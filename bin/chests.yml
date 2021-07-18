@@ -1,0 +1,44 @@
+# Small chest [low levels]
+'s_ch0': COAL
+'s_ch1': WOODEN_SHOVEL
+'s_ch2': WATER_BUCKET
+'s_ch3': OAK_SAPLING
+'s_ch4': COBWEB
+'s_ch5': GOLD_INGOT
+'s_ch6': IRON_INGOT
+'s_ch7': GOLDEN_BOOTS
+'s_ch8': COOKED_SALMON
+'s_ch9': GOLDEN_APPLE
+'s_ch8': APPLE
+'s_ch9': ENDER_PEARL
+'s_ch10': SUGAR_CANE
+'s_ch11': CARROT
+'s_ch12': POTATO
+# Medium chest [medium levels]
+'m_ch0': GOLDEN_HOE
+'m_ch1': WHEAT
+'m_ch2': BOW
+'m_ch3': ARROW
+'m_ch4': DIAMOND
+'m_ch5': COAL
+'m_ch6': IRON_SHOVEL
+'m_ch7': WATER_BUCKET
+'m_ch8': GOLD_INGOT
+'m_ch9': IRON_INGOT
+'m_ch10': COOKED_SALMON
+'m_ch11': GOLDEN_APPLE
+'m_ch12': APPLE
+'m_ch13': ENDER_PEARL
+# Hard chest [hight levels]
+'h_ch0': GOLDEN_SWORD
+'h_ch1': QUARTZ
+'h_ch2': FLINT_AND_STEEL
+'h_ch3': NETHER_WART
+'h_ch4': ARROW
+'h_ch5': DIAMOND
+'h_ch6': COAL
+'h_ch7': GOLDEN_SHOVEL
+'h_ch8': LAVA_BUCKET
+'h_ch9': GOLD_INGOT
+'h_ch10': GOLDEN_APPLE
+'h_ch11': GLOWSTONE_DUST

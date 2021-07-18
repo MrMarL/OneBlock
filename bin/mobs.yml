@@ -1,0 +1,26 @@
+#Mob list "1/3 - low lvl" "2/3 - medium lvl" "all - high lvl"
+'id0': CREEPER
+'id1': ZOMBIE
+'id2': SPIDER
+'id3': SHEEP
+'id4': COW
+'id5': PIG
+'id6': CHICKEN
+'id7': SKELETON
+'id8': MUSHROOM_COW
+'id9': VILLAGER
+'id10': HORSE
+'id11': MULE
+'id12': DONKEY
+'id13': GUARDIAN
+'id14': ELDER_GUARDIAN
+'id15': PILLAGER
+'id16': WITHER_SKELETON
+'id17': BLAZE
+'id18': ZOGLIN
+'id19': ZOMBIFIED_PIGLIN
+'id20': STRIDER
+'id21': PIGLIN
+'id22': HOGLIN
+#you can add more mobs... for example:
+#'id23': CREEPER
