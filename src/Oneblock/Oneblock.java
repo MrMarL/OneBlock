@@ -9,11 +9,6 @@ import org.bukkit.util.Vector;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -246,10 +241,9 @@ public class Oneblock extends JavaPlugin {
                             b.get(Probeg / 100).setProgress(0);
                         b.get(Probeg / 100).addPlayer(ponl);
                     }
-                    if (ponl.getLocation().getBlockX() == x + Probeg && ponl.getLocation().getY() - 1 < y && ponl.getLocation().getBlockZ() == z) {
-                        Location loc = new Location(wor, ponl.getLocation().getX(), y + 1, ponl.getLocation().getZ());
-                        loc.setYaw(ponl.getLocation().getYaw());
-                        loc.setPitch(ponl.getLocation().getPitch());
+                    Location loc = ponl.getLocation();
+                    if (loc.getBlockX() == x + Probeg && loc.getY() - 1 < y && loc.getBlockZ() == z) {
+                        loc.setY(y+1);
                         ponl.teleport(loc);
                     }
                     if (yroven.get(Probeg / 100) == 0)
@@ -357,34 +351,28 @@ public class Oneblock extends JavaPlugin {
                 name = p.getName();
                 if (!data.isInt("_" + name)) {
                     id = data.getInt("id");
-                    if (data.isInt(name) && !name.matches(".*\\b" + "Score_" + "\\b.*")) {
-                        data.set(("_" + name), data.getInt(name));
-                        data.set(name, null);
-                        savedata();
-                    } else {
-                        data.set("_" + name, id);
-                        if (il3x3) {
-                            if (island != null) {
-                                int px = x + id * 100 - 3;
-                                for (int xx = 0; xx < 7; xx++)
-                                    for (int yy = 0; yy < 3; yy++)
-                                        for (int zz = 0; zz < 7; zz++) {
-                                            wor.getBlockAt(px + xx, y + yy, z - 3 + zz).setBlockData(island[xx][yy][zz]);
-                                        }
-                            } else {
-                                wor.getBlockAt(x + id * 100 + 1, y, z).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 + 2, y, z).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 - 1, y, z).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 - 2, y, z).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100, y, z + 1).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100, y, z + 2).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100, y, z - 1).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100, y, z - 2).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 + 1, y, z + 1).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 - 1, y, z + 1).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 + 1, y, z - 1).setType(GRASS_BLOCK);
-                                wor.getBlockAt(x + id * 100 - 1, y, z - 1).setType(GRASS_BLOCK);
-                            }
+                    data.set("_" + name, id);
+                    if (il3x3) {
+                    	if (island != null) {
+                    		int px = x + id * 100 - 3;
+                            for (int xx = 0; xx < 7; xx++)
+                            	for (int yy = 0; yy < 3; yy++)
+                                	for (int zz = 0; zz < 7; zz++) {
+                                    	wor.getBlockAt(px + xx, y + yy, z - 3 + zz).setBlockData(island[xx][yy][zz]);
+                                    }
+                        } else {
+                        	wor.getBlockAt(x + id * 100 + 1, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * 100 + 2, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * 100 - 1, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * 100 - 2, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * 100, y, z + 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100, y, z + 2).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100, y, z - 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100, y, z - 2).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100 + 1, y, z + 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100 - 1, y, z + 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100 + 1, y, z - 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * 100 - 1, y, z - 1).setType(GRASS_BLOCK);
                         }
                     }
                     id++;
@@ -853,13 +841,29 @@ public class Oneblock extends JavaPlugin {
                 sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
                 return true;
             }
+            case ("help"):{
+            	sender.sendMessage(ChatColor.GREEN + "▀▀▀▀▀▀▀▀OB - help▀▀▀▀▀▀▀▀");
+            	boolean admin = sender.hasPermission("Oneblock.set");
+            	if (admin)
+            	sender.sendMessage(ChatColor.GRAY + "/ob set" + ChatColor.WHITE+" - sets the location of the first island.");
+            	sender.sendMessage(ChatColor.GRAY + "/ob j" + ChatColor.WHITE+" - join a new one or your own island.");
+            	if (admin)
+            	sender.sendMessage(ChatColor.GRAY + "/ob protection" + ChatColor.WHITE+" - does not allow players to leave their island.");
+            	sender.sendMessage(ChatColor.GRAY + "/ob invite 'playername'" + ChatColor.WHITE+" - an invitation to the island.");
+            	sender.sendMessage(ChatColor.GRAY + "/ob accept" + ChatColor.WHITE+" - to accept an invitation.");
+            	if (admin) {
+            	sender.sendMessage(ChatColor.GRAY + "/ob islands true" + ChatColor.WHITE+" - islands for new players.");
+            	sender.sendMessage(ChatColor.GRAY + "/ob islands set_my_by_def" + ChatColor.WHITE+" - sets your island as default for new players.");}
+            	sender.sendMessage(ChatColor.GRAY + "/ob IDreset" + ChatColor.WHITE+" - deletes the player's data.");
+            	return true;
+            }
             default:
             //ver
             sender.sendMessage(ChatColor.GREEN +
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.1");
+            	"Create by MrMarL v0.8.2");
             if (superlegacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
             else if (legacy)
@@ -1021,49 +1025,9 @@ public class Oneblock extends JavaPlugin {
             }
         }
     }
-    private static void copyFileUsingStream(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
-    }
+
     private void Configfile() {
         config = this.getConfig();
-        if (config.isInt("id")) {
-            File PlData = new File(getDataFolder(), "PlData.yml");
-            try {
-                copyFileUsingStream(new File(getDataFolder(), "config.yml"), PlData);
-                id = config.getInt("id");
-                for (int i = 0; i < id; i++)
-                    config.set("Score_" + i, null);
-                config.set("id", null);
-                data = YamlConfiguration.loadConfiguration(PlData);
-                data.set("x", null);
-                data.set("y", null);
-                data.set("z", null);
-                data.set("world", null);
-                data.set("leafworld", null);
-                data.set("xleaf", null);
-                data.set("yleaf", null);
-                data.set("zleaf", null);
-                data.set("Progress_bar", null);
-                data.set("frequency", null);
-                data.set("Progress_bar_text", null);
-                savedata();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         if (!config.isString("world"))
             config.set("world", "world");
         wor = Bukkit.getWorld(config.getString("world"));
@@ -1169,6 +1133,7 @@ public class Oneblock extends JavaPlugin {
         	commands.add("ver");
         	commands.add("accept");
         	commands.add("IDreset");
+        	commands.add("help");
             if (sender.hasPermission("Oneblock.set")) {
                 commands.add("set");
                 commands.add("setleaf");
@@ -1209,7 +1174,6 @@ public class Oneblock extends JavaPlugin {
 	            else if (args[0].equals("islands")) {
 	                commands.add("true");
 	                commands.add("false");
-	                commands.add("mobs.yml");
 	                commands.add("set_my_by_def");
 	                commands.add("default");
 	            }
