@@ -42,7 +42,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class Oneblock extends JavaPlugin {
     boolean on = false;
-    public String stroka;
     static int x = 0;
 	static int y = 0;
 	static int z = 0;
@@ -218,17 +217,18 @@ public class Oneblock extends JavaPlugin {
                 Block block = wor.getBlockAt(x + Probeg, y, z);
                 if (block.getType().equals(Material.AIR)) {
                     slomano.set(Probeg / 100, slomano.get(Probeg / 100) + 1);
-                    if (slomano.get(Probeg / 100) >= 16 + yroven.get(Probeg / 100) * lvl_mult) {
+                    int yr_now = yroven.get(Probeg / 100);
+                    if (slomano.get(Probeg / 100) >= 16 + yr_now * lvl_mult) {
                         slomano.set(Probeg / 100, 0);
-                        yroven.set(Probeg / 100, yroven.get(Probeg / 100) + 1);
+                        yroven.set(Probeg / 100, ++yr_now);
                         if (lvl_bar_mode)
-                        	if (yroven.get(Probeg / 100) >= lvl_sizes.size())
+                        	if (yr_now >= lvl_sizes.size())
                         		b.get(Probeg / 100).setTitle("Level: MAX");
                         	else
-                        		b.get(Probeg / 100).setTitle(lvl_names.get(yroven.get(Probeg / 100)));
+                        		b.get(Probeg / 100).setTitle(lvl_names.get(yr_now));
                         if (chat_alert) {
-                        	if (yroven.get(Probeg / 100) < lvl_sizes.size())
-                        		ponl.sendMessage(ChatColor.GREEN + lvl_names.get(yroven.get(Probeg / 100)));
+                        	if (yr_now < lvl_sizes.size())
+                        		ponl.sendMessage(ChatColor.GREEN + lvl_names.get(yr_now));
                         }
                     }
                     if (Progress_bar) {
@@ -236,7 +236,7 @@ public class Oneblock extends JavaPlugin {
                             if (PAPI)
                                 b.get(Probeg / 100).setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
                         if (slomano.get(Probeg / 100) > 0)
-                            b.get(Probeg / 100).setProgress((double) slomano.get(Probeg / 100) / (16 + (double) yroven.get(Probeg / 100) * lvl_mult));
+                            b.get(Probeg / 100).setProgress((double) slomano.get(Probeg / 100) / (16 + (double) yr_now * lvl_mult));
                         else
                             b.get(Probeg / 100).setProgress(0);
                         b.get(Probeg / 100).addPlayer(ponl);
@@ -246,13 +246,13 @@ public class Oneblock extends JavaPlugin {
                         loc.setY(y+1);
                         ponl.teleport(loc);
                     }
-                    if (yroven.get(Probeg / 100) == 0)
+                    if (yr_now == 0)
                         random = 0;
-                    else if (yroven.get(Probeg / 100) >= lvl_sizes.size())
-                    	random = rnd.nextInt(lvl_sizes.size());
+                    else if (yr_now >= lvl_sizes.size())
+                    	random = rnd.nextInt(blocks.size());
                     else
-                        random = rnd.nextInt(lvl_sizes.get(yroven.get(Probeg / 100)));
-                    if (random >= blocks.size() || blocks.get(random) == null) {
+                        random = rnd.nextInt(lvl_sizes.get(yr_now));
+                    if (blocks.get(random) == null) {
                         block.setType(GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1) {
                             wor.getBlockAt(x + Probeg, y + 1, z).setType(flowers[rnd.nextInt(10)]);
@@ -262,21 +262,20 @@ public class Oneblock extends JavaPlugin {
                             block.setType(Material.CHEST);
                             Chest chest = (Chest) block.getState();
                             Inventory inv = chest.getInventory();
-                            if (random < 26) {
-                                inv.addItem(new ItemStack(s_ch.get(rnd.nextInt(s_ch.size())), rnd.nextInt(3)),
-                                    new ItemStack(s_ch.get(rnd.nextInt(s_ch.size())), rnd.nextInt(4) + 1),
-                                    new ItemStack(s_ch.get(rnd.nextInt(s_ch.size())), rnd.nextInt(3) + 1),
-                                    new ItemStack(s_ch.get(rnd.nextInt(s_ch.size())), rnd.nextInt(3)));
-                            } else if (random < 68) {
-                                inv.addItem(new ItemStack(m_ch.get(rnd.nextInt(m_ch.size())), rnd.nextInt(3)),
-                                    new ItemStack(m_ch.get(rnd.nextInt(m_ch.size())), rnd.nextInt(4) + 1),
-                                    new ItemStack(m_ch.get(rnd.nextInt(m_ch.size())), rnd.nextInt(3) + 1),
-                                    new ItemStack(m_ch.get(rnd.nextInt(m_ch.size())), rnd.nextInt(3) + 1));
-                            } else {
-                                inv.addItem(new ItemStack(h_ch.get(rnd.nextInt(h_ch.size())), rnd.nextInt(3)),
-                                    new ItemStack(h_ch.get(rnd.nextInt(h_ch.size())), rnd.nextInt(4) + 1),
-                                    new ItemStack(h_ch.get(rnd.nextInt(h_ch.size())), rnd.nextInt(3) + 1),
-                                    new ItemStack(h_ch.get(rnd.nextInt(h_ch.size())), rnd.nextInt(3)));
+                            ArrayList <Material> ch_now;
+                            if (random < 26)
+                            	ch_now = s_ch;
+                            else if (random < 68)
+                            	ch_now = m_ch;
+                            else
+                            	ch_now = h_ch;
+                            int max = rnd.nextInt(3)+2; 
+                            for(int i = 0;i<max;i++) {
+                            	Material m = ch_now.get(rnd.nextInt(ch_now.size()));
+                            	if (m.getMaxStackSize() == 1)
+                            		inv.addItem(new ItemStack(m, 1));
+                            	else
+                            		inv.addItem(new ItemStack(m, rnd.nextInt(4)+2));
                             }
                         } catch (Exception e) {
                             Bukkit.getConsoleSender().sendMessage("[OB] Error when generating items for the chest! Pls redo chests.yml!");
@@ -285,13 +284,12 @@ public class Oneblock extends JavaPlugin {
                     	block.setType(blocks.get(random));
 
                     if (rnd.nextInt(9) == 0) {
-                        if (yroven.get(Probeg / 100) < blocks.size() / 9)
+                        if (yr_now < blocks.size() / 9)
                             random = rnd.nextInt(mobs.size() / 3);
-                        else if (yroven.get(Probeg / 100) < blocks.size() / 9 * 2)
+                        else if (yr_now < blocks.size() / 9 * 2)
                             random = rnd.nextInt(mobs.size() / 3 * 2);
                         else
                             random = rnd.nextInt(mobs.size());
-                        if (random < mobs.size());
                         wor.spawnEntity(new Location(wor, x + Probeg, y + 1, z), mobs.get(random));
                     }
                 }
@@ -849,11 +847,11 @@ public class Oneblock extends JavaPlugin {
             	sender.sendMessage(ChatColor.GRAY + "/ob j" + ChatColor.WHITE+" - join a new one or your own island.");
             	if (admin)
             	sender.sendMessage(ChatColor.GRAY + "/ob protection" + ChatColor.WHITE+" - does not allow players to leave their island.");
-            	sender.sendMessage(ChatColor.GRAY + "/ob invite 'playername'" + ChatColor.WHITE+" - an invitation to the island.");
-            	sender.sendMessage(ChatColor.GRAY + "/ob accept" + ChatColor.WHITE+" - to accept an invitation.");
+            	sender.sendMessage(ChatColor.GRAY + "/ob invite 'playername'" + ChatColor.WHITE+" - an invitation to the island.\n"+
+            					ChatColor.GRAY + "/ob accept" + ChatColor.WHITE+" - to accept an invitation.");
             	if (admin) {
-            	sender.sendMessage(ChatColor.GRAY + "/ob islands true" + ChatColor.WHITE+" - islands for new players.");
-            	sender.sendMessage(ChatColor.GRAY + "/ob islands set_my_by_def" + ChatColor.WHITE+" - sets your island as default for new players.");}
+            	sender.sendMessage(ChatColor.GRAY + "/ob islands true" + ChatColor.WHITE+" - islands for new players.\n"+ 
+            					ChatColor.GRAY + "/ob islands set_my_by_def" + ChatColor.WHITE+" - sets your island as default for new players.");}
             	sender.sendMessage(ChatColor.GRAY + "/ob IDreset" + ChatColor.WHITE+" - deletes the player's data.");
             	return true;
             }
@@ -863,7 +861,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.2");
+            	"Create by MrMarL v0.8.3+");
             if (superlegacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
             else if (legacy)
@@ -903,7 +901,6 @@ public class Oneblock extends JavaPlugin {
         			slomano.add(data.getInt("ScSlom_" + i));
         		else
         			slomano.add(0);
-        
         savedata();
     }
 
@@ -1000,15 +997,27 @@ public class Oneblock extends JavaPlugin {
         }
         chest = new File(getDataFolder(), "chests.yml");
         newConfigz = YamlConfiguration.loadConfiguration(chest);
-        for (int i = 0; newConfigz.isString("s_ch" + i); i++) {
-            s_ch.add(Material.getMaterial(newConfigz.getString("s_ch" + i)));
-        }
-        for (int i = 0; newConfigz.isString("m_ch" + i); i++) {
-            m_ch.add(Material.getMaterial(newConfigz.getString("m_ch" + i)));
-        }
-        for (int i = 0; newConfigz.isString("h_ch" + i); i++) {
-            h_ch.add(Material.getMaterial(newConfigz.getString("h_ch" + i)));
-        }
+        if (newConfigz.isSet("s_ch0")){//old chest system to new
+        	ArrayList <String> s_s = new ArrayList <String>();
+	        for (int i = 0; newConfigz.isString("s_ch" + i); i++){
+	        	s_s.add(newConfigz.getString("s_ch" + i));
+	            newConfigz.set("s_ch" + i, null);}newConfigz.set("small_chest", s_s);
+	        s_s = new ArrayList <String>();
+	        for (int i = 0; newConfigz.isString("m_ch" + i); i++){
+	        	s_s.add(newConfigz.getString("m_ch" + i));
+	            newConfigz.set("m_ch" + i, null);}newConfigz.set("medium_chest", s_s);
+	        s_s = new ArrayList <String>();
+	        for (int i = 0; newConfigz.isString("h_ch" + i); i++){
+	        	s_s.add(newConfigz.getString("h_ch" + i));
+	            newConfigz.set("h_ch" + i, null);}newConfigz.set("high_chest", s_s);
+	        try {newConfigz.save(chest);} catch (Exception e){}
+	    }
+        for (String s: newConfigz.getStringList("small_chest")) 
+        	s_ch.add(Material.getMaterial(s));
+        for (String s: newConfigz.getStringList("medium_chest")) 
+        	m_ch.add(Material.getMaterial(s));
+        for (String s: newConfigz.getStringList("high_chest")) 
+        	h_ch.add(Material.getMaterial(s));
     }
     private void Mobfile() {
         mobs = new ArrayList < EntityType > ();
