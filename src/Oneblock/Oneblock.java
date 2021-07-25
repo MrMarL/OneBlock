@@ -31,7 +31,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +52,6 @@ public class Oneblock extends JavaPlugin {
     FileConfiguration config = this.getConfig();
     static FileConfiguration data;
     FileConfiguration newConfigz;
-    Player p;
     static World wor;
 	World leafwor;
     int random = 0;
@@ -67,7 +65,7 @@ public class Oneblock extends JavaPlugin {
     ArrayList <EntityType> mobs;
     List <Player> plonl;
     Long fr;
-    int Probeg = 0;
+    int Probeg = 0, Prob = 0;
     boolean il3x3 = false, rebirth = false;
     BarColor Progress_color;
     static int lvl_mult = 5;
@@ -81,6 +79,7 @@ public class Oneblock extends JavaPlugin {
     Material flowers[] = new Material[10];
     ArrayList <String> lvl_names;
     ArrayList <Integer> lvl_sizes;
+    int sto = 100;
     @Override
     public void onEnable() {
         superlegacy = Bukkit.getBukkitVersion().contains("1.8") || Bukkit.getBukkitVersion().contains("1.7");
@@ -140,7 +139,7 @@ public class Oneblock extends JavaPlugin {
             if (rebirth) 
                 if (e.getPlayer().getWorld().equals(wor))
                     if (data.isInt("_" + e.getPlayer().getName()))
-                        e.setRespawnLocation(new Location(wor, x + data.getInt("_" + e.getPlayer().getName()) * 100 + 0.5, y + 1.2, z + 0.5));
+                        e.setRespawnLocation(new Location(wor, x + data.getInt("_" + e.getPlayer().getName()) * sto + 0.5, y + 1.2, z + 0.5));
         }
     }
     public class wor_null implements Runnable {
@@ -186,7 +185,7 @@ public class Oneblock extends JavaPlugin {
     			b.get(data.getInt("_"+name)).removePlayer(pl);;
     		data.set("_"+name, null);
     		data.set("_"+name, data.getInt("_"+to));
-    		pl.teleport(new Location(wor, x + data.getInt("_" + name) * 100 + 0.5, y + 1.2, z + 0.5));
+    		pl.teleport(new Location(wor, x + data.getInt("_" + name) * sto + 0.5, y + 1.2, z + 0.5));
     		invite.remove(to+" "+name);
     		return true;
     	}
@@ -199,10 +198,11 @@ public class Oneblock extends JavaPlugin {
             plonl = wor.getPlayers();
             Collections.shuffle(plonl);
             for (Player ponl: plonl) {
-                Probeg = data.getInt("_" + ponl.getName()) * 100;
+            	if (!data.isInt("_" + ponl.getName()))
+            		continue;
+                Prob = data.getInt("_" + ponl.getName());
+                Probeg =  Prob * sto;
                 if (protection) {
-                	if (!data.isInt("_" + ponl.getName()))
-                		continue;
                 	int check = ponl.getLocation().getBlockX()-Probeg-x;
                 	if (check>50 || check<-50) {
                 		if (check>200 || check<-200) {
@@ -216,16 +216,16 @@ public class Oneblock extends JavaPlugin {
                 }
                 Block block = wor.getBlockAt(x + Probeg, y, z);
                 if (block.getType().equals(Material.AIR)) {
-                    slomano.set(Probeg / 100, slomano.get(Probeg / 100) + 1);
-                    int yr_now = yroven.get(Probeg / 100);
-                    if (slomano.get(Probeg / 100) >= 16 + yr_now * lvl_mult) {
-                        slomano.set(Probeg / 100, 0);
-                        yroven.set(Probeg / 100, ++yr_now);
+                    slomano.set(Prob, slomano.get(Prob) + 1);
+                    int yr_now = yroven.get(Prob);
+                    if (slomano.get(Prob) >= 16 + yr_now * lvl_mult) {
+                        slomano.set(Prob, 0);
+                        yroven.set(Prob, ++yr_now);
                         if (lvl_bar_mode)
                         	if (yr_now >= lvl_sizes.size())
-                        		b.get(Probeg / 100).setTitle("Level: MAX");
+                        		b.get(Prob).setTitle("Level: MAX");
                         	else
-                        		b.get(Probeg / 100).setTitle(lvl_names.get(yr_now));
+                        		b.get(Prob).setTitle(lvl_names.get(yr_now));
                         if (chat_alert) {
                         	if (yr_now < lvl_sizes.size())
                         		ponl.sendMessage(ChatColor.GREEN + lvl_names.get(yr_now));
@@ -234,12 +234,12 @@ public class Oneblock extends JavaPlugin {
                     if (Progress_bar) {
                         if (!lvl_bar_mode)
                             if (PAPI)
-                                b.get(Probeg / 100).setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
-                        if (slomano.get(Probeg / 100) > 0)
-                            b.get(Probeg / 100).setProgress((double) slomano.get(Probeg / 100) / (16 + (double) yr_now * lvl_mult));
+                                b.get(Prob).setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
+                        if (slomano.get(Prob) > 0)
+                            b.get(Prob).setProgress((double) slomano.get(Prob) / (16 + (double) yr_now * lvl_mult));
                         else
-                            b.get(Probeg / 100).setProgress(0);
-                        b.get(Probeg / 100).addPlayer(ponl);
+                            b.get(Prob).setProgress(0);
+                        b.get(Prob).addPlayer(ponl);
                     }
                     Location loc = ponl.getLocation();
                     if (loc.getBlockX() == x + Probeg && loc.getY() - 1 < y && loc.getBlockZ() == z) {
@@ -307,24 +307,14 @@ public class Oneblock extends JavaPlugin {
         }
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
-            List <String> y0 = new ArrayList <String>();
-            List <String> y1 = new ArrayList <String>();
-            List <String> y2 = new ArrayList <String>();
-            int yy = 0;
-            for (int xx = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++)
-                    y0.add(island[xx][yy][zz].getAsString());
-            yy++;
-            for (int xx = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++)
-                    y1.add(island[xx][yy][zz].getAsString());
-            yy++;
-            for (int xx = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++)
-                    y2.add(island[xx][yy][zz].getAsString());
-            map.put("y0", y0);
-            map.put("y1", y1);
-            map.put("y2", y2);
+            List <String> y_now;
+            for (int yy = 0;yy<3;yy++) {
+            	y_now = new ArrayList <String>();
+	            for (int xx = 0; xx < 7; xx++)
+	                for (int zz = 0; zz < 7; zz++)
+	                	y_now.add(island[xx][yy][zz].getAsString());
+	            map.put("y"+yy, y_now);
+            }
             config.set("custom_island", map);
         }
         savedata();
@@ -345,32 +335,32 @@ public class Oneblock extends JavaPlugin {
                 config = this.getConfig();
                 if (config.getInt("y") == 0 || wor == null)
                     return true;
-                p = (Player) sender;
+                Player p = (Player) sender;
                 name = p.getName();
                 if (!data.isInt("_" + name)) {
                     id = data.getInt("id");
                     data.set("_" + name, id);
                     if (il3x3) {
                     	if (island != null) {
-                    		int px = x + id * 100 - 3;
+                    		int px = x + id * sto - 3;
                             for (int xx = 0; xx < 7; xx++)
                             	for (int yy = 0; yy < 3; yy++)
                                 	for (int zz = 0; zz < 7; zz++) {
                                     	wor.getBlockAt(px + xx, y + yy, z - 3 + zz).setBlockData(island[xx][yy][zz]);
                                     }
                         } else {
-                        	wor.getBlockAt(x + id * 100 + 1, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * 100 + 2, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * 100 - 1, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * 100 - 2, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * 100, y, z + 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100, y, z + 2).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100, y, z - 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100, y, z - 2).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100 + 1, y, z + 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100 - 1, y, z + 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100 + 1, y, z - 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * 100 - 1, y, z - 1).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * sto + 1, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * sto + 2, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * sto - 1, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * sto - 2, y, z).setType(GRASS_BLOCK);
+                        	wor.getBlockAt(x + id * sto, y, z + 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto, y, z + 2).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto, y, z - 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto, y, z - 2).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto + 1, y, z + 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto - 1, y, z + 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto + 1, y, z - 1).setType(GRASS_BLOCK);
+                            wor.getBlockAt(x + id * sto - 1, y, z - 1).setType(GRASS_BLOCK);
                         }
                     }
                     id++;
@@ -395,12 +385,12 @@ public class Oneblock extends JavaPlugin {
                         b.add(Bukkit.createBossBar((PlaceholderAPI.setPlaceholders(p, TextP)), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
                     b.get(data.getInt(p.getName())).setVisible(true);
                 }
-                p.teleport(new Location(wor, x + data.getInt("_" + name) * 100 + 0.5, y + 1.2, z + 0.5));
+                p.teleport(new Location(wor, x + data.getInt("_" + name) * sto + 0.5, y + 1.2, z + 0.5));
                 return true;
             }
             case ("leaf"):{
                 config = this.getConfig();
-                p = (Player) sender;
+                Player p = (Player) sender;
                 if (!superlegacy)
                 	b.get(data.getInt("_" + p.getName())).removePlayer(p);
                 if (config.getDouble("yleaf") == 0 || leafwor == null)
@@ -413,14 +403,28 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(noperm);
                     return true;
                 }
-                p = (Player) sender;
-                ((Entity) sender).getLocation();
+                Player p = (Player) sender;
                 Location l = p.getLocation();
-                x = (int) l.getX();
-                y = (int) l.getY();
-                z = (int) l.getZ();
+                x = l.getBlockX();
+                y = l.getBlockY();
+                z = l.getBlockZ();
                 wor = l.getWorld();
                 config = this.getConfig();
+                int temp = 100;
+                if (args.length >= 2) {
+                    try {
+                    	temp = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException nfe) {
+                    	sender.sendMessage(ChatColor.RED + "invalid value");
+                    	return true;
+                    }
+                    if (temp > 1000 || temp < 100) {
+                    	sender.sendMessage(ChatColor.RED + "possible values are from 100 to 1000");
+                    	return true;
+                    }
+                    sto = temp;
+                    config.set("set", sto);
+                }
                 config.set("world", wor.getName());
                 config.set("x", (double) x);
                 config.set("y", (double) y);
@@ -434,8 +438,7 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(noperm);
                     return true;
                 }
-                p = (Player) sender;
-                ((Entity) sender).getLocation();
+                Player p = (Player) sender;
                 Location l = p.getLocation();
                 leafwor = l.getWorld();
                 config = this.getConfig();
@@ -788,7 +791,7 @@ public class Oneblock extends JavaPlugin {
                 		sender.sendMessage(ChatColor.RED + "Not supported in legacy versions!");
                 		return true;
                 	}
-                    p = (Player) sender;
+                	Player p = (Player) sender;
                     name = p.getName();
                     if (data.isInt("_" + name)) {
                         island = new BlockData[7][3][7];
@@ -861,7 +864,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.3+");
+            	"Create by MrMarL v0.8.3++");
             if (superlegacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
             else if (legacy)
@@ -1103,19 +1106,15 @@ public class Oneblock extends JavaPlugin {
             List <String> cust_s1 = getConfig().getStringList("custom_island.y1");
             List <String> cust_s2 = getConfig().getStringList("custom_island.y2");
             island = new BlockData[7][3][7];
-            int yy = 0;
             for (int xx = 0, i = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++, i++)
-                    island[xx][yy][zz] = Bukkit.createBlockData(cust_s.get(i));
-            yy++;
-            for (int xx = 0, i = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++, i++)
-                    island[xx][yy][zz] = Bukkit.createBlockData(cust_s1.get(i));
-            yy++;
-            for (int xx = 0, i = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++, i++)
-                    island[xx][yy][zz] = Bukkit.createBlockData(cust_s2.get(i));
+                for (int zz = 0; zz < 7; zz++, i++) {
+                    island[xx][0][zz] = Bukkit.createBlockData(cust_s.get(i));
+                    island[xx][1][zz] = Bukkit.createBlockData(cust_s1.get(i));
+                    island[xx][2][zz] = Bukkit.createBlockData(cust_s2.get(i));
+                }
         }
+        if (config.isInt("set"))
+        	sto = config.getInt("set");
         this.saveConfig();
     }
     public static int getlvl(String pl_name) {
