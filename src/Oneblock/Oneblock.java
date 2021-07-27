@@ -78,7 +78,7 @@ public class Oneblock extends JavaPlugin {
     boolean protection = false;
     String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
     Material flowers[] = new Material[10];
-    ArrayList <String> lvl_names;
+    static ArrayList <String> lvl_names;
     ArrayList <Integer> lvl_sizes;
     int sto = 100;
     @Override
@@ -184,7 +184,7 @@ public class Oneblock extends JavaPlugin {
     	}
     	if (to!="" && invite.contains(to+" "+name)) {
     		if (Progress_bar && data.isInt("_"+name))
-    			b.get(data.getInt("_"+name)).removePlayer(pl);;
+    			b.get(data.getInt("_"+name)).removePlayer(pl);
     		data.set("_"+name, null);
     		data.set("_"+name, data.getInt("_"+to));
     		pl.teleport(new Location(wor, x + data.getInt("_" + name) * sto + 0.5, y + 1.2, z + 0.5));
@@ -228,10 +228,9 @@ public class Oneblock extends JavaPlugin {
                         		b.get(Prob).setTitle("Level: MAX");
                         	else
                         		b.get(Prob).setTitle(lvl_names.get(yr_now));
-                        if (chat_alert) {
+                        if (chat_alert)
                         	if (yr_now < lvl_sizes.size())
                         		ponl.sendMessage(ChatColor.GREEN + lvl_names.get(yr_now));
-                        }
                     }
                     if (Progress_bar) {
                         if (!lvl_bar_mode)
@@ -256,9 +255,8 @@ public class Oneblock extends JavaPlugin {
                         random = rnd.nextInt(lvl_sizes.get(yr_now));
                     if (blocks.get(random) == null) {
                         block.setType(GRASS_BLOCK);
-                        if (rnd.nextInt(3) == 1) {
+                        if (rnd.nextInt(3) == 1)
                             wor.getBlockAt(x + Probeg, y + 1, z).setType(flowers[rnd.nextInt(10)]);
-                        }
                     } else if (blocks.get(random) == Material.CHEST) {
                         try {
                             block.setType(Material.CHEST);
@@ -362,12 +360,14 @@ public class Oneblock extends JavaPlugin {
                     savedata();
                     yroven.add(0);
                     if (!superlegacy) {
+                    	String temp;
                         if (lvl_bar_mode)
-                            b.add(Bukkit.createBossBar(lvl_names.get(0), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
+                        	temp = lvl_names.get(0);
                         else if (PAPI)
-                            b.add(Bukkit.createBossBar((PlaceholderAPI.setPlaceholders(p, TextP)), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
+                        	temp = PlaceholderAPI.setPlaceholders(p, TextP);
                         else
-                            b.add(Bukkit.createBossBar((TextP), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
+                        	temp = TextP;
+                        b.add(Bukkit.createBossBar(temp, Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
                     }
                 }
                 if (!on) {
@@ -459,8 +459,8 @@ public class Oneblock extends JavaPlugin {
             			 return true;
             		 }
             		 addinvate(((Player) sender).getName(),inv.getName());
-            		 inv.sendMessage(ChatColor.GREEN +"you were invited by player "+inv.getName()+".");
-            		 inv.sendMessage(ChatColor.RED +"/ob accept to accept).");
+            		 inv.sendMessage(ChatColor.GREEN +"you were invited by player "+inv.getName()+".\n"+
+            				 		ChatColor.RED +"/ob accept to accept).");
             		 sender.sendMessage(ChatColor.GREEN +"you invited "+inv.getName()+".");
             	 }
             	 return true;
@@ -500,10 +500,7 @@ public class Oneblock extends JavaPlugin {
                 }
                 else
                 	sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
-                if (protection)
-                	sender.sendMessage(ChatColor.GREEN + "the protection is now enabled.");
-                else
-                	sender.sendMessage(ChatColor.GREEN + "the protection is now disabled.");
+                sender.sendMessage(ChatColor.GREEN + "the protection is now " + (protection?"enabled.":"disabled."));
            		return true;
             }
             //LVL
@@ -679,6 +676,35 @@ public class Oneblock extends JavaPlugin {
                 sender.sendMessage(ChatColor.RED + "true, false, settext or level only!");
                 return true;
             }
+            case ("listlvl"):{
+                if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(noperm);
+                    return true;
+                }
+                if (args.length >= 2) {
+                	int temp = 0;
+                    try {
+                    	temp = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException nfe) {
+                    	sender.sendMessage(ChatColor.RED + "invalid value");
+                    	return true;
+                    }
+                    if (lvl_names.size()<=temp||temp<0) {
+                    	sender.sendMessage(ChatColor.RED + "undefined lvl");
+                    	return true;
+                    }
+                    sender.sendMessage(ChatColor.GREEN+lvl_names.get(temp));
+                    int i = 0;
+                    if (temp !=0)
+                    	i = lvl_sizes.get(temp-1);
+                    for(;i<lvl_sizes.get(temp);i++)
+                    	sender.sendMessage(blocks.get(i)==null?"Grass or undefined":blocks.get(i).name());
+                    return true;
+                }
+                for(int i = 0;i<lvl_names.size();i++)
+                	sender.sendMessage(i+": "+ChatColor.GREEN+lvl_names.get(i));
+                return true;
+            }
             case ("reload"):{
                 if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(noperm);
@@ -712,10 +738,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 chat_alert = !chat_alert;
-                if (chat_alert == false)
-                    sender.sendMessage(ChatColor.GREEN + "Alerts are now disabled!");
-                else
-                    sender.sendMessage(ChatColor.GREEN + "Alerts are now on!");
+                sender.sendMessage(ChatColor.GREEN + (chat_alert?"Alerts are now on!":"Alerts are now disabled!"));
                 config.set("Chat_alert", chat_alert);
                 return true;
             }
@@ -858,7 +881,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.3+++");
+            	"Create by MrMarL v0.8.4");
             if (superlegacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
             else if (legacy)
@@ -1009,7 +1032,7 @@ public class Oneblock extends JavaPlugin {
         	h_ch.add(Material.getMaterial(s));
     }
     private void Mobfile() {
-        mobs = new ArrayList < EntityType > ();
+        mobs = new ArrayList <EntityType>();
         File mob = new File(getDataFolder(), "mobs.yml");
         if (!mob.exists()) {
             saveResource("mobs.yml", false);
@@ -1066,10 +1089,7 @@ public class Oneblock extends JavaPlugin {
             lvl_bar_mode = false;
         //alert
         if (!config.isBoolean("Chat_alert"))
-            if (lvl_bar_mode)
-                config.set("Chat_alert", false);
-            else
-                config.set("Chat_alert", true);
+        	config.set("Chat_alert", !lvl_bar_mode);
         chat_alert = config.getBoolean("Chat_alert");
         if (!config.isString("Progress_bar_color"))
             config.set("Progress_bar_color", "GREEN");
@@ -1106,6 +1126,9 @@ public class Oneblock extends JavaPlugin {
     public static int getlvl(String pl_name) {
         return yroven.get(data.getInt("_" + pl_name));
     }
+    public static String getlvlname(String pl_name) {
+        return lvl_names.get(getlvl(pl_name));
+    }
     public static int getblocks(String pl_name) {
         return slomano.get(data.getInt("_" + pl_name));
     }
@@ -1141,6 +1164,7 @@ public class Oneblock extends JavaPlugin {
                 commands.add("islands");
                 commands.add("island_rebirth");
                 commands.add("protection");
+                commands.add("listlvl");
             }
             StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
@@ -1149,36 +1173,41 @@ public class Oneblock extends JavaPlugin {
         			commands.add(ponl.getDisplayName());
         	}
         	else if (sender.hasPermission("Oneblock.set")) {
-        		if (args[0].equals("setlevel")) {
+        		switch (args[0])
+                {
+                case ("setlevel"):{
             		for (Player ponl: plonl)
             			commands.add(ponl.getDisplayName());
+            		break;
             	}
-        		else if (args[0].equals("Progress_bar")) {
+                case ("Progress_bar"):{
 	                commands.add("true");
 	                commands.add("false");
 	                commands.add("level");
 	                commands.add("settext ...");
 	                commands.add("color");
+	                break;
 	            }
-	            else if (args[0].equals("reload")) {
+                case ("reload"):{
 	                commands.add("blocks.yml");
 	                commands.add("chests.yml");
 	                commands.add("mobs.yml");
+	                break;
 	            }
-	            else if (args[0].equals("islands")) {
-	                commands.add("true");
-	                commands.add("false");
+                case ("islands"):
 	                commands.add("set_my_by_def");
 	                commands.add("default");
-	            }
-	            else if (args[0].equals("island_rebirth")) {
-	            	commands.add("true");
-	                commands.add("false");
-	            }
-	            else if (args[0].equals("protection")) {
+                case ("island_rebirth"):
+                case ("protection"):
 	                commands.add("true");
 	                commands.add("false");
+	                break;
+                case ("listlvl"):{
+	            	for(int i =0;i<lvl_names.size();i++)
+	            		commands.add(""+i);
+	            	break;
 	            }
+                }
         	}
             StringUtil.copyPartialMatches(args[1], commands, completions);
         }
