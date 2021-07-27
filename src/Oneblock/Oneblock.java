@@ -57,7 +57,8 @@ public class Oneblock extends JavaPlugin {
     int random = 0;
     static ArrayList <BossBar> b = new ArrayList <BossBar>();
     boolean Progress_bar = true;
-    boolean superlegacy, legacy, is1_13, is1_14, is1_15, is1_16;
+    boolean superlegacy, legacy;
+    String version = "1.17+";
     boolean lvl_bar_mode = false;
     boolean chat_alert = false;
     ArrayList <Material> blocks;
@@ -82,12 +83,13 @@ public class Oneblock extends JavaPlugin {
     int sto = 100;
     @Override
     public void onEnable() {
-        superlegacy = Bukkit.getBukkitVersion().contains("1.8") || Bukkit.getBukkitVersion().contains("1.7");
-        legacy = Bukkit.getBukkitVersion().contains("1.12") || Bukkit.getBukkitVersion().contains("1.11") || Bukkit.getBukkitVersion().contains("1.10") || Bukkit.getBukkitVersion().contains("1.9") || superlegacy;
-        is1_13 = Bukkit.getBukkitVersion().contains("1.13");
-        is1_14 = Bukkit.getBukkitVersion().contains("1.14");
-        is1_15 = Bukkit.getBukkitVersion().contains("1.15");
-        is1_16 = Bukkit.getBukkitVersion().contains("1.16");
+    	String bVer = Bukkit.getBukkitVersion();
+        superlegacy = bVer.contains("1.8") || bVer.contains("1.7");
+        legacy = bVer.contains("1.12") || bVer.contains("1.11") || bVer.contains("1.10") || bVer.contains("1.9") || superlegacy;
+        version = bVer.contains("1.13")?"1.13":version;
+        version = bVer.contains("1.14")?"1.14":version;
+        version = bVer.contains("1.15")?"1.15":version;
+        version = bVer.contains("1.16")?"1.16":version;
         flowers[9] = Material.SUGAR_CANE;
         if (legacy) {
             GRASS_BLOCK = Material.GRASS;
@@ -349,18 +351,10 @@ public class Oneblock extends JavaPlugin {
                                     	wor.getBlockAt(px + xx, y + yy, z - 3 + zz).setBlockData(island[xx][yy][zz]);
                                     }
                         } else {
-                        	wor.getBlockAt(x + id * sto + 1, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * sto + 2, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * sto - 1, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * sto - 2, y, z).setType(GRASS_BLOCK);
-                        	wor.getBlockAt(x + id * sto, y, z + 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto, y, z + 2).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto, y, z - 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto, y, z - 2).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto + 1, y, z + 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto - 1, y, z + 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto + 1, y, z - 1).setType(GRASS_BLOCK);
-                            wor.getBlockAt(x + id * sto - 1, y, z - 1).setType(GRASS_BLOCK);
+                        	for (int i = -2;i<=2;i++)
+                        		for (int q = -2;q<=2;q++)
+                        			if (Math.abs(i)+Math.abs(q) < 3)
+                        				wor.getBlockAt(x + id * sto + i, y, z+ q).setType(GRASS_BLOCK);
                         }
                     }
                     id++;
@@ -864,21 +858,13 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.3++");
+            	"Create by MrMarL v0.8.3+++");
             if (superlegacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
             else if (legacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run legacy(1.9 - 1.12)");
-            else if (is1_13)
-                sender.sendMessage(ChatColor.GREEN + "Server run 1.13");
-            else if (is1_14)
-                sender.sendMessage(ChatColor.GREEN + "Server run 1.14");
-            else if (is1_15)
-                sender.sendMessage(ChatColor.GREEN + "Server run 1.15");
-            else if (is1_16)
-                sender.sendMessage(ChatColor.GREEN + "Server run 1.16");
             else
-                sender.sendMessage(ChatColor.GREEN + "Server run 1.17+");
+                sender.sendMessage(ChatColor.GREEN + "Server run "+version);
             return true;
             }
         } else {

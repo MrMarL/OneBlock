@@ -1,147 +1,150 @@
 # Configuration of levels.
+# by MrMarL & Adarsh A
 '0':
-- 'Level: 0 - Green hills.'
+- 'Level: 0 - Grass starter'
 - GRASS_BLOCK
 '1':
-- 'Level: 1 - podzol+melon.'
+- 'Level: 1 - Podzol & melon'
 - PODZOL
 - GRASS_BLOCK
 - MELON
 '2':
-- 'Level: 2'
+- 'Level: 2 - Forest'
 - BIRCH_LOG
 - OAK_LOG
 - OAK_LEAVES
 '3':
-- 'Level: 3'
+- 'Level: 3 - Little cave'
 - STONE
 - COBBLESTONE
 - COAL_ORE
+- GRAVEL
 '4':
-- 'Level: 4'
+- 'Level: 4 - Deposits of rocky rocks'
 - GRANITE
 - DIORITE
 - ANDESITE
 '5':
-- 'Level: 5'
+- 'Level: 5 - Little desert'
 - SAND
 - SANDSTONE
 - CACTUS
 '6':
-- 'Level: 6'
+- 'Level: 6 - Ore deposit'
 - IRON_ORE
 - COARSE_DIRT
-- GRAVEL
+- COPPER_ORE
+- DEEPSLATE_COPPER_ORE
 '7':
-- 'Level: 7'
+- 'Level: 7 - The first chest'
 - CHEST
 - MOSSY_COBBLESTONE
 - WHITE_TERRACOTTA
-'8':
-- 'Level: 8'
 - ORANGE_TERRACOTTA
 - YELLOW_TERRACOTTA
+'8':
+- 'Level: 8 - Deep forest'
 - SPRUCE_LOG
-'9':
-- 'Level: 9'
 - DARK_OAK_LOG
 - SPRUCE_LEAVES
-- LAPIS_ORE
-'10':
-- 'Level: 10'
+'9':
+- 'Level: 9 - Mine'
 - STONE
 - COAL_ORE
 - GOLD_ORE
-'11':
-- 'Level: 11'
+- LAPIS_ORE
+'10':
+- 'Level: 10 - Snow?'
 - IRON_ORE
 - INFESTED_STONE
 - SNOW_BLOCK
-'12':
-- 'Level: 12'
+- PACKED_ICE
+'11':
+- 'Level: 11 - Red desert?'
 - CLAY
 - CHEST
-- PACKED_ICE
-'13':
-- 'Level: 13'
 - WHITE_CONCRETE
 - RED_SAND
 - RED_SANDSTONE
-'14':
-- 'Level: 14'
+'12':
+- 'Level: 12 - Acacia & mushrooms'
 - ACACIA_LOG
 - ACACIA_LEAVES
 - MUSHROOM_STEM
-'15':
-- 'Level: 15'
 - BROWN_MUSHROOM_BLOCK
 - RED_MUSHROOM_BLOCK
 - PUMPKIN
-'16':
-- 'Level: 16'
+'13':
+- 'Level: 13 - Sea'
 - PRISMARINE_BRICKS
 - DARK_PRISMARINE
 - SEA_LANTERN
-'17':
-- 'Level: 17'
+'14':
+- 'Level: 14 - Am I rich?'
 - DIAMOND_ORE
 - EMERALD_ORE
 - CHISELED_SANDSTONE
-'18':
-- 'Level: 18'
+'15':
+- 'Level: 15 - Obs...'
 - CUT_SANDSTONE
 - CARVED_PUMPKIN
 - OBSIDIAN
-'19':
-- 'Level: 19'
+'16':
+- 'Level: 16 - Hell!?'
 - NETHERRACK
 - GLOWSTONE
 - SOUL_SAND
-'20':
-- 'Level: 20'
+'17':
+- 'Level: 17 - Infernal terracotta?'
 - CHISELED_STONE_BRICKS
 - NETHER_BRICKS
 - GREEN_TERRACOTTA
-'21':
-- 'Level: 21'
 - PINK_TERRACOTTA
 - NETHER_QUARTZ_ORE
 - BLACK_TERRACOTTA
-'22':
-- 'Level: 22'
+'18':
+- 'Level: 18 - Is that quartz?'
 - NETHER_BRICKS
 - NETHERRACK
-- PRISMARINE
-'23':
-- 'Level: 23'
 - NETHER_QUARTZ_ORE
+'19':
+- 'Level: 19 - Never mine...'
+- PRISMARINE
 - CRIMSON_NYLIUM
 - WARPED_NYLIUM
-'24':
-- 'Level: 24'
+- AMETHYST_BLOCK
+- DIAMOND_BLOCK
+'20':
+- 'Level: 20 - Never...'
 - NETHERRACK
 - CHEST
 - CRIMSON_STEM
-'25':
-- 'Level: 25'
+'21':
+- 'Level: 21 - Ne...'
 - WARPED_STEM
 - CHEST
+- OXIDIZED_COPPER
 - NETHER_GOLD_ORE
-'26':
-- 'Level: 26'
+'22':
+- 'Level: 22'
 - CRIMSON_HYPHAE
 - WARPED_HYPHAE
 - CRACKED_NETHER_BRICKS
-'27':
-- 'Level: 27'
+'23':
+- 'Level: 23 - Deep crying'
 - SHROOMLIGHT
 - CRYING_OBSIDIAN
 - BLACKSTONE
-'28':
-- 'Level: 28'
+- DEEPSLATE_BRICKS
+- CRACKED_DEEPSLATE_BRICKS
+'24':
+- 'Level: 24'
 - NETHERITE_BLOCK
 - ANCIENT_DEBRIS
 - POLISHED_BLACKSTONE
-'29':
-- 'Level: 29'
+'25':
+- 'Level: 25 - The end?'
 - END_STONE
+- CUT_SANDSTONE
+- CARVED_PUMPKIN
+- OBSIDIAN
