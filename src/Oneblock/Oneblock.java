@@ -35,6 +35,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -94,7 +95,6 @@ public class Oneblock extends JavaPlugin {
         if (legacy) {
             GRASS_BLOCK = Material.GRASS;
             GRASS = Material.valueOf("LONG_GRASS");
-            //
             flowers[8] = Material.valueOf("YELLOW_FLOWER");
             flowers[7] = Material.valueOf("RED_ROSE");
             for(int i = 0;i<7;i++)
@@ -103,8 +103,7 @@ public class Oneblock extends JavaPlugin {
             Progress_color = BarColor.GREEN;
             GRASS_BLOCK = Material.GRASS_BLOCK;
             GRASS = Material.GRASS;
-            //
-            flowers[8] = Material.CORNFLOWER;
+            flowers[8] = version=="1.13"?Material.OXEYE_DAISY:Material.CORNFLOWER;
             flowers[7] = Material.OXEYE_DAISY;
             flowers[6] = Material.RED_TULIP;
             flowers[5] = Material.BLUE_ORCHID;
@@ -134,6 +133,8 @@ public class Oneblock extends JavaPlugin {
             }
         }
         Bukkit.getPluginManager().registerEvents(new Respawn(), this);
+        if (!superlegacy)
+        	Bukkit.getPluginManager().registerEvents(new ChangedWorld(), this);
     }
     public class Respawn implements Listener {
         @EventHandler
@@ -142,6 +143,14 @@ public class Oneblock extends JavaPlugin {
                 if (e.getPlayer().getWorld().equals(wor))
                     if (data.isInt("_" + e.getPlayer().getName()))
                         e.setRespawnLocation(new Location(wor, x + data.getInt("_" + e.getPlayer().getName()) * sto + 0.5, y + 1.2, z + 0.5));
+        }
+    }
+    public class ChangedWorld implements Listener {
+    	@EventHandler
+        public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
+    		Player p = e.getPlayer(); World from = e.getFrom();
+        	if (from.equals(wor))
+        		b.get(data.getInt("_" + p.getName())).removePlayer(p);
         }
     }
     public class wor_null implements Runnable {
@@ -881,7 +890,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.4");
+            	"Create by MrMarL v0.8.5");
             if (superlegacy)
                 sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
             else if (legacy)
