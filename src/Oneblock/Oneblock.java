@@ -10,6 +10,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -68,7 +70,7 @@ public class Oneblock extends JavaPlugin {
     List <Player> plonl;
     Long fr;
     int Probeg = 0, Prob = 0;
-    boolean il3x3 = false, rebirth = false;
+    boolean il3x3 = false, rebirth = false, autojoin = false;
     BarColor Progress_color;
     static int lvl_mult = 5;
     Material GRASS_BLOCK, GRASS;
@@ -132,22 +134,35 @@ public class Oneblock extends JavaPlugin {
                 on = true;
             }
         }
-        Bukkit.getPluginManager().registerEvents(new Respawn(), this);
+        Bukkit.getPluginManager().registerEvents(new Resp_AutoJ(), this);
         if (!superlegacy)
         	Bukkit.getPluginManager().registerEvents(new ChangedWorld(), this);
     }
-    public class Respawn implements Listener {
+    public class Resp_AutoJ implements Listener {
         @EventHandler
-        public void onPlayerRespawn(PlayerRespawnEvent e) {
+        public void Resp(PlayerRespawnEvent e) {
             if (rebirth) 
                 if (e.getPlayer().getWorld().equals(wor))
                     if (data.isInt("_" + e.getPlayer().getName()))
                         e.setRespawnLocation(new Location(wor, x + data.getInt("_" + e.getPlayer().getName()) * sto + 0.5, y + 1.2, z + 0.5));
         }
+        @EventHandler
+        public void AutoJ(PlayerTeleportEvent e) {
+        if (autojoin){
+    		Location loc = e.getTo();
+			World from = e.getFrom().getWorld();
+    		World to = loc.getWorld();
+        	if (!from.equals(wor) && to.equals(wor) &&
+        			!(loc.getY() == y+1.2 && loc.getZ() == z+0.5)){
+        		e.setCancelled(true);
+        		e.getPlayer().performCommand("ob j");
+        		}
+        	}
+        }
     }
     public class ChangedWorld implements Listener {
     	@EventHandler
-        public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
+        public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		Player p = e.getPlayer(); World from = e.getFrom();
         	if (from.equals(wor))
         		b.get(data.getInt("_" + p.getName())).removePlayer(p);
@@ -495,21 +510,29 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(noperm);
                     return true;
                 }
-                if (args.length > 1) {
-                    if (args[1].equals("true")) {
-                    	protection = true;
-                    	config.set("protection", protection);	
-                    }
-                    else if (args[1].equals("false")) {
-                    	protection = false;
-                    	config.set("protection", protection);	
-                    }
-                    else
-                    	sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
+            	if (args.length > 1 &&
+                	(args[1].equals("true") || args[1].equals("false"))) {
+                    	protection = Boolean.valueOf(args[1]);
+                    	config.set("protection", protection);
                 }
                 else
                 	sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
                 sender.sendMessage(ChatColor.GREEN + "the protection is now " + (protection?"enabled.":"disabled."));
+           		return true;
+            }
+            case ("autojoin"):{
+            	if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(noperm);
+                    return true;
+                }
+            	if (args.length > 1 &&
+                    	(args[1].equals("true") || args[1].equals("false"))) {
+                    	autojoin = Boolean.valueOf(args[1]);
+                    	config.set("autojoin", autojoin);	
+                }
+                else
+                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
+                sender.sendMessage(ChatColor.GREEN + "autojoin is now " + (autojoin?"enabled.":"disabled."));
            		return true;
             }
             //LVL
@@ -584,8 +607,8 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length <= 1) {
-                    sender.sendMessage(ChatColor.GREEN + "level multiplier now: " + lvl_mult);
-                    sender.sendMessage(ChatColor.GREEN + "5 by default");
+                    sender.sendMessage(ChatColor.GREEN + "level multiplier now: " + lvl_mult +
+                    		"\n5 by default");
                     return true;
                 }
                 int lvl = lvl_mult;
@@ -600,8 +623,8 @@ public class Oneblock extends JavaPlugin {
                     config.set("level_multiplier", lvl_mult);
                 } else
                     sender.sendMessage(ChatColor.RED + "possible values: from 0 to 20.");
-                sender.sendMessage(ChatColor.GREEN + "level multiplier now: " + lvl_mult);
-                sender.sendMessage(ChatColor.GREEN + "5 by default");
+                sender.sendMessage(ChatColor.GREEN + "level multiplier now: " + lvl_mult +
+                		"\n5 by default");
                 return true;
             }
             case ("progress_bar"):{
@@ -617,17 +640,10 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(ChatColor.YELLOW + "and?");
                     return true;
                 }
-                if (args[1].equalsIgnoreCase("true")) {
-                    Progress_bar = true;
+                if (args[1].equals("true") || args[1].equals("false")) {
+                    Progress_bar = Boolean.valueOf(args[1]);
                     for (int i = 0; i < id; i++)
-                        b.get(i).setVisible(true);
-                    config.set("Progress_bar", Progress_bar);
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("false")) {
-                    Progress_bar = false;
-                    for (int i = 0; i < id; i++)
-                        b.get(i).setVisible(false);
+                        b.get(i).setVisible(Progress_bar);
                     config.set("Progress_bar", Progress_bar);
                     return true;
                 }
@@ -757,8 +773,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value (5 to 20)");
-                    sender.sendMessage(ChatColor.YELLOW + "7 by default");
+                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value (5 to 20)\n7 by default");
                     return true;
                 }
                 Long fr_;
@@ -766,8 +781,7 @@ public class Oneblock extends JavaPlugin {
                 try {
                     fr_ = Long.parseLong(args[1]);
                 } catch (Exception e) {
-                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value (5 to 20)");
-                    sender.sendMessage(ChatColor.YELLOW + "7 by default");
+                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value (5 to 20)\n7 by default");
                     return true;
                 }
                 if (fr_ >= 5L && fr_ <= 20L && on) {
@@ -800,19 +814,13 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
                     return true;
                 }
-                if (args[1].equalsIgnoreCase("true")) {
-                    il3x3 = true;
-                    config.set("Island_for_new_players", true);
-                    sender.sendMessage(ChatColor.GREEN + "Island_for_new_players = true");
+                if (args[1].equals("true") || args[1].equals("false")) {
+                    il3x3 = Boolean.valueOf(args[1]);
+                    config.set("Island_for_new_players", il3x3);
+                    sender.sendMessage(ChatColor.GREEN + "Island_for_new_players = " + il3x3);
                     return true;
                 }
-                if (args[1].equalsIgnoreCase("false")) {
-                    il3x3 = false;
-                    config.set("Island_for_new_players", false);
-                    sender.sendMessage(ChatColor.GREEN + "Island_for_new_players = false");
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("set_my_by_def")) {
+                if (args[1].equals("set_my_by_def")) {
                 	if (legacy) {
                 		sender.sendMessage(ChatColor.RED + "Not supported in legacy versions!");
                 		return true;
@@ -853,16 +861,10 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
                     return true;
                 }
-                if (args[1].equalsIgnoreCase("true")) {
-                    rebirth = true;
-                    config.set("Rebirth_on_the_island", true);
-                    sender.sendMessage(ChatColor.GREEN + "Rebirth_on_the_island = true");
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("false")) {
-                    rebirth = false;
-                    config.set("Rebirth_on_the_island", false);
-                    sender.sendMessage(ChatColor.GREEN + "Rebirth_on_the_island = false");
+                if (args[1].equals("true") || args[1].equals("false")) {
+                    rebirth = Boolean.valueOf(args[1]);
+                    config.set("Rebirth_on_the_island", rebirth);
+                    sender.sendMessage(ChatColor.GREEN + "Rebirth_on_the_island = " + rebirth);
                     return true;
                 }
                 sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
@@ -890,13 +892,8 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.5");
-            if (superlegacy)
-                sender.sendMessage(ChatColor.GREEN + "Server run super legacy(1.7 - 1.8)");
-            else if (legacy)
-                sender.sendMessage(ChatColor.GREEN + "Server run legacy(1.9 - 1.12)");
-            else
-                sender.sendMessage(ChatColor.GREEN + "Server run "+version);
+            	"Create by MrMarL v0.8.6\n" + 
+            	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
         } else {
@@ -1116,6 +1113,8 @@ public class Oneblock extends JavaPlugin {
         if (!config.isBoolean("protection"))
             config.set("protection", protection);
         protection = config.getBoolean("protection");
+        if (config.isBoolean("autojoin"))
+        	autojoin = config.getBoolean("autojoin");
         if (config.isSet("custom_island") && !legacy) {
             List <String> cust_s = getConfig().getStringList("custom_island.y0");
             List <String> cust_s1 = getConfig().getStringList("custom_island.y1");
@@ -1151,29 +1150,10 @@ public class Oneblock extends JavaPlugin {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-        	commands.add("j");
-        	commands.add("join");
-            commands.add("leaf");
-        	commands.add("invite");
-        	commands.add("accept");
-        	commands.add("ver");
-        	commands.add("accept");
-        	commands.add("IDreset");
-        	commands.add("help");
+        	commands.addAll(Arrays.asList("j","join","leaf","invite","accept","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
-                commands.add("set");
-                commands.add("setleaf");
-                commands.add("Progress_bar");
-                commands.add("chat_alert");
-                commands.add("setlevel");
-                commands.add("clear");
-                commands.add("lvl_mult");
-                commands.add("reload");
-                commands.add("frequency 7");
-                commands.add("islands");
-                commands.add("island_rebirth");
-                commands.add("protection");
-                commands.add("listlvl");
+            	commands.addAll(Arrays.asList("set","setleaf","Progress_bar","chat_alert","setlevel","clear",
+            		"lvl_mult","reload","frequency 7","islands","island_rebirth","protection","listlvl","autoJoin"));
             }
             StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
@@ -1208,6 +1188,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("default");
                 case ("island_rebirth"):
                 case ("protection"):
+                case ("autoJoin"):
 	                commands.add("true");
 	                commands.add("false");
 	                break;
