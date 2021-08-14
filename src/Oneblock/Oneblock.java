@@ -348,7 +348,11 @@ public class Oneblock extends JavaPlugin {
         if (cmd.getName().equalsIgnoreCase("oneblock")) {
             //
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.YELLOW + "pls try /ob join");
+            	((Player)sender).performCommand("ob j");
+                return true;
+            }
+            if (!sender.hasPermission("Oneblock.join")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.join].");
                 return true;
             }
             //
@@ -892,7 +896,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.6\n" + 
+            	"Create by MrMarL v0.8.7\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
