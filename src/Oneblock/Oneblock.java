@@ -37,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
@@ -128,7 +129,7 @@ public class Oneblock extends JavaPlugin {
         yroven.add(0);
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleaf") != 0 && leafwor == null)) {
-                Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new wor_null(), 20, 40);
+                Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new wor_null(), 32, 64);
             } else {
                 Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
                 on = true;
@@ -159,6 +160,15 @@ public class Oneblock extends JavaPlugin {
         		}
         	}
         }
+        @EventHandler
+        public void JAuto(PlayerJoinEvent e) {
+        if (autojoin){
+        	Player pl = e.getPlayer();
+			World nowwor = pl.getWorld();
+        	if (nowwor.equals(wor))
+        		pl.performCommand("ob j");
+        	}
+        }
     }
     public class ChangedWorld implements Listener {
     	@EventHandler
@@ -171,8 +181,9 @@ public class Oneblock extends JavaPlugin {
     public class wor_null implements Runnable {
         public void run() {
             if (wor == null) {
-                Bukkit.getConsoleSender().sendMessage("[OB] WORLD INITIALIZATION ERROR! world = null");
-                Bukkit.getConsoleSender().sendMessage("[OB] Trying to initialize the world again...");
+                Bukkit.getConsoleSender().sendMessage(
+                		"\n[OB] WORLD INITIALIZATION ERROR! world = null"+
+                		"\n[OB] Trying to initialize the world again...");
                 wor = Bukkit.getWorld(config.getString("world"));
                 leafwor = Bukkit.getWorld(config.getString("leafworld"));
             } else {
@@ -587,11 +598,13 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (data.isInt("_" + args[1])) {
                     int i = data.getInt("_" + args[1]);
-                    data.set("Score_" + i, 0);
+                    data.set("Score_" + i, null);
+                    data.set("ScSlom_" + i, null);
+                    data.set("_" + args[1], null);
                     slomano.set(i, 0);
                     yroven.set(i, 0);
-                    if (lvl_bar_mode)
-                        b.get(i).setTitle(lvl_names.get(0));
+                    if (Progress_bar)
+            			b.get(i).setVisible(false);
                     int x_now = x + i * 100 - 12, y_now = y - 6, z_now = z - 12;
                     if (y_now <= 1)
                         y_now = 1;
@@ -896,7 +909,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.7\n" + 
+            	"Create by MrMarL v0.8.7+\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1168,6 +1181,7 @@ public class Oneblock extends JavaPlugin {
         	else if (sender.hasPermission("Oneblock.set")) {
         		switch (args[0])
                 {
+                case ("clear"):
                 case ("setlevel"):{
             		for (Player ponl: plonl)
             			commands.add(ponl.getDisplayName());
