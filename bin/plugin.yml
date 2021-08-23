@@ -1,6 +1,6 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  0.8.7+
+version:  0.8.7f+
 api-version: 1.13
 author:  MrMarL
 softdepend: [PlaceholderAPI]

@@ -174,8 +174,10 @@ public class Oneblock extends JavaPlugin {
     	@EventHandler
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		Player p = e.getPlayer(); World from = e.getFrom();
+    		int i = data.getInt("_" + p.getName());
         	if (from.equals(wor))
-        		b.get(data.getInt("_" + p.getName())).removePlayer(p);
+        		if (i<b.size())
+        			b.get(i).removePlayer(p);
         }
     }
     public class wor_null implements Runnable {
@@ -909,7 +911,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.7+\n" + 
+            	"Create by MrMarL v0.8.7f+\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
