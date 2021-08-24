@@ -201,7 +201,7 @@ public class Oneblock extends JavaPlugin {
             on = true;
         }
     }
-    public void addinvate(String name ,String to) {
+    public void addinvite(String name ,String to) {
     	if (invite.contains(name+" "+to))
     		return;
     	invite.add(name+" "+to);
@@ -212,7 +212,7 @@ public class Oneblock extends JavaPlugin {
     	     }
     	}, 300L);
     }
-    public boolean checkinvate(Player pl) {
+    public boolean checkinvite(Player pl) {
     	String name = pl.getName();
     	String to = "";
     	for(String item:invite) {
@@ -485,30 +485,34 @@ public class Oneblock extends JavaPlugin {
                 return true;
             }
             case ("invite"):{
-            	 if (args.length < 2) {
-                     sender.sendMessage(ChatColor.RED + "invalid format. try: /ob invite 'nickname'");
-                     return true;
-                 }
-            	 Player inv = Bukkit.getPlayer(args[1]);
-            	 if (inv != null) {
-            		 if (inv == (Player) sender) {
-            			 sender.sendMessage(ChatColor.YELLOW + "wtf? you can't invite yourself.");
-            			 return true;
-            		 }
-            		 if (!data.isInt("_" + ((Player)sender).getName())) {
-            			 sender.sendMessage(ChatColor.YELLOW + "wtf? you don't have an island.");
-            			 return true;
-            		 }
-            		 addinvate(((Player) sender).getName(),inv.getName());
-            		 inv.sendMessage(ChatColor.GREEN +"you were invited by player "+inv.getName()+".\n"+
-            				 		ChatColor.RED +"/ob accept to accept).");
-            		 sender.sendMessage(ChatColor.GREEN +"you invited "+inv.getName()+".");
-            	 }
-            	 return true;
+            	if (!sender.hasPermission("Oneblock.invite")) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.invite].");
+                    return true;
+                }
+            	if (args.length < 2) {
+            		sender.sendMessage(ChatColor.RED + "invalid format. try: /ob invite 'nickname'");
+            		return true;
+            	}
+            	Player inv = Bukkit.getPlayer(args[1]);
+            	if (inv != null) {
+            		if (inv == (Player) sender) {
+            			sender.sendMessage(ChatColor.YELLOW + "wtf? you can't invite yourself.");
+            			return true;
+            		}
+            		if (!data.isInt("_" + ((Player)sender).getName())) {
+            			sender.sendMessage(ChatColor.YELLOW + "wtf? you don't have an island.");
+            			return true;
+            		}
+            		addinvite(((Player) sender).getName(),inv.getName());
+            		inv.sendMessage(ChatColor.GREEN +"you were invited by player "+inv.getName()+".\n"+
+            				ChatColor.RED +"/ob accept to accept).");
+            		sender.sendMessage(ChatColor.GREEN +"you invited "+inv.getName()+".");
+            	}
+            	return true;
             }
             case ("accept"):{
             	Player pl = (Player) sender;
-           	 	if (checkinvate(pl))
+           	 	if (checkinvite(pl))
            	 		sender.sendMessage(ChatColor.GREEN + "[ok]");
            	 	else
            	 		sender.sendMessage(ChatColor.RED + "[you have no invitations.]");
@@ -911,7 +915,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.7f+\n" + 
+            	"Create by MrMarL v0.8.8\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
