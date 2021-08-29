@@ -81,7 +81,7 @@ public class Oneblock extends JavaPlugin {
     static ArrayList <String> invite = new ArrayList<>();
     boolean protection = false;
     String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
-    Material flowers[] = new Material[10];
+    ArrayList <Material> flowers;
     static ArrayList <String> lvl_names;
     ArrayList <Integer> lvl_sizes;
     int sto = 100;
@@ -94,26 +94,13 @@ public class Oneblock extends JavaPlugin {
         version = bVer.contains("1.14")?"1.14":version;
         version = bVer.contains("1.15")?"1.15":version;
         version = bVer.contains("1.16")?"1.16":version;
-        flowers[9] = Material.SUGAR_CANE;
         if (legacy) {
             GRASS_BLOCK = Material.GRASS;
             GRASS = Material.valueOf("LONG_GRASS");
-            flowers[8] = Material.valueOf("YELLOW_FLOWER");
-            flowers[7] = Material.valueOf("RED_ROSE");
-            for(int i = 0;i<7;i++)
-            	flowers[i] = GRASS;
         } else {
             Progress_color = BarColor.GREEN;
             GRASS_BLOCK = Material.GRASS_BLOCK;
             GRASS = Material.GRASS;
-            flowers[8] = version=="1.13"?Material.OXEYE_DAISY:Material.CORNFLOWER;
-            flowers[7] = Material.OXEYE_DAISY;
-            flowers[6] = Material.RED_TULIP;
-            flowers[5] = Material.BLUE_ORCHID;
-            flowers[4] = Material.DANDELION;
-            flowers[3] = Material.POPPY;
-            for(int i = 0;i<3;i++)
-            	flowers[i] = GRASS;
         }
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PAPI = true;
@@ -123,6 +110,7 @@ public class Oneblock extends JavaPlugin {
         Configfile();
         Datafile();
         Blockfile();
+        Flowerfile();
         Chestfile();
         Mobfile();
         config = this.getConfig();
@@ -255,10 +243,10 @@ public class Oneblock extends JavaPlugin {
                 }
                 Block block = wor.getBlockAt(x + Probeg, y, z);
                 if (block.getType().equals(Material.AIR)) {
-                    slomano.set(Prob, slomano.get(Prob) + 1);
+                	int sl_now = slomano.get(Prob) + 1;
                     int yr_now = yroven.get(Prob);
-                    if (slomano.get(Prob) >= 16 + yr_now * lvl_mult) {
-                        slomano.set(Prob, 0);
+                    if (sl_now >= 16 + yr_now * lvl_mult) {
+                    	sl_now = 0;
                         yroven.set(Prob, ++yr_now);
                         if (lvl_bar_mode)
                         	if (yr_now >= lvl_sizes.size())
@@ -269,15 +257,16 @@ public class Oneblock extends JavaPlugin {
                         	if (yr_now < lvl_sizes.size())
                         		ponl.sendMessage(ChatColor.GREEN + lvl_names.get(yr_now));
                     }
+                    slomano.set(Prob, sl_now);
                     if (Progress_bar) {
-                        if (!lvl_bar_mode)
-                            if (PAPI)
-                                b.get(Prob).setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
-                        if (slomano.get(Prob) > 0)
-                            b.get(Prob).setProgress((double) slomano.get(Prob) / (16 + (double) yr_now * lvl_mult));
+                    	BossBar b_now = b.get(Prob);
+                        if (!lvl_bar_mode && PAPI)
+                        	b_now.setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
+                        if (sl_now > 0)
+                        	b_now.setProgress((double) sl_now / (16 + (double) yr_now * lvl_mult));
                         else
-                            b.get(Prob).setProgress(0);
-                        b.get(Prob).addPlayer(ponl);
+                        	b_now.setProgress(0);
+                        b_now.addPlayer(ponl);
                     }
                     Location loc = ponl.getLocation();
                     if (loc.getBlockX() == x + Probeg && loc.getY() - 1 < y && loc.getBlockZ() == z) {
@@ -293,7 +282,7 @@ public class Oneblock extends JavaPlugin {
                     if (blocks.get(random) == null) {
                         block.setType(GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1)
-                            wor.getBlockAt(x + Probeg, y + 1, z).setType(flowers[rnd.nextInt(10)]);
+                            wor.getBlockAt(x + Probeg, y + 1, z).setType(flowers.get(rnd.nextInt(flowers.size())));
                     } else if (blocks.get(random) == Material.CHEST) {
                         try {
                             block.setType(Material.CHEST);
@@ -767,6 +756,11 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(ChatColor.GREEN + "blocks.yml reloaded!");
                     return true;
                 }
+                if (args[1].equalsIgnoreCase("flowers.yml")) {
+                	Flowerfile();
+                    sender.sendMessage(ChatColor.GREEN + "flowers.yml reloaded!");
+                    return true;
+                }
                 if (args[1].equalsIgnoreCase("chests.yml")) {
                     Chestfile();
                     sender.sendMessage(ChatColor.GREEN + "chests.yml reloaded!");
@@ -796,7 +790,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value (5 to 20)\n7 by default");
+                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value (4 to 20)\n7 by default");
                     return true;
                 }
                 Long fr_;
@@ -804,14 +798,16 @@ public class Oneblock extends JavaPlugin {
                 try {
                     fr_ = Long.parseLong(args[1]);
                 } catch (Exception e) {
-                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value (5 to 20)\n7 by default");
+                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value (4 to 20)\n7 by default");
                     return true;
                 }
-                if (fr_ >= 5L && fr_ <= 20L && on) {
+                if (fr_ >= 4L && fr_ <= 20L && on) {
                     fr = fr_;
                     Bukkit.getScheduler().cancelTasks(this);
                     config.set("frequency", fr);
-                    if (fr < 7L)
+                    if (fr == 4L)
+                        Sfr = " (Extreme)";
+                    else if (fr < 7L)
                         Sfr = " (Fast)";
                     else if (fr == 7L)
                         Sfr = " (Default)";
@@ -915,7 +911,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.8.8\n" + 
+            	"Create by MrMarL v0.9\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -961,45 +957,6 @@ public class Oneblock extends JavaPlugin {
         }
         block = new File(getDataFolder(), "blocks.yml");
         newConfigz = YamlConfiguration.loadConfiguration(block);
-        //conversion old lvl system to new
-        if (!newConfigz.isList("0")) {
-	        for (int i = 0; newConfigz.isString(i + ""); i++) {
-	            blocks.add(Material.getMaterial(newConfigz.getString(i + "")));
-	            newConfigz.set(i + "",null);
-	        }
-	        List <String> temp = new ArrayList <String>();
-	        temp.add("Level: 0");
-	        if (blocks.get(0) == null)
-	        	temp.add(GRASS_BLOCK.name());
-	        else
-	        	temp.add(blocks.get(0).name());
-	        newConfigz.set("0",temp);
-	        temp = new ArrayList <String>();
-	        temp.add("Level: 1");
-	        int p = 1;
-	        for(int i =1;blocks.size()>i;i++) {
-	        	if (blocks.get(i) == null)
-		        	temp.add(GRASS_BLOCK.name());
-		        else
-		        	temp.add(blocks.get(i).name());
-	        	if (i%3 == 0) {
-	        		if (i != 3 || i != blocks.size()-1)
-	        			newConfigz.set(p + "",temp);
-	        		temp = new ArrayList <String>();
-	        		temp.add("Level: "+ ++p);
-	        	}
-	        }
-	        newConfigz.set(p + "",temp);
-	        try {
-	        	newConfigz.save(new File(getDataFolder(), "blocks.yml"));
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        block = new File(getDataFolder(), "blocks.yml");
-	        newConfigz = YamlConfiguration.loadConfiguration(block);
-	        blocks = new ArrayList <Material>();
-        }
-        //
         lvl_names = new ArrayList <String>();
         lvl_sizes = new ArrayList <Integer>();
         for (int i = 0; newConfigz.isList(i + ""); i++) {
@@ -1028,31 +985,30 @@ public class Oneblock extends JavaPlugin {
                     b.add(i, Bukkit.createBossBar((TextP), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
         }
     }
+    private void Flowerfile() {
+        flowers = new ArrayList <Material>();
+        File flower = new File(getDataFolder(), "flowers.yml");
+        if (!flower.exists()) {
+            saveResource("flowers.yml", false);
+        }
+        flower = new File(getDataFolder(), "flowers.yml");
+        newConfigz = YamlConfiguration.loadConfiguration(flower);
+        flowers.add(GRASS);
+        for(String list:newConfigz.getStringList("flowers"))
+        	if (Material.getMaterial(list) == null)
+        		flowers.add(GRASS);
+        	else
+        		flowers.add(Material.getMaterial(list));
+    }
     private void Chestfile() {
         s_ch = new ArrayList <Material>();
         m_ch = new ArrayList <Material>();
         h_ch = new ArrayList <Material>();
         File chest = new File(getDataFolder(), "chests.yml");
-        if (!chest.exists()) {
+        if (!chest.exists())
             saveResource("chests.yml", false);
-        }
         chest = new File(getDataFolder(), "chests.yml");
         newConfigz = YamlConfiguration.loadConfiguration(chest);
-        if (newConfigz.isSet("s_ch0")){//old chest system to new
-        	ArrayList <String> s_s = new ArrayList <String>();
-	        for (int i = 0; newConfigz.isString("s_ch" + i); i++){
-	        	s_s.add(newConfigz.getString("s_ch" + i));
-	            newConfigz.set("s_ch" + i, null);}newConfigz.set("small_chest", s_s);
-	        s_s = new ArrayList <String>();
-	        for (int i = 0; newConfigz.isString("m_ch" + i); i++){
-	        	s_s.add(newConfigz.getString("m_ch" + i));
-	            newConfigz.set("m_ch" + i, null);}newConfigz.set("medium_chest", s_s);
-	        s_s = new ArrayList <String>();
-	        for (int i = 0; newConfigz.isString("h_ch" + i); i++){
-	        	s_s.add(newConfigz.getString("h_ch" + i));
-	            newConfigz.set("h_ch" + i, null);}newConfigz.set("high_chest", s_s);
-	        try {newConfigz.save(chest);} catch (Exception e){}
-	    }
         for (String s: newConfigz.getStringList("small_chest")) 
         	s_ch.add(Material.getMaterial(s));
         for (String s: newConfigz.getStringList("medium_chest")) 
@@ -1063,9 +1019,8 @@ public class Oneblock extends JavaPlugin {
     private void Mobfile() {
         mobs = new ArrayList <EntityType>();
         File mob = new File(getDataFolder(), "mobs.yml");
-        if (!mob.exists()) {
+        if (!mob.exists())
             saveResource("mobs.yml", false);
-        }
         newConfigz = YamlConfiguration.loadConfiguration(mob);
         for (int i = 0; newConfigz.isString("id" + i); i++) {
             try {
@@ -1205,6 +1160,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("blocks.yml");
 	                commands.add("chests.yml");
 	                commands.add("mobs.yml");
+	                commands.add("flowers.yml");
 	                break;
 	            }
                 case ("islands"):
@@ -1216,11 +1172,10 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("true");
 	                commands.add("false");
 	                break;
-                case ("listlvl"):{
+                case ("listlvl"):
 	            	for(int i =0;i<lvl_names.size();i++)
 	            		commands.add(""+i);
 	            	break;
-	            }
                 }
         	}
             StringUtil.copyPartialMatches(args[1], commands, completions);
