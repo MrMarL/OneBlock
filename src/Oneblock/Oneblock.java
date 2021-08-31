@@ -3,7 +3,6 @@ package Oneblock;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.StringUtil;
 import org.bukkit.util.Vector;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -194,11 +193,8 @@ public class Oneblock extends JavaPlugin {
     		return;
     	invite.add(name+" "+to);
     	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, new Runnable() {
-    	    @Override
-    	     public void run() {
-    	    	invite.remove(name+" "+to);
-    	     }
-    	}, 300L);
+    		@Override
+    		public void run() {invite.remove(name+" "+to);}}, 300L);
     }
     public boolean checkinvite(Player pl) {
     	String name = pl.getName();
@@ -212,7 +208,7 @@ public class Oneblock extends JavaPlugin {
     			b.get(data.getInt("_"+name)).removePlayer(pl);
     		data.set("_"+name, null);
     		data.set("_"+name, data.getInt("_"+to));
-    		pl.teleport(new Location(wor, x + data.getInt("_" + name) * sto + 0.5, y + 1.2, z + 0.5));
+    		pl.performCommand("ob j");
     		invite.remove(to+" "+name);
     		return true;
     	}
@@ -665,13 +661,11 @@ public class Oneblock extends JavaPlugin {
                         return true;
                     }
                     try {
-                        BarColor.valueOf(args[2]);
                         Progress_color = BarColor.valueOf(args[2]);
                         for (int i = 0; i < id; i++)
                             b.get(i).setColor(Progress_color);
                         config.set("Progress_bar_color", Progress_color.toString());
                     } catch (Exception e) {
-                        Progress_color = BarColor.GREEN;
                         sender.sendMessage(ChatColor.YELLOW + "pls enter a valid color. For example: RED");
                     }
                     sender.sendMessage(ChatColor.GREEN + "Progress bar color = " + Progress_color.toString());
@@ -907,11 +901,11 @@ public class Oneblock extends JavaPlugin {
             }
             default:
             //ver
-            sender.sendMessage(ChatColor.GREEN +
+            sender.sendMessage(ChatColor.values()[rnd.nextInt(ChatColor.values().length)] +
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.9\n" + 
+            	"Create by MrMarL v0.9+\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -952,9 +946,8 @@ public class Oneblock extends JavaPlugin {
     private void Blockfile() {
         blocks = new ArrayList <Material>();
         File block = new File(getDataFolder(), "blocks.yml");
-        if (!block.exists()) {
+        if (!block.exists())
             saveResource("blocks.yml", false);
-        }
         block = new File(getDataFolder(), "blocks.yml");
         newConfigz = YamlConfiguration.loadConfiguration(block);
         lvl_names = new ArrayList <String>();
@@ -988,9 +981,8 @@ public class Oneblock extends JavaPlugin {
     private void Flowerfile() {
         flowers = new ArrayList <Material>();
         File flower = new File(getDataFolder(), "flowers.yml");
-        if (!flower.exists()) {
+        if (!flower.exists())
             saveResource("flowers.yml", false);
-        }
         flower = new File(getDataFolder(), "flowers.yml");
         newConfigz = YamlConfiguration.loadConfiguration(flower);
         flowers.add(GRASS);
@@ -1124,16 +1116,14 @@ public class Oneblock extends JavaPlugin {
     }
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        List<String> completions = new ArrayList<>();
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
         	commands.addAll(Arrays.asList("j","join","leaf","invite","accept","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleaf","Progress_bar","chat_alert","setlevel","clear",
-            		"lvl_mult","reload","frequency 7","islands","island_rebirth","protection","listlvl","autoJoin"));
+            		"lvl_mult","reload","frequency","islands","island_rebirth","protection","listlvl","autoJoin"));
             }
-            StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
         	if (args[0].equals("invite")) {
         		for (Player ponl: plonl)
@@ -1152,7 +1142,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("true");
 	                commands.add("false");
 	                commands.add("level");
-	                commands.add("settext ...");
+	                commands.add("settext");
 	                commands.add("color");
 	                break;
 	            }
@@ -1173,14 +1163,38 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("false");
 	                break;
                 case ("listlvl"):
-	            	for(int i =0;i<lvl_names.size();i++)
-	            		commands.add(""+i);
+	            	for(int i = 0;i<lvl_names.size();)
+	            		commands.add(""+i++);
 	            	break;
+                case ("frequency"):
+                	for(int i = 4;i<=20;)
+	            		commands.add(""+i++);
+	            	break;
+                case ("lvl_mult"):
+                	for(int i = 0;i<=20;)
+	            		commands.add(""+i++);
+	            	break;
+                case ("set"):
+                	commands.add("100");
+                	commands.add("500");
                 }
         	}
-            StringUtil.copyPartialMatches(args[1], commands, completions);
         }
-        Collections.sort(completions);
-        return completions;
+        else if (sender.hasPermission("Oneblock.set") && args.length == 3) 
+        	if (args[0].equals("Progress_bar")) {
+        		if (args[1].equals("color"))
+        			for (BarColor bc:BarColor.values())
+        				commands.add(bc.name());
+        		if (args[1].equals("settext")) {
+        			commands.add("...");
+        			if (PAPI)
+        				commands.add("%OB_lvl_name%. There are %OB_need_to_lvl_up% block(s) left.");
+        		}
+        	}
+        	else if (args[0].equals("setlevel"))
+            	for (int i = 0;i<lvl_names.size();)
+            		commands.add(""+i++);
+        Collections.sort(commands);
+        return commands;
     }
 }
