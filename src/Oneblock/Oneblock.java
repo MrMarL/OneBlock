@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -64,7 +65,7 @@ public class Oneblock extends JavaPlugin {
     String version = "1.17+";
     boolean lvl_bar_mode = false;
     boolean chat_alert = false;
-    ArrayList <Material> blocks;
+    ArrayList <XMaterial> blocks;
     ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs;
     List <Player> plonl;
@@ -73,14 +74,14 @@ public class Oneblock extends JavaPlugin {
     boolean il3x3 = false, rebirth = false, autojoin = false;
     BarColor Progress_color;
     static int lvl_mult = 5;
-    Material GRASS_BLOCK, GRASS;
+    XMaterial GRASS_BLOCK, GRASS;
     boolean PAPI = false;
     String TextP = "";
     BlockData[][][] island = null;
     static ArrayList <String> invite = new ArrayList<>();
     boolean protection = false;
     String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
-    ArrayList <Material> flowers;
+    ArrayList <XMaterial> flowers;
     static ArrayList <String> lvl_names;
     ArrayList <Integer> lvl_sizes;
     int sto = 100;
@@ -93,14 +94,10 @@ public class Oneblock extends JavaPlugin {
         version = bVer.contains("1.14")?"1.14":version;
         version = bVer.contains("1.15")?"1.15":version;
         version = bVer.contains("1.16")?"1.16":version;
-        if (legacy) {
-            GRASS_BLOCK = Material.GRASS;
-            GRASS = Material.valueOf("LONG_GRASS");
-        } else {
-            Progress_color = BarColor.GREEN;
-            GRASS_BLOCK = Material.GRASS_BLOCK;
-            GRASS = Material.GRASS;
-        }
+        if (!legacy) 
+        	Progress_color = BarColor.GREEN;
+        GRASS_BLOCK = XMaterial.GRASS_BLOCK;
+        GRASS = XMaterial.GRASS;
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PAPI = true;
             new OBP().register();
@@ -244,14 +241,13 @@ public class Oneblock extends JavaPlugin {
                     if (sl_now >= 16 + yr_now * lvl_mult) {
                     	sl_now = 0;
                         yroven.set(Prob, ++yr_now);
+                        String lvl_name = "Level: MAX";
+                        if (yr_now < lvl_sizes.size())
+                        	lvl_name = lvl_names.get(yr_now);
                         if (lvl_bar_mode)
-                        	if (yr_now >= lvl_sizes.size())
-                        		b.get(Prob).setTitle("Level: MAX");
-                        	else
-                        		b.get(Prob).setTitle(lvl_names.get(yr_now));
+                        	b.get(Prob).setTitle(lvl_name);
                         if (chat_alert)
-                        	if (yr_now < lvl_sizes.size())
-                        		ponl.sendMessage(ChatColor.GREEN + lvl_names.get(yr_now));
+                        	ponl.sendMessage(ChatColor.GREEN + lvl_name);
                     }
                     slomano.set(Prob, sl_now);
                     if (Progress_bar) {
@@ -276,10 +272,10 @@ public class Oneblock extends JavaPlugin {
                     else
                         random = rnd.nextInt(lvl_sizes.get(yr_now));
                     if (blocks.get(random) == null) {
-                        block.setType(GRASS_BLOCK);
+                        XBlock.setType(block, GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1)
-                            wor.getBlockAt(x + Probeg, y + 1, z).setType(flowers.get(rnd.nextInt(flowers.size())));
-                    } else if (blocks.get(random) == Material.CHEST) {
+                            XBlock.setType(wor.getBlockAt(x + Probeg, y + 1, z),(flowers.get(rnd.nextInt(flowers.size()))));
+                    } else if (blocks.get(random) == XMaterial.CHEST) {
                         try {
                             block.setType(Material.CHEST);
                             Chest chest = (Chest) block.getState();
@@ -303,7 +299,7 @@ public class Oneblock extends JavaPlugin {
                             Bukkit.getConsoleSender().sendMessage("[OB] Error when generating items for the chest! Pls redo chests.yml!");
                         }
                     } else
-                    	block.setType(blocks.get(random));
+                    	XBlock.setType(block, blocks.get(random));
 
                     if (rnd.nextInt(9) == 0) {
                         if (yr_now < blocks.size() / 9)
@@ -378,7 +374,7 @@ public class Oneblock extends JavaPlugin {
                         	for (int i = -2;i<=2;i++)
                         		for (int q = -2;q<=2;q++)
                         			if (Math.abs(i)+Math.abs(q) < 3)
-                        				wor.getBlockAt(x + id * sto + i, y, z+ q).setType(GRASS_BLOCK);
+                        				XBlock.setType(wor.getBlockAt(x + id * sto + i, y, z+ q),GRASS_BLOCK);
                         }
                     }
                     id++;
@@ -450,7 +446,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("y", (double) y);
                 config.set("z", (double) z);
                 this.saveConfig();
-                wor.getBlockAt(x, y, z).setType(GRASS_BLOCK);
+                wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
                 return true;
             }
             case ("setleaf"):{
@@ -905,7 +901,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.9+\n" + 
+            	"Create by MrMarL v0.9.2\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -944,7 +940,7 @@ public class Oneblock extends JavaPlugin {
     }
 
     private void Blockfile() {
-        blocks = new ArrayList <Material>();
+        blocks = new ArrayList <XMaterial>();
         File block = new File(getDataFolder(), "blocks.yml");
         if (!block.exists())
             saveResource("blocks.yml", false);
@@ -956,10 +952,11 @@ public class Oneblock extends JavaPlugin {
         	List <String> bl_temp = newConfigz.getStringList(i + "");
         	lvl_names.add(bl_temp.get(0));
         	for (int q = 1;q<bl_temp.size();q++) {
-	        	if (Material.getMaterial(bl_temp.get(q)) != GRASS_BLOCK)
-	                blocks.add(Material.getMaterial(bl_temp.get(q)));
-	            else
+        		Optional <XMaterial> a = XMaterial.matchXMaterial(bl_temp.get(q));
+	        	if (!a.isPresent() || a.get() == GRASS_BLOCK)
 	                blocks.add(null);
+	            else
+	                blocks.add(a.get());
         	}
         	lvl_sizes.add(blocks.size());
         }
@@ -979,7 +976,7 @@ public class Oneblock extends JavaPlugin {
         }
     }
     private void Flowerfile() {
-        flowers = new ArrayList <Material>();
+        flowers = new ArrayList <XMaterial>();
         File flower = new File(getDataFolder(), "flowers.yml");
         if (!flower.exists())
             saveResource("flowers.yml", false);
@@ -987,10 +984,10 @@ public class Oneblock extends JavaPlugin {
         newConfigz = YamlConfiguration.loadConfiguration(flower);
         flowers.add(GRASS);
         for(String list:newConfigz.getStringList("flowers"))
-        	if (Material.getMaterial(list) == null)
+        	if (!XMaterial.matchXMaterial(list).isPresent())
         		flowers.add(GRASS);
         	else
-        		flowers.add(Material.getMaterial(list));
+        		flowers.add(XMaterial.matchXMaterial(list).get());
     }
     private void Chestfile() {
         s_ch = new ArrayList <Material>();
@@ -1127,7 +1124,7 @@ public class Oneblock extends JavaPlugin {
         } else if (args.length == 2) {
         	if (args[0].equals("invite")) {
         		for (Player ponl: plonl)
-        			commands.add(ponl.getDisplayName());
+        			commands.add(ponl.getName());
         	}
         	else if (sender.hasPermission("Oneblock.set")) {
         		switch (args[0])
@@ -1135,7 +1132,7 @@ public class Oneblock extends JavaPlugin {
                 case ("clear"):
                 case ("setlevel"):{
             		for (Player ponl: plonl)
-            			commands.add(ponl.getDisplayName());
+            			commands.add(ponl.getName());
             		break;
             	}
                 case ("Progress_bar"):{
