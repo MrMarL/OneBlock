@@ -94,8 +94,6 @@ public class Oneblock extends JavaPlugin {
         version = bVer.contains("1.14")?"1.14":version;
         version = bVer.contains("1.15")?"1.15":version;
         version = bVer.contains("1.16")?"1.16":version;
-        if (!legacy) 
-        	Progress_color = BarColor.GREEN;
         GRASS_BLOCK = XMaterial.GRASS_BLOCK;
         GRASS = XMaterial.GRASS;
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -226,7 +224,7 @@ public class Oneblock extends JavaPlugin {
                 	int check = ponl.getLocation().getBlockX()-Probeg-x;
                 	if (check>50 || check<-50) {
                 		if (check>200 || check<-200) {
-                			ponl.teleport(new Location(wor, x + Probeg + 0.5, y + 1.2, z + 0.5));
+                			ponl.performCommand("ob j");;
                 			continue;
                 		}
                 		ponl.setVelocity(new Vector(-check/30, 0, 0));
@@ -382,13 +380,11 @@ public class Oneblock extends JavaPlugin {
                     savedata();
                     yroven.add(0);
                     if (!superlegacy) {
-                    	String temp;
+                    	String temp = TextP;
                         if (lvl_bar_mode)
                         	temp = lvl_names.get(0);
                         else if (PAPI)
                         	temp = PlaceholderAPI.setPlaceholders(p, TextP);
-                        else
-                        	temp = TextP;
                         b.add(Bukkit.createBossBar(temp, Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
                     }
                 }
@@ -901,7 +897,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.9.2\n" + 
+            	"Create by MrMarL v0.9.2f\n" + 
             	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -964,12 +960,14 @@ public class Oneblock extends JavaPlugin {
         if (!on && !superlegacy) {
             if (Progress_color.equals(null))
                 Progress_color = BarColor.GREEN;
-            if (lvl_bar_mode)
+            if (lvl_bar_mode) {
+            	TextP = lvl_names.get(0);
                 for (int i = 0; i < yroven.size(); i++)
                 	if (yroven.get(i) >= lvl_sizes.size())
                 		b.add(i, Bukkit.createBossBar("Level: MAX", Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
                 	else
                 		b.add(i, Bukkit.createBossBar(lvl_names.get(yroven.get(i)), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
+            }
             else
                 for (int i = 0; i < yroven.size(); i++)
                     b.add(i, Bukkit.createBossBar((TextP), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
@@ -1053,13 +1051,13 @@ public class Oneblock extends JavaPlugin {
             config.set("frequency", 7L);
         fr = config.getLong("frequency");
         //Text
-        if (!config.isString("Progress_bar_text"))
-            config.set("Progress_bar_text", "level");
-        TextP = config.getString("Progress_bar_text");
-        if (TextP.equals("level"))
-            lvl_bar_mode = true;
-        if (superlegacy)
-            lvl_bar_mode = false;
+        if (!superlegacy) {
+	        if (!config.isString("Progress_bar_text"))
+	            config.set("Progress_bar_text", "level");
+	        TextP = config.getString("Progress_bar_text");
+	        if (TextP.equals("level"))
+	            lvl_bar_mode = true;
+        }
         //alert
         if (!config.isBoolean("Chat_alert"))
         	config.set("Chat_alert", !lvl_bar_mode);
