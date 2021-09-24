@@ -1,23 +1,45 @@
-name:  Oneblock
-main:  Oneblock.Oneblock
+#OneBlock Plugin Configuration file
+#Plugin By MrMarL
+#Config by Adarsh A
+
+#Specify the World Name.
+world-name: OneBlock
+#The Cordinates where the postion of your First OneBlock is set.
+x: 267.0
+y: 47.0
+z: 414.0
+#This is the place where a player gets tp-ed when they execute /ob leaf
+OneBlock-lobby-world: world
+#Specify the Lobby World
+xleaf: 0
+yleaf: 0
+zleaf: 0
+#Should we enabe the Progress Bar?
+Progress_bar: true
+#This is the speed/amount of block regenarating when a block is breaked in OneBlock 
+#Default value is 7, Increasing this may cause lag.
+frequency: 7
+#What shoud progress bar show?
+Progress_bar_text: level
+#Shoud we enable chat alert for Levels
+Chat_alert: true
+#ProgressBar Color
+Progress_bar_color: GREEN
+#Shoud we Create New Islands for New Players?
+Island_for_new_players: true
+#Should the player get tp-ed to the island again after the death in game?
+Rebirth_on_the_island: true
+#Level Multiplier 
+#Default value: 5
+level_multiplier: 5
+#Should we Prevent other players going from their island to others islands?
+protection: false
+#This is the block-distance between one Island to other.
+#Default value 500
+set: 500
+
+#Do not edit this!
 version:  0.9.2f
 api-version: 1.13
-author:  MrMarL
-softdepend: [PlaceholderAPI]
-commands:
-  oneblock:
-    description: Oneblock main command.
-    aliases: ob
-    usage: /ob join
-  ob j:
-  ob ver:
-    description: Version.
-permissions:
-    Oneblock.set:
-        description: For admin
-        default: op
-    Oneblock.join:
-        description: For all
-        default: true
-    Oneblock.invite:
-        default: true
+
+# End of file <-- No seriously, you're done with configuration.
