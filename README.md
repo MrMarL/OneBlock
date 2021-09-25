@@ -1,4 +1,9 @@
 # Oneblock
+<style type="text/css">
+   a { 
+    float: left;
+   }
+</style>
 <a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>
 
 <br>OneBlock minigame plugin.
