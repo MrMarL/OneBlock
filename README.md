@@ -2,7 +2,7 @@
 <a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>*by MrMarL*
 
 ### OneBlock minigame plugin.
-<br>Main Commands:
+#### Main Commands:
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob set - set the first block /ob set 1 time for the admin then just /ob join and the island will be created by itself ...
 <br>▌/ob set 500 - set the first block and setting the distance of 500 blocks between the islands.
