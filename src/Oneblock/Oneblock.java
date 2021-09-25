@@ -641,8 +641,9 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (args[1].equals("true") || args[1].equals("false")) {
                     Progress_bar = Boolean.valueOf(args[1]);
-                    for (int i = 0; i < id; i++)
-                        b.get(i).setVisible(Progress_bar);
+                    ProgressLoad();
+                    for (BossBar bb:b)
+                        bb.setVisible(Progress_bar);
                     config.set("Progress_bar", Progress_bar);
                     return true;
                 }
@@ -956,8 +957,13 @@ public class Oneblock extends JavaPlugin {
         	lvl_sizes.add(blocks.size());
         }
         //
-        if (!on && !superlegacy) {
-            if (Progress_color.equals(null))
+        if (!on)
+        	ProgressLoad();
+    }
+    private void ProgressLoad() {
+    	if (!superlegacy && Progress_bar) {
+    		b = new ArrayList<BossBar>();
+            if (Progress_color == null)
                 Progress_color = BarColor.GREEN;
             if (lvl_bar_mode) {
             	TextP = lvl_names.get(0);
@@ -972,6 +978,7 @@ public class Oneblock extends JavaPlugin {
                     b.add(i, Bukkit.createBossBar((TextP), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
         }
     }
+    
     private void Flowerfile() {
         flowers = new ArrayList <XMaterial>();
         File flower = new File(getDataFolder(), "flowers.yml");
