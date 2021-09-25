@@ -1,5 +1,11 @@
 # Oneblock
-<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>
+<style>
+   img {
+    float: left; /* Обтекание по правому краю */
+    width="200";
+   }
+</style>
+<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" alt="spigot page"></a>
 
 <br>OneBlock minigame plugin.
 <br>Main Commands:
