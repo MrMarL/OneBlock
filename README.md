@@ -1,5 +1,5 @@
 # Oneblock
-<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>by MrMarL
+<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>*by MrMarL*
 
 <br>OneBlock minigame plugin.
 <br>Main Commands:
