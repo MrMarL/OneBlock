@@ -53,11 +53,11 @@ public class Oneblock extends JavaPlugin {
     static ArrayList <Integer> yroven = new ArrayList <Integer>();
     static ArrayList <Integer> slomano = new ArrayList <Integer>();
     String name = "MrMarL";
-    FileConfiguration config = this.getConfig();
+    FileConfiguration config;
     static FileConfiguration data;
     FileConfiguration newConfigz;
     static World wor;
-	World leafwor;
+	World leavewor;
     int random = 0;
     static ArrayList <BossBar> b = new ArrayList <BossBar>();
     boolean Progress_bar = true;
@@ -99,7 +99,7 @@ public class Oneblock extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PAPI = true;
             new OBP().register();
-            Bukkit.getConsoleSender().sendMessage("[OB] PlaceholderAPI has been found!");
+            Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
         }
         Configfile();
         Datafile();
@@ -107,10 +107,9 @@ public class Oneblock extends JavaPlugin {
         Flowerfile();
         Chestfile();
         Mobfile();
-        config = this.getConfig();
         yroven.add(0);
         if (config.getDouble("y") != 0) {
-            if (wor == null || (config.getDouble("yleaf") != 0 && leafwor == null)) {
+            if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
                 Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new wor_null(), 32, 64);
             } else {
                 Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
@@ -169,7 +168,7 @@ public class Oneblock extends JavaPlugin {
                 		"\n[OB] WORLD INITIALIZATION ERROR! world = null"+
                 		"\n[OB] Trying to initialize the world again...");
                 wor = Bukkit.getWorld(config.getString("world"));
-                leafwor = Bukkit.getWorld(config.getString("leafworld"));
+                leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
                 Bukkit.getConsoleSender().sendMessage("[OB] The initialization of the world was successful!");
                 wor_ok();
@@ -333,8 +332,8 @@ public class Oneblock extends JavaPlugin {
             }
             config.set("custom_island", map);
         }
-        savedata();
-        this.saveConfig();
+        saveData();
+        Config.Save(config);
     }
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("oneblock")) {
@@ -377,7 +376,7 @@ public class Oneblock extends JavaPlugin {
                     }
                     id++;
                     data.set("id", id);
-                    savedata();
+                    saveData();
                     yroven.add(0);
                     if (!superlegacy) {
                     	String temp = TextP;
@@ -400,14 +399,14 @@ public class Oneblock extends JavaPlugin {
                 p.teleport(new Location(wor, x + data.getInt("_" + name) * sto + 0.5, y + 1.2, z + 0.5));
                 return true;
             }
-            case ("leaf"):{
+            case ("leave"):{
                 config = this.getConfig();
                 Player p = (Player) sender;
                 if (!superlegacy)
                 	b.get(data.getInt("_" + p.getName())).removePlayer(p);
-                if (config.getDouble("yleaf") == 0 || leafwor == null)
+                if (config.getDouble("yleave") == 0 || leavewor == null)
                     return true;
-                p.teleport(new Location(leafwor, config.getDouble("xleaf"), config.getDouble("yleaf"), config.getDouble("zleaf")));
+                p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave")));
                 return true;
             }
             case ("set"):{
@@ -441,24 +440,24 @@ public class Oneblock extends JavaPlugin {
                 config.set("x", (double) x);
                 config.set("y", (double) y);
                 config.set("z", (double) z);
-                this.saveConfig();
+                Config.Save(config);
                 wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
                 return true;
             }
-            case ("setleaf"):{
+            case ("setleave"):{
                 if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(noperm);
                     return true;
                 }
                 Player p = (Player) sender;
                 Location l = p.getLocation();
-                leafwor = l.getWorld();
+                leavewor = l.getWorld();
                 config = this.getConfig();
-                config.set("leafworld", leafwor.getName());
-                config.set("xleaf", l.getX());
-                config.set("yleaf", l.getY());
-                config.set("zleaf", l.getZ());
-                this.saveConfig();
+                config.set("leaveworld", leavewor.getName());
+                config.set("xleave", l.getX());
+                config.set("yleave", l.getY());
+                config.set("zleave", l.getZ());
+                Config.Save(config);
                 return true;
             }
             case ("invite"):{
@@ -734,27 +733,27 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "and?");
+                    sender.sendMessage(ChatColor.YELLOW + "Reloading Plugin & Plugin Modules.");
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("blocks.yml")) {
                     Blockfile();
-                    sender.sendMessage(ChatColor.GREEN + "blocks.yml reloaded!");
+                    sender.sendMessage(ChatColor.GREEN + "Blocks.yml reloaded!");
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("flowers.yml")) {
                 	Flowerfile();
-                    sender.sendMessage(ChatColor.GREEN + "flowers.yml reloaded!");
+                    sender.sendMessage(ChatColor.GREEN + "Flowers.yml reloaded!");
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("chests.yml")) {
                     Chestfile();
-                    sender.sendMessage(ChatColor.GREEN + "chests.yml reloaded!");
+                    sender.sendMessage(ChatColor.GREEN + "Chests.yml reloaded!");
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("mobs.yml")) {
                     Mobfile();
-                    sender.sendMessage(ChatColor.GREEN + "mobs.yml reloaded!");
+                    sender.sendMessage(ChatColor.GREEN + "Mobs.yml reloaded!");
                     return true;
                 }
                 sender.sendMessage(ChatColor.RED + "try blocks.yml or chests.yml");
@@ -834,7 +833,7 @@ public class Oneblock extends JavaPlugin {
                     name = p.getName();
                     if (data.isInt("_" + name)) {
                         island = new BlockData[7][3][7];
-                        int px = x + data.getInt("_" + name) * 100 - 3;
+                        int px = x + data.getInt("_" + name) * sto - 3;
                         for (int xx = 0; xx < 7; xx++)
                             for (int yy = 0; yy < 3; yy++)
                                 for (int zz = 0; zz < 7; zz++)
@@ -876,7 +875,7 @@ public class Oneblock extends JavaPlugin {
                 return true;
             }
             case ("help"):{
-            	sender.sendMessage(ChatColor.GREEN + "▀▀▀▀▀▀▀▀OB - help▀▀▀▀▀▀▀▀");
+            	sender.sendMessage(ChatColor.GREEN + "OneBlock Plugin Help");
             	boolean admin = sender.hasPermission("Oneblock.set");
             	if (admin)
             	sender.sendMessage(ChatColor.GRAY + "/ob set" + ChatColor.WHITE+" - sets the location of the first island.");
@@ -897,8 +896,8 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL v0.9.2f\n" + 
-            	"Server run "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
+            	"Create by MrMarL \nPlugin version: v0.9.2R\n" + 
+            	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
         } else {
@@ -924,10 +923,10 @@ public class Oneblock extends JavaPlugin {
         			slomano.add(data.getInt("ScSlom_" + i));
         		else
         			slomano.add(0);
-        savedata();
+        saveData();
     }
 
-    public void savedata() {
+    public void saveData() {
         try {
             data.save(new File(getDataFolder(), "PlData.yml"));
         } catch (Exception e) {
@@ -1019,6 +1018,9 @@ public class Oneblock extends JavaPlugin {
     }
 
     private void Configfile() {
+    	File con = new File(getDataFolder(), "config.yml");
+        if (!con.exists())
+            saveResource("config.yml", false);
         config = this.getConfig();
         if (!config.isString("world"))
             config.set("world", "world");
@@ -1032,16 +1034,32 @@ public class Oneblock extends JavaPlugin {
         if (!config.isDouble("z"))
             config.set("z", (double) z);
         z = (int) config.getDouble("z");
-        //leaf
-        if (!config.isString("leafworld"))
-            config.set("leafworld", "world");
-        leafwor = Bukkit.getWorld(config.getString("leafworld"));
-        if (!config.isDouble("xleaf"))
-            config.set("xleaf", 0);
-        if (!config.isDouble("yleaf"))
-            config.set("yleaf", 0);
-        if (!config.isDouble("zleaf"))
-            config.set("zleaf", 0);
+        //leave - leaf
+        if (config.isString("leafworld")) {
+        	config.set("leaveworld", config.getString("leafworld"));
+        	config.set("leafworld", null);
+        }
+        if (config.isSet("xleaf")) {
+        	config.set("xleave", config.getDouble("xleaf"));
+        	config.set("xleaf", null);
+        }
+        if (config.isSet("yleaf")) {
+        	config.set("yleave", config.getDouble("yleaf"));
+        	config.set("yleaf", null);
+        }
+        if (config.isSet("zleaf")) {
+        	config.set("zleave", config.getDouble("zleaf"));
+        	config.set("zleaf", null);
+        }
+        if (!config.isString("leaveworld"))
+            config.set("leaveworld", "world");
+        leavewor = Bukkit.getWorld(config.getString("leaveworld"));
+        if (!config.isDouble("xleave"))
+            config.set("xleave", 0);
+        if (!config.isDouble("yleave"))
+            config.set("yleave", 0);
+        if (!config.isDouble("zleave"))
+            config.set("zleave", 0);
         if (!config.isBoolean("Progress_bar"))
             config.set("Progress_bar", true);
         Progress_bar = config.getBoolean("Progress_bar");
@@ -1094,7 +1112,7 @@ public class Oneblock extends JavaPlugin {
         }
         if (config.isInt("set"))
         	sto = config.getInt("set");
-        this.saveConfig();
+        Config.Save(config,con);
     }
     public static int getlvl(String pl_name) {
         return yroven.get(data.getInt("_" + pl_name));
@@ -1114,9 +1132,9 @@ public class Oneblock extends JavaPlugin {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-        	commands.addAll(Arrays.asList("j","join","leaf","invite","accept","ver","IDreset","help"));
+        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleaf","Progress_bar","chat_alert","setlevel","clear",
+            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear",
             		"lvl_mult","reload","frequency","islands","island_rebirth","protection","listlvl","autoJoin"));
             }
         } else if (args.length == 2) {
