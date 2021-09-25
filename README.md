@@ -2,7 +2,7 @@
 <a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>*by MrMarL*
 
 ### OneBlock minigame plugin.
-#### Main Commands:
+**Main Commands:**
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob set - set the first block /ob set 1 time for the admin then just /ob join and the island will be created by itself ...
 <br>▌/ob set 500 - set the first block and setting the distance of 500 blocks between the islands.
@@ -19,7 +19,7 @@
 <br>▌ 16+level now*level multiplier
 <br>█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
-<br>Island Commands:
+<br>**Island Commands:**
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob islands true - Islands for new players.
 <br>▌/ob islands set_my_by_def - sets your island as default for new players.
@@ -27,7 +27,7 @@
 <br>▌/ob island_rebirth true - Rebirth of the player on the island
 <br>█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
-<br>Config Commands:
+<br>**Config Commands:**
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob reload blocks.yml - reload...
 <br>▌/ob listlvl - displays a list of levels from blocks.yml
@@ -35,7 +35,7 @@
 <br>▌/ob reload chests.yml - reload chests?...
 <br>█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
-<br>Other Commands:
+<br>**Other Commands:**
 <br>/ob setleave
 <br>/ob leave
 <br>/ob chat_alert - display the level in the chat
