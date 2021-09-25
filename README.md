@@ -1,5 +1,6 @@
 # Oneblock
-[![spigot page](https://i.ibb.co/xCRdNdM/ob.png)](https://www.spigotmc.org/resources/oneblock.83215/)
+<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>
+
 <br>OneBlock minigame plugin.
 <br>Main Commands:
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
