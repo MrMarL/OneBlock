@@ -16,33 +16,31 @@ public class Config {
 	public static void Save (FileConfiguration fc,File f) {
 		file = f;
 		try {
-	        BufferedReader file = new BufferedReader(new FileReader(f));
+	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
 	        StringBuffer inputBuffer = new StringBuffer();
 	        String line;
 
 	        ArrayList<String> inputStr1 = new ArrayList<String>();
 	        ArrayList<String> inputStr2 = new ArrayList<String>();
-	        while ((line = file.readLine()) != null)
+	        while ((line = fileIn.readLine()) != null)
 	        	inputStr1.add(line);
-	        file.close();
+	        fileIn.close();
 	        inputStr2.addAll(Arrays.asList(fc.saveToString().split("\n")));
 	        inputBuffer = new StringBuffer();
 	        
 	        int i = 0;
-	        for(String a:inputStr1) {
+	        for (String a:inputStr1) {
 	        	if (i >= inputStr2.size())
 	        		break;
-	        	if (a.contains("#") || a.isEmpty()) {
+	        	if (a.contains("#") || a.isEmpty())
 	        		inputBuffer.append(a);
-	        	}
-	        	else {
+	        	else
 	        		inputBuffer.append(inputStr2.get(i++));
-	        	}
     			inputBuffer.append('\n');
 	        }
 	        
-	        for(;i<inputStr2.size();i++) {
-	        	inputBuffer.append(inputStr2.get(i));
+	        while (i < inputStr2.size()) {
+	        	inputBuffer.append(inputStr2.get(i++));
 	        	inputBuffer.append('\n');
 	        }
 	        
