@@ -59,7 +59,7 @@ public class Oneblock extends JavaPlugin {
     static World wor;
 	World leavewor;
     int random = 0;
-    static ArrayList <BossBar> b = new ArrayList <BossBar>();
+    static ArrayList <BossBar> b;
     boolean Progress_bar = true;
     boolean superlegacy, legacy;
     String version = "1.17+";
