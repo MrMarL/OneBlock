@@ -59,7 +59,7 @@ public class Oneblock extends JavaPlugin {
     static World wor;
 	World leavewor;
     int random = 0;
-    static ArrayList <BossBar> b;
+    static ArrayList <BossBar> b = null;
     boolean Progress_bar = true;
     boolean superlegacy, legacy;
     String version = "1.17+";
@@ -104,6 +104,7 @@ public class Oneblock extends JavaPlugin {
         Configfile();
         Datafile();
         Blockfile();
+        ProgressLoad();
         Flowerfile();
         Chestfile();
         Mobfile();
@@ -241,7 +242,7 @@ public class Oneblock extends JavaPlugin {
                         String lvl_name = "Level: MAX";
                         if (yr_now < lvl_sizes.size())
                         	lvl_name = lvl_names.get(yr_now);
-                        if (lvl_bar_mode)
+                        if (Progress_bar && lvl_bar_mode)
                         	b.get(Prob).setTitle(lvl_name);
                         if (chat_alert)
                         	ponl.sendMessage(ChatColor.GREEN + lvl_name);
@@ -897,7 +898,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.2R\n" + 
+            	"Create by MrMarL \nPlugin version: v0.9.2R_patch2\n" + 
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -956,12 +957,9 @@ public class Oneblock extends JavaPlugin {
         	}
         	lvl_sizes.add(blocks.size());
         }
-        //
-        if (!on)
-        	ProgressLoad();
     }
     private void ProgressLoad() {
-    	if (!superlegacy && Progress_bar) {
+    	if (!superlegacy && Progress_bar && b == null) {
     		b = new ArrayList<BossBar>();
             if (Progress_color == null)
                 Progress_color = BarColor.GREEN;
