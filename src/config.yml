@@ -13,10 +13,10 @@ leaveworld: world
 xleave: 0.0
 yleave: 0.0
 zleave: 0.0
-#Should we enabe the Progress Bar?
+#Should we enable the Progress Bar?
 Progress_bar: true
 #This is the speed/amount of block regenarating when a block is breaked in OneBlock 
-#Default value is 7, Decreasing this may cause lag.
+#Default value is 7, Increasing this may cause lag.
 frequency: 7
 #What shoud progress bar show?
 Progress_bar_text: level
@@ -34,5 +34,6 @@ level_multiplier: 5
 #Should we Prevent other players going from their island to others islands?
 protection: false
 #This is the block-distance between one Island to other.
-#Default value 100. Max value 500.
+#Default value 100. If you increase this then More chunks will be generated.
+#Which causes more storafe to be occupied
 set: 100
