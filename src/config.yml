@@ -35,5 +35,5 @@ level_multiplier: 5
 protection: false
 #This is the block-distance between one Island to other.
 #Default value 100. If you increase this then More chunks will be generated.
-#Which causes more storafe to be occupied
+#Which causes more storage to be occupied
 set: 100
