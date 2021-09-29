@@ -889,7 +889,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.2R.2\n" + 
+            	"Create by MrMarL \nPlugin version: v0.9.2R.2f\n" + 
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -948,7 +948,7 @@ public class Oneblock extends JavaPlugin {
         }
     }
     private void ProgressLoad() {
-    	if (!superlegacy && Progress_bar && pInf.get(0).bar == null) {
+    	if (!superlegacy && Progress_bar && pInf.size() > 0 && pInf.get(0).bar == null) {
             if (Progress_color == null)
                 Progress_color = BarColor.GREEN;
             if (lvl_bar_mode) {
