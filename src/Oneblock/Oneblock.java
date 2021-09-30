@@ -70,6 +70,7 @@ public class Oneblock extends JavaPlugin {
     int Probeg = 0, Prob = 0;
     boolean il3x3 = false, rebirth = false, autojoin = false;
     BarColor Progress_color;
+    ArrayList<BarColor> Progress_colors;
     static int lvl_mult = 5;
     XMaterial GRASS_BLOCK, GRASS;
     boolean PAPI = false;
@@ -234,8 +235,12 @@ public class Oneblock extends JavaPlugin {
                         String lvl_name = "Level: MAX";
                         if (inf.lvl < lvl_sizes.size())
                         	lvl_name = lvl_names.get(inf.lvl);
-                        if (Progress_bar && lvl_bar_mode)
-                        	inf.bar.setTitle(lvl_name);
+                        if (Progress_bar) {
+                        	if (inf.lvl < lvl_sizes.size())
+                        		inf.bar.setColor(Progress_colors.get(inf.lvl));
+                        	if (lvl_bar_mode)
+                        		inf.bar.setTitle(lvl_name);
+                        }
                         if (chat_alert)
                         	ponl.sendMessage(ChatColor.GREEN + lvl_name);
                     }
@@ -376,7 +381,7 @@ public class Oneblock extends JavaPlugin {
                         	temp = lvl_names.get(0);
                         else if (PAPI)
                         	temp = PlaceholderAPI.setPlaceholders(p, TextP);
-                        inf.bar = (Bukkit.createBossBar(temp, Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
+                        inf.bar = (Bukkit.createBossBar(temp, Progress_colors.get(0), BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
                     }
                 }
                 if (!on) {
@@ -543,10 +548,14 @@ public class Oneblock extends JavaPlugin {
                         inf.breaks = 0;
                         inf.lvl = setlvl;
                         if (lvl_bar_mode)
-	                        if (inf.lvl >= lvl_sizes.size())
+	                        if (inf.lvl >= lvl_sizes.size()) {
 	                    		pInf.get(i).bar.setTitle("Level: MAX");
-	                    	else
+	                    		pInf.get(i).bar.setColor(Progress_color);
+	                        }
+	                    	else {
 	                    		pInf.get(i).bar.setTitle(lvl_names.get(inf.lvl));
+	                    		pInf.get(i).bar.setColor(Progress_colors.get(inf.lvl));
+	                    	}
                         sender.sendMessage(ChatColor.GREEN + "for player " + args[1] + ", level " + args[2] + " is set.");
                         return true;
                     }
@@ -885,7 +894,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.2R.2f\n" + 
+            	"Create by MrMarL \nPlugin version: v0.9.3\n" + 
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -926,14 +935,21 @@ public class Oneblock extends JavaPlugin {
         File block = new File(getDataFolder(), "blocks.yml");
         if (!block.exists())
             saveResource("blocks.yml", false);
-        block = new File(getDataFolder(), "blocks.yml");
         newConfigz = YamlConfiguration.loadConfiguration(block);
         lvl_names = new ArrayList <String>();
         lvl_sizes = new ArrayList <Integer>();
+        if (Progress_bar) 
+        	Progress_colors = new ArrayList<BarColor>();
         for (int i = 0; newConfigz.isList(i + ""); i++) {
         	List <String> bl_temp = newConfigz.getStringList(i + "");
         	lvl_names.add(bl_temp.get(0));
-        	for (int q = 1;q<bl_temp.size();q++) {
+        	int q = 1;
+        	if (Progress_bar && q<bl_temp.size())
+        		try {
+        			Progress_colors.add(BarColor.valueOf(bl_temp.get(1)));
+        			q++;
+        		} catch(Exception e) {Progress_colors.add(Progress_color);}
+        	for (;q<bl_temp.size();q++) {
         		Optional <XMaterial> a = XMaterial.matchXMaterial(bl_temp.get(q));
 	        	if (!a.isPresent() || a.get() == GRASS_BLOCK)
 	                blocks.add(null);
@@ -951,13 +967,13 @@ public class Oneblock extends JavaPlugin {
             	TextP = lvl_names.get(0);
                 for (int i = 0; i < pInf.size(); i++)
                 	if (pInf.get(i).lvl >= lvl_sizes.size())
-                		pInf.get(i).bar = Bukkit.createBossBar("Level: MAX", Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
+                		pInf.get(i).bar = Bukkit.createBossBar("Level: MAX", Progress_colors.get(i), BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
                 	else
-                		pInf.get(i).bar = Bukkit.createBossBar(lvl_names.get(pInf.get(i).lvl), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
+                		pInf.get(i).bar = Bukkit.createBossBar(lvl_names.get(pInf.get(i).lvl), Progress_colors.get(i), BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
             }
             else
                 for (int i = 0; i < pInf.size(); i++)
-                	pInf.get(i).bar = Bukkit.createBossBar((TextP), Progress_color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
+                	pInf.get(i).bar = Bukkit.createBossBar((TextP), Progress_colors.get(i), BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
             Bukkit.getPluginManager().registerEvents(new ChangedWorld(), this);
     	}
     }

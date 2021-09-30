@@ -2,6 +2,7 @@
 # by MrMarL & Adarsh A
 '0':
 - 'Level: 0 - Grass starter'
+- GREEN
 - GRASS_BLOCK
 '1':
 - 'Level: 1 - Podzol & melon'
