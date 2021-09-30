@@ -70,7 +70,7 @@ public class Oneblock extends JavaPlugin {
     int Probeg = 0, Prob = 0;
     boolean il3x3 = false, rebirth = false, autojoin = false;
     BarColor Progress_color;
-    ArrayList<BarColor> Progress_colors;
+    ArrayList<BarColor> Progress_colors = null;
     static int lvl_mult = 5;
     XMaterial GRASS_BLOCK, GRASS;
     boolean PAPI = false;
@@ -661,6 +661,8 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("level")) {
+                	if (!Progress_bar)
+                		return true;
                     if (!lvl_bar_mode) {
                         lvl_bar_mode = true;
                         for (int i = 0; i < id; i++)
@@ -963,6 +965,8 @@ public class Oneblock extends JavaPlugin {
     	if (!superlegacy && Progress_bar && pInf.size() > 0 && pInf.get(0).bar == null) {
             if (Progress_color == null)
                 Progress_color = BarColor.GREEN;
+            if (Progress_colors == null)
+            	Blockfile();
             if (lvl_bar_mode) {
             	TextP = lvl_names.get(0);
                 for (int i = 0; i < pInf.size(); i++)
