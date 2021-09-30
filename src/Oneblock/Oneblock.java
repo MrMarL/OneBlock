@@ -343,7 +343,6 @@ public class Oneblock extends JavaPlugin {
             {
             case ("j"):
             case ("join"):{
-                config = this.getConfig();
                 if (config.getInt("y") == 0 || wor == null)
                     return true;
                 Player p = (Player) sender;
@@ -390,7 +389,6 @@ public class Oneblock extends JavaPlugin {
                 return true;
             }
             case ("leave"):{
-                config = this.getConfig();
                 Player p = (Player) sender;
                 if (!superlegacy)
                 	pInf.get(data.getInt("_" + p.getName())).bar.removePlayer(p);
@@ -410,7 +408,6 @@ public class Oneblock extends JavaPlugin {
                 y = l.getBlockY();
                 z = l.getBlockZ();
                 wor = l.getWorld();
-                config = this.getConfig();
                 int temp = 100;
                 if (args.length >= 2) {
                     try {
@@ -442,7 +439,6 @@ public class Oneblock extends JavaPlugin {
                 Player p = (Player) sender;
                 Location l = p.getLocation();
                 leavewor = l.getWorld();
-                config = this.getConfig();
                 config.set("leaveworld", leavewor.getName());
                 config.set("xleave", l.getX());
                 config.set("yleave", l.getY());
