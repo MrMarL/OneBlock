@@ -639,8 +639,9 @@ public class Oneblock extends JavaPlugin {
                 if (args[1].equals("true") || args[1].equals("false")) {
                     Progress_bar = Boolean.valueOf(args[1]);
                     ProgressLoad();
-                    for (PlayerInfo bb:pInf)
-                        bb.bar.setVisible(Progress_bar);
+                    if (Progress_colors != null)
+                    	for (PlayerInfo bb:pInf)
+                    		bb.bar.setVisible(Progress_bar);
                     config.set("Progress_bar", Progress_bar);
                     return true;
                 }
