@@ -642,8 +642,8 @@ public class Oneblock extends JavaPlugin {
                     }
                     try {
                         Progress_color = BarColor.valueOf(args[2]);
-                        for (int i = 0; i < id; i++)
-                        	pInf.get(i).bar.setColor(Progress_color);
+                        for (PlayerInfo bb:pInf)
+                            bb.bar.setColor(Progress_color);
                         config.set("Progress_bar_color", Progress_color.toString());
                     } catch (Exception e) {
                         sender.sendMessage(ChatColor.YELLOW + "pls enter a valid color. For example: RED");
@@ -663,8 +663,8 @@ public class Oneblock extends JavaPlugin {
                         return true;
                     } else {
                         lvl_bar_mode = false;
-                        for (int i = 0; i < id; i++)
-                        	pInf.get(i).bar.setTitle("Progress bar");
+                        for (PlayerInfo bb:pInf)
+                            bb.bar.setTitle("Progress bar");
                         config.set("Progress_bar_text", "Progress bar");
                         return true;
                     }
@@ -675,8 +675,8 @@ public class Oneblock extends JavaPlugin {
                         txt_bar += args[i] + " ";
                     txt_bar += args[args.length - 1];
                     lvl_bar_mode = false;
-                    for (int i = 0; i < id; i++)
-                    	pInf.get(i).bar.setTitle(txt_bar);
+                    for (PlayerInfo bb:pInf)
+                        bb.bar.setTitle(txt_bar);
                     config.set("Progress_bar_text", txt_bar);
                     TextP = txt_bar;
                     if (PAPI)
@@ -967,7 +967,6 @@ public class Oneblock extends JavaPlugin {
         File flower = new File(getDataFolder(), "flowers.yml");
         if (!flower.exists())
             saveResource("flowers.yml", false);
-        flower = new File(getDataFolder(), "flowers.yml");
         newConfigz = YamlConfiguration.loadConfiguration(flower);
         flowers.add(GRASS);
         for(String list:newConfigz.getStringList("flowers"))
@@ -983,7 +982,6 @@ public class Oneblock extends JavaPlugin {
         File chest = new File(getDataFolder(), "chests.yml");
         if (!chest.exists())
             saveResource("chests.yml", false);
-        chest = new File(getDataFolder(), "chests.yml");
         newConfigz = YamlConfiguration.loadConfiguration(chest);
         for (String s: newConfigz.getStringList("small_chest")) 
         	s_ch.add(Material.getMaterial(s));
