@@ -583,7 +583,7 @@ public class Oneblock extends JavaPlugin {
                     inf.breaks = 0;
                     inf.lvl = 0;
                     if (Progress_bar)
-                    	pInf.get(i).bar.setVisible(false);
+                    	inf.bar.setVisible(false);
                     int x_now = x + i * 100 - 12, y_now = y - 6, z_now = z - 12;
                     if (y_now <= 1)
                         y_now = 1;
