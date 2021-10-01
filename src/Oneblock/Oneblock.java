@@ -488,7 +488,7 @@ public class Oneblock extends JavaPlugin {
             case ("idreset"):{
             	Player pl = (Player)sender;
             	if (Progress_bar && data.isInt("_"+name))
-        			pInf.get(data.getInt("_"+name)).bar.removePlayer(pl);;
+        			pInf.get(data.getInt("_"+name)).bar.removePlayer(pl);
             	data.set("_"+pl.getName(), null);
             	sender.sendMessage(ChatColor.GREEN +"Now your data has been reset. You can create a new island /ob join.");
             	return true;
@@ -549,12 +549,12 @@ public class Oneblock extends JavaPlugin {
                         inf.lvl = setlvl;
                         if (lvl_bar_mode)
 	                        if (inf.lvl >= lvl_sizes.size()) {
-	                    		pInf.get(i).bar.setTitle("Level: MAX");
-	                    		pInf.get(i).bar.setColor(Progress_color);
+	                        	inf.bar.setTitle("Level: MAX");
+	                        	inf.bar.setColor(Progress_color);
 	                        }
 	                    	else {
-	                    		pInf.get(i).bar.setTitle(lvl_names.get(inf.lvl));
-	                    		pInf.get(i).bar.setColor(Progress_colors.get(inf.lvl));
+	                    		inf.bar.setTitle(lvl_names.get(inf.lvl));
+	                    		inf.bar.setColor(Progress_colors.get(inf.lvl));
 	                    	}
                         sender.sendMessage(ChatColor.GREEN + "for player " + args[1] + ", level " + args[2] + " is set.");
                         return true;
