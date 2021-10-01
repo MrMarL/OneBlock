@@ -247,10 +247,7 @@ public class Oneblock extends JavaPlugin {
                     if (Progress_bar) {
                         if (!lvl_bar_mode && PAPI)
                         	inf.bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
-                        if (inf.breaks > 0)
-                        	inf.bar.setProgress((double) inf.breaks / (16 + (double) inf.lvl * lvl_mult));
-                        else
-                        	inf.bar.setProgress(0);
+                        inf.bar.setProgress((double) inf.breaks / (16 + inf.lvl * lvl_mult));
                         inf.bar.addPlayer(ponl);
                     }
                     Location loc = ponl.getLocation();
@@ -666,11 +663,11 @@ public class Oneblock extends JavaPlugin {
                 		return true;
                     if (!lvl_bar_mode) {
                         lvl_bar_mode = true;
-                        for (int i = 0; i < id; i++)
-	                        if (pInf.get(i).lvl >= lvl_sizes.size())
-	                        	pInf.get(i).bar.setTitle("Level: MAX");
+                        for (PlayerInfo inf:pInf)
+	                        if (inf.lvl >= lvl_sizes.size())
+	                        	inf.bar.setTitle("Level: MAX");
 	                    	else
-	                    		pInf.get(i).bar.setTitle(lvl_names.get(pInf.get(i).lvl));
+	                    		inf.bar.setTitle(lvl_names.get(inf.lvl));
                         config.set("Progress_bar_text", "level");
                         return true;
                     } else {
