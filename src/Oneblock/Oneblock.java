@@ -212,7 +212,7 @@ public class Oneblock extends JavaPlugin {
             	if (!data.isInt("_" + ponl.getName()))
             		continue;
                 Prob = data.getInt("_" + ponl.getName());
-                Probeg =  Prob * sto;
+                Probeg = Prob * sto;
                 if (protection) {
                 	int check = ponl.getLocation().getBlockX()-Probeg-x;
                 	if (check>50 || check<-50) {
@@ -255,16 +255,16 @@ public class Oneblock extends JavaPlugin {
                         loc.setY(y+1);
                         ponl.teleport(loc);
                     }
-                    if (inf.lvl == 0)
-                        random = 0;
-                    else if (inf.lvl >= lvl_sizes.size())
+                    if (inf.lvl >= lvl_sizes.size())
                     	random = rnd.nextInt(blocks.size());
-                    else
-                        random = rnd.nextInt(lvl_sizes.get(inf.lvl));
+                    else {
+                        random = lvl_sizes.get(inf.lvl);
+                        if (random != 0) random = rnd.nextInt(random);
+                    }
                     if (blocks.get(random) == null) {
                         XBlock.setType(block, GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1)
-                            XBlock.setType(wor.getBlockAt(x + Probeg, y + 1, z),(flowers.get(rnd.nextInt(flowers.size()))));
+                            XBlock.setType(wor.getBlockAt(x + Probeg, y + 1, z),flowers.get(rnd.nextInt(flowers.size())));
                     } else if (blocks.get(random) == XMaterial.CHEST) {
                         try {
                             block.setType(Material.CHEST);
