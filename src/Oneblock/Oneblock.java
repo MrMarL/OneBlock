@@ -44,7 +44,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Oneblock extends JavaPlugin {
     boolean on = false;
-    static int x = 0;
+	static int x = 0;
 	static int y = 0;
 	static int z = 0;
     Random rnd = new Random(System.currentTimeMillis());
