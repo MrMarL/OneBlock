@@ -50,7 +50,6 @@ public class Oneblock extends JavaPlugin {
     Random rnd = new Random(System.currentTimeMillis());
     int id = 0;
     static ArrayList <PlayerInfo> pInf = new ArrayList <PlayerInfo>();
-    String name = "MrMarL";
     FileConfiguration config;
     static FileConfiguration data;
     FileConfiguration newConfigz;
@@ -348,10 +347,10 @@ public class Oneblock extends JavaPlugin {
                 if (config.getInt("y") == 0 || wor == null)
                     return true;
                 Player p = (Player) sender;
-                name = p.getName();
-                if (!data.isInt("_" + name)) {
+                String name = "_" + p.getName();
+                if (!data.isInt(name)) {
                     id = data.getInt("id");
-                    data.set("_" + name, id);
+                    data.set(name, id);
                     if (il3x3) {
                     	if (island != null) {
                     		int px = x + id * sto - 3;
@@ -386,8 +385,8 @@ public class Oneblock extends JavaPlugin {
                     on = true;
                 }
                 if (Progress_bar)
-                	pInf.get(data.getInt(p.getName())).bar.setVisible(true);
-                p.teleport(new Location(wor, x + data.getInt("_" + name) * sto + 0.5, y + 1.2, z + 0.5));
+                	pInf.get(data.getInt(name)).bar.setVisible(true);
+                p.teleport(new Location(wor, x + data.getInt(name) * sto + 0.5, y + 1.2, z + 0.5));
                 return true;
             }
             case ("leave"):{
@@ -484,9 +483,10 @@ public class Oneblock extends JavaPlugin {
             }
             case ("idreset"):{
             	Player pl = (Player)sender;
-            	if (Progress_bar && data.isInt("_"+name))
-        			pInf.get(data.getInt("_"+name)).bar.removePlayer(pl);
-            	data.set("_"+pl.getName(), null);
+            	String name = "_" + pl.getName();
+            	if (Progress_bar && data.isInt(name))
+        			pInf.get(data.getInt(name)).bar.removePlayer(pl);
+            	data.set(name, null);
             	sender.sendMessage(ChatColor.GREEN +"Now your data has been reset. You can create a new island /ob join.");
             	return true;
             }
@@ -828,10 +828,10 @@ public class Oneblock extends JavaPlugin {
                 		return true;
                 	}
                 	Player p = (Player) sender;
-                    name = p.getName();
-                    if (data.isInt("_" + name)) {
+                    String name = "_" + p.getName();
+                    if (data.isInt(name)) {
                         island = new BlockData[7][3][7];
-                        int px = x + data.getInt("_" + name) * sto - 3;
+                        int px = x + data.getInt(name) * sto - 3;
                         for (int xx = 0; xx < 7; xx++)
                             for (int yy = 0; yy < 3; yy++)
                                 for (int zz = 0; zz < 7; zz++)
