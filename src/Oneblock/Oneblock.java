@@ -50,38 +50,36 @@ public class Oneblock extends JavaPlugin {
     Random rnd = new Random(System.currentTimeMillis());
     int id = 0;
     static ArrayList <PlayerInfo> pInf = new ArrayList <PlayerInfo>();
-    FileConfiguration config;
+    FileConfiguration config, newConfigz;
     static FileConfiguration data;
-    FileConfiguration newConfigz;
     static World wor;
 	World leavewor;
     int random = 0;
-    boolean Progress_bar = true;
     boolean superlegacy, legacy;
     String version = "1.17+";
-    boolean lvl_bar_mode = false;
-    boolean chat_alert = false;
     ArrayList <XMaterial> blocks;
     ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs;
-    List <Player> plonl;
-    Long fr;
-    int Probeg = 0, Prob = 0;
-    boolean il3x3 = false, rebirth = false, autojoin = false;
-    BarColor Progress_color;
-    ArrayList<BarColor> Progress_colors = null;
-    static int lvl_mult = 5;
-    XMaterial GRASS_BLOCK, GRASS;
-    boolean PAPI = false;
-    String TextP = "";
-    BlockData[][][] island = null;
-    static ArrayList <String> invite = new ArrayList<>();
-    boolean protection = false;
-    String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
     ArrayList <XMaterial> flowers;
+    ArrayList <BarColor> Progress_colors = null;
     static ArrayList <String> lvl_names;
     ArrayList <Integer> lvl_sizes;
+    List <Player> plonl;
+    static int lvl_mult = 5;
+    String TextP = "";
     int sto = 100;
+    Long fr;
+    int Probeg = 0, Prob = 0;
+    BarColor Progress_color;
+    boolean il3x3 = false, rebirth = false, autojoin = false;
+    boolean lvl_bar_mode = false, chat_alert = false;
+    boolean protection = false;
+    boolean PAPI = false;
+    boolean Progress_bar = true;
+    BlockData[][][] island = null;
+    static ArrayList <String> invite = new ArrayList<>();
+    XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
+    String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
     @Override
     public void onEnable() {
     	String bVer = Bukkit.getBukkitVersion();
@@ -91,8 +89,6 @@ public class Oneblock extends JavaPlugin {
         version = bVer.contains("1.14")?"1.14":version;
         version = bVer.contains("1.15")?"1.15":version;
         version = bVer.contains("1.16")?"1.16":version;
-        GRASS_BLOCK = XMaterial.GRASS_BLOCK;
-        GRASS = XMaterial.GRASS;
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PAPI = true;
             new OBP().register();
@@ -150,10 +146,11 @@ public class Oneblock extends JavaPlugin {
     	@EventHandler
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		Player p = e.getPlayer(); World from = e.getFrom();
-    		int i = data.getInt("_" + p.getName());
-        	if (from.equals(wor))
+        	if (from.equals(wor)) {
+        		int i = data.getInt("_" + p.getName());
         		if (i<pInf.size())
         			pInf.get(i).bar.removePlayer(p);
+        	}
         }
     }
     public class wor_null implements Runnable {
@@ -830,7 +827,8 @@ public class Oneblock extends JavaPlugin {
                 	Player p = (Player) sender;
                     String name = "_" + p.getName();
                     if (data.isInt(name)) {
-                        island = new BlockData[7][3][7];
+                    	if (island == null)
+                    		island = new BlockData[7][3][7];
                         int px = x + data.getInt(name) * sto - 3;
                         for (int xx = 0; xx < 7; xx++)
                             for (int yy = 0; yy < 3; yy++)
@@ -894,7 +892,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.3\n" + 
+            	"Create by MrMarL \nPlugin version: v0.9.3R\n" + 
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1105,16 +1103,13 @@ public class Oneblock extends JavaPlugin {
         if (config.isBoolean("autojoin"))
         	autojoin = config.getBoolean("autojoin");
         if (config.isSet("custom_island") && !legacy) {
-            List <String> cust_s = getConfig().getStringList("custom_island.y0");
-            List <String> cust_s1 = getConfig().getStringList("custom_island.y1");
-            List <String> cust_s2 = getConfig().getStringList("custom_island.y2");
-            island = new BlockData[7][3][7];
-            for (int xx = 0, i = 0; xx < 7; xx++)
-                for (int zz = 0; zz < 7; zz++, i++) {
-                    island[xx][0][zz] = Bukkit.createBlockData(cust_s.get(i));
-                    island[xx][1][zz] = Bukkit.createBlockData(cust_s1.get(i));
-                    island[xx][2][zz] = Bukkit.createBlockData(cust_s2.get(i));
-                }
+        	island = new BlockData[7][3][7];
+        	for (int yy = 0; yy < 3; yy++) {
+	        	List<String> cust_s = config.getStringList("custom_island.y"+yy);
+	            for (int xx = 0; xx < 7; xx++)
+	                for (int zz = 0; zz < 7; zz++)
+	                	island[xx][yy][zz] = Bukkit.createBlockData(cust_s.get(7*xx+zz));
+        	}
         }
         if (config.isInt("set"))
         	sto = config.getInt("set");
