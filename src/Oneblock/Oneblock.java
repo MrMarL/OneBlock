@@ -350,9 +350,8 @@ public class Oneblock extends JavaPlugin {
                     		int px = x + id * sto - 3;
                             for (int xx = 0; xx < 7; xx++)
                             	for (int yy = 0; yy < 3; yy++)
-                                	for (int zz = 0; zz < 7; zz++) {
+                                	for (int zz = 0; zz < 7; zz++)
                                     	wor.getBlockAt(px + xx, y + yy, z - 3 + zz).setBlockData(island[xx][yy][zz]);
-                                    }
                         } else {
                         	for (int i = -2;i<=2;i++)
                         		for (int q = -2;q<=2;q++)
@@ -894,8 +893,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.3R.2\n" +
-		"Contributed by Adarsh" +	       
+            	"Create by MrMarL \nPlugin version: v0.9.3R.2\n" +   
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
