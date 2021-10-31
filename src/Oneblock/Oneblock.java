@@ -443,36 +443,36 @@ public class Oneblock extends JavaPlugin {
             }
             case ("invite"):{
             	if (!sender.hasPermission("Oneblock.invite")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.invite].");
+                    sender.sendMessage(ChatColor.RED + "You don't have the permission to execute this command");
                     return true;
                 }
             	if (args.length < 2) {
-            		sender.sendMessage(ChatColor.RED + "invalid format. try: /ob invite 'nickname'");
+            		sender.sendMessage(ChatColor.RED + "Usage: /ob invite <username> ");
             		return true;
             	}
             	Player inv = Bukkit.getPlayer(args[1]);
             	if (inv != null) {
             		if (inv == (Player) sender) {
-            			sender.sendMessage(ChatColor.YELLOW + "wtf? you can't invite yourself.");
+            			sender.sendMessage(ChatColor.YELLOW + "You can't invite yourself.");
             			return true;
             		}
             		if (!data.isInt("_" + ((Player)sender).getName())) {
-            			sender.sendMessage(ChatColor.YELLOW + "wtf? you don't have an island.");
+            			sender.sendMessage(ChatColor.YELLOW + "Please create a island before you do this.");
             			return true;
             		}
             		addinvite(((Player) sender).getName(),inv.getName());
-            		inv.sendMessage(ChatColor.GREEN +"you were invited by player "+inv.getName()+".\n"+
+            		inv.sendMessage(ChatColor.GREEN +"You were invited by player "+inv.getName()+".\n"+
             				ChatColor.RED +"/ob accept to accept).");
-            		sender.sendMessage(ChatColor.GREEN +"you invited "+inv.getName()+".");
+            		sender.sendMessage(ChatColor.GREEN +"Succesfully invited "+inv.getName()+".");
             	}
             	return true;
             }
             case ("accept"):{
             	Player pl = (Player) sender;
            	 	if (checkinvite(pl))
-           	 		sender.sendMessage(ChatColor.GREEN + "[ok]");
+           	 		sender.sendMessage(ChatColor.GREEN + "Succesfully accepted the invitation.");
            	 	else
-           	 		sender.sendMessage(ChatColor.RED + "[you have no invitations.]");
+           	 		sender.sendMessage(ChatColor.RED + "There is no Pending invitations for you.]");
            		return true;
             }
             case ("idreset"):{
@@ -650,7 +650,7 @@ public class Oneblock extends JavaPlugin {
                         Blockfile();
                         config.set("Progress_bar_color", Progress_color.toString());
                     } catch (Exception e) {
-                        sender.sendMessage(ChatColor.YELLOW + "pls enter a valid color. For example: RED");
+                        sender.sendMessage(ChatColor.YELLOW + "Please enter a valid color. For example: RED");
                     }
                     sender.sendMessage(ChatColor.GREEN + "Progress bar color = " + Progress_color.toString());
                     return true;
@@ -894,7 +894,8 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.3R.2\n" + 
+            	"Create by MrMarL \nPlugin version: v0.9.3R.2\n" +
+		"Contributed by Adarsh" +	       
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
