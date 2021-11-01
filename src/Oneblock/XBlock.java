@@ -545,35 +545,6 @@ public final class XBlock {
     }
 
     /**
-     * @param block the block to get its XMaterial type.
-     *
-     * @return the XMaterial of the block.
-     * @deprecated Not stable, use {@link #isType(Block, XMaterial)} or {@link #isSimilar(Block, XMaterial)} instead.
-     * If you want to save a block material somewhere, you need to use {@link XMaterial#matchXMaterial(Material)}
-     */
-    @Deprecated
-    public static XMaterial getType(Block block) {
-        if (ISFLAT) return XMaterial.matchXMaterial(block.getType());
-        String type = block.getType().name();
-        BlockState state = block.getState();
-        MaterialData data = state.getData();
-        byte dataValue;
-
-        if (data instanceof Wood) {
-            TreeSpecies species = ((Wood) data).getSpecies();
-            dataValue = species.getData();
-        } else if (data instanceof Colorable) {
-            DyeColor color = ((Colorable) data).getColor();
-            dataValue = color.getDyeData();
-        } else {
-            dataValue = data.getData();
-        }
-
-        return XMaterial.matchDefinedXMaterial(type, dataValue)
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported material for block " + dataValue + ": " + block.getType().name()));
-    }
-
-    /**
      * Same as {@link #isType(Block, XMaterial)} except it also does a simple {@link XMaterial#matchXMaterial(Material)}
      * comparison with the given block and material.
      *

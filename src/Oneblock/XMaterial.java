@@ -1445,12 +1445,6 @@ public enum XMaterial {
      */
     private static final byte UNKNOWN_DATA_VALUE = -1;
     /**
-     * The maximum material ID before the pre-flattening update which belongs to {@link #MUSIC_DISC_WAIT}
-     *
-     * @since 8.1.0
-     */
-    private static final short MAX_ID = 2267;
-    /**
      * <b>XMaterial Paradox (Duplication Check)</b>
      * <p>
      * A set of duplicated material names in 1.13 and 1.12 that will conflict with the legacy names.
@@ -1520,45 +1514,6 @@ public enum XMaterial {
     }
 
     XMaterial(String... legacy) { this(0, legacy); }
-
-    /**
-     * Checks if the version is 1.13 Aquatic Update or higher.
-     * An invocation of this method yields the cached result from the expression:
-     * <p>
-     * <blockquote>
-     * {@link #supports(int) 13}}
-     * </blockquote>
-     *
-     * @return true if 1.13 or higher.
-     * @see #getVersion()
-     * @see #supports(int)
-     * @since 1.0.0
-     * @deprecated Use {@code XMaterial.supports(13)} instead. This method name can be confusing.
-     */
-    @Deprecated
-    public static boolean isNewVersion() {
-        return Data.ISFLAT;
-    }
-
-    /**
-     * This is just an extra method that can be used for many cases.
-     * It can be used in {@link org.bukkit.event.player.PlayerInteractEvent}
-     * or when accessing {@link org.bukkit.entity.Player#getMainHand()},
-     * or other compatibility related methods.
-     * <p>
-     * An invocation of this method yields exactly the same result as the expression:
-     * <p>
-     * <blockquote>
-     * !{@link #supports(int)} 9
-     * </blockquote>
-     *
-     * @since 2.0.0
-     * @deprecated Use {@code !XMaterial.supports(9)} instead.
-     */
-    @Deprecated
-    public static boolean isOneEight() {
-        return !supports(9);
-    }
 
     /**
      * Gets the XMaterial with this name similar to {@link #valueOf(String)}
@@ -1749,30 +1704,6 @@ public enum XMaterial {
     private static boolean isDuplicated(@Nonnull String name) {
         // Don't use matchXMaterial() since this method is being called from matchXMaterial() itself and will cause a StackOverflowError.
         return DUPLICATED.contains(name);
-    }
-
-    /**
-     * Gets the XMaterial based on the material's ID (Magic Value) and data value.<br>
-     * You should avoid using this for performance issues.
-     *
-     * @param id   the ID (Magic value) of the material.
-     * @param data the data value of the material.
-     *
-     * @return a parsed XMaterial with the same ID and data value.
-     * @see #matchXMaterial(ItemStack)
-     * @since 2.0.0
-     * @deprecated this method loops through all the available materials and matches their ID using {@link #getId()}
-     * which takes a really long time. Plugins should no longer support IDs. If you want, you can make a {@link Map} cache yourself.
-     * This method obviously doesn't work for 1.13+ and will not be supported. This is only here for debugging purposes.
-     */
-    @Nonnull
-    @Deprecated
-    public static Optional<XMaterial> matchXMaterial(int id, byte data) {
-        if (id < 0 || id > MAX_ID || data < 0) return Optional.empty();
-        for (XMaterial materials : VALUES) {
-            if (materials.data == data && materials.getId() == id) return Optional.of(materials);
-        }
-        return Optional.empty();
     }
 
     /**
