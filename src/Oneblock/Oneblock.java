@@ -309,9 +309,9 @@ public class Oneblock extends JavaPlugin {
         }
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
-            List <String> y_now;
+            List <String> y_now = new ArrayList <String>();
             for (int yy = 0;yy<3;yy++) {
-            	y_now = new ArrayList <String>();
+            	y_now.clear();
 	            for (int xx = 0; xx < 7; xx++)
 	                for (int zz = 0; zz < 7; zz++)
 	                	y_now.add(island[xx][yy][zz].getAsString());
