@@ -137,8 +137,7 @@ public class Oneblock extends JavaPlugin {
         public void JAuto(PlayerJoinEvent e) {
         if (autojoin){
         	Player pl = e.getPlayer();
-			World nowwor = pl.getWorld();
-        	if (nowwor.equals(wor))
+        	if (pl.getWorld().equals(wor))
         		pl.performCommand("ob j");
         	}
         }
@@ -328,10 +327,9 @@ public class Oneblock extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("oneblock")) {
             //
-            if (args.length == 0) {
-            	((Player)sender).performCommand("ob j");
-                return true;
-            }
+            if (args.length == 0)
+                return ((Player)sender).performCommand("ob j");
+            
             if (!sender.hasPermission("Oneblock.join")) {
                 sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.join].");
                 return true;
