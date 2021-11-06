@@ -57,7 +57,7 @@ public class Oneblock extends JavaPlugin {
 	World leavewor;
     int random = 0;
     boolean superlegacy, legacy;
-    String version = "1.17+";
+    String version = "";
     ArrayList <Object> blocks = new ArrayList <Object>();
     ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs = new ArrayList <EntityType>();
@@ -82,13 +82,9 @@ public class Oneblock extends JavaPlugin {
     String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
     @Override
     public void onEnable() {
-    	String bVer = Bukkit.getBukkitVersion();
-        superlegacy = bVer.contains("1.8") || bVer.contains("1.7");
-        legacy = bVer.contains("1.12") || bVer.contains("1.11") || bVer.contains("1.10") || bVer.contains("1.9") || superlegacy;
-        version = bVer.contains("1.13")?"1.13":version;
-        version = bVer.contains("1.14")?"1.14":version;
-        version = bVer.contains("1.15")?"1.15":version;
-        version = bVer.contains("1.16")?"1.16":version;
+    	version = XMaterial.getMajorVersion(Bukkit.getBukkitVersion());
+        superlegacy = version.contains("1.8") || version.contains("1.7");
+        legacy = version.contains("1.12") || version.contains("1.11") || version.contains("1.10") || version.contains("1.9") || superlegacy;
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PAPI = true;
             new OBP().register();
