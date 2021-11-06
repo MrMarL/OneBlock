@@ -1,9 +1,9 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  0.9.3R.2
+version:  0.9.4
 api-version: 1.13
 author:  MrMarL
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, ItemsAdder]
 commands:
   oneblock:
     description: Oneblock main command.

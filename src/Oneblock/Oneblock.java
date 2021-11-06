@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import dev.lone.itemsadder.api.CustomStack;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -57,7 +58,7 @@ public class Oneblock extends JavaPlugin {
     int random = 0;
     boolean superlegacy, legacy;
     String version = "1.17+";
-    ArrayList <XMaterial> blocks = new ArrayList <XMaterial>();
+    ArrayList <Object> blocks = new ArrayList <Object>();
     ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs = new ArrayList <EntityType>();
     ArrayList <XMaterial> flowers = new ArrayList <XMaterial>();
@@ -73,7 +74,7 @@ public class Oneblock extends JavaPlugin {
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean lvl_bar_mode = false, chat_alert = false;
     boolean protection = false;
-    boolean PAPI = false;
+    boolean PAPI = false, CustomItem = false;
     boolean Progress_bar = true;
     BlockData[][][] island = null;
     static ArrayList <String> invite = new ArrayList<>();
@@ -93,6 +94,8 @@ public class Oneblock extends JavaPlugin {
             new OBP().register();
             Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
         }
+        if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder"))
+        	CustomItem = true;
         Configfile();
         Datafile();
         Blockfile();
@@ -716,7 +719,12 @@ public class Oneblock extends JavaPlugin {
                     if (temp !=0)
                     	i = levels.get(temp-1).size;
                     for(;i<levels.get(temp).size;i++)
-                    	sender.sendMessage(blocks.get(i)==null?"Grass or undefined":blocks.get(i).name());
+                    	if (blocks.get(i) == null)
+                    		sender.sendMessage("Grass or undefined");
+                    	else if (blocks.get(i).getClass() == XMaterial.class)
+                    		sender.sendMessage(((XMaterial)blocks.get(i)).name());
+                    	else
+                    		sender.sendMessage((String)blocks.get(i));
                     return true;
                 }
                 for(int i = 0;i<levels.size();i++)
@@ -893,7 +901,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.3R.2\n" +   
+            	"Create by MrMarL \nPlugin version: v0.9.4\n" +   
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -947,9 +955,12 @@ public class Oneblock extends JavaPlugin {
         			q++;
         		} catch(Exception e) {level.color = Progress_color;}
         	for (;q<bl_temp.size();q++) {
-        		Optional <XMaterial> a = XMaterial.matchXMaterial(bl_temp.get(q));
+        		String text = bl_temp.get(q);
+        		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
 	        	if (!a.isPresent() || a.get() == GRASS_BLOCK)
 	                blocks.add(null);
+	            else if (CustomItem && CustomStack.getInstance(text) != null) 
+	            	blocks.add(text);
 	            else
 	                blocks.add(a.get());
         	}
