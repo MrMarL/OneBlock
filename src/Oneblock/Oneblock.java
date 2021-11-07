@@ -83,8 +83,8 @@ public class Oneblock extends JavaPlugin {
     @Override
     public void onEnable() {
     	version = XMaterial.getMajorVersion(Bukkit.getBukkitVersion());
-        superlegacy = version.contains("1.8") || version.contains("1.7");
-        legacy = version.contains("1.12") || version.contains("1.11") || version.contains("1.10") || version.contains("1.9") || superlegacy;
+        superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
+        legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PAPI = true;
             new OBP().register();
@@ -225,8 +225,7 @@ public class Oneblock extends JavaPlugin {
                 		lvl_inf = levels.get(inf.lvl);
                 	inf.breaks++;
                     if (inf.breaks >= 16 + inf.lvl * lvl_mult) {
-                    	inf.breaks = 0;
-                    	inf.lvl++;
+                    	inf.lvlup();
                         if (Progress_bar) {
                         	inf.bar.setColor(lvl_inf.color);
                         	if (lvl_bar_mode)
