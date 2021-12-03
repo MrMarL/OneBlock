@@ -39,6 +39,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -62,7 +63,7 @@ import java.util.regex.PatternSyntaxException;
  * <b>/give @p minecraft:dirt 1 10</b> where 1 is the item amount, and 10 is the data value. The material {@link #DIRT} with a data value of {@code 10} doesn't exist.
  *
  * @author Crypto Morin
- * @version 10.1.0
+ * @version 10.1.1
  * @see Material
  * @see ItemStack
  */
@@ -156,7 +157,10 @@ public enum XMaterial {
     BLACKSTONE_STAIRS,
     BLACKSTONE_WALL,
     BLACK_BANNER("STANDING_BANNER", "BANNER"),
-    BLACK_BED(15, "BED_BLOCK", "BED"),
+    /**
+     * Version 1.12+ interprets "BED" as BLACK_BED due to enum alphabetic ordering.
+     */
+    BLACK_BED(supports(12) ? 15 : 0, "BED_BLOCK", "BED"),
     BLACK_CANDLE,
     BLACK_CANDLE_CAKE,
     BLACK_CARPET(15, "CARPET"),
@@ -175,7 +179,7 @@ public enum XMaterial {
     BLAZE_ROD,
     BLAZE_SPAWN_EGG(61, "MONSTER_EGG"),
     BLUE_BANNER(4, "STANDING_BANNER", "BANNER"),
-    BLUE_BED(11, "BED_BLOCK", "BED"),
+    BLUE_BED(supports(12) ? 11 : 0, "BED_BLOCK", "BED"),
     BLUE_CANDLE,
     BLUE_CANDLE_CAKE,
     BLUE_CARPET(11, "CARPET"),
@@ -210,7 +214,7 @@ public enum XMaterial {
     BRICK_STAIRS,
     BRICK_WALL,
     BROWN_BANNER(3, "STANDING_BANNER", "BANNER"),
-    BROWN_BED(12, "BED_BLOCK", "BED"),
+    BROWN_BED(supports(12) ? 12 : 0, "BED_BLOCK", "BED"),
     BROWN_CANDLE,
     BROWN_CANDLE_CAKE,
     BROWN_CARPET(12, "CARPET"),
@@ -361,7 +365,7 @@ public enum XMaterial {
     CUT_SANDSTONE,
     CUT_SANDSTONE_SLAB("STEP"),
     CYAN_BANNER(6, "STANDING_BANNER", "BANNER"),
-    CYAN_BED(9, "BED_BLOCK", "BED"),
+    CYAN_BED(supports(12) ? 9 : 0, "BED_BLOCK", "BED"),
     CYAN_CANDLE,
     CYAN_CANDLE_CAKE,
     CYAN_CARPET(9, "CARPET"),
@@ -575,7 +579,7 @@ public enum XMaterial {
     GRASS_BLOCK("GRASS"),
     GRAVEL,
     GRAY_BANNER(8, "STANDING_BANNER", "BANNER"),
-    GRAY_BED(7, "BED_BLOCK", "BED"),
+    GRAY_BED(supports(12) ? 7 : 0, "BED_BLOCK", "BED"),
     GRAY_CANDLE,
     GRAY_CANDLE_CAKE,
     GRAY_CARPET(7, "CARPET"),
@@ -590,7 +594,7 @@ public enum XMaterial {
     GRAY_WALL_BANNER(8, "WALL_BANNER"),
     GRAY_WOOL(7, "WOOL"),
     GREEN_BANNER(2, "STANDING_BANNER", "BANNER"),
-    GREEN_BED(13, "BED_BLOCK", "BED"),
+    GREEN_BED(supports(12) ? 13 : 0, "BED_BLOCK", "BED"),
     GREEN_CANDLE,
     GREEN_CANDLE_CAKE,
     GREEN_CARPET(13, "CARPET"),
@@ -700,7 +704,7 @@ public enum XMaterial {
     LIGHT,
     LIGHTNING_ROD,
     LIGHT_BLUE_BANNER(12, "STANDING_BANNER", "BANNER"),
-    LIGHT_BLUE_BED(3, "BED_BLOCK", "BED"),
+    LIGHT_BLUE_BED(supports(12) ? 3 : 0, "BED_BLOCK", "BED"),
     LIGHT_BLUE_CANDLE,
     LIGHT_BLUE_CANDLE_CAKE,
     LIGHT_BLUE_CARPET(3, "CARPET"),
@@ -715,7 +719,7 @@ public enum XMaterial {
     LIGHT_BLUE_WALL_BANNER(12, "WALL_BANNER", "STANDING_BANNER", "BANNER"),
     LIGHT_BLUE_WOOL(3, "WOOL"),
     LIGHT_GRAY_BANNER(7, "STANDING_BANNER", "BANNER"),
-    LIGHT_GRAY_BED(8, "BED_BLOCK", "BED"),
+    LIGHT_GRAY_BED(supports(12) ? 8 : 0, "BED_BLOCK", "BED"),
     LIGHT_GRAY_CANDLE,
     LIGHT_GRAY_CANDLE_CAKE,
     LIGHT_GRAY_CARPET(8, "CARPET"),
@@ -738,7 +742,7 @@ public enum XMaterial {
     LILY_OF_THE_VALLEY,
     LILY_PAD("WATER_LILY"),
     LIME_BANNER(10, "STANDING_BANNER", "BANNER"),
-    LIME_BED(5, "BED_BLOCK", "BED"),
+    LIME_BED(supports(12) ? 5 : 0, "BED_BLOCK", "BED"),
     LIME_CANDLE,
     LIME_CANDLE_CAKE,
     LIME_CARPET(5, "CARPET"),
@@ -757,7 +761,7 @@ public enum XMaterial {
     LODESTONE,
     LOOM,
     MAGENTA_BANNER(13, "STANDING_BANNER", "BANNER"),
-    MAGENTA_BED(2, "BED_BLOCK", "BED"),
+    MAGENTA_BED(supports(12) ? 2 : 0, "BED_BLOCK", "BED"),
     MAGENTA_CANDLE,
     MAGENTA_CANDLE_CAKE,
     MAGENTA_CARPET(2, "CARPET"),
@@ -813,6 +817,7 @@ public enum XMaterial {
     MUSIC_DISC_FAR("RECORD_6"),
     MUSIC_DISC_MALL("RECORD_7"),
     MUSIC_DISC_MELLOHI("RECORD_8"),
+    MUSIC_DISC_OTHERSIDE,
     MUSIC_DISC_PIGSTEP,
     MUSIC_DISC_STAL("RECORD_9"),
     MUSIC_DISC_STRAD("RECORD_10"),
@@ -874,7 +879,7 @@ public enum XMaterial {
     OBSIDIAN,
     OCELOT_SPAWN_EGG(98, "MONSTER_EGG"),
     ORANGE_BANNER(14, "STANDING_BANNER", "BANNER"),
-    ORANGE_BED(1, "BED_BLOCK", "BED"),
+    ORANGE_BED(supports(12) ? 1 : 0, "BED_BLOCK", "BED"),
     ORANGE_CANDLE,
     ORANGE_CANDLE_CAKE,
     ORANGE_CARPET(1, "CARPET"),
@@ -909,7 +914,7 @@ public enum XMaterial {
     PIG_SPAWN_EGG(90, "MONSTER_EGG"),
     PILLAGER_SPAWN_EGG,
     PINK_BANNER(9, "STANDING_BANNER", "BANNER"),
-    PINK_BED(6, "BED_BLOCK", "BED"),
+    PINK_BED(supports(12) ? 6 : 0, "BED_BLOCK", "BED"),
     PINK_CANDLE,
     PINK_CANDLE_CAKE,
     PINK_CARPET(6, "CARPET"),
@@ -1014,7 +1019,7 @@ public enum XMaterial {
     PUMPKIN_SEEDS,
     PUMPKIN_STEM,
     PURPLE_BANNER(5, "STANDING_BANNER", "BANNER"),
-    PURPLE_BED(10, "BED_BLOCK", "BED"),
+    PURPLE_BED(supports(12) ? 10 : 0, "BED_BLOCK", "BED"),
     PURPLE_CANDLE,
     PURPLE_CANDLE_CAKE,
     PURPLE_CARPET(10, "CARPET"),
@@ -1073,7 +1078,7 @@ public enum XMaterial {
     /**
      * Data value 14 or 0
      */
-    RED_BED(14, "BED_BLOCK", "BED"),
+    RED_BED(supports(12) ? 14 : 0, "BED_BLOCK", "BED"),
     RED_CANDLE,
     RED_CANDLE_CAKE,
     RED_CARPET(14, "CARPET"),
@@ -1363,7 +1368,7 @@ public enum XMaterial {
     WRITABLE_BOOK("BOOK_AND_QUILL"),
     WRITTEN_BOOK,
     YELLOW_BANNER(11, "STANDING_BANNER", "BANNER"),
-    YELLOW_BED(4, "BED_BLOCK", "BED"),
+    YELLOW_BED(supports(12) ? 4 : 0, "BED_BLOCK", "BED"),
     YELLOW_CANDLE,
     YELLOW_CANDLE_CAKE,
     YELLOW_CARPET(4, "CARPET"),
@@ -1410,7 +1415,6 @@ public enum XMaterial {
     private static final Cache<String, XMaterial> NAME_CACHE = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.HOURS)
             .build();
-
     /**
      * This is used for {@link #isOneOf(Collection)}
      *
@@ -1444,6 +1448,12 @@ public enum XMaterial {
      * @since 8.0.0
      */
     private static final byte UNKNOWN_DATA_VALUE = -1;
+    /**
+     * The maximum material ID before the pre-flattening update which belongs to {@link #MUSIC_DISC_WAIT}
+     *
+     * @since 8.1.0
+     */
+    private static final short MAX_ID = 2267;
     /**
      * <b>XMaterial Paradox (Duplication Check)</b>
      * <p>
@@ -1514,6 +1524,45 @@ public enum XMaterial {
     }
 
     XMaterial(String... legacy) { this(0, legacy); }
+
+    /**
+     * Checks if the version is 1.13 Aquatic Update or higher.
+     * An invocation of this method yields the cached result from the expression:
+     * <p>
+     * <blockquote>
+     * {@link #supports(int) 13}}
+     * </blockquote>
+     *
+     * @return true if 1.13 or higher.
+     * @see #getVersion()
+     * @see #supports(int)
+     * @since 1.0.0
+     * @deprecated Use {@code XMaterial.supports(13)} instead. This method name can be confusing.
+     */
+    @Deprecated
+    public static boolean isNewVersion() {
+        return Data.ISFLAT;
+    }
+
+    /**
+     * This is just an extra method that can be used for many cases.
+     * It can be used in {@link org.bukkit.event.player.PlayerInteractEvent}
+     * or when accessing {@link org.bukkit.entity.Player#getMainHand()},
+     * or other compatibility related methods.
+     * <p>
+     * An invocation of this method yields exactly the same result as the expression:
+     * <p>
+     * <blockquote>
+     * !{@link #supports(int)} 9
+     * </blockquote>
+     *
+     * @since 2.0.0
+     * @deprecated Use {@code !XMaterial.supports(9)} instead.
+     */
+    @Deprecated
+    public static boolean isOneEight() {
+        return !supports(9);
+    }
 
     /**
      * Gets the XMaterial with this name similar to {@link #valueOf(String)}
@@ -1707,6 +1756,30 @@ public enum XMaterial {
     }
 
     /**
+     * Gets the XMaterial based on the material's ID (Magic Value) and data value.<br>
+     * You should avoid using this for performance issues.
+     *
+     * @param id   the ID (Magic value) of the material.
+     * @param data the data value of the material.
+     *
+     * @return a parsed XMaterial with the same ID and data value.
+     * @see #matchXMaterial(ItemStack)
+     * @since 2.0.0
+     * @deprecated this method loops through all the available materials and matches their ID using {@link #getId()}
+     * which takes a really long time. Plugins should no longer support IDs. If you want, you can make a {@link Map} cache yourself.
+     * This method obviously doesn't work for 1.13+ and will not be supported. This is only here for debugging purposes.
+     */
+    @Nonnull
+    @Deprecated
+    public static Optional<XMaterial> matchXMaterial(int id, byte data) {
+        if (id < 0 || id > MAX_ID || data < 0) return Optional.empty();
+        for (XMaterial materials : VALUES) {
+            if (materials.data == data && materials.getId() == id) return Optional.of(materials);
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Attempts to build the string like an enum name.
      * Removes all the spaces, and extra non-English characters. Also removes some config/in-game based strings.
      * While this method is hard to maintain, it's extremely efficient. It's approximately more than x5 times faster than
@@ -1757,38 +1830,6 @@ public enum XMaterial {
      */
     public static boolean supports(int version) {
         return Data.VERSION >= version;
-    }
-
-    /**
-     * Gets the exact major version (..., 1.9, 1.10, ..., 1.14)
-     * In most cases, you shouldn't be using this method.
-     *
-     * @param version Supports {@link Bukkit#getVersion()}, {@link Bukkit#getBukkitVersion()} and normal formats such as "1.14"
-     *
-     * @return the exact major version.
-     * @see #supports(int)
-     * @see #getVersion()
-     * @since 2.0.0
-     */
-    @Nonnull
-    public static String getMajorVersion(@Nonnull String version) {
-        Validate.notEmpty(version, "Cannot get major Minecraft version from null or empty string");
-
-        // getVersion()
-        int index = version.lastIndexOf("MC:");
-        if (index != -1) {
-            version = version.substring(index + 4, version.length() - 1);
-        } else if (version.endsWith("SNAPSHOT")) {
-            // getBukkitVersion()
-            index = version.indexOf('-');
-            version = version.substring(0, index);
-        }
-
-        // 1.13.2, 1.14.4, etc...
-        int lastDot = version.lastIndexOf('.');
-        if (version.indexOf('.') != lastDot) version = version.substring(0, lastDot);
-
-        return version;
     }
 
     public String[] getLegacy() {
@@ -2082,12 +2123,31 @@ public enum XMaterial {
          *
          * @since 1.0.0
          */
-        private static final int VERSION = Integer.parseInt(getMajorVersion(Bukkit.getVersion()).substring(2));
+        private static final int VERSION = parseVersion();
         /**
          * Cached result if the server version is after the v1.13 flattening update.
          *
          * @since 3.0.0
          */
         private static final boolean ISFLAT = supports(13);
+
+        /**
+         * Gets the exact minor version (8, 9, ..., 17, 18)
+         * It's necessary to use this alternative method instead of <b>static initialization block</b>
+         * since you can't throw exceptions in them directly.
+         * <p>
+         * Performance doesn't matter here as the method is only called once.
+         *
+         * @return the exact minor version.
+         * @see #VERSION
+         * @since 8.5.0
+         */
+        private static int parseVersion() {
+            String version = Bukkit.getVersion();
+            Matcher matcher = Pattern.compile("MC: \\d\\.(\\d+)").matcher(version);
+
+            if (matcher.find()) return Integer.parseInt(matcher.group(1));
+            throw new IllegalArgumentException("Failed to parse server version from: " + version);
+        }
     }
 }

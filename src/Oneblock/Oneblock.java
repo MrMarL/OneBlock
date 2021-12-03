@@ -82,7 +82,7 @@ public class Oneblock extends JavaPlugin {
     String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
     @Override
     public void onEnable() {
-    	version = XMaterial.getMajorVersion(Bukkit.getBukkitVersion());
+    	version = "1." + XMaterial.getVersion();
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -205,7 +205,7 @@ public class Oneblock extends JavaPlugin {
             		continue;
                 Prob = data.getInt("_" + ponl.getName());
                 Probeg = Prob * sto;
-                if (protection) {
+                if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int check = ponl.getLocation().getBlockX()-Probeg-x;
                 	if (check>50 || check<-50) {
                 		if (check>200 || check<-200) {
@@ -894,7 +894,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.4\n" +   
+            	"Create by MrMarL \nPlugin version: v0.9.4+\n" +   
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
