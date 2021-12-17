@@ -47,7 +47,7 @@ public class OBP extends PlaceholderExpansion {
             return ""+Oneblock.getneed(p.getName());
         }
         // %OB_player_count%
-        if (identifier.equals("need_to_lvl_up")) {
+        if (identifier.equals("player_count")) {
             return ""+Oneblock.plonl.size();
         }
         return null;
