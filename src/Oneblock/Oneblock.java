@@ -64,7 +64,7 @@ public class Oneblock extends JavaPlugin {
     ArrayList <XMaterial> flowers = new ArrayList <XMaterial>();
     static ArrayList <Level> levels = new ArrayList <Level>();
     static Level max_lvl = new Level("Level: MAX");
-    List <Player> plonl;
+    static List <Player> plonl;
     static int lvl_mult = 5;
     String TextP = "";
     int sto = 100;
@@ -894,7 +894,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄\n"+
             	"█    █  █▄▀\n"+
             	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.4+\n" +   
+            	"Create by MrMarL \nPlugin version: v0.9.4p+\n" +   
             	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }

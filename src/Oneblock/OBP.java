@@ -22,13 +22,13 @@ public class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return "0.8";
+        return "0.9";
     }
     @Override
     public String onPlaceholderRequest(Player p, String identifier) {
         // %OB_ver%
         if (identifier.equals("ver")) {
-            return "0.8";
+            return "0.9";
         }
         // %OB_lvl%
         if (identifier.equals("lvl")) {
@@ -45,6 +45,10 @@ public class OBP extends PlaceholderExpansion {
         // %OB_need_to_lvl_up%
         if (identifier.equals("need_to_lvl_up")) {
             return ""+Oneblock.getneed(p.getName());
+        }
+        // %OB_player_count%
+        if (identifier.equals("need_to_lvl_up")) {
+            return ""+Oneblock.plonl.size();
         }
         return null;
     }
