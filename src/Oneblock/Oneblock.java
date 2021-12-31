@@ -1,4 +1,4 @@
-// Copyright © 2021 MrMarL. All rights reserved.
+// Copyright © 2022 MrMarL. All rights reserved.
 package Oneblock;
 
 import org.bukkit.plugin.Plugin;
@@ -152,9 +152,9 @@ public class Oneblock extends JavaPlugin {
     public class wor_null implements Runnable {
         public void run() {
             if (wor == null) {
-                Bukkit.getConsoleSender().sendMessage(
-                		"\n[OB] WORLD INITIALIZATION ERROR! world = null"+
-                		"\n[OB] Trying to initialize the world again...");
+                Bukkit.getConsoleSender().sendMessage(String.format("\n%s\n%s",
+                		"[OB] WORLD INITIALIZATION ERROR! world = null",
+                		"[OB] Trying to initialize the world again..."));
                 wor = Bukkit.getWorld(config.getString("world"));
                 leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
@@ -201,9 +201,10 @@ public class Oneblock extends JavaPlugin {
             plonl = wor.getPlayers();
             Collections.shuffle(plonl);
             for (Player ponl: plonl) {
-            	if (!data.isInt("_" + ponl.getName()))
+            	String name = String.format("_%s", ponl.getName());
+            	if (!data.isInt(name))
             		continue;
-                Prob = data.getInt("_" + ponl.getName());
+                Prob = data.getInt(name);
                 Probeg = Prob * sto;
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int check = ponl.getLocation().getBlockX()-Probeg-x;
@@ -213,7 +214,7 @@ public class Oneblock extends JavaPlugin {
                 			continue;
                 		}
                 		ponl.setVelocity(new Vector(-check/30, 0, 0));
-                		ponl.sendMessage(ChatColor.YELLOW +"are you trying to go "+ChatColor.RED+"outside the island?");
+                		ponl.sendMessage(String.format("%s%s%s%s", ChatColor.YELLOW, "are you trying to go ", ChatColor.RED, "outside the island?"));
                 		continue;
                 	}
                 }
@@ -226,13 +227,16 @@ public class Oneblock extends JavaPlugin {
                 	inf.breaks++;
                     if (inf.breaks >= 16 + inf.lvl * lvl_mult) {
                     	inf.lvlup();
+                    	lvl_inf = max_lvl; 
+                    	if (inf.lvl < levels.size())
+                    		lvl_inf = levels.get(inf.lvl);
                         if (Progress_bar) {
                         	inf.bar.setColor(lvl_inf.color);
                         	if (lvl_bar_mode)
                         		inf.bar.setTitle(lvl_inf.name);
                         }
                         if (chat_alert)
-                        	ponl.sendMessage(ChatColor.GREEN + lvl_inf.name);
+                        	ponl.sendMessage(String.format("%s%s", ChatColor.GREEN, lvl_inf.name));
                     }
                     if (Progress_bar) {
                         if (!lvl_bar_mode && PAPI)
@@ -245,12 +249,8 @@ public class Oneblock extends JavaPlugin {
                         loc.setY(y+1);
                         ponl.teleport(loc);
                     }
-                    if (inf.lvl >= levels.size())
-                    	random = rnd.nextInt(blocks.size());
-                    else {
-                        random = lvl_inf.size;
-                        if (random != 0) random = rnd.nextInt(random);
-                    }
+                    random = lvl_inf.size;
+                    if (random != 0) random = rnd.nextInt(random);
                     if (blocks.get(random) == null) {
                         XBlock.setType(block, GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1)
@@ -337,7 +337,7 @@ public class Oneblock extends JavaPlugin {
                 if (config.getInt("y") == 0 || wor == null)
                     return true;
                 Player p = (Player) sender;
-                String name = "_" + p.getName();
+                String name = String.format("_%s", p.getName());
                 if (!data.isInt(name)) {
                     id = data.getInt("id");
                     data.set(name, id);
@@ -890,12 +890,13 @@ public class Oneblock extends JavaPlugin {
             }
             default:
             //ver
-            sender.sendMessage(ChatColor.values()[rnd.nextInt(ChatColor.values().length)] +
-            	"  ▄▄    ▄▄\n"+
-            	"█    █  █▄▀\n"+
-            	"▀▄▄▀ █▄▀\n"+
-            	"Create by MrMarL \nPlugin version: v0.9.4p+\n" +   
-            	"Server version: "+ (superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
+            sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s",
+            	ChatColor.values()[rnd.nextInt(ChatColor.values().length)],
+            	"  ▄▄    ▄▄",
+            	"█    █  █▄▀",
+            	"▀▄▄▀ █▄▀",
+            	"Create by MrMarL\nPlugin version: v0.9.4p++",
+            	"Server version: ", superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
         } else {
@@ -959,6 +960,7 @@ public class Oneblock extends JavaPlugin {
         	}
         	level.size = blocks.size();
         }
+        max_lvl.size = blocks.size();
         //Progress_bar
         if (!superlegacy && Progress_bar && pInf.size() > 0 && pInf.get(0).bar == null) {
             max_lvl.color = Progress_color;
@@ -1112,8 +1114,17 @@ public class Oneblock extends JavaPlugin {
     public static int getlvl(String pl_name) {
     	return pInf.get(data.getInt("_" + pl_name)).lvl;
     }
+    public static int getnextlvl(String pl_name) {
+    	return getlvl(pl_name)+1;
+    }
     public static String getlvlname(String pl_name) {
     	int lvl = getlvl(pl_name);
+    	if (lvl < levels.size())
+    		return levels.get(lvl).name;
+    	return max_lvl.name;
+    }
+    public static String getnextlvlname(String pl_name) {
+    	int lvl = getnextlvl(pl_name);
     	if (lvl < levels.size())
     		return levels.get(lvl).name;
     	return max_lvl.name;

@@ -8,7 +8,7 @@ public class PlayerInfo {
 	public BossBar bar = null;
 	
 	void lvlup() {
-		lvl++;
+		++lvl;
 		breaks = 0;
 	}
 }
