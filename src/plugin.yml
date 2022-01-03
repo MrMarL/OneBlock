@@ -1,6 +1,6 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  0.9.4p++
+version:  0.9.4s++
 api-version: 1.13
 author:  MrMarL
 softdepend: [PlaceholderAPI, ItemsAdder]
