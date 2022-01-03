@@ -79,7 +79,7 @@ public class Oneblock extends JavaPlugin {
     BlockData[][][] island = null;
     static ArrayList <String> invite = new ArrayList<>();
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
-    String noperm = ChatColor.RED + "You don't have permission [Oneblock.set].";
+    String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
     @Override
     public void onEnable() {
     	version = "1." + XMaterial.getVersion();
@@ -298,11 +298,11 @@ public class Oneblock extends JavaPlugin {
     public void onDisable() {
         for (int i = 0; i < id; i++) {
         	PlayerInfo inf = pInf.get(i);
-            data.set("Score_" + i, inf.lvl);
+            data.set(String.format("Score_%d", i), inf.lvl);
             if (inf.breaks == 0)
-            	data.set("ScSlom_" + i, null);
+            	data.set(String.format("ScSlom_%d", i), null);
             else
-            	data.set("ScSlom_" + i, inf.breaks);
+            	data.set(String.format("ScSlom_%d", i), inf.breaks);
         }
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
@@ -312,7 +312,7 @@ public class Oneblock extends JavaPlugin {
 	            for (int xx = 0; xx < 7; xx++)
 	                for (int zz = 0; zz < 7; zz++)
 	                	y_now.add(island[xx][yy][zz].getAsString());
-	            map.put("y"+yy, y_now);
+	            map.put(String.format("y%d",yy), y_now);
             }
             config.set("custom_island", map);
         }
@@ -326,7 +326,7 @@ public class Oneblock extends JavaPlugin {
                 return ((Player)sender).performCommand("ob j");
             
             if (!sender.hasPermission("Oneblock.join")) {
-                sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.join].");
+                sender.sendMessage(String.format("%sYou don't have permission [Oneblock.join].", ChatColor.RED));
                 return true;
             }
             //
@@ -403,11 +403,11 @@ public class Oneblock extends JavaPlugin {
                     try {
                     	temp = Integer.parseInt(args[1]);
                     } catch (NumberFormatException nfe) {
-                    	sender.sendMessage(ChatColor.RED + "invalid value");
+                    	sender.sendMessage(String.format("%sinvalid value", ChatColor.RED));
                     	return true;
                     }
-                    if (temp > 1000 || temp < 100) {
-                    	sender.sendMessage(ChatColor.RED + "possible values are from 100 to 1000");
+                    if (temp > 1000 || temp < -1000) {
+                    	sender.sendMessage(String.format("%spossible values are from -1000 to 1000", ChatColor.RED));
                     	return true;
                     }
                     sto = temp;
@@ -438,36 +438,36 @@ public class Oneblock extends JavaPlugin {
             }
             case ("invite"):{
             	if (!sender.hasPermission("Oneblock.invite")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have the permission to execute this command");
+                    sender.sendMessage(String.format("%sYou don't have the permission to execute this command", ChatColor.RED));
                     return true;
                 }
             	if (args.length < 2) {
-            		sender.sendMessage(ChatColor.RED + "Usage: /ob invite <username> ");
+            		sender.sendMessage(String.format("%sUsage: /ob invite <username>", ChatColor.RED));
             		return true;
             	}
             	Player inv = Bukkit.getPlayer(args[1]);
             	if (inv != null) {
             		if (inv == (Player) sender) {
-            			sender.sendMessage(ChatColor.YELLOW + "You can't invite yourself.");
+            			sender.sendMessage(String.format("%sYou can't invite yourself.", ChatColor.YELLOW));
             			return true;
             		}
-            		if (!data.isInt("_" + ((Player)sender).getName())) {
-            			sender.sendMessage(ChatColor.YELLOW + "Please create a island before you do this.");
+            		if (!data.isInt(String.format("_%s", ((Player)sender).getName()))) {
+            			sender.sendMessage(String.format("%sPlease create a island before you do this.", ChatColor.YELLOW));
             			return true;
             		}
             		addinvite(((Player) sender).getName(),inv.getName());
-            		inv.sendMessage(ChatColor.GREEN +"You were invited by player "+inv.getName()+".\n"+
-            				ChatColor.RED +"/ob accept to accept).");
-            		sender.sendMessage(ChatColor.GREEN +"Succesfully invited "+inv.getName()+".");
+            		inv.sendMessage(String.format("%sYou were invited by player %s.\n%s/ob accept to accept).",
+            				ChatColor.GREEN, inv.getName(), ChatColor.RED));
+            		sender.sendMessage(String.format("%sSuccesfully invited %s.", ChatColor.GREEN, inv.getName()));
             	}
             	return true;
             }
             case ("accept"):{
             	Player pl = (Player) sender;
            	 	if (checkinvite(pl))
-           	 		sender.sendMessage(ChatColor.GREEN + "Succesfully accepted the invitation.");
+           	 		sender.sendMessage(String.format("%sSuccesfully accepted the invitation.", ChatColor.GREEN));
            	 	else
-           	 		sender.sendMessage(ChatColor.RED + "There is no Pending invitations for you.]");
+           	 		sender.sendMessage(String.format("%s[There is no Pending invitations for you.]",ChatColor.RED));
            		return true;
             }
             case ("idreset"):{
@@ -476,7 +476,7 @@ public class Oneblock extends JavaPlugin {
             	if (Progress_bar && data.isInt(name))
         			pInf.get(data.getInt(name)).bar.removePlayer(pl);
             	data.set(name, null);
-            	sender.sendMessage(ChatColor.GREEN +"Now your data has been reset. You can create a new island /ob join.");
+            	sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
             	return true;
             }
             case ("protection"):{
@@ -490,8 +490,8 @@ public class Oneblock extends JavaPlugin {
                     	config.set("protection", protection);
                 }
                 else
-                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
-                sender.sendMessage(ChatColor.GREEN + "the protection is now " + (protection?"enabled.":"disabled."));
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+            	sender.sendMessage(String.format("%sthe protection is now %s", ChatColor.GREEN, (protection?"enabled.":"disabled.")));
            		return true;
             }
             case ("autojoin"):{
@@ -505,8 +505,8 @@ public class Oneblock extends JavaPlugin {
                     	config.set("autojoin", autojoin);	
                 }
                 else
-                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
-                sender.sendMessage(ChatColor.GREEN + "autojoin is now " + (autojoin?"enabled.":"disabled."));
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                sender.sendMessage(String.format("%sautojoin is now %s", ChatColor.GREEN, (autojoin?"enabled.":"disabled.")));
            		return true;
             }
             //LVL
@@ -516,7 +516,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length <= 2) {
-                    sender.sendMessage(ChatColor.RED + "invalid format. try: /ob setlevel 'nickname' 'level'");
+                    sender.sendMessage(String.format("%sinvalid format. try: /ob setlevel 'nickname' 'level'", ChatColor.RED));
                     return true;
                 }
                 if (data.isInt("_" + args[1])) {
@@ -524,7 +524,7 @@ public class Oneblock extends JavaPlugin {
                     try {
                         setlvl = Integer.parseInt(args[2]);
                     } catch (NumberFormatException nfe) {
-                        sender.sendMessage(ChatColor.RED + "invalid level value.");
+                        sender.sendMessage(String.format("%sinvalid level value.", ChatColor.RED));
                         return true;
                     }
                     if (setlvl >= 0 && 10000 > setlvl) {
@@ -540,13 +540,13 @@ public class Oneblock extends JavaPlugin {
 	                    	inf.bar.setTitle(lvl.name);
 	                    	inf.bar.setColor(lvl.color);
                         }
-                        sender.sendMessage(ChatColor.GREEN + "for player " + args[1] + ", level " + args[2] + " is set.");
+                        sender.sendMessage(String.format("%sfor player %s, level %s is set.", ChatColor.GREEN, args[1], args[2]));
                         return true;
                     }
-                    sender.sendMessage(ChatColor.RED + "invalid level value.");
+                    sender.sendMessage(String.format("%sinvalid level value.", ChatColor.RED));
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "a player named " + args[1] + " was not found.");
+                sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
                 return true;
             }
             case ("clear"):{
@@ -555,14 +555,14 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length <= 1) {
-                    sender.sendMessage(ChatColor.RED + "invalid format. try: /ob clear 'nickname'");
+                    sender.sendMessage(String.format("%sinvalid format. try: /ob clear 'nickname'", ChatColor.RED));
                     return true;
                 }
-                if (data.isInt("_" + args[1])) {
-                    int i = data.getInt("_" + args[1]);
-                    data.set("Score_" + i, null);
-                    data.set("ScSlom_" + i, null);
-                    data.set("_" + args[1], null);
+                if (data.isInt(String.format("_%s", args[1]))) {
+                    int i = data.getInt(String.format("_%s", args[1]));
+                    data.set(String.format("Score_%d", i), null);
+                    data.set(String.format("ScSlom_%d", i), null);
+                    data.set(String.format("_%s", args[1]), null);
                     PlayerInfo inf = pInf.get(i);
                     inf.breaks = 0;
                     inf.lvl = 0;
@@ -575,10 +575,10 @@ public class Oneblock extends JavaPlugin {
                         for (int yy = 0; yy < 16; yy++)
                             for (int zz = 0; zz < 24; zz++)
                                 wor.getBlockAt(x_now + xx, y_now + yy, z_now + zz).setType(Material.AIR);
-                    sender.sendMessage(ChatColor.GREEN + "player " + args[1] + " island is destroyed! :D");
+                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "a player named " + args[1] + " was not found.");
+                sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
                 return true;
             }
             case ("lvl_mult"):{
@@ -587,24 +587,22 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length <= 1) {
-                    sender.sendMessage(ChatColor.GREEN + "level multiplier now: " + lvl_mult +
-                    		"\n5 by default");
+                    sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, lvl_mult));
                     return true;
                 }
                 int lvl = lvl_mult;
                 try {
                     lvl = Integer.parseInt(args[1]);
                 } catch (NumberFormatException nfe) {
-                    sender.sendMessage(ChatColor.RED + "invalid multiplier value.");
+                    sender.sendMessage(String.format("%sinvalid multiplier value.", ChatColor.RED));
                     return true;
                 }
                 if (lvl <= 20 && lvl >= 0) {
                     lvl_mult = lvl;
                     config.set("level_multiplier", lvl_mult);
                 } else
-                    sender.sendMessage(ChatColor.RED + "possible values: from 0 to 20.");
-                sender.sendMessage(ChatColor.GREEN + "level multiplier now: " + lvl_mult +
-                		"\n5 by default");
+                    sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
+                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, lvl_mult));
                 return true;
             }
             case ("progress_bar"):{
@@ -613,11 +611,11 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (superlegacy) {
-                    sender.sendMessage(ChatColor.RED + "You server version is super legacy! ProgressBar unsupported!");
+                    sender.sendMessage(String.format("%sYou server version is super legacy! ProgressBar unsupported!", ChatColor.RED));
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "and?");
+                    sender.sendMessage(String.format("%sand?", ChatColor.YELLOW));
                     return true;
                 }
                 if (args[1].equals("true") || args[1].equals("false")) {
@@ -635,7 +633,7 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (args[1].equalsIgnoreCase("color")) {
                     if (args.length == 2) {
-                        sender.sendMessage(ChatColor.YELLOW + "enter a color name.");
+                        sender.sendMessage(String.format("%senter a color name.", ChatColor.YELLOW));
                         return true;
                     }
                     try {
@@ -645,9 +643,9 @@ public class Oneblock extends JavaPlugin {
                         Blockfile();
                         config.set("Progress_bar_color", Progress_color.toString());
                     } catch (Exception e) {
-                        sender.sendMessage(ChatColor.YELLOW + "Please enter a valid color. For example: RED");
+                        sender.sendMessage(String.format("%sPlease enter a valid color. For example: RED", ChatColor.YELLOW));
                     }
-                    sender.sendMessage(ChatColor.GREEN + "Progress bar color = " + Progress_color.toString());
+                    sender.sendMessage(String.format("%sProgress bar color = %s", ChatColor.GREEN, Progress_color.toString()));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("level")) {
@@ -684,10 +682,10 @@ public class Oneblock extends JavaPlugin {
                     TextP = txt_bar;
                     if (PAPI)
                         for (Player ponl: Bukkit.getOnlinePlayers())
-                            pInf.get(data.getInt("_" + ponl.getName())).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
+                            pInf.get(data.getInt(String.format("_%s", ponl.getName()))).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "true, false, settext or level only!");
+                sender.sendMessage(String.format("%strue, false, settext or level only!", ChatColor.RED));
                 return true;
             }
             case ("listlvl"):{
@@ -700,14 +698,14 @@ public class Oneblock extends JavaPlugin {
                     try {
                     	temp = Integer.parseInt(args[1]);
                     } catch (NumberFormatException nfe) {
-                    	sender.sendMessage(ChatColor.RED + "invalid value");
+                    	sender.sendMessage(String.format("%sinvalid value", ChatColor.RED));
                     	return true;
                     }
                     if (levels.size()<=temp||temp<0) {
-                    	sender.sendMessage(ChatColor.RED + "undefined lvl");
+                    	sender.sendMessage(String.format("%sundefined lvl", ChatColor.RED));
                     	return true;
                     }
-                    sender.sendMessage(ChatColor.GREEN+levels.get(temp).name);
+                    sender.sendMessage(String.format("%s%s",ChatColor.GREEN, levels.get(temp).name));
                     int i = 0;
                     if (temp !=0)
                     	i = levels.get(temp-1).size;
@@ -721,7 +719,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 for(int i = 0;i<levels.size();i++)
-                	sender.sendMessage(i+": "+ChatColor.GREEN+levels.get(i).name);
+                	sender.sendMessage(String.format("%d: %s%s", i, ChatColor.GREEN, levels.get(i).name));
                 return true;
             }
             case ("reload"):{
@@ -730,30 +728,35 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "Reloading Plugin & Plugin Modules.");
+                    sender.sendMessage(String.format("%sReloading Plugin & Plugin Modules.", ChatColor.YELLOW));
+                    Blockfile();
+                    Flowerfile();
+                    Chestfile();
+                    Mobfile();
+                    sender.sendMessage(String.format("%sAll .yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("blocks.yml")) {
                     Blockfile();
-                    sender.sendMessage(ChatColor.GREEN + "Blocks.yml reloaded!");
+                    sender.sendMessage(String.format("%sBlocks.yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("flowers.yml")) {
                 	Flowerfile();
-                    sender.sendMessage(ChatColor.GREEN + "Flowers.yml reloaded!");
+                    sender.sendMessage(String.format("%sFlowers.yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("chests.yml")) {
                     Chestfile();
-                    sender.sendMessage(ChatColor.GREEN + "Chests.yml reloaded!");
+                    sender.sendMessage(String.format("%sChests.yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("mobs.yml")) {
                     Mobfile();
-                    sender.sendMessage(ChatColor.GREEN + "Mobs.yml reloaded!");
+                    sender.sendMessage(String.format("%sMobs.yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "try blocks.yml or chests.yml");
+                sender.sendMessage(String.format("%sTry blocks.yml or chests.yml", ChatColor.RED));
                 return true;
             }
             case ("chat_alert"):{
@@ -1101,7 +1104,7 @@ public class Oneblock extends JavaPlugin {
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][3][7];
         	for (int yy = 0; yy < 3; yy++) {
-	        	List<String> cust_s = config.getStringList("custom_island.y"+yy);
+	        	List<String> cust_s = config.getStringList(String.format("custom_island.y%d", yy));
 	            for (int xx = 0; xx < 7; xx++)
 	                for (int zz = 0; zz < 7; zz++)
 	                	island[xx][yy][zz] = Bukkit.createBlockData(cust_s.get(7*xx+zz));
@@ -1112,7 +1115,7 @@ public class Oneblock extends JavaPlugin {
         Config.Save(config,con);
     }
     public static int getlvl(String pl_name) {
-    	return pInf.get(data.getInt("_" + pl_name)).lvl;
+    	return pInf.get(data.getInt(String.format("_%s", pl_name))).lvl;
     }
     public static int getnextlvl(String pl_name) {
     	return getlvl(pl_name)+1;
@@ -1130,10 +1133,10 @@ public class Oneblock extends JavaPlugin {
     	return max_lvl.name;
     }
     public static int getblocks(String pl_name) {
-        return pInf.get(data.getInt("_" + pl_name)).breaks;
+        return pInf.get(data.getInt(String.format("_%s", pl_name))).breaks;
     }
     public static int getneed(String pl_name) {
-        PlayerInfo id_pl = pInf.get(data.getInt("_" + pl_name));
+        PlayerInfo id_pl = pInf.get(data.getInt(String.format("_%s", pl_name)));
         return 16 + id_pl.lvl * lvl_mult - id_pl.breaks;
     }
     @Override
@@ -1186,15 +1189,15 @@ public class Oneblock extends JavaPlugin {
 	                break;
                 case ("listlvl"):
 	            	for(int i = 0;i<levels.size();)
-	            		commands.add(""+i++);
+	            		commands.add(String.format("%d", i++));
 	            	break;
                 case ("frequency"):
                 	for(int i = 4;i<=20;)
-	            		commands.add(""+i++);
+	            		commands.add(String.format("%d", i++));
 	            	break;
                 case ("lvl_mult"):
                 	for(int i = 0;i<=20;)
-	            		commands.add(""+i++);
+	            		commands.add(String.format("%d", i++));
 	            	break;
                 case ("set"):
                 	commands.add("100");
@@ -1215,7 +1218,7 @@ public class Oneblock extends JavaPlugin {
         	}
         	else if (args[0].equals("setlevel"))
             	for (int i = 0;i<levels.size();)
-            		commands.add(""+i++);
+            		commands.add(String.format("%d", i++));
         Collections.sort(commands);
         return commands;
     }
