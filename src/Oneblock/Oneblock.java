@@ -946,6 +946,8 @@ public class Oneblock extends JavaPlugin {
         if (!block.exists())
             saveResource("blocks.yml", false);
         newConfigz = YamlConfiguration.loadConfiguration(block);
+        if (newConfigz.isString("MaxLevel"))
+        	max_lvl.name = newConfigz.getString("MaxLevel");
         for (int i = 0; newConfigz.isList(String.format("%d", i)); i++) {
         	List <String> bl_temp = newConfigz.getStringList(String.format("%d", i));
         	Level level = new Level(bl_temp.get(0));

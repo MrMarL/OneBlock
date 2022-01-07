@@ -1,5 +1,6 @@
 # Configuration of levels.
 # by MrMarL & Adarsh A
+MaxLevel: 'Level: MAX'
 '0':
 - 'Level: 0 - Grass starter'
 - GREEN
