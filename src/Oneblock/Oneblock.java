@@ -143,7 +143,7 @@ public class Oneblock extends JavaPlugin {
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		Player p = e.getPlayer(); World from = e.getFrom();
         	if (from.equals(wor)) {
-        		int i = data.getInt("_" + p.getName());
+        		int i = data.getInt(String.format("_%s", p.getName()));
         		if (i<pInf.size())
         			pInf.get(i).bar.removePlayer(p);
         	}
@@ -170,13 +170,14 @@ public class Oneblock extends JavaPlugin {
             on = true;
         }
     }
-    public void addinvite(String name ,String to) {
-    	if (invite.contains(name+" "+to))
+    public void addinvite(String name, String to) {
+    	String name_to = String.format("%s %s", name, to);
+    	if (invite.contains(name_to))
     		return;
-    	invite.add(name+" "+to);
+    	invite.add(name_to);
     	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, new Runnable() {
     		@Override
-    		public void run() {invite.remove(name+" "+to);}}, 300L);
+    		public void run() {invite.remove(name_to);}}, 300L);
     }
     public boolean checkinvite(Player pl) {
     	String name = pl.getName();
@@ -185,13 +186,15 @@ public class Oneblock extends JavaPlugin {
     		if (item.split(" ")[1].equals(name))
     			to = item.split(" ")[0];
     	}
-    	if (to!="" && invite.contains(to+" "+name)) {
-    		if (Progress_bar && data.isInt("_"+name))
-    			pInf.get(data.getInt("_"+name)).bar.removePlayer(pl);
-    		data.set("_"+name, null);
-    		data.set("_"+name, data.getInt("_"+to));
+    	String to_name = String.format("%s %s", to, name);
+    	if (to!="" && invite.contains(to_name)) {
+    		name = String.format("_%s", name);
+    		if (Progress_bar && data.isInt(name))
+    			pInf.get(data.getInt(name)).bar.removePlayer(pl);
+    		data.set(name, null);
+    		data.set(name, data.getInt(String.format("_%s", to)));
     		pl.performCommand("ob j");
-    		invite.remove(to+" "+name);
+    		invite.remove(to_name);
     		return true;
     	}
     	return false;
@@ -519,7 +522,7 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sinvalid format. try: /ob setlevel 'nickname' 'level'", ChatColor.RED));
                     return true;
                 }
-                if (data.isInt("_" + args[1])) {
+                if (data.isInt(String.format("_%s", args[1]))) {
                     int setlvl = 0;
                     try {
                         setlvl = Integer.parseInt(args[2]);
@@ -528,8 +531,8 @@ public class Oneblock extends JavaPlugin {
                         return true;
                     }
                     if (setlvl >= 0 && 10000 > setlvl) {
-                        int i = data.getInt("_" + args[1]);
-                        data.set("Score_" + i, setlvl);
+                        int i = data.getInt(String.format("_%s", args[1]));
+                        data.set(String.format("Score_%d", i), setlvl);
                         PlayerInfo inf = pInf.get(i);
                         inf.breaks = 0;
                         inf.lvl = setlvl;
@@ -898,7 +901,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.4s++",
+            	"Create by MrMarL\nPlugin version: v0.9.4m++",
             	"Server version: ", superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -915,12 +918,14 @@ public class Oneblock extends JavaPlugin {
             data.set("id", 0);
         id = data.getInt("id");
         for (int i = 0; i < id; i++) {
+        	String lvl = String.format("Score_%d", i);
+        	String breaks = String.format("ScSlom_%d", i);
         	PlayerInfo inf = new PlayerInfo();
-            if (!data.isInt("Score_" + i))
-                data.set("Score_" + i, 1);
-            if (data.isInt("ScSlom_" + i))
-    			inf.breaks = data.getInt("ScSlom_" + i);
-            inf.lvl = data.getInt("Score_" + i);
+            if (!data.isInt(lvl))
+                data.set(lvl, 1);
+            if (data.isInt(breaks))
+    			inf.breaks = data.getInt(breaks);
+            inf.lvl = data.getInt(lvl);
             pInf.add(inf);
         }
         saveData();
@@ -941,8 +946,8 @@ public class Oneblock extends JavaPlugin {
         if (!block.exists())
             saveResource("blocks.yml", false);
         newConfigz = YamlConfiguration.loadConfiguration(block);
-        for (int i = 0; newConfigz.isList(i + ""); i++) {
-        	List <String> bl_temp = newConfigz.getStringList(i + "");
+        for (int i = 0; newConfigz.isList(String.format("%d", i)); i++) {
+        	List <String> bl_temp = newConfigz.getStringList(String.format("%d", i));
         	Level level = new Level(bl_temp.get(0));
         	levels.add(level);
         	int q = 1;
