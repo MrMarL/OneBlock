@@ -334,8 +334,10 @@ public class Oneblock extends JavaPlugin {
             {
             case ("j"):
             case ("join"):{
-                if (config.getInt("y") == 0 || wor == null)
-                    return true;
+                if (config.getInt("y") == 0 || wor == null) {
+                	sender.sendMessage(String.format("%sFirst you need to set the reference coordinates '/ob set'.", ChatColor.YELLOW));
+                	return true;
+                }
                 Player p = (Player) sender;
                 String name = String.format("_%s", p.getName());
                 if (!data.isInt(name)) {
