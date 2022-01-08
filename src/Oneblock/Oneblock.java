@@ -5,7 +5,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import dev.lone.itemsadder.api.CustomStack;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -74,7 +73,7 @@ public class Oneblock extends JavaPlugin {
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean lvl_bar_mode = false, chat_alert = false;
     boolean protection = false;
-    boolean PAPI = false, CustomItem = false;
+    boolean PAPI = false;
     boolean Progress_bar = true;
     BlockData[][][] island = null;
     static ArrayList <String> invite = new ArrayList<>();
@@ -90,8 +89,6 @@ public class Oneblock extends JavaPlugin {
             new OBP().register();
             Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
         }
-        if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder"))
-        	CustomItem = true;
         Configfile();
         Datafile();
         Blockfile();
@@ -901,7 +898,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.4m++",
+            	"Create by MrMarL\nPlugin version: v0.9.5",
             	"Server version: ", superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -961,10 +958,10 @@ public class Oneblock extends JavaPlugin {
         	for (;q<bl_temp.size();q++) {
         		String text = bl_temp.get(q);
         		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
-	        	if (!a.isPresent() || a.get() == GRASS_BLOCK)
+        		if (text.charAt(0) == '/') 
+	            	blocks.add(text.replaceFirst("/", ""));
+        		else if (!a.isPresent() || a.get() == GRASS_BLOCK)
 	                blocks.add(null);
-	            else if (CustomItem && CustomStack.getInstance(text) != null) 
-	            	blocks.add(text);
 	            else
 	                blocks.add(a.get());
         	}

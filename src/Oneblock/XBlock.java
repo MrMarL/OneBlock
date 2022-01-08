@@ -1,5 +1,7 @@
 package Oneblock;
 
+import org.bukkit.Bukkit;
+
 /*
  * The MIT License (MIT)
  *
@@ -30,8 +32,6 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.*;
-
-import dev.lone.itemsadder.api.CustomBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -117,8 +117,9 @@ public final class XBlock {
         return material == Material.POTATO || material == Material.POTATOES;
     }
     
-    public static boolean setCustomType(@Nonnull Location loc, String name) {
-    	CustomBlock.place(name, loc);
+    public static boolean setCustomType(@Nonnull Location loc, String command) {
+    	Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+    			String.format(command, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     	return true;
     }
     
