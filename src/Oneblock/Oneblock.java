@@ -1025,24 +1025,43 @@ public class Oneblock extends JavaPlugin {
             }
         }
     }
+    
+    String Check(String type, String data) {
+    	if (!config.isString(type))
+            config.set(type, data);
+    	return config.getString(type);
+    }
+    int Check(String type, int data) {
+    	if (!config.isInt(type))
+            config.set(type, data);
+    	return config.getInt(type);
+    }
+    double Check(String type, double data) {
+    	if (!config.isDouble(type))
+            config.set(type, data);
+    	return config.getDouble(type);
+    }
+    boolean Check(String type, boolean data) {
+    	if (!config.isBoolean(type))
+            config.set(type, data);
+    	return config.getBoolean(type);
+    }
+    long Check(String type, long data) {
+    	if (!config.isLong(type))
+            config.set(type, data);
+    	return config.getLong(type);
+    }
+
 
     private void Configfile() {
     	File con = new File(getDataFolder(), "config.yml");
         if (!con.exists())
             saveResource("config.yml", false);
         config = this.getConfig();
-        if (!config.isString("world"))
-            config.set("world", "world");
-        wor = Bukkit.getWorld(config.getString("world"));
-        if (!config.isDouble("x"))
-            config.set("x", (double) x);
-        x = (int) config.getDouble("x");
-        if (!config.isDouble("y"))
-            config.set("y", (double) y);
-        y = (int) config.getDouble("y");
-        if (!config.isDouble("z"))
-            config.set("z", (double) z);
-        z = (int) config.getDouble("z");
+        wor = Bukkit.getWorld(Check("world", "world"));
+        x = (int) Check("x", (double) x);
+        y = (int) Check("y", (double) y);
+        z = (int) Check("z", (double) z);
         //leave - leaf
         if (config.isString("leafworld")) {
         	config.set("leaveworld", config.getString("leafworld"));
@@ -1060,53 +1079,29 @@ public class Oneblock extends JavaPlugin {
         	config.set("zleave", config.getDouble("zleaf"));
         	config.set("zleaf", null);
         }
-        if (!config.isString("leaveworld"))
-            config.set("leaveworld", "world");
-        leavewor = Bukkit.getWorld(config.getString("leaveworld"));
-        if (!config.isDouble("xleave"))
-            config.set("xleave", 0);
-        if (!config.isDouble("yleave"))
-            config.set("yleave", 0);
-        if (!config.isDouble("zleave"))
-            config.set("zleave", 0);
-        if (!config.isBoolean("Progress_bar"))
-            config.set("Progress_bar", true);
-        Progress_bar = config.getBoolean("Progress_bar");
+        leavewor = Bukkit.getWorld(Check("leaveworld", "world"));
+        Check("xleave", 0);
+        Check("yleave", 0);
+        Check("zleave", 0);
+        Progress_bar = Check("Progress_bar", true);
         if (superlegacy)
             Progress_bar = false;
-        if (!config.isInt("frequency"))
-            config.set("frequency", 7L);
-        fr = config.getLong("frequency");
+        fr = Check("frequency", 7L);
         //Text
         if (!superlegacy) {
-	        if (!config.isString("Progress_bar_text"))
-	            config.set("Progress_bar_text", "level");
-	        TextP = config.getString("Progress_bar_text");
+	        TextP = Check("Progress_bar_text", "level");
 	        if (TextP.equals("level"))
 	            lvl_bar_mode = true;
         }
         //alert
-        if (!config.isBoolean("Chat_alert"))
-        	config.set("Chat_alert", !lvl_bar_mode);
-        chat_alert = config.getBoolean("Chat_alert");
-        if (!config.isString("Progress_bar_color"))
-            config.set("Progress_bar_color", "GREEN");
+        chat_alert = Check("Chat_alert", !lvl_bar_mode);
         if (Progress_bar)
-            Progress_color = BarColor.valueOf(config.getString("Progress_bar_color"));
-        if (!config.isBoolean("Island_for_new_players"))
-            config.set("Island_for_new_players", true);
-        il3x3 = config.getBoolean("Island_for_new_players");
-        if (!config.isBoolean("Rebirth_on_the_island"))
-            config.set("Rebirth_on_the_island", true);
-        rebirth = config.getBoolean("Rebirth_on_the_island");
-        if (!config.isInt("level_multiplier"))
-            config.set("level_multiplier", lvl_mult);
-        lvl_mult = config.getInt("level_multiplier");
-        if (!config.isBoolean("protection"))
-            config.set("protection", protection);
-        protection = config.getBoolean("protection");
-        if (config.isBoolean("autojoin"))
-        	autojoin = config.getBoolean("autojoin");
+            Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
+        il3x3 = Check("Island_for_new_players", true);
+        rebirth = Check("Rebirth_on_the_island", true);
+        lvl_mult = Check("level_multiplier", lvl_mult);
+        protection = Check("protection", protection);
+        autojoin = Check("autojoin", autojoin);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][3][7];
         	for (int yy = 0; yy < 3; yy++) {
@@ -1118,7 +1113,7 @@ public class Oneblock extends JavaPlugin {
         }
         if (config.isInt("set"))
         	sto = config.getInt("set");
-        Config.Save(config,con);
+        Config.Save(config, con);
     }
     public static int getlvl(String pl_name) {
     	return pInf.get(data.getInt(String.format("_%s", pl_name))).lvl;

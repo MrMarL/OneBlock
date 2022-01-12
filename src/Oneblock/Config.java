@@ -14,14 +14,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class Config {
 	protected static File file;
 	
-	public static void Save (FileConfiguration fc,File f) {
+	public static void Save (FileConfiguration fc, File f) {
+		file = f;
 		if (XMaterial.supports(18)) {
 			try {
 				fc.save(f);
 				return;
 			} catch (IOException e) {}
 		}
-		file = f;
 		try {
 	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
 	        StringBuffer inputBuffer = new StringBuffer();
