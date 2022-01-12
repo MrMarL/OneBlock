@@ -1046,12 +1046,6 @@ public class Oneblock extends JavaPlugin {
             config.set(type, data);
     	return config.getBoolean(type);
     }
-    long Check(String type, long data) {
-    	if (!config.isLong(type))
-            config.set(type, data);
-    	return config.getLong(type);
-    }
-
 
     private void Configfile() {
     	File con = new File(getDataFolder(), "config.yml");
@@ -1086,7 +1080,9 @@ public class Oneblock extends JavaPlugin {
         Progress_bar = Check("Progress_bar", true);
         if (superlegacy)
             Progress_bar = false;
-        fr = Check("frequency", 7L);
+        if (!config.isInt("frequency"))
+            config.set("frequency", 7L);
+        fr = config.getLong("frequency");
         //Text
         if (!superlegacy) {
 	        TextP = Check("Progress_bar_text", "level");
