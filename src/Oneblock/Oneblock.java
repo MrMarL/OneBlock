@@ -51,7 +51,7 @@ public class Oneblock extends JavaPlugin {
     int id = 0;
     static ArrayList <PlayerInfo> pInf = new ArrayList <PlayerInfo>();
     FileConfiguration config, newConfigz;
-    static FileConfiguration data;
+    //static FileConfiguration data;
     static World wor;
 	World leavewor;
     int random = 0;
@@ -110,8 +110,8 @@ public class Oneblock extends JavaPlugin {
         public void Resp(PlayerRespawnEvent e) {
             if (rebirth) 
                 if (e.getPlayer().getWorld().equals(wor))
-                    if (data.isInt("_" + e.getPlayer().getName()))
-                        e.setRespawnLocation(new Location(wor, x + data.getInt("_" + e.getPlayer().getName()) * sto + 0.5, y + 1.2, z + 0.5));
+                    if (ExistId(e.getPlayer().getName()))
+                        e.setRespawnLocation(new Location(wor, x + GetId(e.getPlayer().getName()) * sto + 0.5, y + 1.2, z + 0.5));
         }
         @EventHandler
         public void AutoJ(PlayerTeleportEvent e) {
@@ -140,7 +140,7 @@ public class Oneblock extends JavaPlugin {
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		Player p = e.getPlayer(); World from = e.getFrom();
         	if (from.equals(wor)) {
-        		int i = data.getInt(String.format("_%s", p.getName()));
+        		int i = GetId(p.getName());
         		if (i<pInf.size())
         			pInf.get(i).bar.removePlayer(p);
         	}
@@ -177,23 +177,15 @@ public class Oneblock extends JavaPlugin {
     		public void run() {invite.remove(name_to);}}, 300L);
     }
     public boolean checkinvite(Player pl) {
-    	String name = pl.getName();
-    	String to = "";
-    	for(String item:invite) {
-    		if (item.split(" ")[1].equals(name))
-    			to = item.split(" ")[0];
-    	}
-    	String to_name = String.format("%s %s", to, name);
-    	if (to!="" && invite.contains(to_name)) {
-    		name = String.format("_%s", name);
-    		if (Progress_bar && data.isInt(name))
-    			pInf.get(data.getInt(name)).bar.removePlayer(pl);
-    		data.set(name, null);
-    		data.set(name, data.getInt(String.format("_%s", to)));
-    		pl.performCommand("ob j");
-    		invite.remove(to_name);
-    		return true;
-    	}
+		/*
+		 * String name = pl.getName(); String to = ""; for(String item:invite) { if
+		 * (item.split(" ")[1].equals(name)) to = item.split(" ")[0]; } String to_name =
+		 * String.format("%s %s", to, name); if (to!="" && invite.contains(to_name)) {
+		 * name = String.format("_%s", name); if (Progress_bar && data.isInt(name))
+		 * pInf.get(data.getInt(name)).bar.removePlayer(pl); data.set(name, null);
+		 * data.set(name, data.getInt(String.format("_%s", to)));
+		 * pl.performCommand("ob j"); invite.remove(to_name); return true; }
+		 */
     	return false;
     }
     public class Task implements Runnable {
@@ -201,10 +193,10 @@ public class Oneblock extends JavaPlugin {
             plonl = wor.getPlayers();
             Collections.shuffle(plonl);
             for (Player ponl: plonl) {
-            	String name = String.format("_%s", ponl.getName());
-            	if (!data.isInt(name))
+            	String name = ponl.getName();
+            	if (!ExistId(name))
             		continue;
-                Prob = data.getInt(name);
+                Prob = GetId(name);
                 Probeg = Prob * sto;
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int check = ponl.getLocation().getBlockX()-Probeg-x;
@@ -296,14 +288,17 @@ public class Oneblock extends JavaPlugin {
     }
 
     public void onDisable() {
-        for (int i = 0; i < id; i++) {
-        	PlayerInfo inf = pInf.get(i);
-            data.set(String.format("Score_%d", i), inf.lvl);
-            if (inf.breaks == 0)
-            	data.set(String.format("ScSlom_%d", i), null);
-            else
-            	data.set(String.format("ScSlom_%d", i), inf.breaks);
-        }
+		/*
+		 * for (int i = 0; i < id; i++) { PlayerInfo inf = pInf.get(i);
+		 * data.set(String.format("Score_%d", i), inf.lvl); if (inf.breaks == 0)
+		 * data.set(String.format("ScSlom_%d", i), null); else
+		 * data.set(String.format("ScSlom_%d", i), inf.breaks); }
+		 */
+    	try {
+    		File PlData = new File(getDataFolder(), "PlData.json");
+    		JsonSimple.Write(id, pInf, PlData);
+		} catch (Exception e) {}
+	
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
             List <String> y_now = new ArrayList <String>();
@@ -339,10 +334,10 @@ public class Oneblock extends JavaPlugin {
                 	return true;
                 }
                 Player p = (Player) sender;
-                String name = String.format("_%s", p.getName());
-                if (!data.isInt(name)) {
-                    id = data.getInt("id");
-                    data.set(name, id);
+                String name = p.getName();
+                if (!ExistId(name)) {
+                    //id = data.getInt("id");
+                    //data.set(name, id);
                     if (il3x3) {
                     	if (island != null) {
                     		int px = x + id * sto - 3;
@@ -358,10 +353,11 @@ public class Oneblock extends JavaPlugin {
                         }
                     }
                     id++;
-                    data.set("id", id);
+                    //data.set("id", id);
                     saveData();
                     PlayerInfo inf = new PlayerInfo();
                     pInf.add(inf);
+                    inf.nick = name;
                     if (!superlegacy && Progress_bar) {
                     	String temp = TextP;
                         if (lvl_bar_mode)
@@ -376,14 +372,14 @@ public class Oneblock extends JavaPlugin {
                     on = true;
                 }
                 if (Progress_bar)
-                	pInf.get(data.getInt(name)).bar.setVisible(true);
-                p.teleport(new Location(wor, x + data.getInt(name) * sto + 0.5, y + 1.2, z + 0.5));
+                	pInf.get(GetId(name)).bar.setVisible(true);
+                p.teleport(new Location(wor, x + GetId(name) * sto + 0.5, y + 1.2, z + 0.5));
                 return true;
             }
             case ("leave"):{
                 Player p = (Player) sender;
                 if (!superlegacy)
-                	pInf.get(data.getInt("_" + p.getName())).bar.removePlayer(p);
+                	pInf.get(GetId(p.getName())).bar.removePlayer(p);
                 if (config.getDouble("yleave") == 0 || leavewor == null)
                     return true;
                 p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave")));
@@ -453,7 +449,7 @@ public class Oneblock extends JavaPlugin {
             			sender.sendMessage(String.format("%sYou can't invite yourself.", ChatColor.YELLOW));
             			return true;
             		}
-            		if (!data.isInt(String.format("_%s", ((Player)sender).getName()))) {
+            		if (!ExistId(((Player)sender).getName())) {
             			sender.sendMessage(String.format("%sPlease create a island before you do this.", ChatColor.YELLOW));
             			return true;
             		}
@@ -474,10 +470,15 @@ public class Oneblock extends JavaPlugin {
             }
             case ("idreset"):{
             	Player pl = (Player)sender;
-            	String name = "_" + pl.getName();
-            	if (Progress_bar && data.isInt(name))
-        			pInf.get(data.getInt(name)).bar.removePlayer(pl);
-            	data.set(name, null);
+            	String name = pl.getName();
+            	if (Progress_bar && ExistId(name))
+        			pInf.get(GetId(name)).bar.removePlayer(pl);
+            	PlayerInfo plp = pInf.get(GetId(name));
+            	if (plp.nick.equals(name))
+            		plp = null;
+            	else
+            		plp.nicks.remove(name);
+            	//data.set(name, null);
             	sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
             	return true;
             }
@@ -521,7 +522,7 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sinvalid format. try: /ob setlevel 'nickname' 'level'", ChatColor.RED));
                     return true;
                 }
-                if (data.isInt(String.format("_%s", args[1]))) {
+                if (ExistId(args[1])) {
                     int setlvl = 0;
                     try {
                         setlvl = Integer.parseInt(args[2]);
@@ -530,8 +531,8 @@ public class Oneblock extends JavaPlugin {
                         return true;
                     }
                     if (setlvl >= 0 && 10000 > setlvl) {
-                        int i = data.getInt(String.format("_%s", args[1]));
-                        data.set(String.format("Score_%d", i), setlvl);
+                        int i = GetId(args[1]);
+                        //data.set(String.format("Score_%d", i), setlvl);
                         PlayerInfo inf = pInf.get(i);
                         inf.breaks = 0;
                         inf.lvl = setlvl;
@@ -560,11 +561,13 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sinvalid format. try: /ob clear 'nickname'", ChatColor.RED));
                     return true;
                 }
-                if (data.isInt(String.format("_%s", args[1]))) {
-                    int i = data.getInt(String.format("_%s", args[1]));
-                    data.set(String.format("Score_%d", i), null);
-                    data.set(String.format("ScSlom_%d", i), null);
-                    data.set(String.format("_%s", args[1]), null);
+                if (ExistId(args[1])) {
+                    int i = GetId(args[1]);
+					/*
+					 * data.set(String.format("Score_%d", i), null);
+					 * data.set(String.format("ScSlom_%d", i), null); data.set(String.format("_%s",
+					 * args[1]), null);
+					 */
                     PlayerInfo inf = pInf.get(i);
                     inf.breaks = 0;
                     inf.lvl = 0;
@@ -684,7 +687,7 @@ public class Oneblock extends JavaPlugin {
                     TextP = txt_bar;
                     if (PAPI)
                         for (Player ponl: Bukkit.getOnlinePlayers())
-                            pInf.get(data.getInt(String.format("_%s", ponl.getName()))).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
+                            pInf.get(GetId(ponl.getName())).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
                     return true;
                 }
                 sender.sendMessage(String.format("%strue, false, settext or level only!", ChatColor.RED));
@@ -832,11 +835,11 @@ public class Oneblock extends JavaPlugin {
                 		return true;
                 	}
                 	Player p = (Player) sender;
-                    String name = "_" + p.getName();
-                    if (data.isInt(name)) {
+                    String name = p.getName();
+                    if (ExistId(name)) {
                     	if (island == null)
                     		island = new BlockData[7][3][7];
-                        int px = x + data.getInt(name) * sto - 3;
+                        int px = x + GetId(name) * sto - 3;
                         for (int xx = 0; xx < 7; xx++)
                             for (int yy = 0; yy < 3; yy++)
                                 for (int zz = 0; zz < 7; zz++)
@@ -909,30 +912,55 @@ public class Oneblock extends JavaPlugin {
             return false;
         }
     }
+    
+    static int GetId(String name) {
+    	for(int i = 0; i<pInf.size() ;i++) {
+    		PlayerInfo pl = pInf.get(i);
+    		if (pl.nick == null)
+    			continue;
+    		if (pl.nick.equals(name))
+    			return i;
+    		if (pl.nicks.contains(name))
+    			return i;
+    	}
+    	return 0;
+    }
+    
+    boolean ExistId(String name) {
+    	for(PlayerInfo pl:pInf) {
+    		if (pl.nick == null)
+    			continue;
+    		if (pl.nick.equals(name))
+    			return true;
+    		if (pl.nicks.contains(name))
+    			return true;
+    	}
+    	return false;
+    }
 
     private void Datafile() {
-        File PlData = new File(getDataFolder(), "PlData.yml");
-        data = YamlConfiguration.loadConfiguration(PlData);
-        if (!data.isInt("id"))
-            data.set("id", 0);
-        id = data.getInt("id");
-        for (int i = 0; i < id; i++) {
-        	String lvl = String.format("Score_%d", i);
-        	String breaks = String.format("ScSlom_%d", i);
-        	PlayerInfo inf = new PlayerInfo();
-            if (!data.isInt(lvl))
-                data.set(lvl, 1);
-            if (data.isInt(breaks))
-    			inf.breaks = data.getInt(breaks);
-            inf.lvl = data.getInt(lvl);
-            pInf.add(inf);
-        }
-        saveData();
+		/*
+		 * File PlData = new File(getDataFolder(), "PlData.yml"); data =
+		 * YamlConfiguration.loadConfiguration(PlData); if (!data.isInt("id"))
+		 * data.set("id", 0); id = data.getInt("id"); for (int i = 0; i < id; i++) {
+		 * String lvl = String.format("Score_%d", i); String breaks =
+		 * String.format("ScSlom_%d", i); PlayerInfo inf = new PlayerInfo(); if
+		 * (!data.isInt(lvl)) data.set(lvl, 1); if (data.isInt(breaks)) inf.breaks =
+		 * data.getInt(breaks); inf.lvl = data.getInt(lvl); pInf.add(inf); } saveData();
+		 */
+    	try {
+    		File PlData = new File(getDataFolder(), "PlData.json");
+			pInf = JsonSimple.Read(PlData);
+			id = pInf.size();
+		} catch (Exception e) {Bukkit.getConsoleSender().sendMessage("[OneBlock] Error read PlData.json");}
+		
     }
 
     public void saveData() {
         try {
-            data.save(new File(getDataFolder(), "PlData.yml"));
+            //data.save(new File(getDataFolder(), "PlData.yml"));
+        	File PlData = new File(getDataFolder(), "PlData.json");
+    		JsonSimple.Write(id, pInf, PlData);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1112,7 +1140,7 @@ public class Oneblock extends JavaPlugin {
         Config.Save(config, con);
     }
     public static int getlvl(String pl_name) {
-    	return pInf.get(data.getInt(String.format("_%s", pl_name))).lvl;
+    	return pInf.get(GetId(pl_name)).lvl;
     }
     public static int getnextlvl(String pl_name) {
     	return getlvl(pl_name)+1;
@@ -1130,10 +1158,10 @@ public class Oneblock extends JavaPlugin {
     	return max_lvl.name;
     }
     public static int getblocks(String pl_name) {
-        return pInf.get(data.getInt(String.format("_%s", pl_name))).breaks;
+        return pInf.get(GetId(pl_name)).breaks;
     }
     public static int getneed(String pl_name) {
-        PlayerInfo id_pl = pInf.get(data.getInt(String.format("_%s", pl_name)));
+        PlayerInfo id_pl = pInf.get(GetId(pl_name));
         return 16 + id_pl.lvl * lvl_mult - id_pl.breaks;
     }
     @Override
