@@ -948,12 +948,9 @@ public class Oneblock extends JavaPlugin {
 		 * (!data.isInt(lvl)) data.set(lvl, 1); if (data.isInt(breaks)) inf.breaks =
 		 * data.getInt(breaks); inf.lvl = data.getInt(lvl); pInf.add(inf); } saveData();
 		 */
-    	try {
-    		File PlData = new File(getDataFolder(), "PlData.json");
-			pInf = JsonSimple.Read(PlData);
-			id = pInf.size();
-		} catch (Exception e) {Bukkit.getConsoleSender().sendMessage("[OneBlock] Error read PlData.json");}
-		
+    	File PlData = new File(getDataFolder(), "PlData.json");
+		pInf = JsonSimple.Read(PlData);
+		id = pInf.size();
     }
 
     public void saveData() {
