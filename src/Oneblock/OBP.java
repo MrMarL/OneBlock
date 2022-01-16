@@ -69,7 +69,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_top_%d_lvl%
         for(int i = 0;i<10;i++) {
-        	if (identifier.equals(String.format("top_%d_name", i+1)))
+        	if (identifier.equals(String.format("top_%d_lvl", i+1)))
                 return String.format("%d",Oneblock.gettop(i).lvl);
         }
         return null;
