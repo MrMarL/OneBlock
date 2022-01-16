@@ -1,6 +1,7 @@
 package Oneblock;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import org.bukkit.boss.BossBar;
 
@@ -15,4 +16,10 @@ public class PlayerInfo {
 		++lvl;
 		breaks = 0;
 	}
+	public static final Comparator<PlayerInfo> COMPARE_BY_LVL = new Comparator<PlayerInfo>() {
+		@Override
+		public int compare(PlayerInfo lhs, PlayerInfo rhs) {
+			return lhs.lvl - rhs.lvl;
+		}
+	};
 }

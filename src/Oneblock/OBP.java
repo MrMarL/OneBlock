@@ -58,6 +58,20 @@ public class OBP extends PlaceholderExpansion {
         if (identifier.equals("player_count")) {
             return String.format("%d", Oneblock.plonl.size());
         }
+        // %OB_owner_name%
+        if (identifier.equals("owner_name")) {
+            return Oneblock.pInf.get(Oneblock.GetId(p.getName())).nick;
+        }
+        // %OB_top_%d_name%
+        for(int i = 0;i<10;i++) {
+        	if (identifier.equals(String.format("top_%d_name", i+1)))
+                return Oneblock.gettop(i).nick;
+        }
+        // %OB_top_%d_lvl%
+        for(int i = 0;i<10;i++) {
+        	if (identifier.equals(String.format("top_%d_name", i+1)))
+                return String.format("%d",Oneblock.gettop(i).lvl);
+        }
         return null;
     }
 }
