@@ -19,7 +19,9 @@ public class PlayerInfo {
 	public static final Comparator<PlayerInfo> COMPARE_BY_LVL = new Comparator<PlayerInfo>() {
 		@Override
 		public int compare(PlayerInfo lhs, PlayerInfo rhs) {
-			return lhs.lvl - rhs.lvl;
+			if (rhs.nick == null)
+				return -1;
+			return rhs.lvl - lhs.lvl;
 		}
 	};
 }

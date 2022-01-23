@@ -186,14 +186,11 @@ public class Oneblock extends JavaPlugin {
 			return false;
 		String to_name = String.format("%s %s", to, name);
 		if (to!="" && invite.contains(to_name)) {
-			if (Progress_bar && ExistId(name))
-				pInf.get(GetId(name)).bar.removePlayer(pl);
 			if (ExistId(name)) {
-				if (ExistNoInvaitId(name))
-					pInf.get(GetId(name)).nick = null;
-				else 
-					pInf.get(GetId(name)).nicks.remove(to);
-			} 
+				if (Progress_bar)
+					pInf.get(GetId(name)).bar.removePlayer(pl);
+				pl.performCommand("ob idreset");
+			}
 			pInf.get(GetId(to)).nicks.add(name);
 			pl.performCommand("ob j"); 
 			invite.remove(to_name);
@@ -513,11 +510,19 @@ public class Oneblock extends JavaPlugin {
             case ("idreset"):{
             	Player pl = (Player)sender;
             	String name = pl.getName();
-            	if (Progress_bar && ExistId(name))
+            	if (!ExistId(name))
+            		return true;
+            	if (Progress_bar)
         			pInf.get(GetId(name)).bar.removePlayer(pl);
             	PlayerInfo plp = pInf.get(GetId(name));
-            	if (plp.nick.equals(name))
-            		plp.nick = null;
+            	if (plp.nick.equals(name)) {
+            		if (plp.nicks.size() > 0) {
+            			plp.nick = plp.nicks.get(0);
+            			plp.nicks.remove(0);
+            		}
+            		else
+            			plp.nick = null;
+            	}
             	else
             		plp.nicks.remove(name);
             	//data.set(name, null);
@@ -939,7 +944,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: premium v0.9.6 beta",
+            	"Create by MrMarL\nPlugin version: premium v0.9.6",
             	"Server version: ", superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -993,17 +998,11 @@ public class Oneblock extends JavaPlugin {
     }
 
     private void Datafile() {
-		/*
-		 * File PlData = new File(getDataFolder(), "PlData.yml"); data =
-		 * YamlConfiguration.loadConfiguration(PlData); if (!data.isInt("id"))
-		 * data.set("id", 0); id = data.getInt("id"); for (int i = 0; i < id; i++) {
-		 * String lvl = String.format("Score_%d", i); String breaks =
-		 * String.format("ScSlom_%d", i); PlayerInfo inf = new PlayerInfo(); if
-		 * (!data.isInt(lvl)) data.set(lvl, 1); if (data.isInt(breaks)) inf.breaks =
-		 * data.getInt(breaks); inf.lvl = data.getInt(lvl); pInf.add(inf); } saveData();
-		 */
     	File PlData = new File(getDataFolder(), "PlData.json");
-		pInf = JsonSimple.Read(PlData);
+		if (PlData.exists())
+			pInf = JsonSimple.Read(PlData);
+		else
+			pInf = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
 		id = pInf.size();
     }
 

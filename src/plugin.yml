@@ -3,7 +3,7 @@ main:  Oneblock.Oneblock
 version:  0.9.6
 api-version: 1.13
 author:  MrMarL
-softdepend: [PlaceholderAPI, ItemsAdder]
+softdepend: [PlaceholderAPI]
 commands:
   oneblock:
     description: Oneblock main command.
