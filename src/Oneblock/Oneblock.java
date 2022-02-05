@@ -189,7 +189,7 @@ public class Oneblock extends JavaPlugin {
 			if (ExistId(name)) {
 				if (Progress_bar)
 					pInf.get(GetId(name)).bar.removePlayer(pl);
-				pl.performCommand("ob idreset");
+				pl.performCommand("ob idreset /n");
 			}
 			pInf.get(GetId(to)).nicks.add(name);
 			pl.performCommand("ob j"); 
@@ -525,8 +525,8 @@ public class Oneblock extends JavaPlugin {
             	}
             	else
             		plp.nicks.remove(name);
-            	//data.set(name, null);
-            	sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
+            	if (!args[args.length-1].equals("/n"))
+            		sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
             	return true;
             }
             case ("protection"):{
