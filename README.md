@@ -11,6 +11,7 @@
 <br>▌/ob protection true - does not allow players to get out of the island)
 <br>▌/ob invite 'playername' - invites the player to the island.
 <br>▌# If you just want to visit, use /tpa...
+<br>▌/ob kick 'playername' - kick an invited player off your island.
 <br>▌/ob accept - to accept an invitation.
 <br>▌/ob IDreset - removes you from the player base. you will be able to create a new island.
 <br>▌/ob frequency "value" //less is better but lower tps (6 - 8 is recommend)
@@ -48,10 +49,22 @@
 <br>/ob clear 'player' - reset the player ob level and remove his island
 <br>/ob ver
 
-<br>PlaceholderAPI:
 <br>%OB_ver%
-<br>%OB_lvl%
-<br>%OB_break_on_this_lvl%
-<br>%OB_need_to_lvl_up%
-<br>%OB_lvl_name%
+<br>%OB_lvl% - The player's level number.
+<br>%OB_next_lvl% - The number of the next level.
+<br>%OB_break_on_this_lvl% - The number of broken blocks at this level.
+<br>%OB_need_to_lvl_up% - The number of blocks that still need to be broken to level up.
+<br>%OB_player_count% - The number of players in the OneBlock world.
+<br>%OB_lvl_name% - The name of the player's current level.
+<br>%OB_next_lvl_name% - The name of the next level.​
+<br>%OB_owner_name% - The name of the owner of your island.
+<br>%OB_top_1_name% - The name of the player with the highest island level.
+<br>%OB_top_2_name%
+...
+<br>%OB_top_10_name%
+<br>%OB_top_1_lvl% - The level of the player with the highest island level.
+<br>%OB_top_2_lvl%
+...
+<br>%OB_top_10_lvl%
+<br>%OB_number_of_invited% - The number of people invited to your island.
 <br>You can use placeholders in the progress bar text!</br>
