@@ -1152,9 +1152,9 @@ public class Oneblock extends JavaPlugin {
         	config.set("zleaf", null);
         }
         leavewor = Bukkit.getWorld(Check("leaveworld", "world"));
-        Check("xleave", 0);
-        Check("yleave", 0);
-        Check("zleave", 0);
+        Check("xleave", 0.0);
+        Check("yleave", 0.0);
+        Check("zleave", 0.0);
         Progress_bar = Check("Progress_bar", true);
         if (superlegacy)
             Progress_bar = false;
