@@ -5,8 +5,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import com.sk89q.worldedit.math.BlockVector3;
-
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -77,6 +75,7 @@ public class Oneblock extends JavaPlugin {
     boolean PAPI = false;
     boolean WorldGuard = false;
     boolean Progress_bar = true;
+    OBWorldGuard OBWorldGuard;
     BlockData[][][] island = null;
     static ArrayList <String> invite = new ArrayList<>();
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
@@ -94,6 +93,12 @@ public class Oneblock extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
         	WorldGuard = true;
             Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
+            if (legacy) {
+            	OBWorldGuard = new OBWorldGuard6();
+            }
+            else {
+            	OBWorldGuard = new OBWorldGuard7();
+            }
         }
         Configfile();
         Datafile();
@@ -373,8 +378,8 @@ public class Oneblock extends JavaPlugin {
                     //WorldGuard
                     if (OBWorldGuard.canUse && WorldGuard) {
                     	int xWG = x + id * sto;
-                    	BlockVector3 Block1 = BlockVector3.at(xWG - sto/2 + 1, 0, z-100);
-                        BlockVector3 Block2 = BlockVector3.at(xWG + sto/2 - 1, 255, z+100);
+                    	Vector Block1 = new Vector(xWG - sto/2 + 1, 0, z-100);
+                    	Vector Block2 = new Vector(xWG + sto/2 - 1, 255, z+100);
 	                    OBWorldGuard.CreateRegion(name, Block1, Block2, id);
                     }	
                     id++;
@@ -1066,8 +1071,8 @@ public class Oneblock extends JavaPlugin {
     			continue;
 			String name = owner.nick;
 			int xWG = x + i * sto;
-            BlockVector3 Block1 = BlockVector3.at(xWG - sto/2 + 1, 0, z-100);
-            BlockVector3 Block2 = BlockVector3.at(xWG + sto/2 - 1, 255, z+100);
+			Vector Block1 = new Vector(xWG - sto/2 + 1, 0, z-100);
+            Vector Block2 = new Vector(xWG + sto/2 - 1, 255, z+100);
             OBWorldGuard.CreateRegion(name, Block1, Block2, i);
             for (String member: owner.nicks) 
                 OBWorldGuard.addMember(member, i);

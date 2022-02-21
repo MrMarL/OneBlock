@@ -64,9 +64,9 @@
 		</dependency>
 
 		<dependency>
-	        <groupId>com.sk89q.worldedit</groupId>
-	        <artifactId>worldedit-bukkit</artifactId>
-	        <version>6.1</version>
+	        <groupId>com.sk89q.worldguard</groupId>
+	        <artifactId>worldguard-bukkit</artifactId>
+	        <version>7.0.0</version>
 	        <scope>provided</scope>
 	    </dependency>
 
@@ -76,5 +76,6 @@
 	        <version>6.2</version>
 	        <scope>provided</scope>
 	    </dependency>
+		
 	</dependencies>
 </project>
