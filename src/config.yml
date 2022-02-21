@@ -33,6 +33,8 @@ Rebirth_on_the_island: true
 level_multiplier: 5
 #Should we Prevent other players going from their island to others islands?
 protection: false
+#Create a WorldGuard region for each island? (only premium)
+WorldGuard: true
 #This is the block-distance between one Island to other.
 #Default value 100. If you increase this then More chunks will be generated.
 #Which causes more storage to be occupied

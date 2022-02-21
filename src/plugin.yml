@@ -1,9 +1,9 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  0.9.6
+version:  0.9.7
 api-version: 1.13
 author:  MrMarL
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI , WorldGuard]
 commands:
   oneblock:
     description: Oneblock main command.

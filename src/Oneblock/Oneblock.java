@@ -5,6 +5,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import com.sk89q.worldedit.math.BlockVector3;
+
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -73,6 +75,7 @@ public class Oneblock extends JavaPlugin {
     boolean lvl_bar_mode = false, chat_alert = false;
     boolean protection = false;
     boolean PAPI = false;
+    boolean WorldGuard = false;
     boolean Progress_bar = true;
     BlockData[][][] island = null;
     static ArrayList <String> invite = new ArrayList<>();
@@ -87,6 +90,10 @@ public class Oneblock extends JavaPlugin {
             PAPI = true;
             new OBP().register();
             Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+        	WorldGuard = true;
+            Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
         }
         Configfile();
         Datafile();
@@ -349,8 +356,6 @@ public class Oneblock extends JavaPlugin {
                 Player p = (Player) sender;
                 String name = p.getName();
                 if (!ExistId(name)) {
-                    //id = data.getInt("id");
-                    //data.set(name, id);
                     if (il3x3) {
                     	if (island != null) {
                     		int px = x + id * sto - 3;
@@ -365,6 +370,13 @@ public class Oneblock extends JavaPlugin {
                         				XBlock.setType(wor.getBlockAt(x + id * sto + i, y, z+ q),GRASS_BLOCK);
                         }
                     }
+                    //WorldGuard
+                    if (OBWorldGuard.canUse && WorldGuard) {
+                    	int xWG = x + id * sto;
+                    	BlockVector3 Block1 = BlockVector3.at(xWG - sto/2 + 1, 0, z-100);
+                        BlockVector3 Block2 = BlockVector3.at(xWG + sto/2 - 1, 255, z+100);
+	                    OBWorldGuard.CreateRegion(name, Block1, Block2, id);
+                    }	
                     id++;
                     //data.set("id", id);
                     saveData();
@@ -387,6 +399,9 @@ public class Oneblock extends JavaPlugin {
                 if (Progress_bar)
                 	pInf.get(GetId(name)).bar.setVisible(true);
                 p.teleport(new Location(wor, x + GetId(name) * sto + 0.5, y + 1.2, z + 0.5));
+                if (OBWorldGuard.canUse && WorldGuard) {
+                	OBWorldGuard.addMember(name, GetId(name));
+                }
                 return true;
             }
             case ("leave"):{
@@ -430,6 +445,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("z", (double) z);
                 Config.Save(config);
                 wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
+                ReCreateRegions();
                 return true;
             }
             case ("setleave"):{
@@ -468,7 +484,7 @@ public class Oneblock extends JavaPlugin {
             		}
             		addinvite(((Player) sender).getName(),inv.getName());
             		inv.sendMessage(String.format("%sYou were invited by player %s.\n%s/ob accept to accept).",
-            				ChatColor.GREEN, inv.getName(), ChatColor.RED));
+            				ChatColor.GREEN, ((Player) sender).getName(), ChatColor.RED));
             		sender.sendMessage(String.format("%sSuccesfully invited %s.", ChatColor.GREEN, inv.getName()));
             	}
             	return true;
@@ -489,6 +505,8 @@ public class Oneblock extends JavaPlugin {
             		}
             		if (pInf.get(GetId(name)).nicks.contains(args[1])) {
             			pInf.get(GetId(name)).nicks.remove(args[1]);
+            			if (OBWorldGuard.canUse && WorldGuard)
+            				OBWorldGuard.removeMember(inv.getName(), GetId(name));
             			inv.performCommand("ob j");
             			return true;
             		}
@@ -512,9 +530,10 @@ public class Oneblock extends JavaPlugin {
             	String name = pl.getName();
             	if (!ExistId(name))
             		return true;
+            	int PlId = GetId(name);
             	if (Progress_bar)
-        			pInf.get(GetId(name)).bar.removePlayer(pl);
-            	PlayerInfo plp = pInf.get(GetId(name));
+        			pInf.get(PlId).bar.removePlayer(pl);
+            	PlayerInfo plp = pInf.get(PlId);
             	if (plp.nick.equals(name)) {
             		if (plp.nicks.size() > 0) {
             			plp.nick = plp.nicks.get(0);
@@ -525,6 +544,8 @@ public class Oneblock extends JavaPlugin {
             	}
             	else
             		plp.nicks.remove(name);
+            	if (OBWorldGuard.canUse && WorldGuard)
+            		OBWorldGuard.removeMember(name, PlId);
             	if (!args[args.length-1].equals("/n"))
             		sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
             	return true;
@@ -542,6 +563,33 @@ public class Oneblock extends JavaPlugin {
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
             	sender.sendMessage(String.format("%sthe protection is now %s", ChatColor.GREEN, (protection?"enabled.":"disabled.")));
+           		return true;
+            }
+            case ("worldguard"):{
+            	if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(noperm);
+                    return true;
+                }
+            	if (!OBWorldGuard.canUse) {
+                    sender.sendMessage(String.format("%sThis feature is only available in the premium version of the plugin!", ChatColor.YELLOW));
+                    return true;
+                }
+            	if (!Bukkit.getPluginManager().isPluginEnabled("WorldGuard")){
+                    sender.sendMessage(String.format("%sThe WorldGuard plugin was not detected!", ChatColor.YELLOW));
+                    return true;
+                }
+            	if (args.length > 1 &&
+                	(args[1].equals("true") || args[1].equals("false"))) {
+                    	WorldGuard = Boolean.valueOf(args[1]);
+                    	config.set("WorldGuard", WorldGuard);
+                    	if (WorldGuard)
+                    		ReCreateRegions();
+                    	else
+                    		OBWorldGuard.RemoveRegions(id);
+                }
+                else
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+            	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
            		return true;
             }
             case ("autojoin"):{
@@ -779,6 +827,7 @@ public class Oneblock extends JavaPlugin {
                     Flowerfile();
                     Chestfile();
                     Mobfile();
+                    ReCreateRegions();
                     sender.sendMessage(String.format("%sAll .yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
@@ -944,7 +993,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.6",
+            	"Create by MrMarL\nPlugin version: v0.9.7",
             	"Server version: ", superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1004,11 +1053,29 @@ public class Oneblock extends JavaPlugin {
 		else
 			pInf = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
 		id = pInf.size();
+		ReCreateRegions();
+    }
+    
+    private void ReCreateRegions() {
+    	if (!WorldGuard || !OBWorldGuard.canUse)
+    		return;
+    	OBWorldGuard.RemoveRegions(id);
+		for (int i = 0; i < id; i++) {
+			PlayerInfo owner = pInf.get(i);
+			if (owner.nick == null)
+    			continue;
+			String name = owner.nick;
+			int xWG = x + i * sto;
+            BlockVector3 Block1 = BlockVector3.at(xWG - sto/2 + 1, 0, z-100);
+            BlockVector3 Block2 = BlockVector3.at(xWG + sto/2 - 1, 255, z+100);
+            OBWorldGuard.CreateRegion(name, Block1, Block2, i);
+            for (String member: owner.nicks) 
+                OBWorldGuard.addMember(member, i);
+        }
     }
 
     public void saveData() {
         try {
-            //data.save(new File(getDataFolder(), "PlData.yml"));
         	File PlData = new File(getDataFolder(), "PlData.json");
     		JsonSimple.Write(id, pInf, PlData);
         } catch (Exception e) {
@@ -1175,6 +1242,8 @@ public class Oneblock extends JavaPlugin {
         rebirth = Check("Rebirth_on_the_island", true);
         lvl_mult = Check("level_multiplier", lvl_mult);
         protection = Check("protection", protection);
+        if (WorldGuard && OBWorldGuard.canUse)
+        	WorldGuard = Check("WorldGuard", WorldGuard);
         autojoin = Check("autojoin", autojoin);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][3][7];
@@ -1230,7 +1299,7 @@ public class Oneblock extends JavaPlugin {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear",
-            		"lvl_mult","reload","frequency","islands","island_rebirth","protection","listlvl","autoJoin"));
+            		"lvl_mult","reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick")) {
@@ -1266,6 +1335,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("default");
                 case ("island_rebirth"):
                 case ("protection"):
+                case ("worldguard"):
                 case ("autoJoin"):
 	                commands.add("true");
 	                commands.add("false");

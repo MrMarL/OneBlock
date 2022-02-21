@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>0.9.6</version>
+  <version>0.9.7</version>
   <build>
     <plugins>
       <plugin>
@@ -26,6 +26,11 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+
+		<repository>
+	        <id>sk89q-repo</id>
+	        <url>https://maven.enginehub.org/repo/</url>
+	    </repository>
 	</repositories>
 	
 	<dependencies>
@@ -50,5 +55,26 @@
 		    <artifactId>json-simple</artifactId>
 		    <version>1.1.1</version>
 		</dependency>
+
+		<dependency>
+		  <groupId>org.bstats</groupId>
+		  <artifactId>bstats-bukkit</artifactId>
+		  <version>3.0.0</version>
+		  <scope>compile</scope>
+		</dependency>
+
+		<dependency>
+	        <groupId>com.sk89q.worldedit</groupId>
+	        <artifactId>worldedit-bukkit</artifactId>
+	        <version>6.1</version>
+	        <scope>provided</scope>
+	    </dependency>
+
+		<dependency>
+	        <groupId>com.sk89q.worldguard</groupId>
+	        <artifactId>worldguard-legacy</artifactId>
+	        <version>6.2</version>
+	        <scope>provided</scope>
+	    </dependency>
 	</dependencies>
 </project>
