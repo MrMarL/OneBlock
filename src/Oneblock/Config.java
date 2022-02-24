@@ -17,12 +17,10 @@ public class Config {
 	public static void Save (FileConfiguration fc, File f) {
 		file = f;
 		if (XMaterial.supports(18)) {
-			try {
-				fc.save(f);
-				return;
-			} catch (IOException e) {}
-		}
-		try {
+			try { fc.save(f); return; } 
+			catch (IOException e) {}
+		} 
+		else try {
 	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
 	        StringBuffer inputBuffer = new StringBuffer();
 	        String line;
