@@ -77,7 +77,7 @@ public class Oneblock extends JavaPlugin {
     boolean Progress_bar = true;
     OBWorldGuard OBWorldGuard;
     BlockData[][][] island = null;
-    static ArrayList <String> invite = new ArrayList<>();
+    static ArrayList <Invitation> invite = new ArrayList<>();
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
     String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
     @Override
@@ -179,36 +179,34 @@ public class Oneblock extends JavaPlugin {
         }
     }
     public void addinvite(String name, String to) {
-    	String name_to = String.format("%s %s", name, to);
-    	if (invite.contains(name_to))
-    		return;
-    	invite.add(name_to);
+    	for(Invitation item:invite) 
+			if (item.equals(name, to))
+				return;
+    	Invitation inv_ = new Invitation(name, to);
+    	invite.add(inv_);
     	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, new Runnable() {
     		@Override
-    		public void run() {invite.remove(name_to);}}, 300L);
+    		public void run() {invite.remove(inv_);}}, 300L);
     }
     public boolean checkinvite(Player pl) {
 		String name = pl.getName();
-		String to = ""; 
-		for(String item:invite) { 
-			if (item.split(" ")[1].equals(name)) 
-				to = item.split(" ")[0]; 
-		}
-		if (!ExistId(to))
+		Invitation inv_ = null; 
+		for(Invitation item:invite) 
+			if (item.Invited.equals(name)) 
+				inv_ = item; 
+		
+		if (inv_ == null || !ExistId(inv_.Inviting))
 			return false;
-		String to_name = String.format("%s %s", to, name);
-		if (to!="" && invite.contains(to_name)) {
-			if (ExistId(name)) {
-				if (Progress_bar)
-					pInf.get(GetId(name)).bar.removePlayer(pl);
-				pl.performCommand("ob idreset /n");
-			}
-			pInf.get(GetId(to)).nicks.add(name);
-			pl.performCommand("ob j"); 
-			invite.remove(to_name);
-			return true; 
+		 
+		if (ExistId(name)) {
+			if (Progress_bar)
+				pInf.get(GetId(name)).bar.removePlayer(pl);
+			pl.performCommand("ob idreset /n");
 		}
-    	return false;
+		pInf.get(GetId(inv_.Inviting)).nicks.add(name);
+		pl.performCommand("ob j"); 
+		invite.remove(inv_);
+		return true; 
     }
     public class Task implements Runnable {
         public void run() {
@@ -575,12 +573,12 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(noperm);
                     return true;
                 }
-            	if (!OBWorldGuard.canUse) {
-                    sender.sendMessage(String.format("%sThis feature is only available in the premium version of the plugin!", ChatColor.YELLOW));
-                    return true;
-                }
             	if (!Bukkit.getPluginManager().isPluginEnabled("WorldGuard")){
                     sender.sendMessage(String.format("%sThe WorldGuard plugin was not detected!", ChatColor.YELLOW));
+                    return true;
+                }
+            	if (OBWorldGuard == null || !OBWorldGuard.canUse) {
+                    sender.sendMessage(String.format("%sThis feature is only available in the premium version of the plugin!", ChatColor.YELLOW));
                     return true;
                 }
             	if (args.length > 1 &&
