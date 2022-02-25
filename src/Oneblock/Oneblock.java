@@ -374,7 +374,7 @@ public class Oneblock extends JavaPlugin {
                         }
                     }
                     //WorldGuard
-                    if (OBWorldGuard.canUse && WorldGuard) {
+                    if (WorldGuard && OBWorldGuard.canUse) {
                     	int xWG = x + id * sto;
                     	Vector Block1 = new Vector(xWG - sto/2 + 1, 0, z-100);
                     	Vector Block2 = new Vector(xWG + sto/2 - 1, 255, z+100);
@@ -402,7 +402,7 @@ public class Oneblock extends JavaPlugin {
                 if (Progress_bar)
                 	pInf.get(GetId(name)).bar.setVisible(true);
                 p.teleport(new Location(wor, x + GetId(name) * sto + 0.5, y + 1.2, z + 0.5));
-                if (OBWorldGuard.canUse && WorldGuard) {
+                if (WorldGuard && OBWorldGuard.canUse) {
                 	OBWorldGuard.addMember(name, GetId(name));
                 }
                 return true;
