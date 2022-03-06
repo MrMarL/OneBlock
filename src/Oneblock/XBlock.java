@@ -83,7 +83,7 @@ public final class XBlock {
         ITEM_TO_BLOCK.put(XMaterial.PUMPKIN_PIE, XMaterial.PUMPKIN);
     }
 
-    private XBlock() { }
+    private XBlock() {}
 
     public static boolean isCake(@Nullable Material material) {
         return material == Material.CAKE || material == BlockMaterial.CAKE_BLOCK.material;
@@ -263,7 +263,8 @@ public final class XBlock {
      * @return true if the raw block type matches with the material.
      * @see #isSimilar(Block, XMaterial)
      */
-    public static boolean isType(Block block, XMaterial material) {
+    @SuppressWarnings("incomplete-switch")
+	public static boolean isType(Block block, XMaterial material) {
         Material mat = block.getType();
         switch (material) {
             case CAKE:
@@ -296,9 +297,8 @@ public final class XBlock {
             case CAVE_AIR:
             case VOID_AIR:
                 return isAir(mat);
-		default:
-			return false;
         }
+        return false;
     }
 
     public static boolean isAir(@Nullable Material material) {
