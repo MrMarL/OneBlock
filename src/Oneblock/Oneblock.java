@@ -409,8 +409,11 @@ public class Oneblock extends JavaPlugin {
             }
             case ("leave"):{
                 Player p = (Player) sender;
-                if (!superlegacy)
-                	pInf.get(GetId(p.getName())).bar.removePlayer(p);
+                if (!superlegacy) {
+                	PlayerInfo p_inf = pInf.get(GetId(p.getName()));
+                	if (p_inf.bar != null)
+                		p_inf.bar.removePlayer(p);
+                	}
                 if (config.getDouble("yleave") == 0 || leavewor == null)
                     return true;
                 p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave")));
