@@ -3,7 +3,7 @@
 
 ### Discord. 
 [![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)
-### OneBlock minigame plugin. 
+### OneBlock minigame plugin commands. 
 **Main Commands:**
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob set - set the first block /ob set 1 time for the admin then just /ob join and the island will be created by itself ...
@@ -50,23 +50,25 @@
 <br>/ob setlevel "nick" 14 - set ob level
 <br>/ob clear 'player' - reset the player ob level and remove his island
 <br>/ob ver
+  
+## Placeholders
 
-<br>%OB_ver%
-<br>%OB_lvl% - The player's level number.
-<br>%OB_next_lvl% - The number of the next level.
-<br>%OB_break_on_this_lvl% - The number of broken blocks at this level.
-<br>%OB_need_to_lvl_up% - The number of blocks that still need to be broken to level up.
-<br>%OB_player_count% - The number of players in the OneBlock world.
-<br>%OB_lvl_name% - The name of the player's current level.
-<br>%OB_next_lvl_name% - The name of the next level.​
-<br>%OB_owner_name% - The name of the owner of your island.
-<br>%OB_top_1_name% - The name of the player with the highest island level.
-<br>%OB_top_2_name%
-...
-<br>%OB_top_10_name%
-<br>%OB_top_1_lvl% - The level of the player with the highest island level.
-<br>%OB_top_2_lvl%
-...
-<br>%OB_top_10_lvl%
-<br>%OB_number_of_invited% - The number of people invited to your island.
-<br>You can use placeholders in the progress bar text!</br>
+* %OB_ver%
+* %OB_lvl% - The player's level number.
+* %OB_next_lvl% - The number of the next level.
+* %OB_break_on_this_lvl% - The number of broken blocks at this level.
+* %OB_need_to_lvl_up% - The number of blocks that still need to be broken to level up.
+* %OB_player_count% - The number of players in the OneBlock world.
+* %OB_lvl_name% - The name of the player's current level.
+* %OB_next_lvl_name% - The name of the next level.​
+* %OB_owner_name% - The name of the owner of your island.
+* %OB_top_1_name% - The name of the player with the highest island level.
+* %OB_top_2_name%
+* ...
+* %OB_top_10_name%
+* %OB_top_1_lvl% - The level of the player with the highest island level.
+* %OB_top_2_lvl%
+* ...
+* %OB_top_10_lvl%
+* %OB_number_of_invited% - The number of people invited to your island.
+* You can use placeholders in the progress bar text!</br>
