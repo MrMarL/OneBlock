@@ -1,7 +1,9 @@
 # Oneblock
 <a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>*by MrMarL*
 
-### OneBlock minigame plugin.
+### Discord. 
+[![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)
+### OneBlock minigame plugin. 
 **Main Commands:**
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob set - set the first block /ob set 1 time for the admin then just /ob join and the island will be created by itself ...
