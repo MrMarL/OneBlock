@@ -67,7 +67,6 @@ public class Oneblock extends JavaPlugin {
     String TextP = "";
     int sto = 100;
     Long fr;
-    int Probeg = 0, Prob = 0;
     BarColor Progress_color;
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean lvl_bar_mode = false, chat_alert = false;
@@ -216,10 +215,11 @@ public class Oneblock extends JavaPlugin {
             	String name = ponl.getName();
             	if (!ExistId(name))
             		continue;
-                Prob = GetId(name);
-                Probeg = Prob * sto;
+                int plID = GetId(name);
+                int X_pl, Z_pl;
+                X_pl = plID * sto + x; Z_pl = z;
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
-                	int check = ponl.getLocation().getBlockX()-Probeg-x;
+                	int check = ponl.getLocation().getBlockX()-X_pl;
                 	if (check>50 || check<-50) {
                 		if (check>200 || check<-200) {
                 			ponl.performCommand("ob j");;
@@ -230,9 +230,9 @@ public class Oneblock extends JavaPlugin {
                 		continue;
                 	}
                 }
-                Block block = wor.getBlockAt(x + Probeg, y, z);
+                Block block = wor.getBlockAt(X_pl, y, Z_pl);
                 if (block.getType().equals(Material.AIR)) {
-                	PlayerInfo inf = pInf.get(Prob);
+                	PlayerInfo inf = pInf.get(plID);
                 	Level lvl_inf = max_lvl; 
                 	if (inf.lvl < levels.size())
                 		lvl_inf = levels.get(inf.lvl);
@@ -257,14 +257,14 @@ public class Oneblock extends JavaPlugin {
                         inf.bar.addPlayer(ponl);
                     }
                     Location loc = ponl.getLocation();
-                    if (loc.getBlockX() == x + Probeg && loc.getY() - 1 < y && loc.getBlockZ() == z) {
+                    if (loc.getBlockX() == X_pl && loc.getY() - 1 < y && loc.getBlockZ() == Z_pl) {
                         loc.setY(y+1);
                         ponl.teleport(loc);
                     }
                     else
-                    	for(Player pll :PlLst(Prob)) {
+                    	for(Player pll :PlLst(plID)) {
                     		loc = pll.getLocation();
-                            if (loc.getBlockX() == x + Probeg && loc.getY() - 1 < y && loc.getBlockZ() == z) {
+                            if (loc.getBlockX() == X_pl && loc.getY() - 1 < y && loc.getBlockZ() == Z_pl) {
                                 loc.setY(y+1);
                                 pll.teleport(loc);
                                 break;
@@ -275,7 +275,7 @@ public class Oneblock extends JavaPlugin {
                     if (blocks.get(random) == null) {
                         XBlock.setType(block, GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1)
-                            XBlock.setType(wor.getBlockAt(x + Probeg, y + 1, z),flowers.get(rnd.nextInt(flowers.size())));
+                            XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl),flowers.get(rnd.nextInt(flowers.size())));
                     } else if (blocks.get(random) == XMaterial.CHEST) {
                         try {
                             block.setType(Material.CHEST);
@@ -309,7 +309,7 @@ public class Oneblock extends JavaPlugin {
                             random = rnd.nextInt(mobs.size() / 3 * 2);
                         else
                             random = rnd.nextInt(mobs.size());
-                        wor.spawnEntity(new Location(wor, x + Probeg, y + 1, z), mobs.get(random));
+                        wor.spawnEntity(new Location(wor, X_pl, y + 1, Z_pl), mobs.get(random));
                     }
                 }
             }
