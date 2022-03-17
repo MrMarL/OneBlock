@@ -207,6 +207,25 @@ public class Oneblock extends JavaPlugin {
 		invite.remove(inv_);
 		return true; 
     }
+
+	public static void getFullCoord(int id, Integer x, Integer z) {
+		for (int i = 0; i < id; i++) {
+			if (x == z)
+				if (z < 0)
+					z++;
+				else
+					x++;
+			else if (x > z && -z < x)
+				z--;
+			else if (x <= -z && x > z)
+				x--;
+			else if (-x > z)
+				z++;
+			else
+				x++;
+		}
+	}
+    
     public class Task implements Runnable {
         public void run() {
             plonl = wor.getPlayers();
@@ -216,7 +235,8 @@ public class Oneblock extends JavaPlugin {
             	if (!ExistId(name))
             		continue;
                 int plID = GetId(name);
-                int X_pl, Z_pl;
+                Integer X_pl = 0, Z_pl = 0;
+                //getFullCoord(plID ,X_pl, Z_pl);
                 X_pl = plID * sto + x; Z_pl = z;
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int check = ponl.getLocation().getBlockX()-X_pl;
