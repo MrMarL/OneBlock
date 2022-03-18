@@ -74,6 +74,7 @@ public class Oneblock extends JavaPlugin {
     boolean PAPI = false;
     boolean WorldGuard = false;
     boolean Progress_bar = true;
+    boolean СircleMode = false;
     OBWorldGuard OBWorldGuard;
     BlockData[][][] island = null;
     static ArrayList <Invitation> invite = new ArrayList<>();
@@ -208,7 +209,7 @@ public class Oneblock extends JavaPlugin {
 		return true; 
     }
 
-	public static void getFullCoord(int id, Integer x, Integer z) {
+	public int[] getFullCoord(int id, int x, int z) {
 		for (int i = 0; i < id; i++) {
 			if (x == z)
 				if (z < 0)
@@ -224,6 +225,9 @@ public class Oneblock extends JavaPlugin {
 			else
 				x++;
 		}
+		x = x * sto + Oneblock.x;
+		z = z * sto + Oneblock.z;
+		return new int[] {x, z};
 	}
     
     public class Task implements Runnable {
@@ -235,9 +239,13 @@ public class Oneblock extends JavaPlugin {
             	if (!ExistId(name))
             		continue;
                 int plID = GetId(name);
-                Integer X_pl = 0, Z_pl = 0;
-                //getFullCoord(plID ,X_pl, Z_pl);
-                X_pl = plID * sto + x; Z_pl = z;
+                int X_pl = 0, Z_pl = 0;
+                if (СircleMode) {
+                	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                	X_pl = result[0]; Z_pl = result[1];
+                }
+                else
+                	{X_pl = plID * sto + x; Z_pl = z;}
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int check = ponl.getLocation().getBlockX()-X_pl;
                 	if (check>50 || check<-50) {
@@ -378,30 +386,36 @@ public class Oneblock extends JavaPlugin {
                 }
                 Player p = (Player) sender;
                 String name = p.getName();
+                int plID = 0;
+                int X_pl = 0, Z_pl = 0;
                 if (!ExistId(name)) {
+                	plID = id;
+                	if (СircleMode) { //GenType
+                    	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                    	X_pl = result[0]; Z_pl = result[1];
+                    }
+                    else { X_pl = x + plID * sto; Z_pl = z; }
                     if (il3x3) {
                     	if (island != null) {
-                    		int px = x + id * sto - 3;
+                    		int px = X_pl - 3;
                             for (int xx = 0; xx < 7; xx++)
                             	for (int yy = 0; yy < 3; yy++)
                                 	for (int zz = 0; zz < 7; zz++)
-                                    	wor.getBlockAt(px + xx, y + yy, z - 3 + zz).setBlockData(island[xx][yy][zz]);
+                                    	wor.getBlockAt(px + xx, y + yy, Z_pl - 3 + zz).setBlockData(island[xx][yy][zz]);
                         } else {
                         	for (int i = -2;i<=2;i++)
                         		for (int q = -2;q<=2;q++)
                         			if (Math.abs(i)+Math.abs(q) < 3)
-                        				XBlock.setType(wor.getBlockAt(x + id * sto + i, y, z+ q),GRASS_BLOCK);
+                        				XBlock.setType(wor.getBlockAt(X_pl + i, y, Z_pl+ q),GRASS_BLOCK);
                         }
                     }
                     //WorldGuard
                     if (WorldGuard && OBWorldGuard.canUse) {
-                    	int xWG = x + id * sto;
-                    	Vector Block1 = new Vector(xWG - sto/2 + 1, 0, z-100);
-                    	Vector Block2 = new Vector(xWG + sto/2 - 1, 255, z+100);
+                    	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
+                    	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
 	                    OBWorldGuard.CreateRegion(name, Block1, Block2, id);
                     }	
                     id++;
-                    //data.set("id", id);
                     saveData();
                     PlayerInfo inf = new PlayerInfo();
                     pInf.add(inf);
@@ -414,16 +428,24 @@ public class Oneblock extends JavaPlugin {
                         	temp = PlaceholderAPI.setPlaceholders(p, TextP);
                         inf.bar = (Bukkit.createBossBar(temp, levels.get(0).color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
                     }
+                } 
+                else {
+                	plID = GetId(name);
+                	if (СircleMode) { //GenType
+                    	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                    	X_pl = result[0]; Z_pl = result[1];
+                    }
+                    else { X_pl = x + plID * sto; Z_pl = z; }
                 }
                 if (!on) {
                     Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
                     on = true;
                 }
                 if (Progress_bar)
-                	pInf.get(GetId(name)).bar.setVisible(true);
-                p.teleport(new Location(wor, x + GetId(name) * sto + 0.5, y + 1.2, z + 0.5));
+                	pInf.get(plID).bar.setVisible(true);
+                p.teleport(new Location(wor, X_pl + 0.5, y + 1.2, Z_pl + 0.5));
                 if (WorldGuard && OBWorldGuard.canUse) {
-                	OBWorldGuard.addMember(name, GetId(name));
+                	OBWorldGuard.addMember(name, plID);
                 }
                 return true;
             }
@@ -1091,9 +1113,15 @@ public class Oneblock extends JavaPlugin {
 			if (owner.nick == null)
     			continue;
 			String name = owner.nick;
-			int xWG = x + i * sto;
-			Vector Block1 = new Vector(xWG - sto/2 + 1, 0, z-100);
-            Vector Block2 = new Vector(xWG + sto/2 - 1, 255, z+100);
+            int X_pl = 0, Z_pl = 0, plID = GetId(name);
+            if (СircleMode) {
+            	int result[] = getFullCoord(plID, X_pl, Z_pl);
+            	X_pl = result[0]; Z_pl = result[1];
+            }
+            else
+            	{X_pl = plID * sto + x; Z_pl = z;}
+			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
+        	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
             OBWorldGuard.CreateRegion(name, Block1, Block2, i);
             for (String member: owner.nicks) 
                 OBWorldGuard.addMember(member, i);
