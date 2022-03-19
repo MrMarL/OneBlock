@@ -86,19 +86,17 @@ public class Oneblock extends JavaPlugin {
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        	Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
             PAPI = true;
             new OBP().register();
-            Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
         }
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-        	WorldGuard = true;
-            Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
-            if (legacy) {
-            	OBWorldGuard = new OBWorldGuard6();
-            }
-            else {
-            	OBWorldGuard = new OBWorldGuard7();
-            }
+			Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
+			WorldGuard = true;
+			if (legacy)
+				OBWorldGuard = new OBWorldGuard6();
+			else
+				OBWorldGuard = new OBWorldGuard7();
         }
         Configfile();
         Datafile();
@@ -119,10 +117,17 @@ public class Oneblock extends JavaPlugin {
     public class Resp_AutoJ implements Listener {
         @EventHandler
         public void Resp(PlayerRespawnEvent e) {
-            if (rebirth) 
-                if (e.getPlayer().getWorld().equals(wor))
-                    if (ExistId(e.getPlayer().getName()))
-                        e.setRespawnLocation(new Location(wor, x + GetId(e.getPlayer().getName()) * sto + 0.5, y + 1.2, z + 0.5));
+            if (rebirth) {
+            	Player pl = e.getPlayer();
+                if (pl.getWorld().equals(wor))
+                    if (ExistId(pl.getName())) {
+                    	int plID = GetId(pl.getName());
+                        int X_pl = 0, Z_pl = 0;
+                        int result[] = getFullCoord(plID, X_pl, Z_pl);
+                        X_pl = result[0]; Z_pl = result[1];
+                    	e.setRespawnLocation(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
+                    }
+            }
         }
         @EventHandler
         public void AutoJ(PlayerTeleportEvent e) {
@@ -130,8 +135,7 @@ public class Oneblock extends JavaPlugin {
     		Location loc = e.getTo();
 			World from = e.getFrom().getWorld();
     		World to = loc.getWorld();
-        	if (!from.equals(wor) && to.equals(wor) &&
-        			!(loc.getY() == y+1.2 && loc.getZ() == z+0.5)){
+        	if (!from.equals(wor) && to.equals(wor) && !(loc.getY() == y+1.2013)){
         		e.setCancelled(true);
         		e.getPlayer().performCommand("ob j");
         		}
@@ -210,6 +214,8 @@ public class Oneblock extends JavaPlugin {
     }
 
 	public int[] getFullCoord(int id, int x, int z) {
+		if (!СircleMode)
+			return new int[] {id * sto + Oneblock.x, Oneblock.z};
 		for (int i = 0; i < id; i++) {
 			if (x == z)
 				if (z < 0)
@@ -240,21 +246,18 @@ public class Oneblock extends JavaPlugin {
             		continue;
                 int plID = GetId(name);
                 int X_pl = 0, Z_pl = 0;
-                if (СircleMode) {
-                	int result[] = getFullCoord(plID, X_pl, Z_pl);
-                	X_pl = result[0]; Z_pl = result[1];
-                }
-                else
-                	{X_pl = plID * sto + x; Z_pl = z;}
+                int result[] = getFullCoord(plID, X_pl, Z_pl);
+                X_pl = result[0]; Z_pl = result[1];
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
-                	int check = ponl.getLocation().getBlockX()-X_pl;
-                	if (check>50 || check<-50) {
-                		if (check>200 || check<-200) {
-                			ponl.performCommand("ob j");;
+                	int checkX = ponl.getLocation().getBlockX()-X_pl;
+                	int checkZ = СircleMode ? ponl.getLocation().getBlockZ()-Z_pl : 0;
+                	if (Math.abs(checkX) > 50 || Math.abs(checkZ) > 50) {
+                		if (Math.abs(checkX) > 200 || Math.abs(checkZ) > 200) {
+                			ponl.performCommand("ob j");
                 			continue;
                 		}
-                		ponl.setVelocity(new Vector(-check/30, 0, 0));
-                		ponl.sendMessage(String.format("%s%s%s%s", ChatColor.YELLOW, "are you trying to go ", ChatColor.RED, "outside the island?"));
+                		ponl.setVelocity(new Vector(-checkX/30, 0, -checkZ/30));
+                		ponl.sendMessage(String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED));
                 		continue;
                 	}
                 }
@@ -389,12 +392,9 @@ public class Oneblock extends JavaPlugin {
                 int plID = 0;
                 int X_pl = 0, Z_pl = 0;
                 if (!ExistId(name)) {
-                	plID = id;
-                	if (СircleMode) { //GenType
-                    	int result[] = getFullCoord(plID, X_pl, Z_pl);
-                    	X_pl = result[0]; Z_pl = result[1];
-                    }
-                    else { X_pl = x + plID * sto; Z_pl = z; }
+                	plID = id; //GenType
+                    int result[] = getFullCoord(plID, X_pl, Z_pl);
+                    X_pl = result[0]; Z_pl = result[1];
                     if (il3x3) {
                     	if (island != null) {
                     		int px = X_pl - 3;
@@ -430,12 +430,9 @@ public class Oneblock extends JavaPlugin {
                     }
                 } 
                 else {
-                	plID = GetId(name);
-                	if (СircleMode) { //GenType
-                    	int result[] = getFullCoord(plID, X_pl, Z_pl);
-                    	X_pl = result[0]; Z_pl = result[1];
-                    }
-                    else { X_pl = x + plID * sto; Z_pl = z; }
+                	plID = GetId(name); // GenType
+                	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                    X_pl = result[0]; Z_pl = result[1];
                 }
                 if (!on) {
                     Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
@@ -443,7 +440,7 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (Progress_bar)
                 	pInf.get(plID).bar.setVisible(true);
-                p.teleport(new Location(wor, X_pl + 0.5, y + 1.2, Z_pl + 0.5));
+                p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (WorldGuard && OBWorldGuard.canUse) {
                 	OBWorldGuard.addMember(name, plID);
                 }
@@ -458,7 +455,8 @@ public class Oneblock extends JavaPlugin {
                 	}
                 if (config.getDouble("yleave") == 0 || leavewor == null)
                     return true;
-                p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave")));
+                p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"),
+                		(float)config.getDouble("yawleave"), 0f));
                 return true;
             }
             case ("set"):{
@@ -508,6 +506,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("xleave", l.getX());
                 config.set("yleave", l.getY());
                 config.set("zleave", l.getZ());
+                config.set("yawleave", l.getYaw());
                 Config.Save(config);
                 return true;
             }
@@ -653,6 +652,21 @@ public class Oneblock extends JavaPlugin {
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
                 sender.sendMessage(String.format("%sautojoin is now %s", ChatColor.GREEN, (autojoin?"enabled.":"disabled.")));
+           		return true;
+            }
+            case ("circlemode"):{
+            	if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(noperm);
+                    return true;
+                }
+            	if (args.length > 1 &&
+						(args[1].equals("true") || args[1].equals("false"))) {
+					СircleMode = Boolean.valueOf(args[1]);
+					config.set("СircleMode", СircleMode);	
+                }
+                else
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                sender.sendMessage(String.format("%sСircleMode is now %s", ChatColor.GREEN, (СircleMode?"enabled.":"disabled.")));
            		return true;
             }
             //LVL
@@ -1041,7 +1055,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.7",
+            	"Create by MrMarL\nPlugin version: v0.9.8",
             	"Server version: ", superlegacy?"super legacy(1.7 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1114,12 +1128,8 @@ public class Oneblock extends JavaPlugin {
     			continue;
 			String name = owner.nick;
             int X_pl = 0, Z_pl = 0, plID = GetId(name);
-            if (СircleMode) {
-            	int result[] = getFullCoord(plID, X_pl, Z_pl);
-            	X_pl = result[0]; Z_pl = result[1];
-            }
-            else
-            	{X_pl = plID * sto + x; Z_pl = z;}
+            int result[] = getFullCoord(plID, X_pl, Z_pl);
+            X_pl = result[0]; Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
             OBWorldGuard.CreateRegion(name, Block1, Block2, i);
@@ -1276,6 +1286,7 @@ public class Oneblock extends JavaPlugin {
         Check("xleave", 0.0);
         Check("yleave", 0.0);
         Check("zleave", 0.0);
+        Check("yawleave", 0.0);
         Progress_bar = Check("Progress_bar", true);
         if (superlegacy)
             Progress_bar = false;
@@ -1295,6 +1306,7 @@ public class Oneblock extends JavaPlugin {
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
         lvl_mult = Check("level_multiplier", lvl_mult);
+        СircleMode = Check("СircleMode", СircleMode);
         protection = Check("protection", protection);
         if (WorldGuard && OBWorldGuard.canUse)
         	WorldGuard = Check("WorldGuard", WorldGuard);
@@ -1352,7 +1364,7 @@ public class Oneblock extends JavaPlugin {
         if (args.length == 1) {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear",
+            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear", "circlemode",
             		"lvl_mult","reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin"));
             }
         } else if (args.length == 2) {
@@ -1389,6 +1401,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("default");
                 case ("island_rebirth"):
                 case ("protection"):
+                case ("circlemode"):
                 case ("worldguard"):
                 case ("autoJoin"):
 	                commands.add("true");
