@@ -90,14 +90,6 @@ public class Oneblock extends JavaPlugin {
             PAPI = true;
             new OBP().register();
         }
-        if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
-			WorldGuard = true;
-			if (legacy)
-				OBWorldGuard = new OBWorldGuard6();
-			else
-				OBWorldGuard = new OBWorldGuard7();
-        }
         Configfile();
         Datafile();
         Blockfile();
@@ -107,10 +99,8 @@ public class Oneblock extends JavaPlugin {
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
                 Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new wor_null(), 32, 64);
-            } else {
-                Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
-                on = true;
-            }
+            } 
+            else wor_ok();
         }
         Bukkit.getPluginManager().registerEvents(new Resp_AutoJ(), this);
     }
@@ -180,6 +170,14 @@ public class Oneblock extends JavaPlugin {
         if (config.getDouble("y") != 0) {
             Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
             on = true;
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+			Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
+			WorldGuard = true;
+			if (legacy)
+				OBWorldGuard = new OBWorldGuard6();
+			else
+				OBWorldGuard = new OBWorldGuard7();
         }
     }
     public void addinvite(String name, String to) {
@@ -490,6 +488,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("y", (double) y);
                 config.set("z", (double) z);
                 Config.Save(config);
+                if (OBWorldGuard == null) wor_ok();
                 wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
                 ReCreateRegions();
                 return true;
@@ -552,7 +551,7 @@ public class Oneblock extends JavaPlugin {
             		}
             		if (pInf.get(GetId(name)).nicks.contains(args[1])) {
             			pInf.get(GetId(name)).nicks.remove(args[1]);
-            			if (OBWorldGuard.canUse && WorldGuard)
+            			if (WorldGuard && OBWorldGuard.canUse)
             				OBWorldGuard.removeMember(inv.getName(), GetId(name));
             			inv.performCommand("ob j");
             			return true;
@@ -591,7 +590,7 @@ public class Oneblock extends JavaPlugin {
             	}
             	else
             		plp.nicks.remove(name);
-            	if (OBWorldGuard.canUse && WorldGuard)
+            	if (WorldGuard && OBWorldGuard.canUse)
             		OBWorldGuard.removeMember(name, PlId);
             	if (!args[args.length-1].equals("/n"))
             		sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
