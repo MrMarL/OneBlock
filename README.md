@@ -8,6 +8,7 @@
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 <br>▌/ob set - set the first block /ob set 1 time for the admin then just /ob join and the island will be created by itself ...
 <br>▌/ob set 500 - set the first block and setting the distance of 500 blocks between the islands.
+<br>▌/ob circlemode true - the mode of creating islands in a circle.
 <br>▌/ob join - join a free block(x+100)
 <br>▌/ob autojoin true - when players connect to the world with oneblock mode, they will automatically join it.
 <br>▌/ob protection true - does not allow players to get out of the island)
