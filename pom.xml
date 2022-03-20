@@ -49,6 +49,7 @@
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -84,18 +85,13 @@
 		<defaultGoal>clean package</defaultGoal>
 		<resources>
 			<resource>
-				<directory>src</directory>
+				<directory>${src.dir}</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

@@ -9,17 +9,13 @@
     <defaultGoal>clean package</defaultGoal>
     <resources>
       <resource>
-        <directory>src</directory>
+        <directory>${src.dir}</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
     </resources>
     <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.2.0</version>
-      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
@@ -75,6 +71,12 @@
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
       <version>2.9.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>1.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
