@@ -111,11 +111,8 @@ public class Oneblock extends JavaPlugin {
             	Player pl = e.getPlayer();
                 if (pl.getWorld().equals(wor))
                     if (ExistId(pl.getName())) {
-                    	int plID = GetId(pl.getName());
-                        int X_pl = 0, Z_pl = 0;
-                        int result[] = getFullCoord(plID, X_pl, Z_pl);
-                        X_pl = result[0]; Z_pl = result[1];
-                    	e.setRespawnLocation(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
+						int result[] = getFullCoord(GetId(pl.getName()), 0, 0);
+						e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
                     }
             }
         }
@@ -243,9 +240,8 @@ public class Oneblock extends JavaPlugin {
             	if (!ExistId(name))
             		continue;
                 int plID = GetId(name);
-                int X_pl = 0, Z_pl = 0;
-                int result[] = getFullCoord(plID, X_pl, Z_pl);
-                X_pl = result[0]; Z_pl = result[1];
+                int result[] = getFullCoord(plID, 0, 0);
+                int X_pl = result[0], Z_pl = result[1];
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int checkX = ponl.getLocation().getBlockX()-X_pl;
                 	int checkZ = СircleMode ? ponl.getLocation().getBlockZ()-Z_pl : 0;
@@ -1126,9 +1122,8 @@ public class Oneblock extends JavaPlugin {
 			if (owner.nick == null)
     			continue;
 			String name = owner.nick;
-            int X_pl = 0, Z_pl = 0, plID = GetId(name);
-            int result[] = getFullCoord(plID, X_pl, Z_pl);
-            X_pl = result[0]; Z_pl = result[1];
+            int result[] = getFullCoord(GetId(name), 0, 0);
+            int X_pl = result[0], Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
             OBWorldGuard.CreateRegion(name, Block1, Block2, i);
