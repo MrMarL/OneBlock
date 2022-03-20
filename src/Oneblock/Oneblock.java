@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -85,6 +86,7 @@ public class Oneblock extends JavaPlugin {
     	version = "1." + XMaterial.getVersion();
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
+        new Metrics(this, 14477);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
         	Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
             PAPI = true;
