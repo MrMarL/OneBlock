@@ -721,7 +721,8 @@ public class Oneblock extends JavaPlugin {
                     inf.lvl = 0;
                     if (Progress_bar)
                     	inf.bar.setVisible(false);
-                    int x_now = x + i * 100 - 12, y_now = y - 6, z_now = z - 12;
+                    int result[] = getFullCoord(i, 0, 0);
+                    int x_now = result[0] - 12, y_now = y - 6, z_now = result[1] - 12;
                     if (y_now <= 1)
                         y_now = 1;
                     for (int xx = 0; xx < 24; xx++)
