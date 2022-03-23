@@ -11,6 +11,8 @@ import java.util.Arrays;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import main.java.xseriesoneblock.XMaterial;
+
 public class Config {
 	protected static File file;
 	

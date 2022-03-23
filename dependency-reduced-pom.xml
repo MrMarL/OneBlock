@@ -59,6 +59,13 @@
       <id>sk89q-repo</id>
       <url>https://maven.enginehub.org/repo/</url>
     </repository>
+    <repository>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <id>XSeriesOneBlock-main</id>
+      <url>https://raw.github.com/MrMarL/XSeriesOneBlock/main/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>

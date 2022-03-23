@@ -26,6 +26,15 @@
 			<id>sk89q-repo</id>
 			<url>https://maven.enginehub.org/repo/</url>
 		</repository>
+
+		<repository>
+			<id>XSeriesOneBlock-main</id>
+			<url>https://raw.github.com/MrMarL/XSeriesOneBlock/main/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -77,6 +86,13 @@
 			<artifactId>worldguard-legacy</artifactId>
 			<version>6.2</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>XSeriesOneBlock</groupId>
+			<artifactId>XSeriesOneBlock</artifactId>
+			<version>1.8</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
