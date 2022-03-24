@@ -35,6 +35,15 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+
+		<repository>
+			<id>WorldGuardOneBlock-main</id>
+			<url>https://raw.github.com/MrMarL/WorldGuardOneBlock/main/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -69,6 +78,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>WorldGuardOneBlock</groupId>
+			<artifactId>WorldGuardOneBlock</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.sk89q.worldguard</groupId>
 			<artifactId>worldguard-bukkit</artifactId>
 			<version>7.0.0</version>
@@ -91,7 +107,7 @@
 		<dependency>
 			<groupId>XSeriesOneBlock</groupId>
 			<artifactId>XSeriesOneBlock</artifactId>
-			<version>1.8</version><!-- ver 1.8 for 1.8.X ~ 1.18.X; ver 1.7 for 1.7.X; -->
+			<version>1.8</version> <!-- ver 1.8 for 1.8.X ~ 1.18.X; ver 1.7 for 1.7.X; -->
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -117,7 +133,7 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
