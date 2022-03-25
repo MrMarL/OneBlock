@@ -1141,9 +1141,8 @@ public class Oneblock extends JavaPlugin {
         try {
         	File PlData = new File(getDataFolder(), "PlData.json");
     		JsonSimple.Write(id, pInf, PlData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } 
+        catch (Exception e) { e.printStackTrace(); }
     }
 
     private void Blockfile() {
@@ -1165,8 +1164,8 @@ public class Oneblock extends JavaPlugin {
         			level.color = BarColor.valueOf(bl_temp.get(1));
         			q++;
         		} catch(Exception e) {level.color = Progress_color;}
-        	for (;q<bl_temp.size();q++) {
-        		String text = bl_temp.get(q);
+        	while (q < bl_temp.size()) {
+        		String text = bl_temp.get(q++);
         		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
         		if (text.charAt(0) == '/') 
 	            	blocks.add(text.replaceFirst("/", ""));
@@ -1307,6 +1306,7 @@ public class Oneblock extends JavaPlugin {
         if (WorldGuard && OBWorldGuard.canUse)
         	WorldGuard = Check("WorldGuard", WorldGuard);
         autojoin = Check("autojoin", autojoin);
+        sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][3][7];
         	for (int yy = 0; yy < 3; yy++) {
@@ -1316,8 +1316,6 @@ public class Oneblock extends JavaPlugin {
 	                	island[xx][yy][zz] = Bukkit.createBlockData(cust_s.get(7*xx+zz));
         	}
         }
-        if (config.isInt("set"))
-        	sto = config.getInt("set");
         Config.Save(config, con);
     }
     public static int getlvl(String pl_name) {
