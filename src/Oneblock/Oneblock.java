@@ -102,7 +102,7 @@ public class Oneblock extends JavaPlugin {
         Mobfile();
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
-                Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new wor_null(), 32, 64);
+                Bukkit.getScheduler().runTaskTimer(this, (Runnable) new wor_null(), 32, 64);
             } 
             else wor_ok();
         }
@@ -169,7 +169,7 @@ public class Oneblock extends JavaPlugin {
     public void wor_ok() {
         Bukkit.getScheduler().cancelTasks(this);
         if (config.getDouble("y") != 0) {
-            Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
+            Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
             on = true;
         }
         if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
@@ -354,12 +354,12 @@ public class Oneblock extends JavaPlugin {
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
             List <String> y_now = new ArrayList <String>();
-            for (int yy = 0;yy<3;yy++) {
+            for (int yy = 0; yy < 3; yy++) {
             	y_now.clear();
 	            for (int xx = 0; xx < 7; xx++)
 	                for (int zz = 0; zz < 7; zz++)
 	                	y_now.add(island[xx][yy][zz].getAsString());
-	            map.put(String.format("y%d",yy), y_now);
+	            map.put(String.format("y%d", yy), y_now);
             }
             config.set("custom_island", map);
         }
@@ -961,7 +961,7 @@ public class Oneblock extends JavaPlugin {
                         Sfr = " (Slower)";
                     else
                         Sfr = " (Max TPS)";
-                    Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
+                    Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
                 }
                 sender.sendMessage(ChatColor.GREEN + "Now frequency = " + fr + Sfr);
                 return true;
@@ -1226,11 +1226,8 @@ public class Oneblock extends JavaPlugin {
             saveResource("mobs.yml", false);
         newConfigz = YamlConfiguration.loadConfiguration(mob);
         for (int i = 0; newConfigz.isString("id" + i); i++) {
-            try {
-                mobs.add(EntityType.valueOf((newConfigz.getString("id" + i))));
-            } catch (Exception ex) {
-                // not supported mob)
-            }
+        	try { mobs.add(EntityType.valueOf((newConfigz.getString("id" + i))));
+            } catch (Exception ex) {/* not supported mob */}
         }
     }
     
