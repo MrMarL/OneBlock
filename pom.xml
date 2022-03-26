@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>XSeriesOneBlock</groupId>
 			<artifactId>XSeriesOneBlock</artifactId>
-			<version>1.8</version> <!-- ver 1.8 for 1.8.X ~ 1.18.X; ver 1.7 for 1.7.X; -->
+			<version>1.8</version> <!-- ver 1.8 for 1.8.X ~ 1.18.X; ver 1.7 for 1.6.X ~ 1.7.X; -->
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
