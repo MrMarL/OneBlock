@@ -55,12 +55,12 @@ public class Config {
 	        fileOut.close();
 		
 		} catch (Exception e) {
-	        try {
+			try {
 				fc.save(f);
 			} catch (Exception e1) {
 				System.out.println("Problem reading config.yml.");
 			}
-	    }
+		}
 	}
 	
 	public static void Save (FileConfiguration fc) {
