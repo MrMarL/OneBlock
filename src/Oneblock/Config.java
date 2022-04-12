@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -20,7 +19,7 @@ public class Config {
 		file = f;
 		if (XMaterial.supports(18)) {
 			try { fc.save(f); return; } 
-			catch (IOException e) {}
+			catch (Exception e) {}
 		} 
 		else try {
 	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
