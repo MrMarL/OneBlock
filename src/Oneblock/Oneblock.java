@@ -311,9 +311,9 @@ public class Oneblock extends JavaPlugin {
                             Chest chest = (Chest) block.getState();
                             Inventory inv = chest.getInventory();
                             ArrayList <Material> ch_now;
-                            if (random < 26)
+                            if (random < blocks.size() / 3)
                             	ch_now = s_ch;
-                            else if (random < 68)
+                            else if (random < blocks.size() / 1.5)
                             	ch_now = m_ch;
                             else
                             	ch_now = h_ch;
