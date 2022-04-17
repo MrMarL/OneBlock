@@ -172,14 +172,17 @@ public class Oneblock extends JavaPlugin {
             Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
             on = true;
         }
-        if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
-			WorldGuard = true;
-			if (legacy)
+        boolean WGpl = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
+        if (WGpl) {
+        	Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
+        	if (legacy)
 				OBWorldGuard = new OBWorldGuard6();
 			else
 				OBWorldGuard = new OBWorldGuard7();
         }
+        if (!WGpl && WorldGuard)
+        	WorldGuard = false;
+        ReCreateRegions();
     }
     public void addinvite(String name, String to) {
     	for(Invitation item:invite) 
@@ -1055,7 +1058,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.8r",
+            	"Create by MrMarL\nPlugin version: v0.9.8r2",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1115,7 +1118,6 @@ public class Oneblock extends JavaPlugin {
 		else
 			pInf = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
 		id = pInf.size();
-		ReCreateRegions();
     }
     
     private void ReCreateRegions() {
@@ -1303,8 +1305,7 @@ public class Oneblock extends JavaPlugin {
         lvl_mult = Check("level_multiplier", lvl_mult);
         СircleMode = Check("СircleMode", СircleMode);
         protection = Check("protection", protection);
-        if (WorldGuard && OBWorldGuard.canUse)
-        	WorldGuard = Check("WorldGuard", WorldGuard);
+        WorldGuard = Check("WorldGuard", WorldGuard);
         autojoin = Check("autojoin", autojoin);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
