@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -83,6 +84,11 @@ public class Oneblock extends JavaPlugin {
     static ArrayList <Invitation> invite = new ArrayList<>();
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
     String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
+    VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    
+	@Override
+	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
+    
     @Override
     public void onEnable() {
     	version = "1." + XMaterial.getVersion();
