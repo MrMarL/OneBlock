@@ -12,6 +12,10 @@ public class PlayerInfo {
 	public int breaks = 0;
 	public BossBar bar = null;
 	
+	public PlayerInfo(String name) {
+		nick = name;
+	}
+	
 	void lvlup() {
 		++lvl;
 		breaks = 0;

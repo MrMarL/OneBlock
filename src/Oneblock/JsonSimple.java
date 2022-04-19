@@ -53,17 +53,16 @@ public class JsonSimple {
 		ArrayList <PlayerInfo> infs = new ArrayList <PlayerInfo>();
 		if(main == null)
 			return infs;
-		PlayerInfo nullable = new PlayerInfo();
-		nullable.nick = null;
+		PlayerInfo nullable = new PlayerInfo(null);
 		int id = ((Number) main.get("id")).intValue();
 		for(int i = 0; i<id ;i++) {
-			PlayerInfo pl = new PlayerInfo();
 			JSONObject user = (JSONObject) main.get(""+i);
 			if (user == null) {
 				infs.add(nullable);
 				continue;
 			}
-			pl.nick = (String) user.get("nick");
+			String nick = (String) user.get("nick");
+			PlayerInfo pl = new PlayerInfo(nick);
 			pl.lvl = ((Number) user.get("lvl")).intValue();
 			pl.breaks = ((Number) user.get("breaks")).intValue();
 			JSONArray arr = (JSONArray) user.get("invated");

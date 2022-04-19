@@ -22,13 +22,13 @@ public class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return "0.9.6";
+        return "0.9.9";
     }
     @Override
     public String onPlaceholderRequest(Player p, String identifier) {
         // %OB_ver%
         if (identifier.equals("ver")) {
-            return "0.9.6";
+            return "0.9.9";
         }
         // %OB_lvl%
         if (identifier.equals("lvl")) {

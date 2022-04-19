@@ -162,8 +162,8 @@ public class Oneblock extends JavaPlugin {
         public void run() {
             if (wor == null) {
                 Bukkit.getConsoleSender().sendMessage(String.format("\n%s\n%s",
-                		"[OB] WORLD INITIALIZATION ERROR! world = null",
-                		"[OB] Trying to initialize the world again..."));
+                		"	[OB] Waiting for the initialization of the world",
+                		"	[OB] Trying to initialize the world again..."));
                 wor = Bukkit.getWorld(config.getString("world"));
                 leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
@@ -362,13 +362,12 @@ public class Oneblock extends JavaPlugin {
 	
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
-            List <String> y_now = new ArrayList <String>();
-            for (int yy = 0; yy < 3; yy++) {
-            	y_now.clear();
+            for (int yy = 0; yy < 5; yy++) {
+            	List <String> y_now = new ArrayList <String>();
 	            for (int xx = 0; xx < 7; xx++)
 	                for (int zz = 0; zz < 7; zz++)
 	                	y_now.add(island[xx][yy][zz].getAsString());
-	            map.put(String.format("y%d", yy), y_now);
+	            map.put(String.format("y%d", yy-1), y_now);
             }
             config.set("custom_island", map);
         }
@@ -406,9 +405,12 @@ public class Oneblock extends JavaPlugin {
                     	if (island != null) {
                     		int px = X_pl - 3;
                             for (int xx = 0; xx < 7; xx++)
-                            	for (int yy = 0; yy < 3; yy++)
-                                	for (int zz = 0; zz < 7; zz++)
-                                    	wor.getBlockAt(px + xx, y + yy, Z_pl - 3 + zz).setBlockData(island[xx][yy][zz]);
+                            	for (int yy = 0; yy < 5; yy++)
+                                	for (int zz = 0; zz < 7; zz++) {
+                                		if (island[xx][yy][zz].getMaterial().equals(Material.AIR))
+                                			continue;
+                                    	wor.getBlockAt(px + xx, y + yy - 1, Z_pl - 3 + zz).setBlockData(island[xx][yy][zz]);
+                                	}
                         } else {
                         	for (int i = -2;i<=2;i++)
                         		for (int q = -2;q<=2;q++)
@@ -424,9 +426,8 @@ public class Oneblock extends JavaPlugin {
                     }	
                     id++;
                     saveData();
-                    PlayerInfo inf = new PlayerInfo();
+                    PlayerInfo inf = new PlayerInfo(name);
                     pInf.add(inf);
-                    inf.nick = name;
                     if (!superlegacy && Progress_bar) {
                     	String temp = TextP;
                         if (lvl_bar_mode)
@@ -999,12 +1000,13 @@ public class Oneblock extends JavaPlugin {
                     String name = p.getName();
                     if (ExistId(name)) {
                     	if (island == null)
-                    		island = new BlockData[7][3][7];
-                        int px = x + GetId(name) * sto - 3;
+                    		island = new BlockData[7][5][7];
+                        int result[] = getFullCoord(GetId(name), 0, 0);
+                        int X_pl = result[0], Z_pl = result[1];
                         for (int xx = 0; xx < 7; xx++)
-                            for (int yy = 0; yy < 3; yy++)
+                            for (int yy = 0; yy < 5; yy++)
                                 for (int zz = 0; zz < 7; zz++)
-                                    island[xx][yy][zz] = wor.getBlockAt(px + xx, y + yy, z - 3 + zz).getBlockData();
+                                    island[xx][yy][zz] = wor.getBlockAt(X_pl + xx - 3, y + yy - 1, Z_pl - 3 + zz).getBlockData();
                         sender.sendMessage(ChatColor.GREEN + "Your island has been successfully saved and set as default for new players!");
                     } else
                         sender.sendMessage(ChatColor.RED + "You don't have an island!");
@@ -1064,7 +1066,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.8r2",
+            	"Create by MrMarL\nPlugin version: v0.9.9",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1315,9 +1317,17 @@ public class Oneblock extends JavaPlugin {
         autojoin = Check("autojoin", autojoin);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
-        	island = new BlockData[7][3][7];
-        	for (int yy = 0; yy < 3; yy++) {
-	        	List<String> cust_s = config.getStringList(String.format("custom_island.y%d", yy));
+        	island = new BlockData[7][5][7];
+        	for (int yy = 0; yy < 5; yy++) {
+        		String check = String.format("custom_island.y%d", yy-1);
+        		if (!config.isList(check)) {
+        			BlockData airData = Material.AIR.createBlockData();
+        			for (int xx = 0; xx < 7; xx++)
+    	                for (int zz = 0; zz < 7; zz++)
+    	                	island[xx][yy][zz] = airData;
+        			continue;
+        		}
+	        	List<String> cust_s = config.getStringList(check);
 	            for (int xx = 0; xx < 7; xx++)
 	                for (int zz = 0; zz < 7; zz++)
 	                	island[xx][yy][zz] = Bukkit.createBlockData(cust_s.get(7*xx+zz));
@@ -1353,9 +1363,11 @@ public class Oneblock extends JavaPlugin {
     @SuppressWarnings("unchecked")
 	public static PlayerInfo gettop(int i) {
     	if (pInf.size() <= i)
-    		return new PlayerInfo();
+    		return new PlayerInfo("[None]");
     	ArrayList<PlayerInfo> ppii = (ArrayList<PlayerInfo>) pInf.clone();
     	Collections.sort(ppii, PlayerInfo.COMPARE_BY_LVL);
+    	if (ppii.get(i).nick == null)
+    		return new PlayerInfo("[None]");
         return ppii.get(i);
     }
     @Override

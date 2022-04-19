@@ -45,8 +45,7 @@ public class ReadOldData {
         	if (newinf != null)
         		newinf.nicks.add(_nick.substring(1));
         	else{
-	        	newinf = new PlayerInfo();
-	        	newinf.nick = _nick.substring(1);
+	        	newinf = new PlayerInfo(_nick.substring(1));
 	            if (!data.isInt(lvl))
 	                data.set(lvl, 1);
 	            if (data.isInt(breaks))
