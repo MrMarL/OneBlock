@@ -162,8 +162,8 @@ public class Oneblock extends JavaPlugin {
         public void run() {
             if (wor == null) {
                 Bukkit.getConsoleSender().sendMessage(String.format("\n%s\n%s",
-                		"	[OB] Waiting for the initialization of the world",
-                		"	[OB] Trying to initialize the world again..."));
+                		"[OB] Waiting for the initialization of the world",
+                		"[OB] Trying to initialize the world again..."));
                 wor = Bukkit.getWorld(config.getString("world"));
                 leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
