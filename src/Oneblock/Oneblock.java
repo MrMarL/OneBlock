@@ -81,7 +81,6 @@ public class Oneblock extends JavaPlugin {
     boolean СircleMode = false;
     OBWorldGuard OBWorldGuard;
     BlockData[][][] island = null;
-    static ArrayList <Invitation> invite = new ArrayList<>();
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
     String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
     VoidChunkGenerator GenVoid = new VoidChunkGenerator();
@@ -191,21 +190,18 @@ public class Oneblock extends JavaPlugin {
         ReCreateRegions();
     }
     public void addinvite(String name, String to) {
-    	for(Invitation item:invite) 
+    	for(Invitation item: Invitation.list) 
 			if (item.equals(name, to))
 				return;
     	Invitation inv_ = new Invitation(name, to);
-    	invite.add(inv_);
+    	Invitation.list.add(inv_);
     	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, new Runnable() {
     		@Override
-    		public void run() {invite.remove(inv_);}}, 300L);
+    		public void run() {Invitation.list.remove(inv_);}}, 300L);
     }
     public boolean checkinvite(Player pl) {
 		String name = pl.getName();
-		Invitation inv_ = null; 
-		for(Invitation item:invite) 
-			if (item.Invited.equals(name)) 
-				inv_ = item; 
+		Invitation inv_ = Invitation.check(name);
 		
 		if (inv_ == null || !ExistId(inv_.Inviting))
 			return false;
@@ -217,7 +213,7 @@ public class Oneblock extends JavaPlugin {
 		}
 		pInf.get(GetId(inv_.Inviting)).nicks.add(name);
 		pl.performCommand("ob j"); 
-		invite.remove(inv_);
+		Invitation.list.remove(inv_);
 		return true; 
     }
 
