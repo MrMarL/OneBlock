@@ -53,7 +53,6 @@ public class Oneblock extends JavaPlugin {
     static int z = 0;
     Random rnd = new Random(System.currentTimeMillis());
     int id = 0;
-    static ArrayList <PlayerInfo> pInf = new ArrayList <>();
     FileConfiguration config, newConfigz;
     static World wor;
 	World leavewor;
@@ -152,8 +151,8 @@ public class Oneblock extends JavaPlugin {
     		Player p = e.getPlayer(); World from = e.getFrom();
         	if (from.equals(wor)) {
         		int i = GetId(p.getName());
-        		if (i<pInf.size())
-        			pInf.get(i).bar.removePlayer(p);
+        		if (i<PlayerInfo.size())
+        			PlayerInfo.get(i).bar.removePlayer(p);
         	}
         }
     }
@@ -208,10 +207,10 @@ public class Oneblock extends JavaPlugin {
 		 
 		if (ExistId(name)) {
 			if (Progress_bar)
-				pInf.get(GetId(name)).bar.removePlayer(pl);
+				PlayerInfo.get(GetId(name)).bar.removePlayer(pl);
 			pl.performCommand("ob idreset /n");
 		}
-		pInf.get(GetId(inv_.Inviting)).nicks.add(name);
+		PlayerInfo.get(GetId(inv_.Inviting)).nicks.add(name);
 		pl.performCommand("ob j"); 
 		Invitation.list.remove(inv_);
 		return true; 
@@ -266,7 +265,7 @@ public class Oneblock extends JavaPlugin {
                 }
                 Block block = wor.getBlockAt(X_pl, y, Z_pl);
                 if (block.getType().equals(Material.AIR)) {
-                	PlayerInfo inf = pInf.get(plID);
+                	PlayerInfo inf = PlayerInfo.get(plID);
                 	Level lvl_inf = max_lvl; 
                 	if (inf.lvl < levels.size())
                 		lvl_inf = levels.get(inf.lvl);
@@ -353,7 +352,7 @@ public class Oneblock extends JavaPlugin {
     public void onDisable() {
     	try {
     		File PlData = new File(getDataFolder(), "PlData.json");
-    		JsonSimple.Write(id, pInf, PlData);
+    		JsonSimple.Write(id, PlayerInfo.list, PlData);
 		} catch (Exception e) {}
 	
         if (island != null) {
@@ -423,7 +422,7 @@ public class Oneblock extends JavaPlugin {
                     id++;
                     saveData();
                     PlayerInfo inf = new PlayerInfo(name);
-                    pInf.add(inf);
+                    PlayerInfo.list.add(inf);
                     if (!superlegacy && Progress_bar) {
                     	String temp = TextP;
                         if (lvl_bar_mode)
@@ -443,7 +442,7 @@ public class Oneblock extends JavaPlugin {
                     on = true;
                 }
                 if (Progress_bar)
-                	pInf.get(plID).bar.setVisible(true);
+                	PlayerInfo.get(plID).bar.setVisible(true);
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (WorldGuard && OBWorldGuard.canUse) {
                 	OBWorldGuard.addMember(name, plID);
@@ -453,7 +452,7 @@ public class Oneblock extends JavaPlugin {
             case ("leave"):{
                 Player p = (Player) sender;
                 if (!superlegacy) {
-                	PlayerInfo p_inf = pInf.get(GetId(p.getName()));
+                	PlayerInfo p_inf = PlayerInfo.get(GetId(p.getName()));
                 	if (p_inf.bar != null)
                 		p_inf.bar.removePlayer(p);
                 	}
@@ -555,16 +554,16 @@ public class Oneblock extends JavaPlugin {
             			sender.sendMessage(String.format("%sYou can't kick yourself.", ChatColor.YELLOW));
             			return true;
             		}
-            		if (pInf.get(GetId(name)).nicks.contains(args[1])) {
-            			pInf.get(GetId(name)).nicks.remove(args[1]);
+            		if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
+            			PlayerInfo.get(GetId(name)).nicks.remove(args[1]);
             			if (WorldGuard && OBWorldGuard.canUse)
             				OBWorldGuard.removeMember(inv.getName(), GetId(name));
             			inv.performCommand("ob j");
             			return true;
             		}
             	}
-            	else if (pInf.get(GetId(name)).nicks.contains(args[1])) {
-            		pInf.get(GetId(name)).nicks.remove(args[1]);
+            	else if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
+            		PlayerInfo.get(GetId(name)).nicks.remove(args[1]);
             		sender.sendMessage(String.format("%sYou can't kick yourself.", ChatColor.YELLOW));
             	}
             	return true;
@@ -584,8 +583,8 @@ public class Oneblock extends JavaPlugin {
             		return true;
             	int PlId = GetId(name);
             	if (Progress_bar)
-        			pInf.get(PlId).bar.removePlayer(pl);
-            	PlayerInfo plp = pInf.get(PlId);
+        			PlayerInfo.get(PlId).bar.removePlayer(pl);
+            	PlayerInfo plp = PlayerInfo.get(PlId);
             	if (plp.nick.equals(name)) {
             		if (plp.nicks.size() > 0) {
             			plp.nick = plp.nicks.get(0);
@@ -694,7 +693,7 @@ public class Oneblock extends JavaPlugin {
                     }
                     if (setlvl >= 0 && 10000 > setlvl) {
                         int i = GetId(args[1]);
-                        PlayerInfo inf = pInf.get(i);
+                        PlayerInfo inf = PlayerInfo.get(i);
                         inf.breaks = 0;
                         inf.lvl = setlvl;
                         if (lvl_bar_mode) {
@@ -724,7 +723,7 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (ExistId(args[1])) {
                     int i = GetId(args[1]);
-                    PlayerInfo inf = pInf.get(i);
+                    PlayerInfo inf = PlayerInfo.get(i);
                     inf.breaks = 0;
                     inf.lvl = 0;
                     if (Progress_bar)
@@ -787,7 +786,7 @@ public class Oneblock extends JavaPlugin {
                             Progress_color = BarColor.GREEN;
                     	Blockfile();
                     }
-                    for (PlayerInfo bb:pInf)
+                    for (PlayerInfo bb:PlayerInfo.list)
                     	if (bb.bar != null)
                     		bb.bar.setVisible(Progress_bar);
                     config.set("Progress_bar", Progress_bar);
@@ -800,7 +799,7 @@ public class Oneblock extends JavaPlugin {
                     }
                     try {
                         Progress_color = BarColor.valueOf(args[2]);
-                        for (PlayerInfo bb:pInf)
+                        for (PlayerInfo bb:PlayerInfo.list)
                             bb.bar.setColor(Progress_color);
                         Blockfile();
                         config.set("Progress_bar_color", Progress_color.toString());
@@ -815,7 +814,7 @@ public class Oneblock extends JavaPlugin {
                 		return true;
                     if (!lvl_bar_mode) {
                         lvl_bar_mode = true;
-                        for (PlayerInfo inf:pInf)
+                        for (PlayerInfo inf:PlayerInfo.list)
 	                        if (inf.lvl >= levels.size())
 	                        	inf.bar.setTitle(max_lvl.name);
 	                    	else
@@ -824,7 +823,7 @@ public class Oneblock extends JavaPlugin {
                         return true;
                     } else {
                         lvl_bar_mode = false;
-                        for (PlayerInfo bb:pInf)
+                        for (PlayerInfo bb:PlayerInfo.list)
                             bb.bar.setTitle("Progress bar");
                         config.set("Progress_bar_text", "Progress bar");
                         return true;
@@ -838,13 +837,13 @@ public class Oneblock extends JavaPlugin {
                         txt_bar += args[i] + " ";
                     txt_bar += args[args.length - 1];
                     lvl_bar_mode = false;
-                    for (PlayerInfo bb:pInf)
+                    for (PlayerInfo bb:PlayerInfo.list)
                         bb.bar.setTitle(txt_bar);
                     config.set("Progress_bar_text", txt_bar);
                     TextP = txt_bar;
                     if (PAPI)
                         for (Player ponl: Bukkit.getOnlinePlayers())
-                            pInf.get(GetId(ponl.getName())).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
+                            PlayerInfo.get(GetId(ponl.getName())).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
                     return true;
                 }
                 sender.sendMessage(String.format("%strue, false, settext or level only!", ChatColor.RED));
@@ -1073,8 +1072,8 @@ public class Oneblock extends JavaPlugin {
     }
     
     static int GetId(String name) {
-    	for(int i = 0; i<pInf.size() ;i++) {
-    		PlayerInfo pl = pInf.get(i);
+    	for(int i = 0; i<PlayerInfo.size() ;i++) {
+    		PlayerInfo pl = PlayerInfo.get(i);
     		if (pl.nick == null)
     			continue;
     		if (pl.nick.equals(name))
@@ -1094,7 +1093,7 @@ public class Oneblock extends JavaPlugin {
     }
     
     boolean ExistNoInvaitId(String name) {
-    	for(PlayerInfo pl:pInf) {
+    	for(PlayerInfo pl:PlayerInfo.list) {
     		if (pl.nick == null)
     			continue;
     		if (pl.nick.equals(name))
@@ -1104,7 +1103,7 @@ public class Oneblock extends JavaPlugin {
     }
     
     boolean ExistId(String name) {
-    	for(PlayerInfo pl:pInf) {
+    	for(PlayerInfo pl:PlayerInfo.list) {
     		if (pl.nick == null)
     			continue;
     		if (pl.nick.equals(name))
@@ -1118,10 +1117,10 @@ public class Oneblock extends JavaPlugin {
     private void Datafile() {
     	File PlData = new File(getDataFolder(), "PlData.json");
 		if (PlData.exists())
-			pInf = JsonSimple.Read(PlData);
+			PlayerInfo.list = JsonSimple.Read(PlData);
 		else
-			pInf = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
-		id = pInf.size();
+			PlayerInfo.list = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
+		id = PlayerInfo.size();
     }
     
     private void ReCreateRegions() {
@@ -1129,7 +1128,7 @@ public class Oneblock extends JavaPlugin {
     		return;
     	OBWorldGuard.RemoveRegions(id);
 		for (int i = 0; i < id; i++) {
-			PlayerInfo owner = pInf.get(i);
+			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.nick == null)
     			continue;
 			String name = owner.nick;
@@ -1146,7 +1145,7 @@ public class Oneblock extends JavaPlugin {
     public void saveData() {
         try {
         	File PlData = new File(getDataFolder(), "PlData.json");
-    		JsonSimple.Write(id, pInf, PlData);
+    		JsonSimple.Write(id, PlayerInfo.list, PlData);
         } 
         catch (Exception e) { e.printStackTrace(); }
     }
@@ -1184,9 +1183,9 @@ public class Oneblock extends JavaPlugin {
         }
         max_lvl.size = blocks.size();
         //Progress_bar
-        if (!superlegacy && Progress_bar && pInf.size() > 0 && pInf.get(0).bar == null) {
+        if (!superlegacy && Progress_bar && PlayerInfo.size() > 0 && PlayerInfo.get(0).bar == null) {
             max_lvl.color = Progress_color;
-            for (PlayerInfo inf:pInf) {
+            for (PlayerInfo inf:PlayerInfo.list) {
                 Level lvl = max_lvl;
                 if (inf.lvl < levels.size())
                 	lvl = levels.get(inf.lvl);
@@ -1332,7 +1331,7 @@ public class Oneblock extends JavaPlugin {
         Config.Save(config, con);
     }
     public static int getlvl(String pl_name) {
-    	return pInf.get(GetId(pl_name)).lvl;
+    	return PlayerInfo.get(GetId(pl_name)).lvl;
     }
     public static int getnextlvl(String pl_name) {
     	return getlvl(pl_name)+1;
@@ -1350,17 +1349,17 @@ public class Oneblock extends JavaPlugin {
     	return max_lvl.name;
     }
     public static int getblocks(String pl_name) {
-        return pInf.get(GetId(pl_name)).breaks;
+        return PlayerInfo.get(GetId(pl_name)).breaks;
     }
     public static int getneed(String pl_name) {
-        PlayerInfo id_pl = pInf.get(GetId(pl_name));
+        PlayerInfo id_pl = PlayerInfo.get(GetId(pl_name));
         return 16 + id_pl.lvl * lvl_mult - id_pl.breaks;
     }
     @SuppressWarnings("unchecked")
 	public static PlayerInfo gettop(int i) {
-    	if (pInf.size() <= i)
+    	if (PlayerInfo.size() <= i)
     		return new PlayerInfo("[None]");
-    	ArrayList<PlayerInfo> ppii = (ArrayList<PlayerInfo>) pInf.clone();
+    	ArrayList<PlayerInfo> ppii = (ArrayList<PlayerInfo>) PlayerInfo.list.clone();
     	Collections.sort(ppii, PlayerInfo.COMPARE_BY_LVL);
     	if (ppii.get(i).nick == null)
     		return new PlayerInfo("[None]");

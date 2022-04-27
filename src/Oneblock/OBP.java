@@ -60,7 +60,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_owner_name%
         if (identifier.equals("owner_name")) {
-            return Oneblock.pInf.get(Oneblock.GetId(p.getName())).nick;
+            return PlayerInfo.get(Oneblock.GetId(p.getName())).nick;
         }
         // %OB_top_%d_name%
         for(int i = 0;i<10;i++) {
@@ -74,7 +74,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_number_of_invited%
         if (identifier.equals("number_of_invited")) {
-            return String.format("%d", Oneblock.pInf.get(Oneblock.GetId(p.getName())).nicks.size());
+            return String.format("%d", PlayerInfo.get(Oneblock.GetId(p.getName())).nicks.size());
         }
         return null;
     }

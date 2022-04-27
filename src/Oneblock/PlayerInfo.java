@@ -6,6 +6,8 @@ import java.util.Comparator;
 import org.bukkit.boss.BossBar;
 
 public class PlayerInfo {
+	public static ArrayList <PlayerInfo> list = new ArrayList <>();
+	
 	public String nick;
 	public ArrayList<String> nicks = new ArrayList<String>();
 	public int lvl = 0;
@@ -16,10 +18,19 @@ public class PlayerInfo {
 		nick = name;
 	}
 	
-	void lvlup() {
+	public void lvlup() {
 		++lvl;
 		breaks = 0;
 	}
+	
+	public static PlayerInfo get(int id) {
+		return list.get(id);
+	}
+	
+	public static int size() {
+		return list.size();
+	}
+	
 	public static final Comparator<PlayerInfo> COMPARE_BY_LVL = new Comparator<PlayerInfo>() {
 		@Override
 		public int compare(PlayerInfo lhs, PlayerInfo rhs) {
