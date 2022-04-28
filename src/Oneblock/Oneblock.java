@@ -34,10 +34,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -72,6 +74,7 @@ public class Oneblock extends JavaPlugin {
     Long fr;
     BarColor Progress_color;
     boolean il3x3 = false, rebirth = false, autojoin = false;
+    boolean droptossup = true;
     boolean lvl_bar_mode = false, chat_alert = false;
     boolean protection = false;
     boolean PAPI = false;
@@ -110,40 +113,40 @@ public class Oneblock extends JavaPlugin {
             } 
             else wor_ok();
         }
-        Bukkit.getPluginManager().registerEvents(new Resp_AutoJ(), this);
+        Bukkit.getPluginManager().registerEvents(new RespawnJoinEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockEvent(), this);
     }
-    public class Resp_AutoJ implements Listener {
+    public class RespawnJoinEvent implements Listener {
         @EventHandler
-        public void Resp(PlayerRespawnEvent e) {
-            if (rebirth) {
-            	Player pl = e.getPlayer();
-                if (pl.getWorld().equals(wor))
-                    if (ExistId(pl.getName())) {
-						int result[] = getFullCoord(GetId(pl.getName()), 0, 0);
-						e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
-                    }
-            }
+        public void Respawn(PlayerRespawnEvent e) {
+			if (!rebirth)
+				return;
+			Player pl = e.getPlayer();
+			if (pl.getWorld().equals(wor) && ExistId(pl.getName())) {
+				int result[] = getFullCoord(GetId(pl.getName()), 0, 0);
+				e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
+			}
         }
         @EventHandler
-        public void AutoJ(PlayerTeleportEvent e) {
-        if (autojoin){
-    		Location loc = e.getTo();
+        public void AutoJoin(PlayerTeleportEvent e) {
+			if (!autojoin)
+				return;
+			Location loc = e.getTo();
 			World from = e.getFrom().getWorld();
-    		World to = loc.getWorld();
-        	if (!from.equals(wor) && to.equals(wor) && !(loc.getY() == y+1.2013)){
-        		e.setCancelled(true);
-        		e.getPlayer().performCommand("ob j");
-        		}
-        	}
+			World to = loc.getWorld();
+			if (!from.equals(wor) && to.equals(wor) && !(loc.getY() == y + 1.2013)) {
+				e.setCancelled(true);
+				e.getPlayer().performCommand("ob j");
+			}
         }
         @EventHandler
-        public void JAuto(PlayerJoinEvent e) {
-        if (autojoin){
-        	Player pl = e.getPlayer();
-        	if (pl.getWorld().equals(wor))
-        		pl.performCommand("ob j");
-        	}
-        }
+        public void JoinAuto(PlayerJoinEvent e) {
+			if (!autojoin)
+				return;
+			Player pl = e.getPlayer();
+			if (pl.getWorld().equals(wor))
+				pl.performCommand("ob j");
+		}
     }
     public class ChangedWorld implements Listener {
     	@EventHandler
@@ -154,6 +157,31 @@ public class Oneblock extends JavaPlugin {
         		if (i<PlayerInfo.size())
         			PlayerInfo.get(i).bar.removePlayer(p);
         	}
+        }
+    }
+    
+    public class BlockEvent implements Listener {
+    	@EventHandler(ignoreCancelled = true)
+        public void ItemStackSpawn(EntitySpawnEvent e)
+        {
+    		if (!droptossup) return;
+    		
+            if (!EntityType.DROPPED_ITEM.equals(e.getEntityType()))
+                return;
+            
+            Location loc = e.getLocation();
+            
+            if (!wor.equals(loc.getWorld()))
+                return;
+            
+            if (loc.getBlockY() != y) return;
+            
+            if((x - loc.getBlockX()) % sto != 0 || (z - loc.getBlockZ()) % sto != 0)
+            	return;
+
+            Entity drop = e.getEntity();
+            drop.teleport(loc.add(0, .75, 0));
+            drop.setVelocity(new Vector(0, .1, 0));
         }
     }
     public class wor_null implements Runnable {
@@ -342,7 +370,7 @@ public class Oneblock extends JavaPlugin {
                             random = rnd.nextInt(mobs.size() / 3 * 2);
                         else
                             random = rnd.nextInt(mobs.size());
-                        wor.spawnEntity(new Location(wor, X_pl, y + 1, Z_pl), mobs.get(random));
+                        wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(random));
                     }
                 }
             }
@@ -656,6 +684,21 @@ public class Oneblock extends JavaPlugin {
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
                 sender.sendMessage(String.format("%sautojoin is now %s", ChatColor.GREEN, (autojoin?"enabled.":"disabled.")));
+           		return true;
+            }
+            case ("droptossup"):{
+            	if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(noperm);
+                    return true;
+                }
+            	if (args.length > 1 &&
+                    	(args[1].equals("true") || args[1].equals("false"))) {
+            			droptossup = Boolean.valueOf(args[1]);
+                    	config.set("droptossup", droptossup);	
+                }
+                else
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                sender.sendMessage(String.format("%sdroptossup is now %s", ChatColor.GREEN, (droptossup?"enabled.":"disabled.")));
            		return true;
             }
             case ("circlemode"):{
@@ -1061,7 +1104,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v0.9.9",
+            	"Create by MrMarL\nPlugin version: v1.0.0pre",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1310,6 +1353,7 @@ public class Oneblock extends JavaPlugin {
         protection = Check("protection", protection);
         WorldGuard = Check("WorldGuard", WorldGuard);
         autojoin = Check("autojoin", autojoin);
+        droptossup = Check("droptossup", droptossup);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][5][7];
@@ -1372,8 +1416,8 @@ public class Oneblock extends JavaPlugin {
         if (args.length == 1) {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear", "circlemode",
-            		"lvl_mult","reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin"));
+            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult",
+            		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick")) {
@@ -1412,6 +1456,7 @@ public class Oneblock extends JavaPlugin {
                 case ("circlemode"):
                 case ("worldguard"):
                 case ("autoJoin"):
+                case ("droptossup"):
 	                commands.add("true");
 	                commands.add("false");
 	                break;

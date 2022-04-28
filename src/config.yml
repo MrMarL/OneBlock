@@ -42,3 +42,5 @@ WorldGuard: true
 set: 100
 #Use the island creation mode in a circle?
 СircleMode: false
+#Toss drop(item) up above the block?
+droptossup: true
