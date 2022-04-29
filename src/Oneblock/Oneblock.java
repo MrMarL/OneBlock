@@ -408,7 +408,8 @@ public class Oneblock extends JavaPlugin {
                 return true;
             }
             //
-            switch (args[0].toLowerCase())
+            String parametr = args[0].toLowerCase();
+            switch (parametr)
             {
             case ("j"):
             case ("join"):{
@@ -629,21 +630,6 @@ public class Oneblock extends JavaPlugin {
             		sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
             	return true;
             }
-            case ("protection"):{
-            	if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
-                    return true;
-                }
-            	if (args.length > 1 &&
-                	(args[1].equals("true") || args[1].equals("false"))) {
-                    	protection = Boolean.valueOf(args[1]);
-                    	config.set("protection", protection);
-                }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
-            	sender.sendMessage(String.format("%sthe protection is now %s", ChatColor.GREEN, (protection?"enabled.":"disabled.")));
-           		return true;
-            }
             case ("worldguard"):{
             	if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(noperm);
@@ -671,6 +657,10 @@ public class Oneblock extends JavaPlugin {
             	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
            		return true;
             }
+            case ("circlemode"):
+            	parametr = "СircleMode";
+            case ("protection"):
+            case ("droptossup"):
             case ("autojoin"):{
             	if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(noperm);
@@ -678,42 +668,12 @@ public class Oneblock extends JavaPlugin {
                 }
             	if (args.length > 1 &&
                     	(args[1].equals("true") || args[1].equals("false"))) {
-                    	autojoin = Boolean.valueOf(args[1]);
-                    	config.set("autojoin", autojoin);	
+                    	config.set(parametr, Boolean.valueOf(args[1]));
+                    	UpdateParametrs();
                 }
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
-                sender.sendMessage(String.format("%sautojoin is now %s", ChatColor.GREEN, (autojoin?"enabled.":"disabled.")));
-           		return true;
-            }
-            case ("droptossup"):{
-            	if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
-                    return true;
-                }
-            	if (args.length > 1 &&
-                    	(args[1].equals("true") || args[1].equals("false"))) {
-            			droptossup = Boolean.valueOf(args[1]);
-                    	config.set("droptossup", droptossup);	
-                }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
-                sender.sendMessage(String.format("%sdroptossup is now %s", ChatColor.GREEN, (droptossup?"enabled.":"disabled.")));
-           		return true;
-            }
-            case ("circlemode"):{
-            	if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
-                    return true;
-                }
-            	if (args.length > 1 &&
-						(args[1].equals("true") || args[1].equals("false"))) {
-					СircleMode = Boolean.valueOf(args[1]);
-					config.set("СircleMode", СircleMode);	
-                }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
-                sender.sendMessage(String.format("%sСircleMode is now %s", ChatColor.GREEN, (СircleMode?"enabled.":"disabled.")));
+                sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (config.getBoolean(parametr)?"enabled.":"disabled.")));
            		return true;
             }
             //LVL
@@ -1349,11 +1309,8 @@ public class Oneblock extends JavaPlugin {
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
         lvl_mult = Check("level_multiplier", lvl_mult);
-        СircleMode = Check("СircleMode", СircleMode);
-        protection = Check("protection", protection);
+        UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         WorldGuard = Check("WorldGuard", WorldGuard);
-        autojoin = Check("autojoin", autojoin);
-        droptossup = Check("droptossup", droptossup);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][5][7];
@@ -1374,6 +1331,14 @@ public class Oneblock extends JavaPlugin {
         }
         Config.Save(config, con);
     }
+    
+    public void UpdateParametrs() {
+    	СircleMode = Check("СircleMode", СircleMode);
+        protection = Check("protection", protection);
+        autojoin = Check("autojoin", autojoin);
+        droptossup = Check("droptossup", droptossup);
+    }
+    
     public static int getlvl(String pl_name) {
     	return PlayerInfo.get(GetId(pl_name)).lvl;
     }
