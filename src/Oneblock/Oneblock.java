@@ -108,8 +108,8 @@ public class Oneblock extends JavaPlugin {
         Flowerfile();
         Chestfile();
         Mobfile();
-        metrics.addCustomChart(new SimplePie("Premium", () -> String.valueOf(OBWorldGuard.canUse)));
-        metrics.addCustomChart(new SimplePie("Сircle Mode", () -> String.valueOf(СircleMode)));
+        metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
+        metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
                 Bukkit.getScheduler().runTaskTimer(this, (Runnable) new wor_null(), 32, 64);
