@@ -44,3 +44,5 @@ set: 100
 СircleMode: false
 #Toss drop(item) up above the block?
 droptossup: true
+#Apply physics to blocks? //for example: falling gravel
+physics: false

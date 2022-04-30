@@ -74,7 +74,7 @@ public class Oneblock extends JavaPlugin {
     Long fr;
     BarColor Progress_color;
     boolean il3x3 = false, rebirth = false, autojoin = false;
-    boolean droptossup = true;
+    boolean droptossup = true, physics = false;
     boolean lvl_bar_mode = false, chat_alert = false;
     boolean protection = false;
     boolean PAPI = false;
@@ -361,7 +361,7 @@ public class Oneblock extends JavaPlugin {
                             Bukkit.getConsoleSender().sendMessage("[OB] Error when generating items for the chest! Pls redo chests.yml!");
                         }
                     } else
-                    	XBlock.setType(block, blocks.get(random));
+                    	XBlock.setType(block, blocks.get(random), physics);
 
                     if (rnd.nextInt(9) == 0) {
                         if (inf.lvl < blocks.size() / 9)
@@ -661,6 +661,7 @@ public class Oneblock extends JavaPlugin {
             	parametr = "СircleMode";
             case ("protection"):
             case ("droptossup"):
+            case ("physics"):
             case ("autojoin"):{
             	if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(noperm);
@@ -1064,7 +1065,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.0pre2",
+            	"Create by MrMarL\nPlugin version: v1.0.0pre3",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1343,6 +1344,7 @@ public class Oneblock extends JavaPlugin {
         protection = Check("protection", protection);
         autojoin = Check("autojoin", autojoin);
         droptossup = Check("droptossup", droptossup);
+        physics = Check("physics", physics);
     }
     
     public static int getlvl(String pl_name) {
@@ -1388,7 +1390,7 @@ public class Oneblock extends JavaPlugin {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult",
-            		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup"));
+            		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup","physics"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick")) {
@@ -1428,6 +1430,7 @@ public class Oneblock extends JavaPlugin {
                 case ("worldguard"):
                 case ("autoJoin"):
                 case ("droptossup"):
+                case ("physics"):
 	                commands.add("true");
 	                commands.add("false");
 	                break;
