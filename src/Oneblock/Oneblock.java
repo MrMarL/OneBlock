@@ -81,7 +81,7 @@ public class Oneblock extends JavaPlugin {
     boolean WorldGuard = false;
     boolean Progress_bar = true;
     boolean СircleMode = false;
-    OBWorldGuard OBWorldGuard;
+    OBWorldGuard OBWG;
     BlockData[][][] island = null;
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
     String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
@@ -208,9 +208,9 @@ public class Oneblock extends JavaPlugin {
         if (WGpl) {
         	Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
         	if (legacy)
-				OBWorldGuard = new OBWorldGuard6();
+        		OBWG = new OBWorldGuard6();
 			else
-				OBWorldGuard = new OBWorldGuard7();
+				OBWG = new OBWorldGuard7();
         }
         if (!WGpl && WorldGuard)
         	WorldGuard = false;
@@ -446,7 +446,7 @@ public class Oneblock extends JavaPlugin {
                     if (WorldGuard && OBWorldGuard.canUse) {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
                     	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-	                    OBWorldGuard.CreateRegion(name, Block1, Block2, id);
+                    	OBWG.CreateRegion(name, Block1, Block2, id);
                     }	
                     id++;
                     saveData();
@@ -474,7 +474,7 @@ public class Oneblock extends JavaPlugin {
                 	PlayerInfo.get(plID).bar.setVisible(true);
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (WorldGuard && OBWorldGuard.canUse) {
-                	OBWorldGuard.addMember(name, plID);
+                	OBWG.addMember(name, plID);
                 }
                 return true;
             }
@@ -522,7 +522,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("y", (double) y);
                 config.set("z", (double) z);
                 Config.Save(config);
-                if (OBWorldGuard == null) wor_ok();
+                if (OBWG == null) wor_ok();
                 wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
                 ReCreateRegions();
                 return true;
@@ -586,7 +586,7 @@ public class Oneblock extends JavaPlugin {
             		if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
             			PlayerInfo.get(GetId(name)).nicks.remove(args[1]);
             			if (WorldGuard && OBWorldGuard.canUse)
-            				OBWorldGuard.removeMember(inv.getName(), GetId(name));
+            				OBWG.removeMember(inv.getName(), GetId(name));
             			inv.performCommand("ob j");
             			return true;
             		}
@@ -625,7 +625,7 @@ public class Oneblock extends JavaPlugin {
             	else
             		plp.nicks.remove(name);
             	if (WorldGuard && OBWorldGuard.canUse)
-            		OBWorldGuard.removeMember(name, PlId);
+            		OBWG.removeMember(name, PlId);
             	if (!args[args.length-1].equals("/n"))
             		sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
             	return true;
@@ -639,7 +639,7 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sThe WorldGuard plugin was not detected!", ChatColor.YELLOW));
                     return true;
                 }
-            	if (OBWorldGuard == null || !OBWorldGuard.canUse) {
+            	if (OBWG == null || !OBWorldGuard.canUse) {
                     sender.sendMessage(String.format("%sThis feature is only available in the premium version of the plugin!", ChatColor.YELLOW));
                     return true;
                 }
@@ -650,7 +650,7 @@ public class Oneblock extends JavaPlugin {
                     	if (WorldGuard)
                     		ReCreateRegions();
                     	else
-                    		OBWorldGuard.RemoveRegions(id);
+                    		OBWG.RemoveRegions(id);
                 }
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
@@ -1064,7 +1064,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.0pre",
+            	"Create by MrMarL\nPlugin version: v1.0.0pre2",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1129,7 +1129,7 @@ public class Oneblock extends JavaPlugin {
     private void ReCreateRegions() {
     	if (!WorldGuard || !OBWorldGuard.canUse)
     		return;
-    	OBWorldGuard.RemoveRegions(id);
+    	OBWG.RemoveRegions(id);
 		for (int i = 0; i < id; i++) {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.nick == null)
@@ -1139,9 +1139,9 @@ public class Oneblock extends JavaPlugin {
             int X_pl = result[0], Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-            OBWorldGuard.CreateRegion(name, Block1, Block2, i);
+        	OBWG.CreateRegion(name, Block1, Block2, i);
             for (String member: owner.nicks) 
-                OBWorldGuard.addMember(member, i);
+            	OBWG.addMember(member, i);
         }
     }
 
@@ -1258,6 +1258,11 @@ public class Oneblock extends JavaPlugin {
             config.set(type, data);
     	return config.getBoolean(type);
     }
+    List<String> Check(String type, List<String> data) {
+    	if (!config.isList(type))
+            config.set(type, data);
+    	return config.getStringList(type);
+    }
 
     private void Configfile() {
     	File con = new File(getDataFolder(), "config.yml");
@@ -1311,6 +1316,7 @@ public class Oneblock extends JavaPlugin {
         lvl_mult = Check("level_multiplier", lvl_mult);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         WorldGuard = Check("WorldGuard", WorldGuard);
+        OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][5][7];

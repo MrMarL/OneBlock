@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>1.0.0pre</version>
+  <version>1.0.0pre2</version>
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
@@ -101,6 +101,12 @@
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-legacy</artifactId>
+      <version>6.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
       <artifactId>worldguard-bukkit</artifactId>
       <version>7.0.0</version>
       <scope>provided</scope>
@@ -110,12 +116,6 @@
           <groupId>org.bstats</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.sk89q.worldguard</groupId>
-      <artifactId>worldguard-legacy</artifactId>
-      <version>6.2</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <properties>
