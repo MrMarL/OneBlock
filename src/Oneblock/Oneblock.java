@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -95,7 +96,7 @@ public class Oneblock extends JavaPlugin {
     	version = "1." + XMaterial.getVersion();
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
-        new Metrics(this, 14477);
+        Metrics metrics = new Metrics(this, 14477);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
         	Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
             PAPI = true;
@@ -107,6 +108,8 @@ public class Oneblock extends JavaPlugin {
         Flowerfile();
         Chestfile();
         Mobfile();
+        metrics.addCustomChart(new SimplePie("Premium", () -> String.valueOf(OBWorldGuard.canUse)));
+        metrics.addCustomChart(new SimplePie("Сircle Mode", () -> String.valueOf(СircleMode)));
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
                 Bukkit.getScheduler().runTaskTimer(this, (Runnable) new wor_null(), 32, 64);
@@ -1065,7 +1068,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.0pre3",
+            	"Create by MrMarL\nPlugin version: v1.0.0",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
