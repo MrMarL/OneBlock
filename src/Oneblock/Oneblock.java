@@ -82,10 +82,10 @@ public class Oneblock extends JavaPlugin {
     boolean WorldGuard = false;
     boolean Progress_bar = true;
     boolean СircleMode = false;
+    int max_players_team = 0;
     OBWorldGuard OBWG;
     BlockData[][][] island = null;
     XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
-    String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
     VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     
 	@Override
@@ -108,6 +108,7 @@ public class Oneblock extends JavaPlugin {
         Flowerfile();
         Chestfile();
         Mobfile();
+        Messagefile();
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
         if (config.getDouble("y") != 0) {
@@ -496,7 +497,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("set"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 Player p = (Player) sender;
@@ -532,7 +533,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("setleave"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 Player p = (Player) sender;
@@ -548,33 +549,41 @@ public class Oneblock extends JavaPlugin {
             }
             case ("invite"):{
             	if (!sender.hasPermission("Oneblock.invite")) {
-                    sender.sendMessage(String.format("%sYou don't have the permission to execute this command", ChatColor.RED));
+                    sender.sendMessage(Messages.noperm_inv);
                     return true;
                 }
             	if (args.length < 2) {
-            		sender.sendMessage(String.format("%sUsage: /ob invite <username>", ChatColor.RED));
+            		sender.sendMessage(Messages.invite_usage);
             		return true;
             	}
             	Player inv = Bukkit.getPlayer(args[1]);
             	if (inv != null) {
-            		if (inv == (Player) sender) {
-            			sender.sendMessage(String.format("%sYou can't invite yourself.", ChatColor.YELLOW));
+            		Player pl = (Player) sender;
+            		String name = pl.getName();
+            		if (inv == pl) {
+            			sender.sendMessage(Messages.invite_yourself);
             			return true;
             		}
-            		if (!ExistId(((Player)sender).getName())) {
-            			sender.sendMessage(String.format("%sPlease create a island before you do this.", ChatColor.YELLOW));
+            		if (!ExistId(name)) {
+            			sender.sendMessage(Messages.invite_no_island);
             			return true;
             		}
-            		addinvite(((Player) sender).getName(),inv.getName());
-            		inv.sendMessage(String.format("%sYou were invited by player %s.\n%s/ob accept to accept).",
-            				ChatColor.GREEN, ((Player) sender).getName(), ChatColor.RED));
-            		sender.sendMessage(String.format("%sSuccesfully invited %s.", ChatColor.GREEN, inv.getName()));
+            		if (max_players_team != 0) {
+            			PlayerInfo pinf = PlayerInfo.get(GetId(name));
+            			if (pinf.nicks.size() >= max_players_team) {
+	            			sender.sendMessage(String.format(Messages.invite_team, max_players_team));
+	            			return true;
+            			}
+            		}
+            		addinvite(name,inv.getName());
+            		inv.sendMessage(String.format(Messages.invited, name));
+            		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
             	}
             	return true;
             }
             case ("kick"):{
             	if (args.length < 2) {
-            		sender.sendMessage(String.format("%sUsage: /ob invite <username>", ChatColor.RED));
+            		sender.sendMessage(Messages.kick_usage);
             		return true;
             	}
             	Player inv = Bukkit.getPlayer(args[1]);
@@ -583,7 +592,7 @@ public class Oneblock extends JavaPlugin {
             		return true;
             	if (inv != null) {
             		if (inv == (Player) sender) {
-            			sender.sendMessage(String.format("%sYou can't kick yourself.", ChatColor.YELLOW));
+            			sender.sendMessage(Messages.kick_yourself);
             			return true;
             		}
             		if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
@@ -596,16 +605,16 @@ public class Oneblock extends JavaPlugin {
             	}
             	else if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
             		PlayerInfo.get(GetId(name)).nicks.remove(args[1]);
-            		sender.sendMessage(String.format("%sYou can't kick yourself.", ChatColor.YELLOW));
+            		sender.sendMessage(Messages.kick_yourself);
             	}
             	return true;
             }
             case ("accept"):{
             	Player pl = (Player) sender;
            	 	if (checkinvite(pl))
-           	 		sender.sendMessage(String.format("%sSuccesfully accepted the invitation.", ChatColor.GREEN));
+           	 		sender.sendMessage(Messages.accept_succes);
            	 	else
-           	 		sender.sendMessage(String.format("%s[There is no Pending invitations for you.]",ChatColor.RED));
+           	 		sender.sendMessage(Messages.accept_none);
            		return true;
             }
             case ("idreset"):{
@@ -630,12 +639,12 @@ public class Oneblock extends JavaPlugin {
             	if (WorldGuard && OBWorldGuard.canUse)
             		OBWG.removeMember(name, PlId);
             	if (!args[args.length-1].equals("/n"))
-            		sender.sendMessage(String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN));
+            		sender.sendMessage(Messages.idreset);
             	return true;
             }
             case ("worldguard"):{
             	if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
             	if (!Bukkit.getPluginManager().isPluginEnabled("WorldGuard")){
@@ -667,7 +676,7 @@ public class Oneblock extends JavaPlugin {
             case ("physics"):
             case ("autojoin"):{
             	if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
             	if (args.length > 1 &&
@@ -683,7 +692,7 @@ public class Oneblock extends JavaPlugin {
             //LVL
             case ("setlevel"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length <= 2) {
@@ -721,7 +730,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("clear"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length <= 1) {
@@ -751,7 +760,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("lvl_mult"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length <= 1) {
@@ -773,9 +782,33 @@ public class Oneblock extends JavaPlugin {
                 sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, lvl_mult));
                 return true;
             }
+            case ("max_players_team"):{
+                if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(Messages.noperm);
+                    return true;
+                }
+                if (args.length <= 1) {
+                    sender.sendMessage(String.format("%smax_players_team now: %d\n5 by default", ChatColor.GREEN, max_players_team));
+                    return true;
+                }
+                int mpt = max_players_team;
+                try {
+                	mpt = Integer.parseInt(args[1]);
+                } catch (NumberFormatException nfe) {
+                    sender.sendMessage(String.format("%sinvalid max_players_team value.", ChatColor.RED));
+                    return true;
+                }
+                if (mpt <= 20 && mpt >= 0) {
+                	max_players_team = mpt;
+                    config.set("max_players_team", max_players_team);
+                } else
+                    sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
+                sender.sendMessage(String.format("%smax_players_team now: %d", ChatColor.GREEN, max_players_team));
+                return true;
+            }
             case ("progress_bar"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (superlegacy) {
@@ -858,7 +891,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("listlvl"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length >= 2) {
@@ -892,7 +925,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("reload"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length == 1) {
@@ -902,6 +935,7 @@ public class Oneblock extends JavaPlugin {
                     Chestfile();
                     Mobfile();
                     ReCreateRegions();
+                    Messagefile();
                     sender.sendMessage(String.format("%sAll .yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
@@ -925,12 +959,17 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sMobs.yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
+                if (args[1].equalsIgnoreCase("messages.yml")) {
+                	Messagefile();
+                    sender.sendMessage(String.format("%sMessages.yml reloaded!", ChatColor.GREEN));
+                    return true;
+                }
                 sender.sendMessage(String.format("%sTry blocks.yml or chests.yml", ChatColor.RED));
                 return true;
             }
             case ("chat_alert"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 chat_alert = !chat_alert;
@@ -940,7 +979,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("frequency"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length == 1) {
@@ -980,7 +1019,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("islands"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length == 1) {
@@ -1029,7 +1068,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("island_rebirth"):{
                 if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(noperm);
+                    sender.sendMessage(Messages.noperm);
                     return true;
                 }
                 if (args.length == 1) {
@@ -1046,19 +1085,11 @@ public class Oneblock extends JavaPlugin {
                 return true;
             }
             case ("help"):{
-            	sender.sendMessage(ChatColor.GREEN + "OneBlock Plugin Help");
-            	boolean admin = sender.hasPermission("Oneblock.set");
-            	if (admin)
-            	sender.sendMessage(ChatColor.GRAY + "/ob set" + ChatColor.WHITE+" - sets the location of the first island.");
-            	sender.sendMessage(ChatColor.GRAY + "/ob j" + ChatColor.WHITE+" - join a new one or your own island.");
-            	if (admin)
-            	sender.sendMessage(ChatColor.GRAY + "/ob protection" + ChatColor.WHITE+" - does not allow players to leave their island.");
-            	sender.sendMessage(ChatColor.GRAY + "/ob invite 'playername'" + ChatColor.WHITE+" - an invitation to the island.\n"+
-            					ChatColor.GRAY + "/ob accept" + ChatColor.WHITE+" - to accept an invitation.");
-            	if (admin) {
-            	sender.sendMessage(ChatColor.GRAY + "/ob islands true" + ChatColor.WHITE+" - islands for new players.\n"+ 
-            					ChatColor.GRAY + "/ob islands set_my_by_def" + ChatColor.WHITE+" - sets your island as default for new players.");}
-            	sender.sendMessage(ChatColor.GRAY + "/ob IDreset" + ChatColor.WHITE+" - deletes the player's data.");
+            	if (sender.hasPermission("Oneblock.set"))
+            		sender.sendMessage(Messages.help_adm);
+            	else
+            		sender.sendMessage(Messages.help);
+
             	return true;
             }
             default:
@@ -1068,7 +1099,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.0",
+            	"Create by MrMarL\nPlugin version: v1.0.1",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1201,7 +1232,41 @@ public class Oneblock extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new ChangedWorld(), this);
     	}
     }
-    
+    private void Messagefile() {
+        File message = new File(getDataFolder(), "messages.yml");
+        if (!message.exists())
+            saveResource("messages.yml", false);
+        newConfigz = YamlConfiguration.loadConfiguration(message);
+        
+        if (newConfigz.isString("noperm"))
+        	Messages.noperm = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("noperm"));
+        if (newConfigz.isString("help"))
+        	Messages.help = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("help"));
+        if (newConfigz.isString("help_adm"))
+        	Messages.help_adm = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("help_adm"));
+        if (newConfigz.isString("invite_usage"))
+        	Messages.invite_usage = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_usage"));
+        if (newConfigz.isString("invite_yourself"))
+        	Messages.invite_yourself = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_yourself"));
+        if (newConfigz.isString("invite_no_island"))
+        	Messages.invite_no_island = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_no_island"));
+        if (newConfigz.isString("invite_team"))
+        	Messages.invite_team = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_team"));
+        if (newConfigz.isString("invited"))
+        	Messages.invited = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invited"));
+        if (newConfigz.isString("invited_succes"))
+        	Messages.invited_succes = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invited_succes"));
+        if (newConfigz.isString("kick_usage"))
+        	Messages.kick_usage = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("kick_usage"));
+        if (newConfigz.isString("kick_yourself"))
+        	Messages.kick_yourself = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("kick_yourself"));
+        if (newConfigz.isString("accept_succes"))
+        	Messages.accept_succes = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("accept_succes"));
+        if (newConfigz.isString("accept_none"))
+        	Messages.accept_none = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("accept_none"));
+        if (newConfigz.isString("idreset"))
+        	Messages.idreset = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("idreset"));
+    }
     private void Flowerfile() {
         flowers.clear();
         File flower = new File(getDataFolder(), "flowers.yml");
@@ -1318,6 +1383,7 @@ public class Oneblock extends JavaPlugin {
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
         lvl_mult = Check("level_multiplier", lvl_mult);
+        max_players_team = Check("max_players_team", max_players_team);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         WorldGuard = Check("WorldGuard", WorldGuard);
         OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
@@ -1392,7 +1458,7 @@ public class Oneblock extends JavaPlugin {
         if (args.length == 1) {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult",
+            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team",
             		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup","physics"));
             }
         } else if (args.length == 2) {
@@ -1422,6 +1488,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("chests.yml");
 	                commands.add("mobs.yml");
 	                commands.add("flowers.yml");
+	                commands.add("messages.yml");
 	                break;
 	            }
                 case ("islands"):
@@ -1446,6 +1513,7 @@ public class Oneblock extends JavaPlugin {
 	            		commands.add(String.format("%d", i++));
 	            	break;
                 case ("lvl_mult"):
+                case ("max_players_team"):
                 	for(int i = 0;i<=20;)
 	            		commands.add(String.format("%d", i++));
 	            	break;
