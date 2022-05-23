@@ -7,21 +7,21 @@ noperm_inv: |
 
 help: |
     &a OneBlock Plugin Help
-    &7 /ob j &f - join a new one or your own island.
-    &7 /ob invite 'playername' &f - an invitation to the island.
-    &7 /ob accept &f - to accept an invitation.
-    &7 /ob IDreset &f - deletes the player's data.
+    &7 /ob j &f- join a new one or your own island.
+    &7 /ob invite 'playername' &f- an invitation to the island.
+    &7 /ob accept &f- to accept an invitation.
+    &7 /ob IDreset &f- deletes the player's data.
 
 help_adm: |
     &a OneBlock Plugin Help
-    &7 /ob set &f - sets the location of the first island.
-    &7 /ob j &f - join a new one or your own island.
-    &7 /ob protection &f - does not allow players to leave their island.
-    &7 /ob invite 'playername' &f - an invitation to the island.
-    &7 /ob accept &f - to accept an invitation.
-    &7 /ob islands true &f - islands for new players.
-    &7 /ob islands set_my_by_def &f - sets your island as default for new players.
-    &7 /ob IDreset &f - deletes the player's data.
+    &7 /ob set &f- sets the location of the first island.
+    &7 /ob j &f- join a new one or your own island.
+    &7 /ob protection &f- does not allow players to leave their island.
+    &7 /ob invite 'playername' &f- an invitation to the island.
+    &7 /ob accept &f- to accept an invitation.
+    &7 /ob islands true &f- islands for new players.
+    &7 /ob islands set_my_by_def &f- sets your island as default for new players.
+    &7 /ob IDreset &f- deletes the player's data.
 
 invite_usage: |
     &cUsage: /ob invite <username>
