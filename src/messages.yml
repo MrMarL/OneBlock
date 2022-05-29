@@ -56,3 +56,6 @@ accept_none: |
 
 idreset: |
     &aNow your data has been reset. You can create a new island /ob join.
+
+protection: |
+    &eare you trying to go &coutside the island?

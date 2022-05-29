@@ -19,4 +19,5 @@ public class Messages {
 	public static String accept_succes = String.format("%sSuccesfully accepted the invitation.", ChatColor.GREEN);
 	public static String accept_none = String.format("%s[There is no Pending invitations for you.]", ChatColor.RED);
 	public static String idreset = String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN);
+	public static String protection = String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED);
 }

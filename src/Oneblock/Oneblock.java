@@ -2,6 +2,7 @@
 package Oneblock;
 
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -97,7 +98,8 @@ public class Oneblock extends JavaPlugin {
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Metrics metrics = new Metrics(this, 14477);
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        final PluginManager pluginManager = Bukkit.getPluginManager();
+        if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
         	Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
             PAPI = true;
             new OBP().register();
@@ -117,8 +119,8 @@ public class Oneblock extends JavaPlugin {
             } 
             else wor_ok();
         }
-        Bukkit.getPluginManager().registerEvents(new RespawnJoinEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new BlockEvent(), this);
+        pluginManager.registerEvents(new RespawnJoinEvent(), this);
+        pluginManager.registerEvents(new BlockEvent(), this);
     }
     public class RespawnJoinEvent implements Listener {
         @EventHandler
@@ -291,7 +293,7 @@ public class Oneblock extends JavaPlugin {
                 			continue;
                 		}
                 		ponl.setVelocity(new Vector(-checkX/30, 0, -checkZ/30));
-                		ponl.sendMessage(String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED));
+                		ponl.sendMessage(Messages.protection);
                 		continue;
                 	}
                 }
@@ -1266,6 +1268,8 @@ public class Oneblock extends JavaPlugin {
         	Messages.accept_none = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("accept_none"));
         if (newConfigz.isString("idreset"))
         	Messages.idreset = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("idreset"));
+        if (newConfigz.isString("protection"))
+        	Messages.protection = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("protection"));
     }
     private void Flowerfile() {
         flowers.clear();
