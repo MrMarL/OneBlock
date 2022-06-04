@@ -172,6 +172,8 @@ public class Oneblock extends JavaPlugin {
         {
     		if (!droptossup) return;
     		
+    		if (wor == null) return;
+    		
             if (!EntityType.DROPPED_ITEM.equals(e.getEntityType()))
                 return;
             
