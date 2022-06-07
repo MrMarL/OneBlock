@@ -55,7 +55,7 @@ public class Oneblock extends JavaPlugin {
     static int x = 0;
     static int y = 0;
     static int z = 0;
-    Random rnd = new Random(System.currentTimeMillis());
+    final Random rnd = new Random(System.currentTimeMillis());
     int id = 0;
     FileConfiguration config, newConfigz;
     static World wor;
@@ -86,8 +86,8 @@ public class Oneblock extends JavaPlugin {
     int max_players_team = 0;
     OBWorldGuard OBWG;
     BlockData[][][] island = null;
-    XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
-    VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
+    final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
@@ -256,16 +256,12 @@ public class Oneblock extends JavaPlugin {
 		if (!СircleMode)
 			return new int[] {id * sto + Oneblock.x, Oneblock.z};
 		for (int i = 0; i < id; i++) {
-			if (x == z)
-				if (z < 0)
-					z++;
+			if (x > z)
+			    if (x > -z)
+				    z--;
 				else
-					x++;
-			else if (x > z && -z < x)
-				z--;
-			else if (x <= -z && x > z)
-				x--;
-			else if (-x > z)
+				    x--;
+			else if (-x > z || x == z && z < 0)
 				z++;
 			else
 				x++;
@@ -938,8 +934,8 @@ public class Oneblock extends JavaPlugin {
                     Flowerfile();
                     Chestfile();
                     Mobfile();
-                    ReCreateRegions();
                     Messagefile();
+                    ReCreateRegions();
                     sender.sendMessage(String.format("%sAll .yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
