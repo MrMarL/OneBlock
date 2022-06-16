@@ -382,11 +382,6 @@ public class Oneblock extends JavaPlugin {
     }
 
     public void onDisable() {
-    	try {
-    		File PlData = new File(getDataFolder(), "PlData.json");
-    		JsonSimple.Write(id, PlayerInfo.list, PlData);
-		} catch (Exception e) {}
-	
         if (island != null) {
             HashMap <String, List <String>> map = new HashMap <String, List <String>>();
             for (int yy = 0; yy < 5; yy++) {
