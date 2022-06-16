@@ -56,7 +56,6 @@ public class Oneblock extends JavaPlugin {
     static int y = 0;
     static int z = 0;
     final Random rnd = new Random(System.currentTimeMillis());
-    int id = 0;
     FileConfiguration config, newConfigz;
     static World wor;
 	World leavewor;
@@ -421,7 +420,7 @@ public class Oneblock extends JavaPlugin {
                 int plID = 0;
                 int X_pl = 0, Z_pl = 0;
                 if (!ExistId(name)) {
-                	plID = id; //GenType
+                	plID = PlayerInfo.size(); //GenType
                     int result[] = getFullCoord(plID, X_pl, Z_pl);
                     X_pl = result[0]; Z_pl = result[1];
                     if (il3x3) {
@@ -445,9 +444,8 @@ public class Oneblock extends JavaPlugin {
                     if (WorldGuard && OBWorldGuard.canUse) {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
                     	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-                    	OBWG.CreateRegion(name, Block1, Block2, id);
+                    	OBWG.CreateRegion(name, Block1, Block2, plID);
                     }	
-                    id++;
                     saveData();
                     PlayerInfo inf = new PlayerInfo(name);
                     PlayerInfo.list.add(inf);
@@ -657,7 +655,7 @@ public class Oneblock extends JavaPlugin {
                     	if (WorldGuard)
                     		ReCreateRegions();
                     	else
-                    		OBWG.RemoveRegions(id);
+                    		OBWG.RemoveRegions(PlayerInfo.size());
                 }
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
@@ -1153,19 +1151,19 @@ public class Oneblock extends JavaPlugin {
 			PlayerInfo.list = JsonSimple.Read(PlData);
 		else
 			PlayerInfo.list = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
-		id = PlayerInfo.size();
     }
     
     private void ReCreateRegions() {
     	if (!WorldGuard || !OBWorldGuard.canUse)
     		return;
+    	int id = PlayerInfo.size();
     	OBWG.RemoveRegions(id);
 		for (int i = 0; i < id; i++) {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.nick == null)
     			continue;
 			String name = owner.nick;
-            int result[] = getFullCoord(GetId(name), 0, 0);
+            int result[] = getFullCoord(i, 0, 0);
             int X_pl = result[0], Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
@@ -1178,7 +1176,7 @@ public class Oneblock extends JavaPlugin {
     public void saveData() {
         try {
         	File PlData = new File(getDataFolder(), "PlData.json");
-    		JsonSimple.Write(id, PlayerInfo.list, PlData);
+    		JsonSimple.Write(PlayerInfo.list, PlData);
         } 
         catch (Exception e) { e.printStackTrace(); }
     }

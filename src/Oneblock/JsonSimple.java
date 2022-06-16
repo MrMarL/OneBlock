@@ -12,7 +12,7 @@ import org.json.simple.parser.JSONParser;
 public class JsonSimple {
 
 	@SuppressWarnings("unchecked")
-	public static void Write(int id, ArrayList<PlayerInfo> pls, File f) {
+	public static void Write(ArrayList<PlayerInfo> pls, File f) {
 		JSONObject main = new JSONObject();
 		
 		for (int i = 0;pls.size() > i;i++) {
@@ -33,7 +33,7 @@ public class JsonSimple {
 			main.put(i, user);
 		}
 
-		main.put("id", id);
+		main.put("id", pls.size());
 		
 		try {
 			FileWriter file = new FileWriter(f);
