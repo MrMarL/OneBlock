@@ -300,8 +300,7 @@ public class Oneblock extends JavaPlugin {
                 	Level lvl_inf = max_lvl; 
                 	if (inf.lvl < levels.size())
                 		lvl_inf = levels.get(inf.lvl);
-                	inf.breaks++;
-                    if (inf.breaks >= 16 + inf.lvl * lvl_mult) {
+                    if (++inf.breaks >= 16 + inf.lvl * lvl_mult) {
                     	inf.lvlup();
                     	lvl_inf = max_lvl; 
                     	if (inf.lvl < levels.size())
@@ -320,20 +319,14 @@ public class Oneblock extends JavaPlugin {
                         inf.bar.setProgress((double) inf.breaks / (16 + inf.lvl * lvl_mult));
                         inf.bar.addPlayer(ponl);
                     }
-                    Location loc = ponl.getLocation();
-                    if (loc.getBlockX() == X_pl && loc.getY() - 1 < y && loc.getBlockZ() == Z_pl) {
-                        loc.setY(y+1);
-                        ponl.teleport(loc);
-                    }
-                    else
-                    	for(Player pll :PlLst(plID)) {
-                    		loc = pll.getLocation();
-                            if (loc.getBlockX() == X_pl && loc.getY() - 1 < y && loc.getBlockZ() == Z_pl) {
-                                loc.setY(y+1);
-                                pll.teleport(loc);
-                                break;
-                            }
+                    for(Player pll :PlLst(plID)) {
+                    	Location loc = pll.getLocation();
+                    	if (loc.getBlockX() == X_pl && loc.getY() - 1 < y && loc.getBlockZ() == Z_pl) {
+                    		loc.setY(y+1);
+                    		pll.teleport(loc);
+                    		break;
                     	}
+                    }
                     random = lvl_inf.size;
                     if (random != 0) random = rnd.nextInt(random);
                     if (blocks.get(random) == null) {
