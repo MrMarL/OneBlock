@@ -1224,36 +1224,26 @@ public class Oneblock extends JavaPlugin {
             saveResource("messages.yml", false);
         newConfigz = YamlConfiguration.loadConfiguration(message);
         
-        if (newConfigz.isString("noperm"))
-        	Messages.noperm = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("noperm"));
-        if (newConfigz.isString("help"))
-        	Messages.help = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("help"));
-        if (newConfigz.isString("help_adm"))
-        	Messages.help_adm = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("help_adm"));
-        if (newConfigz.isString("invite_usage"))
-        	Messages.invite_usage = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_usage"));
-        if (newConfigz.isString("invite_yourself"))
-        	Messages.invite_yourself = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_yourself"));
-        if (newConfigz.isString("invite_no_island"))
-        	Messages.invite_no_island = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_no_island"));
-        if (newConfigz.isString("invite_team"))
-        	Messages.invite_team = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invite_team"));
-        if (newConfigz.isString("invited"))
-        	Messages.invited = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invited"));
-        if (newConfigz.isString("invited_succes"))
-        	Messages.invited_succes = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("invited_succes"));
-        if (newConfigz.isString("kick_usage"))
-        	Messages.kick_usage = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("kick_usage"));
-        if (newConfigz.isString("kick_yourself"))
-        	Messages.kick_yourself = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("kick_yourself"));
-        if (newConfigz.isString("accept_succes"))
-        	Messages.accept_succes = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("accept_succes"));
-        if (newConfigz.isString("accept_none"))
-        	Messages.accept_none = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("accept_none"));
-        if (newConfigz.isString("idreset"))
-        	Messages.idreset = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("idreset"));
-        if (newConfigz.isString("protection"))
-        	Messages.protection = ChatColor.translateAlternateColorCodes('&',newConfigz.getString("protection"));
+        Messages.noperm = MessageCheck("noperm", Messages.noperm);
+        Messages.help = MessageCheck("help", Messages.help);
+        Messages.help_adm = MessageCheck("help_adm", Messages.help_adm);
+        Messages.invite_usage = MessageCheck("invite_usage", Messages.invite_usage);
+        Messages.invite_yourself = MessageCheck("invite_yourself", Messages.invite_yourself);
+        Messages.invite_no_island = MessageCheck("invite_no_island", Messages.invite_no_island);
+        Messages.invite_team = MessageCheck("invite_team", Messages.invite_team);
+        Messages.invited = MessageCheck("invited", Messages.invited);
+        Messages.invited_succes = MessageCheck("invited_succes", Messages.invited_succes);
+        Messages.kick_usage = MessageCheck("kick_usage", Messages.kick_usage);
+        Messages.kick_yourself = MessageCheck("kick_yourself", Messages.kick_yourself);
+        Messages.accept_succes = MessageCheck("accept_succes", Messages.accept_succes);
+        Messages.accept_none = MessageCheck("accept_none", Messages.accept_none);
+        Messages.idreset = MessageCheck("idreset", Messages.idreset);
+        Messages.protection = MessageCheck("protection", Messages.protection);
+    }
+    private String MessageCheck(String name, String def_message) {
+    	if (newConfigz.isString(name))
+        	return ChatColor.translateAlternateColorCodes('&',newConfigz.getString(name));
+    	return def_message;
     }
     private void Flowerfile() {
         flowers.clear();
