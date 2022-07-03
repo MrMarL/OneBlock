@@ -474,7 +474,7 @@ public class Oneblock extends JavaPlugin {
                 	PlayerInfo p_inf = PlayerInfo.get(GetId(p.getName()));
                 	if (p_inf.bar != null)
                 		p_inf.bar.removePlayer(p);
-                	}
+                }
                 if (config.getDouble("yleave") == 0 || leavewor == null)
                     return true;
                 p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"),
@@ -572,26 +572,22 @@ public class Oneblock extends JavaPlugin {
             		sender.sendMessage(Messages.kick_usage);
             		return true;
             	}
-            	Player inv = Bukkit.getPlayer(args[1]);
-            	String name = ((Player) sender).getName();
+            	String name = args[1];
             	if (!ExistNoInvaitId(name))
             		return true;
-            	if (inv != null) {
-            		if (inv == (Player) sender) {
-            			sender.sendMessage(Messages.kick_yourself);
-            			return true;
-            		}
-            		if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
-            			PlayerInfo.get(GetId(name)).nicks.remove(args[1]);
-            			if (WorldGuard && OBWorldGuard.canUse)
-            				OBWG.removeMember(inv.getName(), GetId(name));
-            			inv.performCommand("ob j");
-            			return true;
-            		}
-            	}
-            	else if (PlayerInfo.get(GetId(name)).nicks.contains(args[1])) {
-            		PlayerInfo.get(GetId(name)).nicks.remove(args[1]);
+            	Player inv = Bukkit.getPlayer(name);
+            	if (inv == (Player) sender) {
             		sender.sendMessage(Messages.kick_yourself);
+            		return true;
+            	}
+            	int plID = GetId(name);
+            	PlayerInfo info = PlayerInfo.get(plID);
+            	if (info.nicks.contains(name)) {
+            		info.nicks.remove(name);
+            		if (WorldGuard && OBWorldGuard.canUse)
+        				OBWG.removeMember(name, plID);
+            		if (inv != null)
+            			inv.performCommand("ob j");
             	}
             	return true;
             }
