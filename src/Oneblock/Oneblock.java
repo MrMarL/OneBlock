@@ -1368,10 +1368,10 @@ public class Oneblock extends JavaPlugin {
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy) {
         	island = new BlockData[7][5][7];
+        	BlockData airData = Material.AIR.createBlockData();
         	for (int yy = 0; yy < 5; yy++) {
         		String check = String.format("custom_island.y%d", yy-1);
         		if (!config.isList(check)) {
-        			BlockData airData = Material.AIR.createBlockData();
         			for (int xx = 0; xx < 7; xx++)
     	                for (int zz = 0; zz < 7; zz++)
     	                	island[xx][yy][zz] = airData;
