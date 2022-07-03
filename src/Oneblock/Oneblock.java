@@ -1486,13 +1486,12 @@ public class Oneblock extends JavaPlugin {
 	            	for(int i = 0;i<levels.size();)
 	            		commands.add(String.format("%d", i++));
 	            	break;
-                case ("frequency"):
-                	for(int i = 4;i<=20;)
-	            		commands.add(String.format("%d", i++));
-	            	break;
                 case ("lvl_mult"):
                 case ("max_players_team"):
-                	for(int i = 0;i<=20;)
+                	for(int i = 0;i<4;)
+	            		commands.add(String.format("%d", i++));
+                case ("frequency"):
+                	for(int i = 4;i<=20;)
 	            		commands.add(String.format("%d", i++));
 	            	break;
                 case ("set"):
