@@ -398,7 +398,7 @@ public class Oneblock extends JavaPlugin {
                     int result[] = getFullCoord(plID, X_pl, Z_pl);
                     X_pl = result[0]; Z_pl = result[1];
                     if (il3x3)
-                    	Island.place(wor, X_pl, X_pl, Z_pl);
+                    	Island.place(wor, X_pl, y, Z_pl);
                     //WorldGuard
                     if (WorldGuard && OBWorldGuard.canUse) {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
