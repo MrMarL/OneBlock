@@ -66,8 +66,6 @@ public class Oneblock extends JavaPlugin {
     ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs = new ArrayList <>();
     ArrayList <XMaterial> flowers = new ArrayList <>();
-    static ArrayList <Level> levels = new ArrayList <>();
-    static Level max_lvl = new Level("Level: MAX");
     static List <Player> plonl;
     static int lvl_mult = 5;
     String TextP = "";
@@ -297,14 +295,10 @@ public class Oneblock extends JavaPlugin {
                 Block block = wor.getBlockAt(X_pl, y, Z_pl);
                 if (block.getType().equals(Material.AIR)) {
                 	PlayerInfo inf = PlayerInfo.get(plID);
-                	Level lvl_inf = max_lvl; 
-                	if (inf.lvl < levels.size())
-                		lvl_inf = levels.get(inf.lvl);
+                	Level lvl_inf = Level.get(inf.lvl); 
                     if (++inf.breaks >= 16 + inf.lvl * lvl_mult) {
                     	inf.lvlup();
-                    	lvl_inf = max_lvl; 
-                    	if (inf.lvl < levels.size())
-                    		lvl_inf = levels.get(inf.lvl);
+                    	lvl_inf = Level.get(inf.lvl); 
                         if (Progress_bar) {
                         	inf.bar.setColor(lvl_inf.color);
                         	if (lvl_bar_mode)
@@ -418,13 +412,12 @@ public class Oneblock extends JavaPlugin {
                     X_pl = result[0]; Z_pl = result[1];
                     if (il3x3) {
                     	if (island != null) {
-                    		int px = X_pl - 3;
                             for (int xx = 0; xx < 7; xx++)
                             	for (int yy = 0; yy < 5; yy++)
                                 	for (int zz = 0; zz < 7; zz++) {
                                 		if (island[xx][yy][zz].getMaterial().equals(Material.AIR))
                                 			continue;
-                                    	wor.getBlockAt(px + xx, y + yy - 1, Z_pl - 3 + zz).setBlockData(island[xx][yy][zz]);
+                                    	wor.getBlockAt(X_pl - 3 + xx, y + yy - 1, Z_pl - 3 + zz).setBlockData(island[xx][yy][zz]);
                                 	}
                         } else {
                         	for (int i = -2;i<=2;i++)
@@ -445,10 +438,10 @@ public class Oneblock extends JavaPlugin {
                     if (!superlegacy && Progress_bar) {
                     	String temp = TextP;
                         if (lvl_bar_mode)
-                        	temp = levels.get(0).name;
+                        	temp = Level.get(0).name;
                         else if (PAPI)
                         	temp = PlaceholderAPI.setPlaceholders(p, TextP);
-                        inf.bar = (Bukkit.createBossBar(temp, levels.get(0).color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY));
+                        inf.bar = Bukkit.createBossBar(temp, Level.get(0).color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
                     }
                 } 
                 else {
@@ -463,9 +456,8 @@ public class Oneblock extends JavaPlugin {
                 if (Progress_bar)
                 	PlayerInfo.get(plID).bar.setVisible(true);
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
-                if (WorldGuard && OBWorldGuard.canUse) {
+                if (WorldGuard && OBWorldGuard.canUse)
                 	OBWG.addMember(name, plID);
-                }
                 return true;
             }
             case ("leave"):{
@@ -695,9 +687,7 @@ public class Oneblock extends JavaPlugin {
                         inf.breaks = 0;
                         inf.lvl = setlvl;
                         if (lvl_bar_mode) {
-                        	Level lvl = max_lvl;
-                        	if (inf.lvl < levels.size())
-                        		lvl = levels.get(inf.lvl);
+                        	Level lvl = Level.get(inf.lvl);
 	                    	inf.bar.setTitle(lvl.name);
 	                    	inf.bar.setColor(lvl.color);
                         }
@@ -836,10 +826,7 @@ public class Oneblock extends JavaPlugin {
                     if (!lvl_bar_mode) {
                         lvl_bar_mode = true;
                         for (PlayerInfo inf:PlayerInfo.list)
-	                        if (inf.lvl >= levels.size())
-	                        	inf.bar.setTitle(max_lvl.name);
-	                    	else
-	                    		inf.bar.setTitle(levels.get(inf.lvl).name);
+                        	inf.bar.setTitle(Level.get(inf.lvl).name);
                         config.set("Progress_bar_text", "level");
                         return true;
                     } else {
@@ -883,15 +870,15 @@ public class Oneblock extends JavaPlugin {
                     	sender.sendMessage(String.format("%sinvalid value", ChatColor.RED));
                     	return true;
                     }
-                    if (levels.size()<=temp||temp<0) {
+                    if (Level.size()<=temp||temp<0) {
                     	sender.sendMessage(String.format("%sundefined lvl", ChatColor.RED));
                     	return true;
                     }
-                    sender.sendMessage(String.format("%s%s",ChatColor.GREEN, levels.get(temp).name));
+                    sender.sendMessage(String.format("%s%s",ChatColor.GREEN, Level.get(temp).name));
                     int i = 0;
                     if (temp !=0)
-                    	i = levels.get(temp-1).size;
-                    for(;i<levels.get(temp).size;i++)
+                    	i = Level.get(temp-1).size;
+                    for(;i<Level.get(temp).size;i++)
                     	if (blocks.get(i) == null)
                     		sender.sendMessage("Grass or undefined");
                     	else if (blocks.get(i).getClass() == XMaterial.class)
@@ -900,8 +887,8 @@ public class Oneblock extends JavaPlugin {
                     		sender.sendMessage((String)blocks.get(i));
                     return true;
                 }
-                for(int i = 0;i<levels.size();i++)
-                	sender.sendMessage(String.format("%d: %s%s", i, ChatColor.GREEN, levels.get(i).name));
+                for(int i = 0;i<Level.size();i++)
+                	sender.sendMessage(String.format("%d: %s%s", i, ChatColor.GREEN, Level.get(i).name));
                 return true;
             }
             case ("reload"):{
@@ -1171,17 +1158,17 @@ public class Oneblock extends JavaPlugin {
 
     private void Blockfile() {
     	blocks.clear();
-        levels.clear();
+    	Level.levels.clear();
         File block = new File(getDataFolder(), "blocks.yml");
         if (!block.exists())
             saveResource("blocks.yml", false);
         newConfigz = YamlConfiguration.loadConfiguration(block);
         if (newConfigz.isString("MaxLevel"))
-        	max_lvl.name = newConfigz.getString("MaxLevel");
+        	Level.max.name = newConfigz.getString("MaxLevel");
         for (int i = 0; newConfigz.isList(String.format("%d", i)); i++) {
         	List <String> bl_temp = newConfigz.getStringList(String.format("%d", i));
         	Level level = new Level(bl_temp.get(0));
-        	levels.add(level);
+        	Level.levels.add(level);
         	int q = 1;
         	if (Progress_bar && q<bl_temp.size())
         		try {
@@ -1200,14 +1187,12 @@ public class Oneblock extends JavaPlugin {
         	}
         	level.size = blocks.size();
         }
-        max_lvl.size = blocks.size();
+        Level.max.size = blocks.size();
         //Progress_bar
         if (!superlegacy && Progress_bar && PlayerInfo.size() > 0 && PlayerInfo.get(0).bar == null) {
-            max_lvl.color = Progress_color;
+        	Level.max.color = Progress_color;
             for (PlayerInfo inf:PlayerInfo.list) {
-                Level lvl = max_lvl;
-                if (inf.lvl < levels.size())
-                	lvl = levels.get(inf.lvl);
+                Level lvl = Level.get(inf.lvl);
                 inf.bar = Bukkit.createBossBar(lvl_bar_mode?lvl.name:TextP, lvl.color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
             }
             Bukkit.getPluginManager().registerEvents(new ChangedWorld(), this);
@@ -1397,15 +1382,11 @@ public class Oneblock extends JavaPlugin {
     }
     public static String getlvlname(String pl_name) {
     	int lvl = getlvl(pl_name);
-    	if (lvl < levels.size())
-    		return levels.get(lvl).name;
-    	return max_lvl.name;
+    	return Level.get(lvl).name;
     }
     public static String getnextlvlname(String pl_name) {
     	int lvl = getnextlvl(pl_name);
-    	if (lvl < levels.size())
-    		return levels.get(lvl).name;
-    	return max_lvl.name;
+    	return Level.get(lvl).name;
     }
     public static int getblocks(String pl_name) {
         return PlayerInfo.get(GetId(pl_name)).breaks;
@@ -1478,7 +1459,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("false");
 	                break;
                 case ("listlvl"):
-	            	for(int i = 0;i<levels.size();)
+	            	for(int i = 0;i<Level.size();)
 	            		commands.add(String.format("%d", i++));
 	            	break;
                 case ("lvl_mult"):
@@ -1507,7 +1488,7 @@ public class Oneblock extends JavaPlugin {
         		}
         	}
         	else if (args[0].equals("setlevel"))
-            	for (int i = 0;i<levels.size();)
+            	for (int i = 0;i<Level.size();)
             		commands.add(String.format("%d", i++));
         Collections.sort(commands);
         return commands;
