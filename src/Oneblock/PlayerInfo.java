@@ -27,7 +27,21 @@ public class PlayerInfo {
 		return list.get(id);
 	}
 	
+	public static void set(int id, PlayerInfo pInf) {
+		if (id < list.size())
+			list.set(id, pInf);
+		else
+			list.add(pInf);
+	}
+	
 	public static int size() {
+		return list.size();
+	}
+	
+	public static int getNull() {
+		for (int i = 0; list.size() > i; i++)
+			if (list.get(i).nick == null) 
+				return i;
 		return list.size();
 	}
 	

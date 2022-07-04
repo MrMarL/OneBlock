@@ -78,6 +78,7 @@ public class Oneblock extends JavaPlugin {
     boolean WorldGuard = false;
     boolean Progress_bar = true;
     boolean СircleMode = false;
+    boolean UseEmptyIslands = true;
     int max_players_team = 0;
     OBWorldGuard OBWG;
     final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
@@ -394,9 +395,15 @@ public class Oneblock extends JavaPlugin {
                 int plID = 0;
                 int X_pl = 0, Z_pl = 0;
                 if (!ExistId(name)) {
-                	plID = PlayerInfo.size(); //GenType
-                    int result[] = getFullCoord(plID, X_pl, Z_pl);
-                    X_pl = result[0]; Z_pl = result[1];
+                	PlayerInfo inf = new PlayerInfo(name);
+                	if (UseEmptyIslands)
+                		plID = PlayerInfo.getNull();
+                	else
+                		plID = PlayerInfo.size();
+                	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                	X_pl = result[0]; Z_pl = result[1];
+                	if (plID != PlayerInfo.size())
+                		Island.clear(wor, X_pl, y, Z_pl, sto/4);
                     if (il3x3)
                     	Island.place(wor, X_pl, y, Z_pl);
                     //WorldGuard
@@ -405,9 +412,8 @@ public class Oneblock extends JavaPlugin {
                     	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
                     	OBWG.CreateRegion(name, Block1, Block2, plID);
                     }	
-                    saveData();
-                    PlayerInfo inf = new PlayerInfo(name);
-                    PlayerInfo.list.add(inf);
+					saveData();
+					PlayerInfo.set(plID, inf);
                     if (!superlegacy && Progress_bar) {
                     	String temp = TextP;
                         if (lvl_bar_mode)
@@ -618,6 +624,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("circlemode"):
             	parametr = "СircleMode";
+            case ("useemptyislands"):
             case ("protection"):
             case ("droptossup"):
             case ("physics"):
@@ -690,13 +697,7 @@ public class Oneblock extends JavaPlugin {
                     if (Progress_bar)
                     	inf.bar.setVisible(false);
                     int result[] = getFullCoord(i, 0, 0);
-                    int x_now = result[0] - 12, y_now = y - 6, z_now = result[1] - 12;
-                    if (y_now <= 1)
-                        y_now = 1;
-                    for (int xx = 0; xx < 24; xx++)
-                        for (int yy = 0; yy < 16; yy++)
-                            for (int zz = 0; zz < 24; zz++)
-                                wor.getBlockAt(x_now + xx, y_now + yy, z_now + zz).setType(Material.AIR);
+                    Island.clear(wor, result[0], y, result[1], sto/4);
                     sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
                     return true;
                 }
@@ -1033,7 +1034,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.1u",
+            	"Create by MrMarL\nPlugin version: v1.0.2",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1319,6 +1320,7 @@ public class Oneblock extends JavaPlugin {
     
     public void UpdateParametrs() {
     	СircleMode = Check("СircleMode", СircleMode);
+    	UseEmptyIslands = Check("useemptyislands", UseEmptyIslands);
         protection = Check("protection", protection);
         autojoin = Check("autojoin", autojoin);
         droptossup = Check("droptossup", droptossup);
@@ -1364,7 +1366,7 @@ public class Oneblock extends JavaPlugin {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team",
-            		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup","physics"));
+            		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick")) {
@@ -1399,6 +1401,7 @@ public class Oneblock extends JavaPlugin {
                 case ("islands"):
 	                commands.add("set_my_by_def");
 	                commands.add("default");
+                case ("UseEmptyIslands"):
                 case ("island_rebirth"):
                 case ("protection"):
                 case ("circlemode"):

@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -56,6 +57,21 @@ public class Island {
             for (int yy = 0; yy < 5; yy++)
                 for (int zz = 0; zz < 7; zz++)
                     island[xx][yy][zz] = wor.getBlockAt(x + xx - 3, y + yy - 1, z - 3 + zz).getBlockData();
+	}
+	
+	public static void clear(World wor, int x, int y, int z, int radius) {
+		x -= radius; y -= 12; z -= radius;
+		radius*=2;
+        if (y <= 1)
+            y = 1;
+        for (int xx = 0; xx < radius; xx++)
+            for (int yy = 0; yy < 24; yy++)
+                for (int zz = 0; zz < radius; zz++) {
+                	Block bl = wor.getBlockAt(x + xx, y + yy, z + zz);
+                	if (bl.getType().equals(Material.AIR))
+						continue;
+                	bl.setType(Material.AIR);
+                }
 	}
 	
 	public static void place(World wor, int x, int y, int z) {
