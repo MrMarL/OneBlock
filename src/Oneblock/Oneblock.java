@@ -780,10 +780,9 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sinvalid max_players_team value.", ChatColor.RED));
                     return true;
                 }
-                if (mpt <= 20 && mpt >= 0) {
-                	max_players_team = mpt;
-                    config.set("max_players_team", max_players_team);
-                } else
+                if (mpt <= 20 && mpt >= 0) 
+                    config.set("max_players_team", max_players_team = mpt);
+                else
                     sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
                 sender.sendMessage(String.format("%smax_players_team now: %d", ChatColor.GREEN, max_players_team));
                 return true;
