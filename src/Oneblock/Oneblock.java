@@ -108,6 +108,7 @@ public class Oneblock extends JavaPlugin {
         Messagefile();
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
+        metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
                 Bukkit.getScheduler().runTaskTimer(this, (Runnable) new wor_null(), 32, 64);
