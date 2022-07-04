@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -28,7 +27,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -82,7 +80,6 @@ public class Oneblock extends JavaPlugin {
     boolean СircleMode = false;
     int max_players_team = 0;
     OBWorldGuard OBWG;
-    BlockData[][][] island = null;
     final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
     final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     
@@ -368,17 +365,7 @@ public class Oneblock extends JavaPlugin {
     }
 
     public void onDisable() {
-        if (island != null) {
-            HashMap <String, List <String>> map = new HashMap <String, List <String>>();
-            for (int yy = 0; yy < 5; yy++) {
-            	List <String> y_now = new ArrayList <String>();
-	            for (int xx = 0; xx < 7; xx++)
-	                for (int zz = 0; zz < 7; zz++)
-	                	y_now.add(island[xx][yy][zz].getAsString());
-	            map.put(String.format("y%d", yy-1), y_now);
-            }
-            config.set("custom_island", map);
-        }
+        config.set("custom_island", Island.map());
         saveData();
         Config.Save(config);
     }
@@ -410,22 +397,8 @@ public class Oneblock extends JavaPlugin {
                 	plID = PlayerInfo.size(); //GenType
                     int result[] = getFullCoord(plID, X_pl, Z_pl);
                     X_pl = result[0]; Z_pl = result[1];
-                    if (il3x3) {
-                    	if (island != null) {
-                            for (int xx = 0; xx < 7; xx++)
-                            	for (int yy = 0; yy < 5; yy++)
-                                	for (int zz = 0; zz < 7; zz++) {
-                                		if (island[xx][yy][zz].getMaterial().equals(Material.AIR))
-                                			continue;
-                                    	wor.getBlockAt(X_pl - 3 + xx, y + yy - 1, Z_pl - 3 + zz).setBlockData(island[xx][yy][zz]);
-                                	}
-                        } else {
-                        	for (int i = -2;i<=2;i++)
-                        		for (int q = -2;q<=2;q++)
-                        			if (Math.abs(i)+Math.abs(q) < 3)
-                        				XBlock.setType(wor.getBlockAt(X_pl + i, y, Z_pl+ q),GRASS_BLOCK);
-                        }
-                    }
+                    if (il3x3)
+                    	Island.place(wor, X_pl, X_pl, Z_pl);
                     //WorldGuard
                     if (WorldGuard && OBWorldGuard.canUse) {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
@@ -1008,14 +981,8 @@ public class Oneblock extends JavaPlugin {
                 	Player p = (Player) sender;
                     String name = p.getName();
                     if (ExistId(name)) {
-                    	if (island == null)
-                    		island = new BlockData[7][5][7];
                         int result[] = getFullCoord(GetId(name), 0, 0);
-                        int X_pl = result[0], Z_pl = result[1];
-                        for (int xx = 0; xx < 7; xx++)
-                            for (int yy = 0; yy < 5; yy++)
-                                for (int zz = 0; zz < 7; zz++)
-                                    island[xx][yy][zz] = wor.getBlockAt(X_pl + xx - 3, y + yy - 1, Z_pl - 3 + zz).getBlockData();
+                        Island.scan(wor, result[0], y, result[1]);
                         sender.sendMessage(ChatColor.GREEN + "Your island has been successfully saved and set as default for new players!");
                     } else
                         sender.sendMessage(ChatColor.RED + "You don't have an island!");
@@ -1026,8 +993,7 @@ public class Oneblock extends JavaPlugin {
                 		sender.sendMessage(ChatColor.RED + "Not supported in legacy versions!");
                 		return true;
                 	}
-                    config.set("custom_island", null);
-                    island = null;
+                    config.set("custom_island", Island.island = null);
                     sender.sendMessage(ChatColor.GREEN + "The default island is installed.");
                     return true;
                 }
@@ -1346,23 +1312,8 @@ public class Oneblock extends JavaPlugin {
         WorldGuard = Check("WorldGuard", WorldGuard);
         OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
         sto = Check("set", 100);
-        if (config.isSet("custom_island") && !legacy) {
-        	island = new BlockData[7][5][7];
-        	BlockData airData = Material.AIR.createBlockData();
-        	for (int yy = 0; yy < 5; yy++) {
-        		String check = String.format("custom_island.y%d", yy-1);
-        		if (!config.isList(check)) {
-        			for (int xx = 0; xx < 7; xx++)
-    	                for (int zz = 0; zz < 7; zz++)
-    	                	island[xx][yy][zz] = airData;
-        			continue;
-        		}
-	        	List<String> cust_s = config.getStringList(check);
-	            for (int xx = 0; xx < 7; xx++)
-	                for (int zz = 0; zz < 7; zz++)
-	                	island[xx][yy][zz] = Bukkit.createBlockData(cust_s.get(7*xx+zz));
-        	}
-        }
+        if (config.isSet("custom_island") && !legacy)
+        	Island.read(config);
         Config.Save(config, con);
     }
     
