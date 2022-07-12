@@ -14,10 +14,10 @@ public class Messages {
 	public static String invited = String.format("%sYou were invited by player %s.\n%s/ob accept to accept).", 
 			ChatColor.GREEN, "%s", ChatColor.RED);
 	public static String invited_succes = String.format("%sSuccesfully invited %s.", ChatColor.GREEN, "%s");
-	public static String kick_usage = String.format("%sUsage: /ob kick <username>", ChatColor.RED);
+	public static String kick_usage = String.format("%sUsage: /ob kick <player>", ChatColor.RED);
 	public static String kick_yourself = String.format("%sYou can't kick yourself.", ChatColor.YELLOW);
 	public static String accept_succes = String.format("%sSuccesfully accepted the invitation.", ChatColor.GREEN);
-	public static String accept_none = String.format("%s[There is no Pending invitations for you.]", ChatColor.RED);
-	public static String idreset = String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN);
+	public static String accept_none = String.format("%sThere is no Pending invitations for you.", ChatColor.RED);
+	public static String idreset = String.format("%sYour island has been deleted, create one by /ob join", ChatColor.GREEN);
 	public static String protection = String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED);
 }
