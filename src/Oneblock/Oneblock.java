@@ -1058,10 +1058,10 @@ public class Oneblock extends JavaPlugin {
     	return 0;
     }
     
-    ArrayList<Player>PlLst(int id) {
+    ArrayList<Player> PlLst(int id) {
     	ArrayList<Player> pls = new ArrayList<Player>();
     	for (Player ponl: plonl)
-    		if (ExistId(ponl.getName()))
+    		if (id == GetId(ponl.getName()))
     			pls.add(ponl);
     	return pls;
     }
