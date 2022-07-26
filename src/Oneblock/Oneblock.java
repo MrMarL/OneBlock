@@ -1041,6 +1041,9 @@ public class Oneblock extends JavaPlugin {
                 }
                 else
                 	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+            	if (!GUI.enabled)
+            		for (Player pl : plonl)
+            			pl.closeInventory();
                 sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (GUI.enabled?"enabled.":"disabled.")));
             	return true;
             }
