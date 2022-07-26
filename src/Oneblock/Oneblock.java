@@ -6,6 +6,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import Oneblock.gui.GUI;
+import Oneblock.gui.GUIListener;
 import main.java.xseriesoneblock.XBlock;
 import main.java.xseriesoneblock.XMaterial;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -109,6 +111,7 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
         metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
+        metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
                 Bukkit.getScheduler().runTaskTimer(this, (Runnable) new wor_null(), 32, 64);
@@ -117,6 +120,7 @@ public class Oneblock extends JavaPlugin {
         }
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
+        pluginManager.registerEvents(new GUIListener(), this);
     }
     public class RespawnJoinEvent implements Listener {
         @EventHandler
@@ -533,7 +537,8 @@ public class Oneblock extends JavaPlugin {
 	            			return true;
             			}
             		}
-            		addinvite(name,inv.getName());
+            		addinvite(name, inv.getName());
+            		GUI.acceptGUI(inv, name);
             		inv.sendMessage(String.format(Messages.invited, name));
             		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
             	}
@@ -1020,6 +1025,29 @@ public class Oneblock extends JavaPlugin {
                 sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
                 return true;
             }
+            case ("gui"):{
+            	if (args.length == 1) {
+            		GUI.openGUI((Player) sender);
+            		return true;
+            	}
+            	if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(Messages.noperm);
+                    return true;
+                }
+            	if (args.length > 1 &&
+                    	(args[1].equals("true") || args[1].equals("false"))) {
+                    	config.set(parametr, Boolean.valueOf(args[1]));
+                        GUI.enabled = Check("gui", GUI.enabled);
+                }
+                else
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (GUI.enabled?"enabled.":"disabled.")));
+            	return true;
+            }
+            case ("top"):{
+            	GUI.topGUI((Player) sender);
+            	return true;
+            }
             case ("help"):{
             	if (sender.hasPermission("Oneblock.set"))
             		sender.sendMessage(Messages.help_adm);
@@ -1035,7 +1063,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.2",
+            	"Create by MrMarL\nPlugin version: v1.0.3",
             	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
             return true;
             }
@@ -1149,7 +1177,7 @@ public class Oneblock extends JavaPlugin {
         		if (text.charAt(0) == '/') 
 	            	blocks.add(text.replaceFirst("/", ""));
         		else if (!a.isPresent() || a.get() == GRASS_BLOCK)
-	                blocks.add(null);
+	                blocks.add(null);//Material.matchMaterial(text)
 	            else
 	                blocks.add(a.get());
         	}
@@ -1311,6 +1339,7 @@ public class Oneblock extends JavaPlugin {
         lvl_mult = Check("level_multiplier", lvl_mult);
         max_players_team = Check("max_players_team", max_players_team);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
+        GUI.enabled = Check("gui", GUI.enabled);
         WorldGuard = Check("WorldGuard", WorldGuard);
         OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
         sto = Check("set", 100);
@@ -1364,7 +1393,7 @@ public class Oneblock extends JavaPlugin {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help"));
+        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team",
             		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
@@ -1410,6 +1439,7 @@ public class Oneblock extends JavaPlugin {
                 case ("autoJoin"):
                 case ("droptossup"):
                 case ("physics"):
+                case ("gui"):
 	                commands.add("true");
 	                commands.add("false");
 	                break;
