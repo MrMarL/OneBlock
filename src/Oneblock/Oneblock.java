@@ -96,6 +96,11 @@ public class Oneblock extends JavaPlugin {
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
+        Bukkit.getConsoleSender().sendMessage(
+        		  "\n┏━┓····┏━━┓·····┏┓\n"
+        		  + "┃┃┣━┳┳━┫┏┓┣┓┏━┳━┫┣┓\n"
+        		  + "┃┃┃┃┃┃┻┫┏┓┃┗┫╋┃━┫━┫\n"
+        		  + "┗━┻┻━┻━┻━━┻━┻━┻━┻┻┛ by MrMarL");
         if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
         	Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
             PAPI = true;
@@ -195,13 +200,12 @@ public class Oneblock extends JavaPlugin {
     public class wor_null implements Runnable {
         public void run() {
             if (wor == null) {
-                Bukkit.getConsoleSender().sendMessage(String.format("\n%s\n%s",
-                		"[OB] Waiting for the initialization of the world",
-                		"[OB] Trying to initialize the world again..."));
+            	Bukkit.getConsoleSender().sendMessage("[OneBlock] Waiting for the initialization of the world");
+            	Bukkit.getConsoleSender().sendMessage("[OneBlock] Trying to initialize the world again...");
                 wor = Bukkit.getWorld(config.getString("world"));
                 leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
-                Bukkit.getConsoleSender().sendMessage("[OB] The initialization of the world was successful!");
+                Bukkit.getConsoleSender().sendMessage("[OneBlock] The initialization of the world was successful!");
                 wor_ok();
             }
         }
