@@ -1,8 +1,12 @@
-# Oneblock
-<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page"></a>*by MrMarL*
+<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page" align="right"></a>
+<div align="center">
+  <h1>Oneblock</h1>
+  <h3>Support 1.8.X - 1.19.X and higher... Legacy support 1.6.X - 1.7.X</h3>
+  <h3>Works on java 8 and bukkit/</h3>
 
-### Discord. 
-[![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)
+  [![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)
+</div>
+
 ### OneBlock minigame plugin commands. 
 **Main Commands:**
 <br>▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -21,6 +25,7 @@
 <br>▌# If you set it too high, players will die from falling)
 <br>▌/ob lvl_mult 5 - The number of blocks that must be broken to get a new level is calculated using the formula:
 <br>▌ 16+level now*level multiplier
+<br>▌/ob UseEmptyIslands true - whether to overwrite abandoned islands.
 <br>█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
 <br>**Island Commands:**
@@ -73,3 +78,6 @@
 * %OB_top_10_lvl%
 * %OB_number_of_invited% - The number of people invited to your island.
 * You can use placeholders in the progress bar text!</br>
+
+## bStats
+[![](https://bstats.org/signatures/bukkit/Oneblock.svg)](bstats.org/plugin/bukkit/OneBlock/14477)
