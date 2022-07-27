@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class GUIListener implements Listener {
 
@@ -34,7 +35,10 @@ public class GUIListener implements Listener {
 		        if (item == null)
 		        	return;
 		        pl.closeInventory();
-		        String command = item.getItemMeta().getDisplayName();
+		        ItemMeta meta = item.getItemMeta();
+		        if (meta == null)
+		        	return;
+		        String command = meta.getDisplayName();
 		        if (command.contains("/")) 
 		        	pl.performCommand(command.split("/")[1]);
 		    }
