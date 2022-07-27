@@ -19,6 +19,8 @@ public class GUIListener implements Listener {
         	return;
         if (!inv.getHolder().getClass().isAssignableFrom(GUIHolder.class))
         	return;
+        
+        e.setCancelled(true);
 	        
 	    if (inv.getSize() == 9) {
 	    	HumanEntity he = e.getWhoClicked();
@@ -30,9 +32,10 @@ public class GUIListener implements Listener {
 		        ItemStack item = e.getCurrentItem();
 		        if (item == null)
 		        	return;
-		        String command = item.getItemMeta().getDisplayName().split("/")[1];
 		        pl.closeInventory();
-		        pl.performCommand(command);
+		        String command = item.getItemMeta().getDisplayName();
+		        if (command.contains("/")) 
+		        	pl.performCommand(command.split("/")[1]);
 		    }
 		    else {
 		    	pl.closeInventory();
@@ -40,6 +43,5 @@ public class GUIListener implements Listener {
 		        	pl.performCommand("ob accept");
 		    }
         }
-	    e.setCancelled(true);
     }
 }
