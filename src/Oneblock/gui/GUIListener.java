@@ -5,13 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class GUIListener implements Listener {
 
 	@EventHandler
-    public void onPlayerClickInventory(InventoryClickEvent e){
+    public void onPlayerClickInventory(final InventoryClickEvent e){
     	if (!GUI.enabled)
     		return;
         Inventory inv = e.getClickedInventory();
@@ -43,5 +44,19 @@ public class GUIListener implements Listener {
 		        	pl.performCommand("ob accept");
 		    }
         }
+    }
+	
+	@EventHandler
+    public void onInventoryDrag(final InventoryDragEvent e)
+    {
+		if (!GUI.enabled)
+    		return;
+        Inventory inv = e.getInventory();
+        if (inv == null)
+        	return;
+        if (!inv.getHolder().getClass().isAssignableFrom(GUIHolder.class))
+        	return;
+        
+        e.setCancelled(true);
     }
 }
