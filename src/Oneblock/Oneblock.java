@@ -60,7 +60,7 @@ public class Oneblock extends JavaPlugin {
     static int z = 0;
     final Random rnd = new Random(System.currentTimeMillis());
     FileConfiguration config, newConfigz;
-    public static World wor;
+    static World wor;
 	World leavewor;
     int random = 0;
     boolean superlegacy, legacy;
@@ -88,6 +88,8 @@ public class Oneblock extends JavaPlugin {
     OBWorldGuard OBWG;
     final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
     final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    
+    public static World wor() { return wor; }
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
