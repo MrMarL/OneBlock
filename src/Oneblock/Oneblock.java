@@ -528,29 +528,29 @@ public class Oneblock extends JavaPlugin {
             		return true;
             	}
             	Player inv = Bukkit.getPlayer(args[1]);
-            	if (inv != null) {
-            		Player pl = (Player) sender;
-            		String name = pl.getName();
-            		if (inv == pl) {
-            			sender.sendMessage(Messages.invite_yourself);
+            	if (inv == null) 
+            		return true;
+            	Player pl = (Player) sender;
+        		String name = pl.getName();
+        		if (inv == pl) {
+        			sender.sendMessage(Messages.invite_yourself);
+        			return true;
+        		}
+        		if (!PlayerInfo.ExistId(name)) {
+        			sender.sendMessage(Messages.invite_no_island);
+        			return true;
+        		}
+        		if (max_players_team != 0) {
+        			PlayerInfo pinf = PlayerInfo.get(name);
+        			if (pinf.nicks.size() >= max_players_team) {
+            			sender.sendMessage(String.format(Messages.invite_team, max_players_team));
             			return true;
-            		}
-            		if (!PlayerInfo.ExistId(name)) {
-            			sender.sendMessage(Messages.invite_no_island);
-            			return true;
-            		}
-            		if (max_players_team != 0) {
-            			PlayerInfo pinf = PlayerInfo.get(name);
-            			if (pinf.nicks.size() >= max_players_team) {
-	            			sender.sendMessage(String.format(Messages.invite_team, max_players_team));
-	            			return true;
-            			}
-            		}
-            		addinvite(name, inv.getName());
-            		GUI.acceptGUI(inv, name);
-            		inv.sendMessage(String.format(Messages.invited, name));
-            		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
-            	}
+        			}
+        		}
+        		addinvite(name, inv.getName());
+        		GUI.acceptGUI(inv, name);
+        		inv.sendMessage(String.format(Messages.invited, name));
+        		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
             	return true;
             }
             case ("kick"):{
@@ -591,9 +591,9 @@ public class Oneblock extends JavaPlugin {
             	if (!PlayerInfo.ExistId(name))
             		return true;
             	int PlId = PlayerInfo.GetId(name);
-            	if (Progress_bar)
-        			PlayerInfo.get(PlId).bar.removePlayer(pl);
             	PlayerInfo plp = PlayerInfo.get(PlId);
+            	if (Progress_bar)
+            		plp.bar.removePlayer(pl);
             	if (plp.nick.equals(name)) {
             		if (plp.nicks.size() > 0) {
             			plp.nick = plp.nicks.get(0);
