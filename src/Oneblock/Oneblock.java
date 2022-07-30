@@ -167,12 +167,9 @@ public class Oneblock extends JavaPlugin {
     public class ChangedWorld implements Listener {
     	@EventHandler
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
-    		Player p = e.getPlayer(); World from = e.getFrom();
-        	if (from.equals(wor)) {
-        		int i = PlayerInfo.GetId(p.getName());
-        		if (i<PlayerInfo.size())
-        			PlayerInfo.get(i).bar.removePlayer(p);
-        	}
+    		Player p = e.getPlayer();
+        	if (e.getFrom().equals(wor))
+        		PlayerInfo.get(p.getName()).bar.removePlayer(p);
         }
     }
     
