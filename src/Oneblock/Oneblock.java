@@ -6,6 +6,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import Oneblock.WorldGuard.OBWorldGuard;
+import Oneblock.WorldGuard.OBWorldGuard6;
+import Oneblock.WorldGuard.OBWorldGuard7;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
 import main.java.xseriesoneblock.XBlock;

@@ -1,4 +1,4 @@
-package Oneblock;
+package Oneblock.WorldGuard;
 
 import java.util.ArrayList;
 import java.util.List;
