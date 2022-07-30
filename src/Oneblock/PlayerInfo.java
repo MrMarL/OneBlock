@@ -23,8 +23,47 @@ public class PlayerInfo {
 		breaks = 0;
 	}
 	
+	public static int GetId(String name) {
+    	for(int i = 0; i<PlayerInfo.size() ;i++) {
+    		PlayerInfo pl = PlayerInfo.get(i);
+    		if (pl.nick == null)
+    			continue;
+    		if (pl.nick.equals(name))
+    			return i;
+    		if (pl.nicks.contains(name))
+    			return i;
+    	}
+    	return 0;
+    }
+	
+	public static boolean ExistNoInvaitId(String name) {
+    	for(PlayerInfo pl:PlayerInfo.list) {
+    		if (pl.nick == null)
+    			continue;
+    		if (pl.nick.equals(name))
+    			return true;
+    	}
+    	return false;
+    }
+    
+	public static boolean ExistId(String name) {
+    	for(PlayerInfo pl:PlayerInfo.list) {
+    		if (pl.nick == null)
+    			continue;
+    		if (pl.nick.equals(name))
+    			return true;
+    		if (pl.nicks.contains(name))
+    			return true;
+    	}
+    	return false;
+    }
+	
 	public static PlayerInfo get(int id) {
 		return list.get(id);
+	}
+	
+	public static PlayerInfo get(String name) {
+    	return list.get(GetId(name));
 	}
 	
 	public static void set(int id, PlayerInfo pInf) {
