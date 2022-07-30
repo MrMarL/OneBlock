@@ -60,7 +60,7 @@ public class Oneblock extends JavaPlugin {
     static int z = 0;
     final Random rnd = new Random(System.currentTimeMillis());
     FileConfiguration config, newConfigz;
-    static World wor;
+    public static World wor;
 	World leavewor;
     int random = 0;
     boolean superlegacy, legacy;
