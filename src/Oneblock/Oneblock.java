@@ -1109,12 +1109,11 @@ public class Oneblock extends JavaPlugin {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.nick == null)
     			continue;
-			String name = owner.nick;
             int result[] = getFullCoord(i, 0, 0);
             int X_pl = result[0], Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-        	OBWG.CreateRegion(name, Block1, Block2, i);
+        	OBWG.CreateRegion(owner.nick, Block1, Block2, i);
             for (String member: owner.nicks) 
             	OBWG.addMember(member, i);
         }
