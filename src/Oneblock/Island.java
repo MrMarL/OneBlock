@@ -11,8 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import main.java.xseriesoneblock.XBlock;
-import main.java.xseriesoneblock.XMaterial;
+import XSeriesOneBlock.XBlock;
+import XSeriesOneBlock.XMaterial;
 
 public class Island {
 	public static BlockData[][][] island = null;

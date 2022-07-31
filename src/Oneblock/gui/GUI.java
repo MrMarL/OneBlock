@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import Oneblock.PlayerInfo;
-import main.java.xseriesoneblock.XMaterial;
+import XSeriesOneBlock.XMaterial;
 
 public class GUI {
 	public static boolean enabled = true;

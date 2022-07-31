@@ -11,8 +11,8 @@ import Oneblock.WorldGuard.OBWorldGuard6;
 import Oneblock.WorldGuard.OBWorldGuard7;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
-import main.java.xseriesoneblock.XBlock;
-import main.java.xseriesoneblock.XMaterial;
+import XSeriesOneBlock.XBlock;
+import XSeriesOneBlock.XMaterial;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
