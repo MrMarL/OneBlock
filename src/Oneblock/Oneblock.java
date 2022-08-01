@@ -101,13 +101,13 @@ public class Oneblock extends JavaPlugin {
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
-        Bukkit.getConsoleSender().sendMessage(
+        getLogger().info(
         		  "\n┏━┓····┏━━┓·····┏┓\n"
         		  + "┃┃┣━┳┳━┫┏┓┣┓┏━┳━┫┣┓\n"
         		  + "┃┃┃┃┃┃┻┫┏┓┃┗┫╋┃━┫━┫\n"
         		  + "┗━┻┻━┻━┻━━┻━┻━┻━┻┻┛ by MrMarL");
         if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
-        	Bukkit.getConsoleSender().sendMessage("[OneBlock] PlaceholderAPI has been found!");
+        	getLogger().info("PlaceholderAPI has been found!");
             PAPI = true;
             new OBP().register();
         }
@@ -204,12 +204,12 @@ public class Oneblock extends JavaPlugin {
     public class wor_null implements Runnable {
         public void run() {
             if (wor == null) {
-            	Bukkit.getConsoleSender().sendMessage("[OneBlock] Waiting for the initialization of the world");
-            	Bukkit.getConsoleSender().sendMessage("[OneBlock] Trying to initialize the world again...");
+            	getLogger().info("Waiting for the initialization of the world");
+            	getLogger().info("Trying to initialize the world again...");
                 wor = Bukkit.getWorld(config.getString("world"));
                 leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
-                Bukkit.getConsoleSender().sendMessage("[OneBlock] The initialization of the world was successful!");
+            	getLogger().info("The initialization of the world was successful!");
                 wor_ok();
             }
         }
@@ -222,7 +222,7 @@ public class Oneblock extends JavaPlugin {
         }
         boolean WGpl = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
         if (WGpl) {
-        	Bukkit.getConsoleSender().sendMessage("[OneBlock] WorldGuard has been found!");
+        	getLogger().info("WorldGuard has been found!");
         	if (legacy)
         		OBWG = new OBWorldGuard6();
 			else
@@ -359,7 +359,7 @@ public class Oneblock extends JavaPlugin {
                             		inv.addItem(new ItemStack(m, rnd.nextInt(4)+2));
                             }
                         } catch (Exception e) {
-                            Bukkit.getConsoleSender().sendMessage("[OB] Error when generating items for the chest! Pls redo chests.yml!");
+                        	getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
                         }
                     } else
                     	XBlock.setType(block, blocks.get(random), physics);
