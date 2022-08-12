@@ -169,9 +169,8 @@ public class Oneblock extends JavaPlugin {
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		if (PlayerInfo.size() == 0)
     			return;
-    		Player p = e.getPlayer();
         	if (e.getFrom().equals(wor))
-        		PlayerInfo.get(p.getName()).bar.removePlayer(p);
+        		PlayerInfo.removeBarStatic(e.getPlayer());
         }
     }
     
@@ -454,11 +453,7 @@ public class Oneblock extends JavaPlugin {
             }
             case ("leave"):{
                 Player p = (Player) sender;
-                if (!superlegacy) {
-                	PlayerInfo p_inf = PlayerInfo.get(p.getName());
-                	if (p_inf.bar != null)
-                		p_inf.bar.removePlayer(p);
-                }
+                PlayerInfo.removeBarStatic(p);
                 if (config.getDouble("yleave") == 0 || leavewor == null)
                     return true;
                 p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"),
@@ -837,7 +832,7 @@ public class Oneblock extends JavaPlugin {
                     config.set("Progress_bar_text", txt_bar);
                     TextP = txt_bar;
                     if (PAPI)
-                        for (Player ponl: Bukkit.getOnlinePlayers())
+                        for (Player ponl: plonl)
                             PlayerInfo.get(ponl.getName()).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
                     return true;
                 }

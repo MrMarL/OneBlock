@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Player;
 
 public class PlayerInfo {
 	public static ArrayList <PlayerInfo> list = new ArrayList <>();
@@ -21,6 +22,16 @@ public class PlayerInfo {
 	public void lvlup() {
 		++lvl;
 		breaks = 0;
+	}
+	
+	public void removeBar(Player p) {
+		if (bar == null)
+			return;
+		bar.removePlayer(p);
+	}
+	
+	public static void removeBarStatic(Player p) {
+		get(p.getName()).removeBar(p);
 	}
 	
 	public static int GetId(String name) {
