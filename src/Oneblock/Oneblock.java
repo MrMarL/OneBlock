@@ -64,7 +64,6 @@ public class Oneblock extends JavaPlugin {
 	World leavewor;
     int random = 0;
     boolean superlegacy, legacy;
-    String version = "";
     ArrayList <Object> blocks = new ArrayList <>();
     ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs = new ArrayList <>();
@@ -96,7 +95,6 @@ public class Oneblock extends JavaPlugin {
     
     @Override
     public void onEnable() {
-    	version = "1." + XMaterial.getVersion();
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Metrics metrics = new Metrics(this, 14477);
@@ -1063,13 +1061,13 @@ public class Oneblock extends JavaPlugin {
             }
             default:
             //ver
-            sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s",
+            sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s 1.%d",
             	ChatColor.values()[rnd.nextInt(ChatColor.values().length)],
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
             	"Create by MrMarL\nPlugin version: v1.0.4",
-            	"Server version: ", superlegacy?"super legacy(1.6 - 1.8)":(legacy?"legacy(1.9 - 1.12)":version)));
+            	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
         } else {
