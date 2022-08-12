@@ -122,9 +122,9 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
         if (config.getDouble("y") != 0) {
             if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
-                Bukkit.getScheduler().runTaskTimer(this, (Runnable) new wor_null(), 32, 64);
+                Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new wor_null(), 32, 64);
             } 
-            else wor_ok();
+            else runMainTaskWG();
         }
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
@@ -207,16 +207,12 @@ public class Oneblock extends JavaPlugin {
                 leavewor = Bukkit.getWorld(config.getString("leaveworld"));
             } else {
             	getLogger().info("The initialization of the world was successful!");
-                wor_ok();
+            	runMainTaskWG();
             }
         }
     }
-    public void wor_ok() {
-        Bukkit.getScheduler().cancelTasks(this);
-        if (config.getDouble("y") != 0) {
-            Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
-            on = true;
-        }
+    public void runMainTaskWG() {
+    	runMainTask();
         boolean WGpl = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
         if (WGpl) {
         	getLogger().info("WorldGuard has been found!");
@@ -228,6 +224,13 @@ public class Oneblock extends JavaPlugin {
         if (!WGpl && WorldGuard)
         	WorldGuard = false;
         ReCreateRegions();
+    }
+    public void runMainTask() {
+        Bukkit.getScheduler().cancelTasks(this);
+        if (config.getDouble("y") != 0) {
+            Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
+            on = true;
+        }
     }
     public void addinvite(String name, String to) {
     	for(Invitation item: Invitation.list) 
@@ -438,10 +441,8 @@ public class Oneblock extends JavaPlugin {
                 	int result[] = getFullCoord(plID, X_pl, Z_pl);
                     X_pl = result[0]; Z_pl = result[1];
                 }
-                if (!on) {
-                    Bukkit.getScheduler().runTaskTimer((Plugin) this, (Runnable) new Task(), fr, fr * 2);
-                    on = true;
-                }
+                if (!on)
+                	runMainTaskWG();
                 if (Progress_bar)
                 	PlayerInfo.get(plID).bar.setVisible(true);
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
@@ -489,7 +490,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("y", (double) y);
                 config.set("z", (double) z);
                 Config.Save(config);
-                if (OBWG == null) wor_ok();
+                if (OBWG == null) runMainTaskWG();
                 wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
                 ReCreateRegions();
                 return true;
@@ -942,7 +943,6 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (fr_ >= 4L && fr_ <= 20L && on) {
                     fr = fr_;
-                    Bukkit.getScheduler().cancelTasks(this);
                     config.set("frequency", fr);
                     if (fr == 4L)
                         Sfr = " (Extreme)";
@@ -958,7 +958,7 @@ public class Oneblock extends JavaPlugin {
                         Sfr = " (Slower)";
                     else
                         Sfr = " (Max TPS)";
-                    Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
+                    runMainTask();
                 }
                 sender.sendMessage(ChatColor.GREEN + "Now frequency = " + fr + Sfr);
                 return true;
