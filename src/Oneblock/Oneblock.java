@@ -804,16 +804,14 @@ public class Oneblock extends JavaPlugin {
                 if (args[1].equalsIgnoreCase("level")) {
                 	if (!Progress_bar)
                 		return true;
-                    if (!lvl_bar_mode) {
-                        lvl_bar_mode = true;
+                    if (lvl_bar_mode = !lvl_bar_mode) {
                         for (PlayerInfo inf:PlayerInfo.list)
                         	inf.bar.setTitle(Level.get(inf.lvl).name);
                         config.set("Progress_bar_text", "level");
                         return true;
                     } else {
-                        lvl_bar_mode = false;
-                        for (PlayerInfo bb:PlayerInfo.list)
-                            bb.bar.setTitle("Progress bar");
+                        for (PlayerInfo inf:PlayerInfo.list)
+                        	inf.bar.setTitle("Progress bar");
                         config.set("Progress_bar_text", "Progress bar");
                         return true;
                     }
