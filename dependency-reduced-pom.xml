@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.19-R0.1-SNAPSHOT</version>
+      <version>1.19.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

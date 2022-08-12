@@ -829,9 +829,8 @@ public class Oneblock extends JavaPlugin {
                 	if (!Progress_bar)
                 		return true;
                     String txt_bar = "";
-                    for (int i = 2; i < args.length - 1; i++)
-                        txt_bar += args[i] + " ";
-                    txt_bar += args[args.length - 1];
+					for (int i = 2; i < args.length; i++)
+						txt_bar = String.format("%s %s", txt_bar, args[i]);
                     lvl_bar_mode = false;
                     for (PlayerInfo bb:PlayerInfo.list)
                         bb.bar.setTitle(txt_bar);
