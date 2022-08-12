@@ -226,11 +226,12 @@ public class Oneblock extends JavaPlugin {
         ReCreateRegions();
     }
     public void runMainTask() {
-        Bukkit.getScheduler().cancelTasks(this);
-        if (config.getDouble("y") != 0) {
-            Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
-            on = true;
-        }
+		Bukkit.getScheduler().cancelTasks(this);
+		if (config.getDouble("y") != 0) {
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskUpdatePlayers(), 0, 100);
+			Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
+			on = true;
+		}
     }
     public void addinvite(String name, String to) {
     	for(Invitation item: Invitation.list) 
@@ -278,11 +279,16 @@ public class Oneblock extends JavaPlugin {
 		z = z * sto + Oneblock.z;
 		return new int[] {x, z};
 	}
-    
+	
+	public class TaskUpdatePlayers implements Runnable {
+		public void run() {
+			plonl = wor.getPlayers();
+			Collections.shuffle(plonl);
+		}
+	}
+
     public class Task implements Runnable {
         public void run() {
-            plonl = wor.getPlayers();
-            Collections.shuffle(plonl);
             for (Player ponl: plonl) {
             	String name = ponl.getName();
             	if (!PlayerInfo.ExistId(name))
@@ -1059,12 +1065,12 @@ public class Oneblock extends JavaPlugin {
             }
             default:
             //ver
-            sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s 1.%d",
+            sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s 1.%d.X",
             	ChatColor.values()[rnd.nextInt(ChatColor.values().length)],
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.4",
+            	"Create by MrMarL\nPlugin version: v1.0.5",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
