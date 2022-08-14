@@ -148,7 +148,7 @@ public class Oneblock extends JavaPlugin {
 			Location loc = e.getTo();
 			World from = e.getFrom().getWorld();
 			World to = loc.getWorld();
-			if (!from.equals(wor) && to.equals(wor) && !(loc.getY() == y + 1.2013)) {
+			if (!from.equals(wor) && to.equals(wor) && loc.getY() != y + 1.2013) {
 				e.setCancelled(true);
 				e.getPlayer().performCommand("ob j");
 			}
