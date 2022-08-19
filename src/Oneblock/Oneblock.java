@@ -69,7 +69,6 @@ public class Oneblock extends JavaPlugin {
     ArrayList <EntityType> mobs = new ArrayList <>();
     ArrayList <XMaterial> flowers = new ArrayList <>();
     static List <Player> plonl;
-    static int lvl_mult = 5;
     String TextP = "";
     int sto = 100;
     Long fr;
@@ -313,7 +312,7 @@ public class Oneblock extends JavaPlugin {
                 if (block.getType().equals(Material.AIR)) {
                 	PlayerInfo inf = PlayerInfo.get(plID);
                 	Level lvl_inf = Level.get(inf.lvl); 
-                    if (++inf.breaks >= 16 + inf.lvl * lvl_mult) {
+                    if (++inf.breaks >= inf.getNeed()) {
                     	inf.lvlup();
                     	lvl_inf = Level.get(inf.lvl); 
                         if (Progress_bar) {
@@ -327,7 +326,7 @@ public class Oneblock extends JavaPlugin {
                     if (Progress_bar) {
                         if (!lvl_bar_mode && PAPI)
                         	inf.bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
-                        inf.bar.setProgress((double) inf.breaks / (16 + inf.lvl * lvl_mult));
+                        inf.bar.setProgress(inf.getPercent());
                         inf.bar.addPlayer(ponl);
                     }
                     for(Player pll :PlLst(plID)) {
@@ -724,10 +723,10 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length <= 1) {
-                    sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, lvl_mult));
+                    sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, PlayerInfo.lvl_mult));
                     return true;
                 }
-                int lvl = lvl_mult;
+                int lvl = PlayerInfo.lvl_mult;
                 try {
                     lvl = Integer.parseInt(args[1]);
                 } catch (NumberFormatException nfe) {
@@ -735,11 +734,11 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (lvl <= 20 && lvl >= 0) {
-                    lvl_mult = lvl;
-                    config.set("level_multiplier", lvl_mult);
+                	PlayerInfo.lvl_mult = lvl;
+                    config.set("level_multiplier", PlayerInfo.lvl_mult);
                 } else
                     sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
-                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, lvl_mult));
+                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, PlayerInfo.lvl_mult));
                 return true;
             }
             case ("max_players_team"):{
@@ -1070,7 +1069,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.5",
+            	"Create by MrMarL\nPlugin version: v1.0.5p",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1307,7 +1306,7 @@ public class Oneblock extends JavaPlugin {
             Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
-        lvl_mult = Check("level_multiplier", lvl_mult);
+        PlayerInfo.lvl_mult = Check("level_multiplier", PlayerInfo.lvl_mult);
         max_players_team = Check("max_players_team", max_players_team);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         GUI.enabled = Check("gui", GUI.enabled);
@@ -1332,7 +1331,7 @@ public class Oneblock extends JavaPlugin {
     	return PlayerInfo.get(pl_name).lvl;
     }
     public static int getnextlvl(String pl_name) {
-    	return getlvl(pl_name)+1;
+    	return getlvl(pl_name) + 1;
     }
     public static String getlvlname(String pl_name) {
     	int lvl = getlvl(pl_name);
@@ -1346,9 +1345,9 @@ public class Oneblock extends JavaPlugin {
         return PlayerInfo.get(pl_name).breaks;
     }
     public static int getneed(String pl_name) {
-        PlayerInfo id_pl = PlayerInfo.get(pl_name);
-        return 16 + id_pl.lvl * lvl_mult - id_pl.breaks;
+    	return PlayerInfo.get(pl_name).getNeed();
     }
+  
     @SuppressWarnings("unchecked")
 	public static PlayerInfo gettop(int i) {
     	if (PlayerInfo.size() <= i)

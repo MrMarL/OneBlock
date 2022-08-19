@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerInfo {
 	public static ArrayList <PlayerInfo> list = new ArrayList <>();
+	public static int lvl_mult = 5;
 	
 	public String nick;
 	public ArrayList<String> nicks = new ArrayList<String>();
@@ -28,6 +29,14 @@ public class PlayerInfo {
 		if (bar == null)
 			return;
 		bar.removePlayer(p);
+	}
+	
+	public int getNeed() {
+        return 16 + lvl * lvl_mult - breaks;
+    }
+	
+	public double getPercent() {
+		return (double) breaks / getNeed();
 	}
 	
 	public static void removeBarStatic(Player p) {
