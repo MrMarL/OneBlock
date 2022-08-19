@@ -87,65 +87,99 @@ MaxLevel: 'Level: MAX'
 - EMERALD_ORE
 - CHISELED_SANDSTONE
 '15':
-- 'Level: 15 - Obs...'
+- 'Level: 15 - Mangrove swamp'
+- MANGROVE_LEAVES
+- Mangrove_Log
+- Mangrove_Planks
+- Muddy_Mangrove_Roots
+- Stripped_Mangrove_Log
+- Bee_Nest
+- Mud
+- Clay
+'16':
+- 'Level: 16 - Obs...'
 - CUT_SANDSTONE
 - CARVED_PUMPKIN
 - OBSIDIAN
-'16':
-- 'Level: 16 - Hell!?'
+'17':
+- 'Level: 17 - Hell!?'
 - NETHERRACK
 - GLOWSTONE
 - SOUL_SAND
-'17':
-- 'Level: 17 - Infernal terracotta?'
+'18':
+- 'Level: 18 - Deep Dark'
+- Sculk
+- Sculk_Sensor
+- Sculk_Catalyst
+- Sculk_Shrieker
+'19':
+- 'Level: 19 - Infernal terracotta?'
 - CHISELED_STONE_BRICKS
 - NETHER_BRICKS
 - GREEN_TERRACOTTA
 - PINK_TERRACOTTA
 - NETHER_QUARTZ_ORE
 - BLACK_TERRACOTTA
-'18':
-- 'Level: 18 - Is that quartz?'
+'20':
+- 'Level: 20 - Is that quartz?'
 - NETHER_BRICKS
 - NETHERRACK
 - NETHER_QUARTZ_ORE
-'19':
-- 'Level: 19 - Never mine...'
+'21':
+- 'Level: 21 - Never mine...'
 - PRISMARINE
 - CRIMSON_NYLIUM
 - WARPED_NYLIUM
 - AMETHYST_BLOCK
 - DIAMOND_BLOCK
-'20':
-- 'Level: 20 - Never...'
+'22':
+- 'Level: 22 - Never...'
 - NETHERRACK
 - CHEST
 - CRIMSON_STEM
-'21':
-- 'Level: 21 - Ne...'
+'23':
+- 'Level: 23 - Ne...'
 - WARPED_STEM
 - CHEST
 - OXIDIZED_COPPER
 - NETHER_GOLD_ORE
-'22':
-- 'Level: 22'
+'24':
+- 'Level: 24 - Ancient City'
+- Deepslate
+- Cobbled_Deepslate
+- Polished_Deepslate
+- Deepslate_Bricks
+- Deepslate_Tiles
+- Chiseled_Deepslate
+- Deepslate_Bricks
+- Slabs
+- Gray_Wool
+- Sculk_Sensor
+- Redstone_Lamp
+- Soul_Sand
+- Furnace
+- Lectern
+- Block_of_Redstone
+- Target
+'25':
+- 'Level: 25'
 - CRIMSON_HYPHAE
 - WARPED_HYPHAE
 - CRACKED_NETHER_BRICKS
-'23':
-- 'Level: 23 - Deep crying'
+'26':
+- 'Level: 26 - Deep crying'
 - SHROOMLIGHT
 - CRYING_OBSIDIAN
 - BLACKSTONE
 - DEEPSLATE_BRICKS
 - CRACKED_DEEPSLATE_BRICKS
-'24':
-- 'Level: 24'
+'27':
+- 'Level: 27'
 - NETHERITE_BLOCK
 - ANCIENT_DEBRIS
 - POLISHED_BLACKSTONE
-'25':
-- 'Level: 25 - The end?'
+'28':
+- 'Level: 28 - The end?'
 - END_STONE
 - CUT_SANDSTONE
 - CARVED_PUMPKIN
