@@ -68,6 +68,8 @@
 * %OB_lvl_name% - The name of the player's current level.
 * %OB_next_lvl_name% - The name of the next level.​
 * %OB_owner_name% - The name of the owner of your island.
+* %OB_percent% - Percentage of level completion.
+* %OB_scale% - Proportional scale of level completion.
 * %OB_top_1_name% - The name of the player with the highest island level.
 * %OB_top_2_name%
 * ...
