@@ -1351,6 +1351,10 @@ public class Oneblock extends JavaPlugin {
         return PlayerInfo.get(pl_name).breaks;
     }
     public static int getneed(String pl_name) {
+    	PlayerInfo inf = PlayerInfo.get(pl_name);
+    	return inf.getNeed() - inf.breaks;
+    }
+    public static int getlenght(String pl_name) {
     	return PlayerInfo.get(pl_name).getNeed();
     }
   

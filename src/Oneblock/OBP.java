@@ -68,6 +68,10 @@ public class OBP extends PlaceholderExpansion {
         if (identifier.equals("break_on_this_lvl")) {
             return String.format("%d", Oneblock.getblocks(p.getName()));
         }
+        // %OB_lvl_lenght%
+        if (identifier.equals("lvl_lenght")) {
+            return String.format("%d", Oneblock.getlenght(p.getName()));
+        }
         // %OB_need_to_lvl_up%
         if (identifier.equals("need_to_lvl_up")) {
             return String.format("%d", Oneblock.getneed(p.getName()));
