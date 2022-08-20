@@ -66,6 +66,7 @@
 * %OB_need_to_lvl_up% - The number of blocks that still need to be broken to level up.
 * %OB_player_count% - The number of players in the OneBlock world.
 * %OB_lvl_name% - The name of the player's current level.
+* %OB_lvl_lenght% - The length of the level.
 * %OB_next_lvl_name% - The name of the next level.​
 * %OB_owner_name% - The name of the owner of your island.
 * %OB_percent% - Percentage of level completion.
