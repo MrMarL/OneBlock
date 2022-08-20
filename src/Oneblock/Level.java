@@ -22,7 +22,7 @@ public class Level {
 	public String name;
 	public int size = 0;
 	public BarColor color;
-	public int length = 16;
+	public int length = 100;
 	
 	public Level(String name) {
         this.name = name;
