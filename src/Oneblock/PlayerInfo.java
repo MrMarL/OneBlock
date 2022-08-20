@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 public class PlayerInfo {
 	public static ArrayList <PlayerInfo> list = new ArrayList <>();
-	public static int lvl_mult = 5;
 	
 	public String nick;
 	public ArrayList<String> nicks = new ArrayList<String>();
@@ -32,7 +31,7 @@ public class PlayerInfo {
 	}
 	
 	public int getNeed() {
-        return 16 + lvl * lvl_mult - breaks;
+        return Level.get(lvl).length;
     }
 	
 	public double getPercent() {

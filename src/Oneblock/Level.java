@@ -7,6 +7,7 @@ import org.bukkit.boss.BarColor;
 public class Level {
 	public static Level max = new Level("Level: MAX");
 	public static ArrayList <Level> levels = new ArrayList <>();
+	public static int multiplier = 5;
 	
 	public static Level get(int i) {
 		if (i < levels.size())
@@ -21,8 +22,18 @@ public class Level {
 	public String name;
 	public int size = 0;
 	public BarColor color;
+	public int length = 16;
 	
 	public Level(String name) {
         this.name = name;
     }
+	
+	public int getId() {
+		for (int i = 0; i < size(); i++) {
+			Level lvl = get(i);
+			if (lvl == this)
+				return i;
+		}
+		return 1;
+	}
 }

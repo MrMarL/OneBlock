@@ -723,10 +723,10 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length <= 1) {
-                    sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, PlayerInfo.lvl_mult));
+                    sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, Level.multiplier));
                     return true;
                 }
-                int lvl = PlayerInfo.lvl_mult;
+                int lvl = Level.multiplier;
                 try {
                     lvl = Integer.parseInt(args[1]);
                 } catch (NumberFormatException nfe) {
@@ -734,11 +734,12 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (lvl <= 20 && lvl >= 0) {
-                	PlayerInfo.lvl_mult = lvl;
-                    config.set("level_multiplier", PlayerInfo.lvl_mult);
+                	Level.multiplier = lvl;
+                    config.set("level_multiplier", Level.multiplier);
+                    Blockfile();
                 } else
                     sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
-                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, PlayerInfo.lvl_mult));
+                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, Level.multiplier));
                 return true;
             }
             case ("max_players_team"):{
@@ -1069,7 +1070,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.5p",
+            	"Create by MrMarL\nPlugin version: v1.0.6",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1137,10 +1138,15 @@ public class Oneblock extends JavaPlugin {
         	Level.levels.add(level);
         	int q = 1;
         	if (Progress_bar && q<bl_temp.size())
-        		try {
-        			level.color = BarColor.valueOf(bl_temp.get(1));
+        		try {//reading a custom color for the level.
+        			level.color = BarColor.valueOf(bl_temp.get(q));
         			q++;
         		} catch(Exception e) {level.color = Progress_color;}
+	        	try {//reading a custom size for the level.
+	        		int value = Integer.parseInt(bl_temp.get(q));
+	    			level.length = value > 0 ? value : 1;
+	    			q++;
+	    		} catch(Exception e) {level.length = 16 + level.getId() * Level.multiplier;}
         	while (q < bl_temp.size()) {
         		String text = bl_temp.get(q++);
         		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
@@ -1306,7 +1312,7 @@ public class Oneblock extends JavaPlugin {
             Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
-        PlayerInfo.lvl_mult = Check("level_multiplier", PlayerInfo.lvl_mult);
+        Level.multiplier = Check("level_multiplier", Level.multiplier);
         max_players_team = Check("max_players_team", max_players_team);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         GUI.enabled = Check("gui", GUI.enabled);
