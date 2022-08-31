@@ -6,6 +6,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import Oneblock.PlData.JsonSimple;
+import Oneblock.PlData.ReadOldData;
 import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.WorldGuard.OBWorldGuard6;
 import Oneblock.WorldGuard.OBWorldGuard7;
@@ -30,6 +32,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
@@ -79,6 +82,7 @@ public class Oneblock extends JavaPlugin {
     boolean protection = false;
     boolean PAPI = false;
     boolean WorldGuard = false;
+    boolean Border = true;
     boolean Progress_bar = true;
     boolean СircleMode = false;
     boolean UseEmptyIslands = true;
@@ -96,16 +100,16 @@ public class Oneblock extends JavaPlugin {
     public void onEnable() {
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
-        Metrics metrics = new Metrics(this, 14477);
+        Border = XMaterial.supports(19);// Is version 1.19 supported?
+        final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         getLogger().info(
         		  "\n┏━┓····┏━━┓·····┏┓\n"
         		  + "┃┃┣━┳┳━┫┏┓┣┓┏━┳━┫┣┓\n"
         		  + "┃┃┃┃┃┃┻┫┏┓┃┗┫╋┃━┫━┫\n"
         		  + "┗━┻┻━┻━┻━━┻━┻━┻━┻┻┛ by MrMarL");
-        if (pluginManager.isPluginEnabled("PlaceholderAPI")) {
+        if (PAPI = pluginManager.isPluginEnabled("PlaceholderAPI")) {
         	getLogger().info("PlaceholderAPI has been found!");
-            PAPI = true;
             new OBP().register();
         }
         Configfile();
@@ -119,29 +123,29 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
         metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
-        if (config.getDouble("y") != 0) {
-            if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null)) {
-                Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new wor_null(), 32, 64);
-            } 
-            else runMainTaskWG();
-        }
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
         pluginManager.registerEvents(new GUIListener(), this);
+        
+        if (config.getDouble("y") == 0) return;	
+        if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null))
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new wor_null(), 32, 64);
+        else 
+            runMainTaskWG();
     }
     public class RespawnJoinEvent implements Listener {
         @EventHandler
-        public void Respawn(PlayerRespawnEvent e) {
+        public void Respawn(final PlayerRespawnEvent e) {
 			if (!rebirth)
 				return;
 			Player pl = e.getPlayer();
 			if (pl.getWorld().equals(wor) && PlayerInfo.ExistId(pl.getName())) {
-				int result[] = getFullCoord(PlayerInfo.GetId(pl.getName()), 0, 0);
+				int result[] = getFullCoord(PlayerInfo.GetId(pl.getName()));
 				e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
 			}
         }
         @EventHandler
-        public void AutoJoin(PlayerTeleportEvent e) {
+        public void AutoJoin(final PlayerTeleportEvent e) {
 			if (!autojoin)
 				return;
 			Location loc = e.getTo();
@@ -153,14 +157,25 @@ public class Oneblock extends JavaPlugin {
 			}
         }
         @EventHandler
-        public void JoinAuto(PlayerJoinEvent e) {
+        public void JoinAuto(final PlayerJoinEvent e) {
 			if (!autojoin)
 				return;
 			Player pl = e.getPlayer();
-			if (pl.getWorld().equals(wor))
+			if (pl.getWorld().equals(wor)) {
 				pl.performCommand("ob j");
+				if (Border) UpdateBorder(pl);
+			}
 		}
     }
+    
+    public void UpdateBorder(final Player pl) {
+    	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, new Runnable() {
+	    	@Override public void run() { 
+	    		pl.setWorldBorder(pl.getWorldBorder()); 
+	    	}
+	    }, 10L);
+    }
+    
     public class ChangedWorld implements Listener {
     	@EventHandler
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
@@ -173,7 +188,7 @@ public class Oneblock extends JavaPlugin {
     
     public class BlockEvent implements Listener {
     	@EventHandler(ignoreCancelled = true)
-        public void ItemStackSpawn(EntitySpawnEvent e)
+        public void ItemStackSpawn(final EntitySpawnEvent e)
         {
     		if (!droptossup) return;
     		
@@ -260,7 +275,8 @@ public class Oneblock extends JavaPlugin {
 		return true; 
     }
 
-	public int[] getFullCoord(int id, int x, int z) {
+	public int[] getFullCoord(final int id) {
+		int x = 0, z = 0;
 		if (!СircleMode)
 			return new int[] {id * sto + Oneblock.x, Oneblock.z};
 		for (int i = 0; i < id; i++) {
@@ -289,12 +305,12 @@ public class Oneblock extends JavaPlugin {
     public class Task implements Runnable {
         public void run() {
             for (Player ponl: plonl) {
-            	String name = ponl.getName();
+            	final String name = ponl.getName();
             	if (!PlayerInfo.ExistId(name))
             		continue;
-                int plID = PlayerInfo.GetId(name);
-                int result[] = getFullCoord(plID, 0, 0);
-                int X_pl = result[0], Z_pl = result[1];
+            	final int plID = PlayerInfo.GetId(name);
+            	final int result[] = getFullCoord(plID);
+                final int X_pl = result[0], Z_pl = result[1];
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int checkX = ponl.getLocation().getBlockX()-X_pl;
                 	int checkZ = СircleMode ? ponl.getLocation().getBlockZ()-Z_pl : 0;
@@ -308,9 +324,9 @@ public class Oneblock extends JavaPlugin {
                 		continue;
                 	}
                 }
-                Block block = wor.getBlockAt(X_pl, y, Z_pl);
+                final Block block = wor.getBlockAt(X_pl, y, Z_pl);
                 if (block.getType().equals(Material.AIR)) {
-                	PlayerInfo inf = PlayerInfo.get(plID);
+                	final PlayerInfo inf = PlayerInfo.get(plID);
                 	Level lvl_inf = Level.get(inf.lvl); 
                     if (++inf.breaks >= inf.getNeed()) {
                     	inf.lvlup();
@@ -418,7 +434,7 @@ public class Oneblock extends JavaPlugin {
                 		plID = PlayerInfo.getNull();
                 	else
                 		plID = PlayerInfo.size();
-                	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                	int result[] = getFullCoord(plID);
                 	X_pl = result[0]; Z_pl = result[1];
                 	if (plID != PlayerInfo.size())
                 		Island.clear(wor, X_pl, y, Z_pl, sto/4);
@@ -429,7 +445,7 @@ public class Oneblock extends JavaPlugin {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
                     	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
                     	OBWG.CreateRegion(name, Block1, Block2, plID);
-                    }	
+                    }
 					saveData();
 					PlayerInfo.set(plID, inf);
                     if (!superlegacy && Progress_bar) {
@@ -443,7 +459,7 @@ public class Oneblock extends JavaPlugin {
                 } 
                 else {
                 	plID = PlayerInfo.GetId(name); // GenType
-                	int result[] = getFullCoord(plID, X_pl, Z_pl);
+                	int result[] = getFullCoord(plID);
                     X_pl = result[0]; Z_pl = result[1];
                 }
                 if (!on)
@@ -453,6 +469,13 @@ public class Oneblock extends JavaPlugin {
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (WorldGuard && OBWorldGuard.canUse)
                 	OBWG.addMember(name, plID);
+                //Border
+                if (Border) {
+                	WorldBorder br = Bukkit.createWorldBorder();
+                	br.setCenter(X_pl, Z_pl);
+                	br.setSize(sto);
+                	p.setWorldBorder(br);
+                }
                 return true;
             }
             case ("leave"):{
@@ -635,6 +658,41 @@ public class Oneblock extends JavaPlugin {
             	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
            		return true;
             }
+            case ("border"):{
+            	if (!sender.hasPermission("Oneblock.set")) {
+                    sender.sendMessage(Messages.noperm);
+                    return true;
+                }
+            	if (!XMaterial.supports(19)){
+                    sender.sendMessage(String.format("%sThe border can only be used on version 1.19 and above!", ChatColor.YELLOW));
+                    return true;
+                }
+            	if (args.length > 1 &&
+                	(args[1].equals("true") || args[1].equals("false"))) {
+            			Border = Boolean.valueOf(args[1]);
+                    	config.set("Border", Border);
+                    	if (Border) {
+                    		for (Player pl: plonl) {
+                    			String name = pl.getName();
+                            	if (!PlayerInfo.ExistId(name))
+                            		continue;
+                            	int result[] = getFullCoord(PlayerInfo.GetId(name));
+                                int X_pl = result[0], Z_pl = result[1];
+                            	WorldBorder br = Bukkit.createWorldBorder();
+                            	br.setCenter(X_pl, Z_pl);
+                            	br.setSize(sto);
+                            	pl.setWorldBorder(br);
+                            }
+                    	}
+                    	else
+                    		for (Player pl: plonl) 
+                    			pl.setWorldBorder(null);
+                }
+                else
+                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+            	sender.sendMessage(String.format("%sthe Border is now %s", ChatColor.GREEN, (Border?"enabled.":"disabled.")));
+           		return true;
+            }
             case ("circlemode"):
             	parametr = "СircleMode";
             case ("useemptyislands"):
@@ -709,7 +767,7 @@ public class Oneblock extends JavaPlugin {
                     inf.lvl = 0;
                     if (Progress_bar)
                     	inf.bar.setVisible(false);
-                    int result[] = getFullCoord(i, 0, 0);
+                    int result[] = getFullCoord(i);
                     Island.clear(wor, result[0], y, result[1], sto/4);
                     sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
                     return true;
@@ -992,7 +1050,7 @@ public class Oneblock extends JavaPlugin {
                 	Player p = (Player) sender;
                     String name = p.getName();
                     if (PlayerInfo.ExistId(name)) {
-                        int result[] = getFullCoord(PlayerInfo.GetId(name), 0, 0);
+                        int result[] = getFullCoord(PlayerInfo.GetId(name));
                         Island.scan(wor, result[0], y, result[1]);
                         sender.sendMessage(ChatColor.GREEN + "Your island has been successfully saved and set as default for new players!");
                     } else
@@ -1070,7 +1128,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.6",
+            	"Create by MrMarL\nPlugin version: v1.0.7",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1105,7 +1163,7 @@ public class Oneblock extends JavaPlugin {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.nick == null)
     			continue;
-            int result[] = getFullCoord(i, 0, 0);
+            int result[] = getFullCoord(i);
             int X_pl = result[0], Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
@@ -1318,6 +1376,8 @@ public class Oneblock extends JavaPlugin {
         GUI.enabled = Check("gui", GUI.enabled);
         WorldGuard = Check("WorldGuard", WorldGuard);
         OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
+        if (Border)
+        	Border = Check("Border", Border);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy)
         	Island.read(config);
@@ -1376,7 +1436,7 @@ public class Oneblock extends JavaPlugin {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team",
-            		"reload","frequency","islands","island_rebirth","protection","worldguard","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
+            		"reload","frequency","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick")) {
@@ -1416,6 +1476,7 @@ public class Oneblock extends JavaPlugin {
                 case ("protection"):
                 case ("circlemode"):
                 case ("worldguard"):
+                case ("border"):
                 case ("autoJoin"):
                 case ("droptossup"):
                 case ("physics"):

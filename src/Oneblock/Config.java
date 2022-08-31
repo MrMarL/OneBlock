@@ -15,7 +15,7 @@ import XSeriesOneBlock.XMaterial;
 public class Config {
 	protected static File file;
 	
-	public static void Save (FileConfiguration fc, File f) {
+	public static void Save (final FileConfiguration fc, final File f) {
 		file = f;
 		if (XMaterial.supports(18)) {
 			try { fc.save(f); return; } 
@@ -63,7 +63,7 @@ public class Config {
 		}
 	}
 	
-	public static void Save (FileConfiguration fc) {
-		Save(fc,file);
+	public static void Save (final FileConfiguration fc) {
+		Save(fc, file);
 	}
 }

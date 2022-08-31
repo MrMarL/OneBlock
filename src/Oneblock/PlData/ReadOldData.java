@@ -1,4 +1,4 @@
-package Oneblock;
+package Oneblock.PlData;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,8 +7,10 @@ import java.util.ArrayList;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import Oneblock.PlayerInfo;
+
 public class ReadOldData {
-	public static ArrayList<PlayerInfo> Read(File f){
+	public static ArrayList<PlayerInfo> Read(final File f){
 		ArrayList<PlayerInfo> infs = new ArrayList<PlayerInfo>();
 		ArrayList<String> nicks = new ArrayList<String>();
 		if (!f.exists())
@@ -38,19 +40,18 @@ public class ReadOldData {
         	String breaks = String.format("ScSlom_%d", i);
         	
         	PlayerInfo newinf = null;
-        	for(PlayerInfo inf:infs) {
+        	for(PlayerInfo inf:infs) 
         		if (inf.nick.equals(_nick))
         			newinf = inf;
-        	}
+
         	if (newinf != null)
         		newinf.nicks.add(_nick.substring(1));
         	else{
 	        	newinf = new PlayerInfo(_nick.substring(1));
-	            if (!data.isInt(lvl))
-	                data.set(lvl, 1);
+	            if (data.isInt(lvl))
+	            	newinf.lvl = data.getInt(lvl);
 	            if (data.isInt(breaks))
 	            	newinf.breaks = data.getInt(breaks);
-	            newinf.lvl = data.getInt(lvl);
 	            infs.add(newinf);
             }
         }
