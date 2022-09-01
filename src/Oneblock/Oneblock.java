@@ -18,6 +18,7 @@ import XSeriesOneBlock.XMaterial;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,12 +96,19 @@ public class Oneblock extends JavaPlugin {
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
+	
+	public boolean findMethod(final Class<?> cl, String name) {
+		for (Method m : cl.getMethods())
+			if (m.getName().equals(name))
+				return true;
+		return false;
+	}
     
     @Override
     public void onEnable() {
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
-        Border = XMaterial.supports(19);// Is version 1.19 supported?
+        Border = findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         getLogger().info(
@@ -663,8 +671,8 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(Messages.noperm);
                     return true;
                 }
-            	if (!XMaterial.supports(19)){
-                    sender.sendMessage(String.format("%sThe border can only be used on version 1.19 and above!", ChatColor.YELLOW));
+            	if (!findMethod(Bukkit.class, "createWorldBorder")){
+                    sender.sendMessage(String.format("%sThe border can only be used on version 1.18.2 and above!", ChatColor.YELLOW));
                     return true;
                 }
             	if (args.length > 1 &&
@@ -1128,7 +1136,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.7",
+            	"Create by MrMarL\nPlugin version: v1.0.7+",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
