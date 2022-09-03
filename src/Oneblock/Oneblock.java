@@ -1205,7 +1205,7 @@ public class Oneblock extends JavaPlugin {
         	int q = 1;
         	if (Progress_bar && q<bl_temp.size())
         		try {//reading a custom color for the level.
-        			level.color = BarColor.valueOf(bl_temp.get(q));
+        			level.color = BarColor.valueOf(bl_temp.get(q).toUpperCase());
         			q++;
         		} catch(Exception e) {level.color = Progress_color;}
 	        	try {//reading a custom size for the level.
