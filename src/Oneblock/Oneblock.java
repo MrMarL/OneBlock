@@ -196,24 +196,16 @@ public class Oneblock extends JavaPlugin {
     
     public class BlockEvent implements Listener {
     	@EventHandler(ignoreCancelled = true)
-        public void ItemStackSpawn(final EntitySpawnEvent e)
-        {
+        public void ItemStackSpawn(final EntitySpawnEvent e) {
     		if (!droptossup) return;
-    		
     		if (wor == null) return;
-    		
-            if (!EntityType.DROPPED_ITEM.equals(e.getEntityType()))
-                return;
-            
+            if (!EntityType.DROPPED_ITEM.equals(e.getEntityType())) return;
+                
             Location loc = e.getLocation();
-            
-            if (!wor.equals(loc.getWorld()))
-                return;
-            
+            if (!wor.equals(loc.getWorld())) return;
             if (loc.getBlockY() != y) return;
-            
-            if((x - loc.getBlockX()) % sto != 0 || (z - loc.getBlockZ()) % sto != 0)
-            	return;
+            if ((x - loc.getBlockX()) % sto != 0) return;
+            if ((z - loc.getBlockZ()) % sto != 0) return;
 
             Entity drop = e.getEntity();
             drop.teleport(loc.add(0, .75, 0));
@@ -896,13 +888,12 @@ public class Oneblock extends JavaPlugin {
 					for (int i = 2; i < args.length; i++)
 						txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
                     lvl_bar_mode = false;
-                    for (PlayerInfo bb:PlayerInfo.list)
-                        bb.bar.setTitle(txt_bar);
+                    if (PAPI) for (Player ponl : plonl)
+                    	PlayerInfo.get(ponl.getName()).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
+                    else 
+                    	for (PlayerInfo bb : PlayerInfo.list) bb.bar.setTitle(txt_bar);
                     config.set("Progress_bar_text", txt_bar);
                     TextP = txt_bar;
-                    if (PAPI)
-                        for (Player ponl: plonl)
-                            PlayerInfo.get(ponl.getName()).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
                     return true;
                 }
                 sender.sendMessage(String.format("%strue, false, settext or level only!", ChatColor.RED));
