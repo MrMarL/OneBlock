@@ -894,7 +894,7 @@ public class Oneblock extends JavaPlugin {
                 		return true;
                     String txt_bar = "";
 					for (int i = 2; i < args.length; i++)
-						txt_bar = String.format("%s %s", txt_bar, args[i]);
+						txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
                     lvl_bar_mode = false;
                     for (PlayerInfo bb:PlayerInfo.list)
                         bb.bar.setTitle(txt_bar);
