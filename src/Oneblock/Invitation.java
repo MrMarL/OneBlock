@@ -24,7 +24,7 @@ public class Invitation {
     public boolean equals(Object obj) {
         if (obj != null && obj.getClass() == getClass()) {
         	Invitation inv = (Invitation)obj;
-        	return Inviting.equals(inv.Inviting) && Invited.equals(inv.Invited);
+        	return equals(inv.Inviting, inv.Invited);
         }
         return false;
     }
