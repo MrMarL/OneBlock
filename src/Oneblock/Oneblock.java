@@ -358,17 +358,17 @@ public class Oneblock extends JavaPlugin {
                         if (rnd.nextInt(3) == 1)
                             XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl),flowers.get(rnd.nextInt(flowers.size())));
                     } else if (blocks.get(random) == XMaterial.CHEST) {
-						block.setType(Material.CHEST);
-						Chest chest = (Chest) block.getState();
-						Inventory inv = chest.getInventory();
-						ArrayList <Material> ch_now;
-						if (random < blocks.size() / 3)
-							ch_now = s_ch;
-						else if (random < blocks.size() / 1.5)
-							ch_now = m_ch;
-						else
-							ch_now = h_ch;
-						final int max = rnd.nextInt(3) + 2;
+                        block.setType(Material.CHEST);
+                        Chest chest = (Chest) block.getState();
+                        Inventory inv = chest.getInventory();
+                        ArrayList <Material> ch_now;
+                        if (random < blocks.size() / 3)
+                            ch_now = s_ch;
+                        else if (random < blocks.size() / 1.5)
+                            ch_now = m_ch;
+                        else
+                            ch_now = h_ch;
+                        final int max = rnd.nextInt(3) + 2;
                         try { for (int i = 0; i < max; i++) {
 								Material m = ch_now.get(rnd.nextInt(ch_now.size()));
 								if (m.getMaxStackSize() == 1)
