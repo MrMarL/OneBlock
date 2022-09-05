@@ -370,12 +370,12 @@ public class Oneblock extends JavaPlugin {
                             ch_now = h_ch;
                         final int max = rnd.nextInt(3) + 2;
                         try { for (int i = 0; i < max; i++) {
-								Material m = ch_now.get(rnd.nextInt(ch_now.size()));
-								if (m.getMaxStackSize() == 1)
-									inv.addItem(new ItemStack(m, 1));
-								else
-									inv.addItem(new ItemStack(m, rnd.nextInt(4) + 2));
-							}
+                            Material m = ch_now.get(rnd.nextInt(ch_now.size()));
+                            if (m.getMaxStackSize() == 1)
+                                inv.addItem(new ItemStack(m, 1));
+                            else
+                                inv.addItem(new ItemStack(m, rnd.nextInt(4) + 2));
+                            }
                         } catch (Exception e) { getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!"); }
                     } 
                     else
