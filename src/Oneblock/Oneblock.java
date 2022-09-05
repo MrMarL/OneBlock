@@ -82,7 +82,7 @@ public class Oneblock extends JavaPlugin {
     boolean lvl_bar_mode = false, chat_alert = false;
     boolean protection = false;
     boolean PAPI = false;
-    boolean WorldGuard = false;
+    boolean WorldGuard = OBWorldGuard.canUse;
     boolean Border = true;
     boolean Progress_bar = true;
     boolean СircleMode = false;
@@ -227,25 +227,23 @@ public class Oneblock extends JavaPlugin {
     }
     public void runMainTaskWG() {
     	runMainTask();
-        boolean WGpl = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
-        if (WGpl) {
+    	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
         	getLogger().info("WorldGuard has been found!");
         	if (legacy)
         		OBWG = new OBWorldGuard6();
 			else
 				OBWG = new OBWorldGuard7();
+        	ReCreateRegions();
         }
-        if (!WGpl && WorldGuard)
-        	WorldGuard = false;
-        ReCreateRegions();
+        else WorldGuard = false;
     }
     public void runMainTask() {
 		Bukkit.getScheduler().cancelTasks(this);
-		if (config.getDouble("y") != 0) {
-			Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskUpdatePlayers(), 0, 100);
-			Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
-			on = true;
-		}
+		if (config.getDouble("y") == 0) 
+			return;
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskUpdatePlayers(), 0, 100);
+		Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
+		on = true;
     }
     public void addinvite(String name, String to) {
     	for(Invitation item: Invitation.list) 
@@ -441,7 +439,7 @@ public class Oneblock extends JavaPlugin {
                     if (il3x3)
                     	Island.place(wor, X_pl, y, Z_pl);
                     //WorldGuard
-                    if (WorldGuard && OBWorldGuard.canUse) {
+                    if (WorldGuard) {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
                     	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
                     	OBWG.CreateRegion(name, Block1, Block2, plID);
@@ -467,7 +465,7 @@ public class Oneblock extends JavaPlugin {
                 if (Progress_bar)
                 	PlayerInfo.get(plID).bar.setVisible(true);
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
-                if (WorldGuard && OBWorldGuard.canUse)
+                if (WorldGuard)
                 	OBWG.addMember(name, plID);
                 //Border
                 if (Border) {
@@ -518,7 +516,7 @@ public class Oneblock extends JavaPlugin {
                 config.set("y", (double) y);
                 config.set("z", (double) z);
                 Config.Save(config);
-                if (OBWG == null) runMainTaskWG();
+                if (!on) runMainTaskWG();
                 wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
                 ReCreateRegions();
                 return true;
@@ -591,7 +589,7 @@ public class Oneblock extends JavaPlugin {
             	PlayerInfo info = PlayerInfo.get(plID);
             	if (info.nicks.contains(name)) {
             		info.nicks.remove(name);
-            		if (WorldGuard && OBWorldGuard.canUse)
+            		if (WorldGuard)
         				OBWG.removeMember(name, plID);
             		if (inv != null)
             			inv.performCommand("ob j");
@@ -620,12 +618,11 @@ public class Oneblock extends JavaPlugin {
             			plp.nick = plp.nicks.get(0);
             			plp.nicks.remove(0);
             		}
-            		else
-            			plp.nick = null;
+            		else plp.nick = null;
             	}
-            	else
-            		plp.nicks.remove(name);
-            	if (WorldGuard && OBWorldGuard.canUse)
+            	else plp.nicks.remove(name);
+            		
+            	if (WorldGuard) 
             		OBWG.removeMember(name, PlId);
             	if (!args[args.length-1].equals("/n"))
             		sender.sendMessage(Messages.idreset);
@@ -653,8 +650,7 @@ public class Oneblock extends JavaPlugin {
                     	else
                     		OBWG.RemoveRegions(PlayerInfo.size());
                 }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
             	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
            		return true;
             }
@@ -688,8 +684,7 @@ public class Oneblock extends JavaPlugin {
                     		for (Player pl: plonl) 
                     			pl.setWorldBorder(null);
                 }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
             	sender.sendMessage(String.format("%sthe Border is now %s", ChatColor.GREEN, (Border?"enabled.":"disabled.")));
            		return true;
             }
@@ -709,8 +704,7 @@ public class Oneblock extends JavaPlugin {
                     	config.set(parametr, Boolean.valueOf(args[1]));
                     	UpdateParametrs();
                 }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
                 sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (config.getBoolean(parametr)?"enabled.":"disabled.")));
            		return true;
             }
