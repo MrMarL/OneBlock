@@ -1309,28 +1309,11 @@ public class Oneblock extends JavaPlugin {
         x = (int) Check("x", (double) x);
         y = (int) Check("y", (double) y);
         z = (int) Check("z", (double) z);
-        //leave - leaf
-        if (config.isString("leafworld")) {
-        	config.set("leaveworld", config.getString("leafworld"));
-        	config.set("leafworld", null);
-        }
-        if (config.isSet("xleaf")) {
-        	config.set("xleave", config.getDouble("xleaf"));
-        	config.set("xleaf", null);
-        }
-        if (config.isSet("yleaf")) {
-        	config.set("yleave", config.getDouble("yleaf"));
-        	config.set("yleaf", null);
-        }
-        if (config.isSet("zleaf")) {
-        	config.set("zleave", config.getDouble("zleaf"));
-        	config.set("zleaf", null);
-        }
         leavewor = Bukkit.getWorld(Check("leaveworld", "world"));
-        Check("xleave", 0.0);
-        Check("yleave", 0.0);
-        Check("zleave", 0.0);
-        Check("yawleave", 0.0);
+        Check("xleave", .0);
+        Check("yleave", .0);
+        Check("zleave", .0);
+        Check("yawleave", .0);
         Progress_bar = Check("Progress_bar", true);
         if (superlegacy)
             Progress_bar = false;
