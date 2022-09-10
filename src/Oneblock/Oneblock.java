@@ -125,7 +125,6 @@ public class Oneblock extends JavaPlugin {
         Blockfile();
         Flowerfile();
         Chestfile();
-        Mobfile();
         Messagefile();
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
@@ -351,7 +350,7 @@ public class Oneblock extends JavaPlugin {
                     		break;
                     	}
                     }
-                    random = lvl_inf.size;
+                    random = lvl_inf.blocks;
                     if (random != 0) random = rnd.nextInt(random);
                     if (blocks.get(random) == null) {
                         XBlock.setType(block, GRASS_BLOCK);
@@ -382,12 +381,8 @@ public class Oneblock extends JavaPlugin {
                     	XBlock.setType(block, blocks.get(random), physics);
 
                     if (rnd.nextInt(9) == 0) {
-                        if (inf.lvl < blocks.size() / 9)
-                            random = rnd.nextInt(mobs.size() / 3);
-                        else if (inf.lvl < blocks.size() / 9 * 2)
-                            random = rnd.nextInt(mobs.size() / 3 * 2);
-                        else
-                            random = rnd.nextInt(mobs.size());
+                    	random = lvl_inf.mobs;
+                        if (random != 0) random = rnd.nextInt(random);
                         wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(random));
                     }
                 }
@@ -911,8 +906,8 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%s%s",ChatColor.GREEN, Level.get(temp).name));
                     int i = 0;
                     if (temp !=0)
-                    	i = Level.get(temp-1).size;
-                    for(;i<Level.get(temp).size;i++)
+                    	i = Level.get(temp-1).blocks;
+                    for(;i<Level.get(temp).blocks;i++)
                     	if (blocks.get(i) == null)
                     		sender.sendMessage("Grass or undefined");
                     	else if (blocks.get(i).getClass() == XMaterial.class)
@@ -935,7 +930,6 @@ public class Oneblock extends JavaPlugin {
                     Blockfile();
                     Flowerfile();
                     Chestfile();
-                    Mobfile();
                     Messagefile();
                     ReCreateRegions();
                     sender.sendMessage(String.format("%sAll .yml reloaded!", ChatColor.GREEN));
@@ -954,11 +948,6 @@ public class Oneblock extends JavaPlugin {
                 if (args[1].equalsIgnoreCase("chests.yml")) {
                     Chestfile();
                     sender.sendMessage(String.format("%sChests.yml reloaded!", ChatColor.GREEN));
-                    return true;
-                }
-                if (args[1].equalsIgnoreCase("mobs.yml")) {
-                    Mobfile();
-                    sender.sendMessage(String.format("%sMobs.yml reloaded!", ChatColor.GREEN));
                     return true;
                 }
                 if (args[1].equalsIgnoreCase("messages.yml")) {
@@ -1119,7 +1108,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.0.7+",
+            	"Create by MrMarL\nPlugin version: v1.1.0",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1198,17 +1187,26 @@ public class Oneblock extends JavaPlugin {
 	    		} catch(Exception e) {level.length = 16 + level.getId() * Level.multiplier;}
         	while (q < bl_temp.size()) {
         		String text = bl_temp.get(q++);
-        		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
-        		if (text.charAt(0) == '/') 
+        		//reading a custom block (command).
+        		if (text.charAt(0) == '/') {
 	            	blocks.add(text.replaceFirst("/", ""));
-        		else if (!a.isPresent() || a.get() == GRASS_BLOCK)
-	                blocks.add(null);//Material.matchMaterial(text)
-	            else
-	                blocks.add(a.get());
+	            	continue;
+        		}
+        		//reading a mob.
+        		try { mobs.add(EntityType.valueOf(text)); continue; }
+        		catch (Exception e) {}
+        		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
+        		if (!a.isPresent() || a.get() == GRASS_BLOCK) 
+	                blocks.add(null);
+        		else
+        			blocks.add(a.get());
         	}
-        	level.size = blocks.size();
+        	level.blocks = blocks.size();
+        	level.mobs = mobs.size();
         }
-        Level.max.size = blocks.size();
+        Level.max.blocks = blocks.size();
+        if ((Level.max.mobs = mobs.size()) == 0) 
+        	{ mobs.add(EntityType.CREEPER); getLogger().warning("Mobs are not set in the blocks.yml"); }
         //Progress_bar
         if (!superlegacy && Progress_bar && PlayerInfo.size() > 0 && PlayerInfo.get(0).bar == null) {
         	Level.max.color = Progress_color;
@@ -1273,17 +1271,6 @@ public class Oneblock extends JavaPlugin {
         	m_ch.add(Material.getMaterial(s));
         for (String s: newConfigz.getStringList("high_chest")) 
         	h_ch.add(Material.getMaterial(s));
-    }
-    private void Mobfile() {
-        mobs.clear();
-        File mob = new File(getDataFolder(), "mobs.yml");
-        if (!mob.exists())
-            saveResource("mobs.yml", false);
-        newConfigz = YamlConfiguration.loadConfiguration(mob);
-        for (int i = 0; newConfigz.isString("id" + i); i++) {
-        	try { mobs.add(EntityType.valueOf((newConfigz.getString("id" + i))));
-            } catch (Exception ex) {/* not supported mob */}
-        }
     }
     
     String Check(String type, String data) {
@@ -1454,7 +1441,6 @@ public class Oneblock extends JavaPlugin {
                 case ("reload"):{
 	                commands.add("blocks.yml");
 	                commands.add("chests.yml");
-	                commands.add("mobs.yml");
 	                commands.add("flowers.yml");
 	                commands.add("messages.yml");
 	                break;

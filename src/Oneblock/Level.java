@@ -20,7 +20,8 @@ public class Level {
 	}
 	
 	public String name;
-	public int size = 0;
+	public int blocks = 0;
+	public int mobs = 0;
 	public BarColor color;
 	public int length = 100;
 	
