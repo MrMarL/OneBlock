@@ -1163,6 +1163,7 @@ public class Oneblock extends JavaPlugin {
 
     private void Blockfile() {
     	blocks.clear();
+    	mobs.clear();
     	Level.levels.clear();
         File block = new File(getDataFolder(), "blocks.yml");
         if (!block.exists())
