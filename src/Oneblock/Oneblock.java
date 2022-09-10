@@ -643,7 +643,7 @@ public class Oneblock extends JavaPlugin {
                     	else
                     		OBWG.RemoveRegions(PlayerInfo.size());
                 }
-                else sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(Messages.bool_format);
             	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
            		return true;
             }
@@ -677,7 +677,7 @@ public class Oneblock extends JavaPlugin {
                     		for (Player pl: plonl) 
                     			pl.setWorldBorder(null);
                 }
-                else sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(Messages.bool_format);
             	sender.sendMessage(String.format("%sthe Border is now %s", ChatColor.GREEN, (Border?"enabled.":"disabled.")));
            		return true;
             }
@@ -697,7 +697,7 @@ public class Oneblock extends JavaPlugin {
                     	config.set(parametr, Boolean.valueOf(args[1]));
                     	UpdateParametrs();
                 }
-                else sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(Messages.bool_format);
                 sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (config.getBoolean(parametr)?"enabled.":"disabled.")));
            		return true;
             }
@@ -1013,7 +1013,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
+                    sender.sendMessage(Messages.bool_format);
                     return true;
                 }
                 if (args[1].equals("true") || args[1].equals("false")) {
@@ -1046,7 +1046,7 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(ChatColor.GREEN + "The default island is installed.");
                     return true;
                 }
-                sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
+                sender.sendMessage(Messages.bool_format);
                 return true;
             }
             case ("island_rebirth"):{
@@ -1055,7 +1055,7 @@ public class Oneblock extends JavaPlugin {
                     return true;
                 }
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
+                    sender.sendMessage(Messages.bool_format);
                     return true;
                 }
                 if (args[1].equals("true") || args[1].equals("false")) {
@@ -1064,7 +1064,7 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(ChatColor.GREEN + "Rebirth_on_the_island = " + rebirth);
                     return true;
                 }
-                sender.sendMessage(ChatColor.YELLOW + "enter a valid value true or false");
+                sender.sendMessage(Messages.bool_format);
                 return true;
             }
             case ("gui"):{
@@ -1081,8 +1081,7 @@ public class Oneblock extends JavaPlugin {
                     	config.set(parametr, Boolean.valueOf(args[1]));
                         GUI.enabled = Check("gui", GUI.enabled);
                 }
-                else
-                	sender.sendMessage(String.format("%senter a valid value true or false", ChatColor.YELLOW));
+                else sender.sendMessage(Messages.bool_format);
             	if (!GUI.enabled)
             		for (Player pl : plonl)
             			pl.closeInventory();
@@ -1098,7 +1097,6 @@ public class Oneblock extends JavaPlugin {
             		sender.sendMessage(Messages.help_adm);
             	else
             		sender.sendMessage(Messages.help);
-
             	return true;
             }
             default:
@@ -1225,6 +1223,7 @@ public class Oneblock extends JavaPlugin {
         newConfigz = YamlConfiguration.loadConfiguration(message);
         
         Messages.noperm = MessageCheck("noperm", Messages.noperm);
+        Messages.noperm_inv = MessageCheck("noperm_inv", Messages.noperm_inv);
         Messages.help = MessageCheck("help", Messages.help);
         Messages.help_adm = MessageCheck("help_adm", Messages.help_adm);
         Messages.invite_usage = MessageCheck("invite_usage", Messages.invite_usage);
@@ -1323,8 +1322,7 @@ public class Oneblock extends JavaPlugin {
         //Text
         if (!superlegacy) {
 	        TextP = Check("Progress_bar_text", "level");
-	        if (TextP.equals("level"))
-	            lvl_bar_mode = true;
+	        lvl_bar_mode = TextP.equals("level");
         }
         //alert
         chat_alert = Check("Chat_alert", !lvl_bar_mode);
