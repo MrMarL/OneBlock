@@ -377,8 +377,7 @@ public class Oneblock extends JavaPlugin {
                             }
                         } catch (Exception e) { getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!"); }
                     } 
-                    else
-                    	XBlock.setType(block, blocks.get(random), physics);
+                    else XBlock.setType(block, blocks.get(random), physics);
 
                     if (rnd.nextInt(9) == 0) {
                     	random = lvl_inf.mobs;
