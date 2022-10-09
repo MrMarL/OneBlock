@@ -1105,7 +1105,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.0",
+            	"Create by MrMarL\nPlugin version: v1.1.1",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1194,10 +1194,18 @@ public class Oneblock extends JavaPlugin {
         		try { mobs.add(EntityType.valueOf(text)); continue; }
         		catch (Exception e) {}
         		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
-        		if (!a.isPresent() || a.get() == GRASS_BLOCK) 
+        		if (!a.isPresent()) {
+        			if (Material.getMaterial(text) != null) 
+        				blocks.add(String.format("%s %s", "setblock %d %d %d", text));
+        			else
+        				blocks.add(null);
+        			continue;
+        		}
+        		XMaterial xmt = a.get();
+        		if (xmt == GRASS_BLOCK)
 	                blocks.add(null);
         		else
-        			blocks.add(a.get());
+        			blocks.add(xmt);
         	}
         	level.blocks = blocks.size();
         	level.mobs = mobs.size();
