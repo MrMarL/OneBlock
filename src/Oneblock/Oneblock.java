@@ -380,8 +380,7 @@ public class Oneblock extends JavaPlugin {
                     else XBlock.setType(block, blocks.get(random), physics);
 
                     if (rnd.nextInt(9) == 0) {
-                    	random = lvl_inf.mobs;
-                        if (random != 0) random = rnd.nextInt(random);
+                        if ((random = lvl_inf.mobs) != 0) random = rnd.nextInt(random);
                         wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(random));
                     }
                 }
