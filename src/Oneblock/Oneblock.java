@@ -55,21 +55,19 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 public class Oneblock extends JavaPlugin {
+    static final Random rnd = new Random(System.currentTimeMillis());
     boolean on = false;
     static int x = 0;
     static int y = 0;
     static int z = 0;
-    final Random rnd = new Random(System.currentTimeMillis());
     FileConfiguration config, newConfigz;
     static World wor;
-	World leavewor;
+    World leavewor;
     int random = 0;
     boolean superlegacy, legacy;
     ArrayList <Object> blocks = new ArrayList <>();
-    ArrayList <Material> s_ch, m_ch, h_ch;
     ArrayList <EntityType> mobs = new ArrayList <>();
     ArrayList <XMaterial> flowers = new ArrayList <>();
     static List <Player> plonl;
@@ -361,22 +359,16 @@ public class Oneblock extends JavaPlugin {
                         block.setType(Material.CHEST);
                         Chest chest = (Chest) block.getState();
                         Inventory inv = chest.getInventory();
-                        ArrayList <Material> ch_now;
+                        ChestItems.type chestType;
                         if (random < blocks.size() / 3)
-                            ch_now = s_ch;
+                        	chestType = ChestItems.type.SMALL;
                         else if (random < blocks.size() / 1.5)
-                            ch_now = m_ch;
+                        	chestType = ChestItems.type.MEDIUM;
                         else
-                            ch_now = h_ch;
-                        final int max = rnd.nextInt(3) + 2;
-                        try { for (int i = 0; i < max; i++) {
-                            Material m = ch_now.get(rnd.nextInt(ch_now.size()));
-                            if (m.getMaxStackSize() == 1)
-                                inv.addItem(new ItemStack(m, 1));
-                            else
-                                inv.addItem(new ItemStack(m, rnd.nextInt(4) + 2));
-                            }
-                        } catch (Exception e) { getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!"); }
+                        	chestType = ChestItems.type.HIGH;
+                        
+                        if (!ChestItems.fillChest(inv, chestType))
+                        getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
                     } 
                     else XBlock.setType(block, blocks.get(random), physics);
 
@@ -1105,7 +1097,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.1",
+            	"Create by MrMarL\nPlugin version: v1.1.2",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1265,19 +1257,14 @@ public class Oneblock extends JavaPlugin {
         		flowers.add(XMaterial.matchXMaterial(list).get());
     }
     private void Chestfile() {
-        s_ch = new ArrayList <Material>();
-        m_ch = new ArrayList <Material>();
-        h_ch = new ArrayList <Material>();
         File chest = new File(getDataFolder(), "chests.yml");
         if (!chest.exists())
             saveResource("chests.yml", false);
         newConfigz = YamlConfiguration.loadConfiguration(chest);
-        for (String s: newConfigz.getStringList("small_chest")) 
-        	s_ch.add(Material.getMaterial(s));
-        for (String s: newConfigz.getStringList("medium_chest")) 
-        	m_ch.add(Material.getMaterial(s));
-        for (String s: newConfigz.getStringList("high_chest")) 
-        	h_ch.add(Material.getMaterial(s));
+        ChestItems.loadFromString(
+        		newConfigz.getStringList("small_chest"),
+        		newConfigz.getStringList("medium_chest"),
+        		newConfigz.getStringList("high_chest"));
     }
     
     String Check(String type, String data) {
