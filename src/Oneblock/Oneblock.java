@@ -149,6 +149,7 @@ public class Oneblock extends JavaPlugin {
 			if (pl.getWorld().equals(wor) && PlayerInfo.ExistId(pl.getName())) {
 				int result[] = getFullCoord(PlayerInfo.GetId(pl.getName()));
 				e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
+				if (Border) UpdateBorder(pl);
 			}
         }
         @EventHandler
