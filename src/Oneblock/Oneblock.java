@@ -1307,21 +1307,14 @@ public class Oneblock extends JavaPlugin {
         Check("yleave", .0);
         Check("zleave", .0);
         Check("yawleave", .0);
-        Progress_bar = Check("Progress_bar", true);
-        if (superlegacy)
-            Progress_bar = false;
-        if (!config.isInt("frequency"))
-            config.set("frequency", 7L);
-        fr = config.getLong("frequency");
-        //Text
+        if (Progress_bar = !superlegacy && Check("Progress_bar", true))
+        	Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
         if (!superlegacy) {
 	        TextP = Check("Progress_bar_text", "level");
 	        lvl_bar_mode = TextP.equals("level");
         }
-        //alert
         chat_alert = Check("Chat_alert", !lvl_bar_mode);
-        if (Progress_bar)
-            Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
+        fr = (long) Check("frequency", 7);
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
         Level.multiplier = Check("level_multiplier", Level.multiplier);
