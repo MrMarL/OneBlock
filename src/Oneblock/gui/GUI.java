@@ -60,6 +60,8 @@ public class GUI {
         p.openInventory(topGUI);
 	}
 	
+	public static void chestGUI(Player p) {}
+	
 	private static ItemStack setMeta(XMaterial material, String title) {
 		return setFillMeta(material, title, 1, null);
 	}
