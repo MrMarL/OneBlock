@@ -63,6 +63,8 @@ public class GUI {
 	
 	public static void chestGUI(Player p) {}
 	
+	public static void chestGUI(Player sender, type small) { }
+	
 	private static ItemStack setMeta(XMaterial material, String title) {
 		return setFillMeta(material, title, 1, null);
 	}
@@ -89,6 +91,4 @@ public class GUI {
         join.setItemMeta(meta);
 		return join;
 	}
-
-	public static void chestGUI(Player sender, type small) { }
 }
