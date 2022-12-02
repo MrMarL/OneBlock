@@ -55,20 +55,4 @@ public class GUIListener implements Listener {
 		    }
         }
     }
-	
-	@EventHandler
-    public void onPlayerCloseInventory(final InventoryCloseEvent e){
-		Inventory inv = e.getInventory();
-        if (inv.getHolder() == null)
-        	return;
-        if (!inv.getHolder().getClass().isAssignableFrom(ChestHolder.class))
-        	return;
-        String type = e.getView().getTitle().split(" ")[0];
-        List<ItemStack> stack = ChestItems.getChest(ChestItems.getType(type));
-        stack.clear();
-        for (ItemStack itm : inv.getContents())
-        	if (itm != null)
-        		stack.add(itm);
-        ChestItems.save();
-    }
 }
