@@ -6,6 +6,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import Oneblock.ChestItems.type;
 import Oneblock.PlData.JsonSimple;
 import Oneblock.PlData.ReadOldData;
 import Oneblock.WorldGuard.OBWorldGuard;
@@ -1083,6 +1084,21 @@ public class Oneblock extends JavaPlugin {
             	GUI.topGUI((Player) sender);
             	return true;
             }
+            case ("chest"):{
+            	if (!sender.hasPermission("Oneblock.set"))
+            		return true;
+            	if (args.length < 2) {
+            		GUI.chestGUI((Player) sender, ChestItems.type.SMALL);
+            		return true;
+            	}
+            	
+            	boolean rtn = true;
+            	for (type t :type.values()) if (args[1].equals(t.name())) rtn = false;
+            	if (rtn) return true;
+            	
+            	GUI.chestGUI((Player) sender, ChestItems.type.valueOf(args[1]));
+            	return true;
+            }
             case ("help"):{
             	if (sender.hasPermission("Oneblock.set"))
             		sender.sendMessage(Messages.help_adm);
@@ -1260,11 +1276,8 @@ public class Oneblock extends JavaPlugin {
         File chest = new File(getDataFolder(), "chests.yml");
         if (!chest.exists())
             saveResource("chests.yml", false);
-        newConfigz = YamlConfiguration.loadConfiguration(chest);
-        ChestItems.loadFromString(
-        		newConfigz.getStringList("small_chest"),
-        		newConfigz.getStringList("medium_chest"),
-        		newConfigz.getStringList("high_chest"));
+        ChestItems.chest = chest;
+        ChestItems.load();
     }
     
     String Check(String type, String data) {
@@ -1382,7 +1395,7 @@ public class Oneblock extends JavaPlugin {
         if (args.length == 1) {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team",
+            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest",
             		"reload","frequency","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
@@ -1393,6 +1406,9 @@ public class Oneblock extends JavaPlugin {
         	else if (sender.hasPermission("Oneblock.set")) {
         		switch (args[0])
                 {
+        		case ("chest"):
+        			for (type t : type.values())
+        				commands.add(t.name());
                 case ("clear"):
                 case ("setlevel"):{
             		for (Player ponl: plonl)

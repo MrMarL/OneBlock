@@ -1,13 +1,18 @@
 package Oneblock.gui;
 
+import java.util.List;
+
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import Oneblock.ChestItems;
 
 public class GUIListener implements Listener {
 
@@ -49,5 +54,21 @@ public class GUIListener implements Listener {
 		        	pl.performCommand("ob accept");
 		    }
         }
+    }
+	
+	@EventHandler
+    public void onPlayerCloseInventory(final InventoryCloseEvent e){
+		Inventory inv = e.getInventory();
+        if (inv.getHolder() == null)
+        	return;
+        if (!inv.getHolder().getClass().isAssignableFrom(ChestHolder.class))
+        	return;
+        String type = e.getView().getTitle().split(" ")[0];
+        List<ItemStack> stack = ChestItems.getChest(ChestItems.getType(type));
+        stack.clear();
+        for (ItemStack itm : inv.getContents())
+        	if (itm != null)
+        		stack.add(itm);
+        ChestItems.save();
     }
 }
