@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import Oneblock.ChestItems.type;
 import Oneblock.PlayerInfo;
 import XSeriesOneBlock.XMaterial;
 
@@ -88,4 +89,6 @@ public class GUI {
         join.setItemMeta(meta);
 		return join;
 	}
+
+	public static void chestGUI(Player sender, type small) { }
 }

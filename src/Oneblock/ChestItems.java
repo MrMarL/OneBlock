@@ -1,13 +1,17 @@
 package Oneblock;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class ChestItems {
+	public static File chest;
+	
 	static List <Material> s_ch = new ArrayList <>();
 	static List <Material> m_ch = new ArrayList <>();
 	static List <Material> h_ch = new ArrayList <>();
@@ -16,20 +20,24 @@ public class ChestItems {
 		SMALL, MEDIUM, HIGH
     }
     
-	public static void loadFromString(
-			List<String> small_chest,
-			List<String> medium_chest,
-			List<String> high_chest) {
+	public static void load() {
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(chest);
+    	s_ch.clear(); m_ch.clear(); h_ch.clear();
 		
     	s_ch.clear(); m_ch.clear(); h_ch.clear();
     	
-    	for (String s: small_chest) 
-        	s_ch.add(Material.getMaterial(s));
-        for (String s: medium_chest) 
-        	m_ch.add(Material.getMaterial(s));
-        for (String s: high_chest) 
-        	h_ch.add(Material.getMaterial(s));
+    	loadMaterial(s_ch, config.getStringList("small_chest"));
+    	loadMaterial(s_ch, config.getStringList("medium_chest"));
+    	loadMaterial(s_ch, config.getStringList("high_chest"));
     }
+	
+	private static void loadMaterial(List<Material> arr, List<String> data) {
+		for (String s: data) {
+    		Material m = Material.getMaterial(s);
+    		if (m != null)
+    			arr.add(m);
+    	}
+	}
 	
 	public static boolean fillChest(Inventory inv, type chestType) {
 		List <Material> ch;
