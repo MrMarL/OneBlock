@@ -1092,11 +1092,9 @@ public class Oneblock extends JavaPlugin {
             		return true;
             	}
             	
-            	boolean rtn = true;
-            	for (type t :type.values()) if (args[1].equals(t.name())) rtn = false;
-            	if (rtn) return true;
-            	
-            	GUI.chestGUI((Player) sender, ChestItems.type.valueOf(args[1]));
+            	for (type t : type.values()) 
+            		if (args[1].equals(t.name())) 
+            			GUI.chestGUI((Player) sender, ChestItems.type.valueOf(args[1]));
             	return true;
             }
             case ("help"):{
