@@ -165,11 +165,9 @@ public class Oneblock extends JavaPlugin {
         }
         @EventHandler
         public void JoinAuto(final PlayerJoinEvent e) {
-			if (!autojoin)
-				return;
 			Player pl = e.getPlayer();
 			if (pl.getWorld().equals(wor)) {
-				pl.performCommand("ob j");
+				if (autojoin) pl.performCommand("ob j");
 				if (Border) UpdateBorder(pl);
 			}
 		}
