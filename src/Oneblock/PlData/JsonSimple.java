@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import Oneblock.PlayerInfo;
 
 public class JsonSimple {
+	public static final Pattern p = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
 
 	@SuppressWarnings("unchecked")
 	public static void Write(ArrayList<PlayerInfo> pls, File f) {
@@ -25,12 +29,13 @@ public class JsonSimple {
 				continue;
 			}
 			user.put("nick", pl.nick);
+			user.put("uuid", Bukkit.getServer().getOfflinePlayer(pl.nick).getUniqueId().toString());
 			user.put("lvl", pl.lvl);
 			user.put("breaks", pl.breaks);
 			
 			JSONArray arr = new JSONArray();
 			for(String us: pl.nicks)
-				arr.add(us);
+				arr.add(Bukkit.getServer().getOfflinePlayer(us).getUniqueId().toString());
 			user.put("invated", arr);
 			main.put(i, user);
 		}
@@ -63,13 +68,21 @@ public class JsonSimple {
 				infs.add(nullable);
 				continue;
 			}
-			String nick = (String) user.get("nick");
+			String nick;
+			if (user.containsKey("uuid"))
+				nick = Bukkit.getServer().getOfflinePlayer(UUID.fromString((String)user.get("uuid"))).getName();
+			else
+				nick = (String) user.get("nick");
 			PlayerInfo pl = new PlayerInfo(nick);
 			pl.lvl = ((Number) user.get("lvl")).intValue();
 			pl.breaks = ((Number) user.get("breaks")).intValue();
 			JSONArray arr = (JSONArray) user.get("invated");
-			for(int q = 0;q<arr.size();q++)
-				pl.nicks.add((String) arr.get(q));
+			for(int q = 0;q<arr.size();q++) {
+				String us = (String) arr.get(q);
+				if (p.matcher(us).matches())
+					us = Bukkit.getServer().getOfflinePlayer(UUID.fromString((us))).getName();
+				pl.nicks.add(us);
+			}
 			infs.add(pl); 
 		}
 		return infs;
