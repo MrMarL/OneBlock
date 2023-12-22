@@ -86,6 +86,7 @@ public class Oneblock extends JavaPlugin {
     boolean Progress_bar = true;
     boolean СircleMode = false;
     boolean UseEmptyIslands = true;
+    boolean saveplayerinventory = false;
     int max_players_team = 0;
     OBWorldGuard OBWG;
     final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
@@ -354,7 +355,7 @@ public class Oneblock extends JavaPlugin {
                         XBlock.setType(block, GRASS_BLOCK);
                         if (rnd.nextInt(3) == 1)
                             XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl),flowers.get(rnd.nextInt(flowers.size())));
-                    } else if (blocks.get(random) == XMaterial.CHEST) {
+                    } else if (blocks.get(random) == Material.CHEST) {
                         block.setType(Material.CHEST);
                         Chest chest = (Chest) block.getState();
                         Inventory inv = chest.getInventory();
@@ -604,6 +605,8 @@ public class Oneblock extends JavaPlugin {
             		else plp.nick = null;
             	}
             	else plp.nicks.remove(name);
+            	
+            	if (!saveplayerinventory) pl.getInventory().clear();
             		
             	if (WorldGuard) 
             		OBWG.removeMember(name, PlId);
@@ -677,7 +680,8 @@ public class Oneblock extends JavaPlugin {
             case ("protection"):
             case ("droptossup"):
             case ("physics"):
-            case ("autojoin"):{
+            case ("autojoin"):
+            case ("saveplayerinventory"):{
             	if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(Messages.noperm);
                     return true;
@@ -900,6 +904,8 @@ public class Oneblock extends JavaPlugin {
                     for(;i<Level.get(temp).blocks;i++)
                     	if (blocks.get(i) == null)
                     		sender.sendMessage("Grass or undefined");
+                    	else if (blocks.get(i).getClass() == Material.class)
+                    		sender.sendMessage(((Material)blocks.get(i)).name());
                     	else if (blocks.get(i).getClass() == XMaterial.class)
                     		sender.sendMessage(((XMaterial)blocks.get(i)).name());
                     	else
@@ -1109,7 +1115,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.2",
+            	"Create by MrMarL\nPlugin version: v1.1.3",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1197,19 +1203,27 @@ public class Oneblock extends JavaPlugin {
         		//reading a mob.
         		try { mobs.add(EntityType.valueOf(text)); continue; }
         		catch (Exception e) {}
-        		Optional <XMaterial> a = XMaterial.matchXMaterial(text);
-        		if (!a.isPresent()) {
-        			if (Material.getMaterial(text) != null) 
-        				blocks.add(String.format("%s %s", "setblock %d %d %d", text));
-        			else
-        				blocks.add(null);
-        			continue;
+        		//read a material
+        		if (legacy){
+        			Optional <XMaterial> a = XMaterial.matchXMaterial(text);
+	        		if (!a.isPresent()) {
+	        			blocks.add(null);
+	        			continue;
+	        		}
+	        		XMaterial xmt = a.get();
+	        		if (xmt == GRASS_BLOCK)
+		                blocks.add(null);
+	        		else if (xmt == XMaterial.CHEST)
+		                blocks.add(Material.CHEST);
+	        		else
+	        			blocks.add(xmt);
         		}
-        		XMaterial xmt = a.get();
-        		if (xmt == GRASS_BLOCK)
-	                blocks.add(null);
-        		else
-        			blocks.add(xmt);
+        		else {
+        			Material a = Material.matchMaterial(text);
+        			if (a != null && a.equals(Material.GRASS_BLOCK))
+        				a = null;
+        			blocks.add(a);
+        		}
         	}
         	level.blocks = blocks.size();
         	level.mobs = mobs.size();
@@ -1343,6 +1357,7 @@ public class Oneblock extends JavaPlugin {
     public void UpdateParametrs() {
     	СircleMode = Check("СircleMode", СircleMode);
     	UseEmptyIslands = Check("useemptyislands", UseEmptyIslands);
+    	saveplayerinventory = Check("saveplayerinventory", saveplayerinventory);
         protection = Check("protection", protection);
         autojoin = Check("autojoin", autojoin);
         droptossup = Check("droptossup", droptossup);
@@ -1391,7 +1406,7 @@ public class Oneblock extends JavaPlugin {
         if (args.length == 1) {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest",
+            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
             		"reload","frequency","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
@@ -1431,6 +1446,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("default");
                 case ("UseEmptyIslands"):
                 case ("island_rebirth"):
+                case ("saveplayerinventory"):
                 case ("protection"):
                 case ("circlemode"):
                 case ("worldguard"):

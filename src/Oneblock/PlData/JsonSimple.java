@@ -36,7 +36,7 @@ public class JsonSimple {
 			JSONArray arr = new JSONArray();
 			for(String us: pl.nicks)
 				arr.add(Bukkit.getServer().getOfflinePlayer(us).getUniqueId().toString());
-			user.put("invated", arr);
+			user.put("invited", arr);
 			main.put(i, user);
 		}
 
@@ -76,7 +76,7 @@ public class JsonSimple {
 			PlayerInfo pl = new PlayerInfo(nick);
 			pl.lvl = ((Number) user.get("lvl")).intValue();
 			pl.breaks = ((Number) user.get("breaks")).intValue();
-			JSONArray arr = (JSONArray) user.get("invated");
+			JSONArray arr = (JSONArray) (user.containsKey("invated")? user.get("invated"): user.get("invited"));
 			for(int q = 0;q<arr.size();q++) {
 				String us = (String) arr.get(q);
 				if (p.matcher(us).matches())

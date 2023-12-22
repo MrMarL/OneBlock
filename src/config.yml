@@ -48,3 +48,5 @@ droptossup: true
 physics: false
 #Limits the number of people on the island. (0 - unlimited)
 max_players_team: 0
+#Keep player inventory after id reset?
+saveplayerinventory: false
