@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import java.util.TreeMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class OBP extends PlaceholderExpansion {
@@ -40,41 +41,41 @@ public class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return "1.0.6";
+        return "1.1.4";
     }
     @Override
     public String onPlaceholderRequest(Player p, String identifier) {
         // %OB_ver%
         if (identifier.equals("ver")) {
-            return "1.0.6";
+            return "1.1.4";
         }
         // %OB_lvl%
         if (identifier.equals("lvl")) {
-            return String.format("%d", Oneblock.getlvl(p.getName()));
+            return String.format("%d", Oneblock.getlvl(p.getUniqueId()));
         }
         // %OB_lvl_name%
         if (identifier.equals("lvl_name")) {
-            return Oneblock.getlvlname(p.getName());
+            return Oneblock.getlvlname(p.getUniqueId());
         }
         // %OB_next_lvl%
         if (identifier.equals("next_lvl")) {
-            return String.format("%d", Oneblock.getnextlvl(p.getName()));
+            return String.format("%d", Oneblock.getnextlvl(p.getUniqueId()));
         }
         // %OB_next_lvl_name%
         if (identifier.equals("next_lvl_name")) {
-            return Oneblock.getnextlvlname(p.getName());
+            return Oneblock.getnextlvlname(p.getUniqueId());
         }
         // %OB_break_on_this_lvl%
         if (identifier.equals("break_on_this_lvl")) {
-            return String.format("%d", Oneblock.getblocks(p.getName()));
+            return String.format("%d", Oneblock.getblocks(p.getUniqueId()));
         }
         // %OB_lvl_lenght%
         if (identifier.equals("lvl_lenght")) {
-            return String.format("%d", Oneblock.getlenght(p.getName()));
+            return String.format("%d", Oneblock.getlenght(p.getUniqueId()));
         }
         // %OB_need_to_lvl_up%
         if (identifier.equals("need_to_lvl_up")) {
-            return String.format("%d", Oneblock.getneed(p.getName()));
+            return String.format("%d", Oneblock.getneed(p.getUniqueId()));
         }
         // %OB_player_count%
         if (identifier.equals("player_count")) {
@@ -82,22 +83,22 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_owner_name%
         if (identifier.equals("owner_name")) {
-            return PlayerInfo.get(p.getName()).nick;
+            return Bukkit.getOfflinePlayer(PlayerInfo.get(p.getUniqueId()).uuid).getName();
         }
         // %OB_percent%
         if (identifier.equals("percent")) {
-        	PlayerInfo inf = PlayerInfo.get(p.getName());
+        	PlayerInfo inf = PlayerInfo.get(p.getUniqueId());
         	return String.format("%d%%", (int) (inf.getPercent() * 100));
         }
         // %OB_scale%
         if (identifier.equals("scale")) {
-        	PlayerInfo inf = PlayerInfo.get(p.getName());
+        	PlayerInfo inf = PlayerInfo.get(p.getUniqueId());
         	return SCALE.floorEntry(inf.getPercent()).getValue().replace("╍", "█");
         }
         // %OB_top_%d_name%
         for(int i = 0;i<10;i++) {
         	if (identifier.equals(String.format("top_%d_name", i + 1)))
-                return Oneblock.gettop(i).nick;
+                return Bukkit.getOfflinePlayer(Oneblock.gettop(i).uuid).getName();
         }
         // %OB_top_%d_lvl%
         for(int i = 0;i<10;i++) {
@@ -106,7 +107,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_number_of_invited%
         if (identifier.equals("number_of_invited")) {
-            return String.format("%d", PlayerInfo.get(p.getName()).nicks.size());
+            return String.format("%d", PlayerInfo.get(p.getUniqueId()).uuids.size());
         }
         return null; 
     }

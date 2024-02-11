@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import Oneblock.PlayerInfo;
@@ -39,15 +41,17 @@ public class ReadOldData {
         	String lvl = String.format("Score_%d", i);
         	String breaks = String.format("ScSlom_%d", i);
         	
+        	Server server = Bukkit.getServer();
+        	
         	PlayerInfo newinf = null;
         	for(PlayerInfo inf:infs) 
-        		if (inf.nick.equals(_nick))
+        		if (inf.uuid.equals(server.getOfflinePlayer(_nick).getUniqueId()))
         			newinf = inf;
 
         	if (newinf != null)
-        		newinf.nicks.add(_nick.substring(1));
+        		newinf.uuids.add(server.getOfflinePlayer(_nick.substring(1)).getUniqueId());
         	else{
-	        	newinf = new PlayerInfo(_nick.substring(1));
+	        	newinf = new PlayerInfo(server.getOfflinePlayer(_nick.substring(1)).getUniqueId());
 	            if (data.isInt(lvl))
 	            	newinf.lvl = data.getInt(lvl);
 	            if (data.isInt(breaks))

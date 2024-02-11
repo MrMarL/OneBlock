@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -24,18 +25,18 @@ public class JsonSimple {
 		for (int i = 0;pls.size() > i;i++) {
 			JSONObject user = new JSONObject();
 			PlayerInfo pl = pls.get(i);
-			if (pl.nick == null) {
+			if (pl.uuid == null) {
 				main.put(i, null);
 				continue;
 			}
-			user.put("nick", pl.nick);
-			user.put("uuid", Bukkit.getServer().getOfflinePlayer(pl.nick).getUniqueId().toString());
+			user.put("uuid", pl.uuid.toString());
 			user.put("lvl", pl.lvl);
 			user.put("breaks", pl.breaks);
 			
 			JSONArray arr = new JSONArray();
-			for(String us: pl.nicks)
-				arr.add(Bukkit.getServer().getOfflinePlayer(us).getUniqueId().toString());
+			
+			for(UUID us: pl.uuids)
+				arr.add(us.toString());
 			user.put("invited", arr);
 			main.put(i, user);
 		}
@@ -51,6 +52,7 @@ public class JsonSimple {
 	}
 
 	public static ArrayList<PlayerInfo> Read(File f)  {
+		Server server = Bukkit.getServer();
 		JSONObject main = null;
 		JSONParser parser = new JSONParser();
 		try {
@@ -68,20 +70,20 @@ public class JsonSimple {
 				infs.add(nullable);
 				continue;
 			}
-			String nick;
+			PlayerInfo pl;
 			if (user.containsKey("uuid"))
-				nick = Bukkit.getServer().getOfflinePlayer(UUID.fromString((String)user.get("uuid"))).getName();
+				pl = new PlayerInfo(UUID.fromString((String)user.get("uuid")));
 			else
-				nick = (String) user.get("nick");
-			PlayerInfo pl = new PlayerInfo(nick);
+				pl = new PlayerInfo(server.getOfflinePlayer((String) user.get("nick")).getUniqueId());
 			pl.lvl = ((Number) user.get("lvl")).intValue();
 			pl.breaks = ((Number) user.get("breaks")).intValue();
 			JSONArray arr = (JSONArray) (user.containsKey("invated")? user.get("invated"): user.get("invited"));
 			for(int q = 0;q<arr.size();q++) {
 				String us = (String) arr.get(q);
 				if (p.matcher(us).matches())
-					us = Bukkit.getServer().getOfflinePlayer(UUID.fromString((us))).getName();
-				pl.nicks.add(us);
+					pl.uuids.add(UUID.fromString(us));
+				else
+					pl.uuids.add(server.getOfflinePlayer(us).getUniqueId());
 			}
 			infs.add(pl); 
 		}

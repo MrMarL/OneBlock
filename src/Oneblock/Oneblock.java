@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -146,8 +147,8 @@ public class Oneblock extends JavaPlugin {
 			if (!rebirth)
 				return;
 			Player pl = e.getPlayer();
-			if (pl.getWorld().equals(wor) && PlayerInfo.ExistId(pl.getName())) {
-				int result[] = getFullCoord(PlayerInfo.GetId(pl.getName()));
+			if (pl.getWorld().equals(wor) && PlayerInfo.ExistId(pl.getUniqueId())) {
+				int result[] = getFullCoord(PlayerInfo.GetId(pl.getUniqueId()));
 				e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
 				if (Border) UpdateBorder(pl);
 			}
@@ -240,10 +241,11 @@ public class Oneblock extends JavaPlugin {
 		if (config.getDouble("y") == 0) 
 			return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskUpdatePlayers(), 0, 100);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskSaveData(), 200, 6000);
 		Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
 		on = true;
     }
-    public void addinvite(String name, String to) {
+    public void addinvite(UUID name, UUID to) {
     	for(Invitation item: Invitation.list) 
 			if (item.equals(name, to))
 				return;
@@ -254,18 +256,18 @@ public class Oneblock extends JavaPlugin {
     		public void run() {Invitation.list.remove(inv_);}}, 300L);
     }
     public boolean checkinvite(Player pl) {
-		String name = pl.getName();
-		Invitation inv_ = Invitation.check(name);
+		UUID uuid = pl.getUniqueId();
+		Invitation inv_ = Invitation.check(uuid);
 		
 		if (inv_ == null || !PlayerInfo.ExistId(inv_.Inviting))
 			return false;
 		 
-		if (PlayerInfo.ExistId(name)) {
+		if (PlayerInfo.ExistId(uuid)) {
 			if (Progress_bar)
-				PlayerInfo.get(name).bar.removePlayer(pl);
+				PlayerInfo.get(uuid).bar.removePlayer(pl);
 			pl.performCommand("ob idreset /n");
 		}
-		PlayerInfo.get(inv_.Inviting).nicks.add(name);
+		PlayerInfo.get(inv_.Inviting).uuids.add(uuid);
 		pl.performCommand("ob j"); 
 		Invitation.list.remove(inv_);
 		return true; 
@@ -297,14 +299,18 @@ public class Oneblock extends JavaPlugin {
 			Collections.shuffle(plonl);
 		}
 	}
+	
+	public class TaskSaveData implements Runnable {
+		public void run() { saveData(); }
+	}
 
     public class Task implements Runnable {
         public void run() {
             for (Player ponl: plonl) {
-            	final String name = ponl.getName();
-            	if (!PlayerInfo.ExistId(name))
+            	final UUID uuid = ponl.getUniqueId();
+            	if (!PlayerInfo.ExistId(uuid))
             		continue;
-            	final int plID = PlayerInfo.GetId(name);
+            	final int plID = PlayerInfo.GetId(uuid);
             	final int result[] = getFullCoord(plID);
                 final int X_pl = result[0], Z_pl = result[1];
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
@@ -407,11 +413,11 @@ public class Oneblock extends JavaPlugin {
                 	return true;
                 }
                 Player p = (Player) sender;
-                String name = p.getName();
+                UUID uuid = p.getUniqueId();
                 int plID = 0;
                 int X_pl = 0, Z_pl = 0;
-                if (!PlayerInfo.ExistId(name)) {
-                	PlayerInfo inf = new PlayerInfo(name);
+                if (!PlayerInfo.ExistId(uuid)) {
+                	PlayerInfo inf = new PlayerInfo(uuid);
                 	if (UseEmptyIslands)
                 		plID = PlayerInfo.getNull();
                 	else
@@ -426,9 +432,8 @@ public class Oneblock extends JavaPlugin {
                     if (WorldGuard) {
                     	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
                     	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-                    	OBWG.CreateRegion(name, Block1, Block2, plID);
+                    	OBWG.CreateRegion(uuid, Block1, Block2, plID);
                     }
-					saveData();
 					PlayerInfo.set(plID, inf);
                     if (!superlegacy && Progress_bar) {
                     	String temp = TextP;
@@ -440,7 +445,7 @@ public class Oneblock extends JavaPlugin {
                     }
                 } 
                 else {
-                	plID = PlayerInfo.GetId(name); // GenType
+                	plID = PlayerInfo.GetId(uuid); // GenType
                 	int result[] = getFullCoord(plID);
                     X_pl = result[0]; Z_pl = result[1];
                 }
@@ -450,7 +455,7 @@ public class Oneblock extends JavaPlugin {
                 	PlayerInfo.get(plID).bar.setVisible(true);
                 p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (WorldGuard)
-                	OBWG.addMember(name, plID);
+                	OBWG.addMember(uuid, plID);
                 //Border
                 if (Border) {
                 	WorldBorder br = Bukkit.createWorldBorder();
@@ -534,23 +539,24 @@ public class Oneblock extends JavaPlugin {
             	if (inv == null) 
             		return true;
             	Player pl = (Player) sender;
-        		String name = pl.getName();
         		if (inv == pl) {
         			sender.sendMessage(Messages.invite_yourself);
         			return true;
         		}
-        		if (!PlayerInfo.ExistId(name)) {
+        		UUID uuid = pl.getUniqueId();
+        		if (!PlayerInfo.ExistId(uuid)) {
         			sender.sendMessage(Messages.invite_no_island);
         			return true;
         		}
         		if (max_players_team != 0) {
-        			PlayerInfo pinf = PlayerInfo.get(name);
-        			if (pinf.nicks.size() >= max_players_team) {
+        			PlayerInfo pinf = PlayerInfo.get(uuid);
+        			if (pinf.uuids.size() >= max_players_team) {
             			sender.sendMessage(String.format(Messages.invite_team, max_players_team));
             			return true;
         			}
         		}
-        		addinvite(name, inv.getName());
+        		addinvite(uuid, inv.getUniqueId());
+        		String name = pl.getName();
         		GUI.acceptGUI(inv, name);
         		inv.sendMessage(String.format(Messages.invited, name));
         		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
@@ -562,19 +568,20 @@ public class Oneblock extends JavaPlugin {
             		return true;
             	}
             	String name = args[1];
-            	if (!PlayerInfo.ExistNoInvaitId(name))
+            	UUID uuid = Bukkit.getPlayer(name).getUniqueId();
+            	if (!PlayerInfo.ExistNoInvaitId(uuid))
             		return true;
             	Player inv = Bukkit.getPlayer(name);
             	if (inv == (Player) sender) {
             		sender.sendMessage(Messages.kick_yourself);
             		return true;
             	}
-            	int plID = PlayerInfo.GetId(name);
+            	int plID = PlayerInfo.GetId(uuid);
             	PlayerInfo info = PlayerInfo.get(plID);
-            	if (info.nicks.contains(name)) {
-            		info.nicks.remove(name);
+            	if (info.uuids.contains(uuid)) {
+            		info.uuids.remove(uuid);
             		if (WorldGuard)
-        				OBWG.removeMember(name, plID);
+        				OBWG.removeMember(uuid, plID);
             		if (inv != null)
             			inv.performCommand("ob j");
             	}
@@ -590,26 +597,26 @@ public class Oneblock extends JavaPlugin {
             }
             case ("idreset"):{
             	Player pl = (Player)sender;
-            	String name = pl.getName();
-            	if (!PlayerInfo.ExistId(name))
+            	UUID uuid = pl.getUniqueId();
+            	if (!PlayerInfo.ExistId(uuid))
             		return true;
-            	int PlId = PlayerInfo.GetId(name);
+            	int PlId = PlayerInfo.GetId(uuid);
             	PlayerInfo plp = PlayerInfo.get(PlId);
             	if (Progress_bar)
             		plp.bar.removePlayer(pl);
-            	if (plp.nick.equals(name)) {
-            		if (plp.nicks.size() > 0) {
-            			plp.nick = plp.nicks.get(0);
-            			plp.nicks.remove(0);
+            	if (plp.uuid.equals(uuid)) {
+            		if (plp.uuids.size() > 0) {
+            			plp.uuid = plp.uuids.get(0);
+            			plp.uuids.remove(0);
             		}
-            		else plp.nick = null;
+            		else plp.uuid = null;
             	}
-            	else plp.nicks.remove(name);
+            	else plp.uuids.remove(uuid);
             	
             	if (!saveplayerinventory) pl.getInventory().clear();
             		
             	if (WorldGuard) 
-            		OBWG.removeMember(name, PlId);
+            		OBWG.removeMember(uuid, PlId);
             	if (!args[args.length-1].equals("/n"))
             		sender.sendMessage(Messages.idreset);
             	return true;
@@ -655,10 +662,10 @@ public class Oneblock extends JavaPlugin {
                     	config.set("Border", Border);
                     	if (Border) {
                     		for (Player pl: plonl) {
-                    			String name = pl.getName();
-                            	if (!PlayerInfo.ExistId(name))
+                    			UUID uuid = pl.getUniqueId();
+                            	if (!PlayerInfo.ExistId(uuid))
                             		continue;
-                            	int result[] = getFullCoord(PlayerInfo.GetId(name));
+                            	int result[] = getFullCoord(PlayerInfo.GetId(uuid));
                                 int X_pl = result[0], Z_pl = result[1];
                             	WorldBorder br = Bukkit.createWorldBorder();
                             	br.setCenter(X_pl, Z_pl);
@@ -705,7 +712,8 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sinvalid format. try: /ob setlevel 'nickname' 'level'", ChatColor.RED));
                     return true;
                 }
-                if (PlayerInfo.ExistId(args[1])) {
+                UUID uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+                if (PlayerInfo.ExistId(uuid)) {
                     int setlvl = 0;
                     try {
                         setlvl = Integer.parseInt(args[2]);
@@ -714,7 +722,7 @@ public class Oneblock extends JavaPlugin {
                         return true;
                     }
                     if (setlvl >= 0 && 10000 > setlvl) {
-                        int i = PlayerInfo.GetId(args[1]);
+                        int i = PlayerInfo.GetId(uuid);
                         PlayerInfo inf = PlayerInfo.get(i);
                         inf.breaks = 0;
                         inf.lvl = setlvl;
@@ -741,8 +749,9 @@ public class Oneblock extends JavaPlugin {
                     sender.sendMessage(String.format("%sinvalid format. try: /ob clear 'nickname'", ChatColor.RED));
                     return true;
                 }
-                if (PlayerInfo.ExistId(args[1])) {
-                    int i = PlayerInfo.GetId(args[1]);
+                UUID uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+                if (PlayerInfo.ExistId(uuid)) {
+                    int i = PlayerInfo.GetId(uuid);
                     PlayerInfo inf = PlayerInfo.get(i);
                     inf.breaks = 0;
                     inf.lvl = 0;
@@ -870,7 +879,7 @@ public class Oneblock extends JavaPlugin {
 						txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
                     lvl_bar_mode = false;
                     if (PAPI) for (Player ponl : plonl)
-                    	PlayerInfo.get(ponl.getName()).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
+                    	PlayerInfo.get(ponl.getUniqueId()).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
                     else 
                     	for (PlayerInfo bb : PlayerInfo.list) bb.bar.setTitle(txt_bar);
                     config.set("Progress_bar_text", txt_bar);
@@ -1024,9 +1033,9 @@ public class Oneblock extends JavaPlugin {
                 		return true;
                 	}
                 	Player p = (Player) sender;
-                    String name = p.getName();
-                    if (PlayerInfo.ExistId(name)) {
-                        int result[] = getFullCoord(PlayerInfo.GetId(name));
+                	UUID uuid = p.getUniqueId();
+                    if (PlayerInfo.ExistId(uuid)) {
+                        int result[] = getFullCoord(PlayerInfo.GetId(uuid));
                         Island.scan(wor, result[0], y, result[1]);
                         sender.sendMessage(ChatColor.GREEN + "Your island has been successfully saved and set as default for new players!");
                     } else
@@ -1115,7 +1124,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.3",
+            	"Create by MrMarL\nPlugin version: v1.1.4",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1128,7 +1137,7 @@ public class Oneblock extends JavaPlugin {
     ArrayList<Player> PlLst(int id) {
     	ArrayList<Player> pls = new ArrayList<Player>();
     	for (Player ponl: plonl)
-    		if (id == PlayerInfo.GetId(ponl.getName()))
+    		if (id == PlayerInfo.GetId(ponl.getUniqueId()))
     			pls.add(ponl);
     	return pls;
     }
@@ -1148,14 +1157,14 @@ public class Oneblock extends JavaPlugin {
     	OBWG.RemoveRegions(id);
 		for (int i = 0; i < id; i++) {
 			PlayerInfo owner = PlayerInfo.get(i);
-			if (owner.nick == null)
+			if (owner.uuid == null)
     			continue;
             int result[] = getFullCoord(i);
             int X_pl = result[0], Z_pl = result[1];
 			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
         	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-        	OBWG.CreateRegion(owner.nick, Block1, Block2, i);
-            for (String member: owner.nicks) 
+        	OBWG.CreateRegion(owner.uuid, Block1, Block2, i);
+            for (UUID member: owner.uuids) 
             	OBWG.addMember(member, i);
         }
     }
@@ -1364,39 +1373,39 @@ public class Oneblock extends JavaPlugin {
         physics = Check("physics", physics);
     }
     
-    public static int getlvl(String pl_name) {
-    	return PlayerInfo.get(pl_name).lvl;
+    public static int getlvl(UUID pl_uuid) {
+    	return PlayerInfo.get(pl_uuid).lvl;
     }
-    public static int getnextlvl(String pl_name) {
-    	return getlvl(pl_name) + 1;
+    public static int getnextlvl(UUID pl_uuid) {
+    	return getlvl(pl_uuid) + 1;
     }
-    public static String getlvlname(String pl_name) {
-    	int lvl = getlvl(pl_name);
+    public static String getlvlname(UUID pl_uuid) {
+    	int lvl = getlvl(pl_uuid);
     	return Level.get(lvl).name;
     }
-    public static String getnextlvlname(String pl_name) {
-    	int lvl = getnextlvl(pl_name);
+    public static String getnextlvlname(UUID pl_uuid) {
+    	int lvl = getnextlvl(pl_uuid);
     	return Level.get(lvl).name;
     }
-    public static int getblocks(String pl_name) {
-        return PlayerInfo.get(pl_name).breaks;
+    public static int getblocks(UUID pl_uuid) {
+        return PlayerInfo.get(pl_uuid).breaks;
     }
-    public static int getneed(String pl_name) {
-    	PlayerInfo inf = PlayerInfo.get(pl_name);
+    public static int getneed(UUID pl_uuid) {
+    	PlayerInfo inf = PlayerInfo.get(pl_uuid);
     	return inf.getNeed() - inf.breaks;
     }
-    public static int getlenght(String pl_name) {
-    	return PlayerInfo.get(pl_name).getNeed();
+    public static int getlenght(UUID pl_uuid) {
+    	return PlayerInfo.get(pl_uuid).getNeed();
     }
   
     @SuppressWarnings("unchecked")
 	public static PlayerInfo gettop(int i) {
     	if (PlayerInfo.size() <= i)
-    		return new PlayerInfo("[None]");
+    		return new PlayerInfo("[None]", null);
     	ArrayList<PlayerInfo> ppii = (ArrayList<PlayerInfo>) PlayerInfo.list.clone();
     	Collections.sort(ppii, PlayerInfo.COMPARE_BY_LVL);
-    	if (ppii.get(i).nick == null)
-    		return new PlayerInfo("[None]");
+    	if (ppii.get(i).uuid == null)
+    		return new PlayerInfo("[None]", null);
         return ppii.get(i);
     }
     @Override

@@ -1,21 +1,22 @@
 package Oneblock;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Invitation {
 	public static ArrayList <Invitation> list = new ArrayList<>();
 	
-	public String Inviting;
-	public String Invited;
+	public UUID Inviting;
+	public UUID Invited;
 	
-	public Invitation(String inviting, String invited) {
+	public Invitation(UUID inviting, UUID invited) {
 		Inviting = inviting;
 		Invited = invited;
 	}
 	
-	public static Invitation check(String name) {
+	public static Invitation check(UUID uuid) {
 		for(Invitation item:Invitation.list)
-			if (item.Invited.equals(name))
+			if (item.Invited.equals(uuid))
 				return item;
 		return null;
 	}
@@ -29,7 +30,7 @@ public class Invitation {
         return false;
     }
 	
-	public boolean equals(String inviting, String invited) {
+	public boolean equals(UUID inviting, UUID invited) {
 		return Inviting.equals(inviting) && Invited.equals(invited);
 	}
 }
