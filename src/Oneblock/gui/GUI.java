@@ -12,7 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import Oneblock.ChestItems.type;
+import Oneblock.ChestItems;
 import Oneblock.PlayerInfo;
 import XSeriesOneBlock.XMaterial;
 
@@ -62,9 +62,23 @@ public class GUI {
         p.openInventory(topGUI);
 	}
 	
-	public static void chestGUI(Player p) {}
-	
-	public static void chestGUI(Player sender, type small) { }
+	public static void chestGUI(Player p) {
+		chestGUI(p, ChestItems.type.SMALL);
+	}
+
+	public static void chestGUI(Player p, ChestItems.type chestType) {
+		List<ItemStack> list;
+		switch(chestType) {
+			case MEDIUM: list = ChestItems.m_ch; break;
+			case HIGH: list = ChestItems.h_ch; break;
+			default: list = ChestItems.s_ch;
+		}
+		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%s %schest.", chestType.name(), ChatColor.BLACK));
+		for(ItemStack itm : list)
+			if (itm != null)
+				chestGUI.addItem(itm);
+		p.openInventory(chestGUI);
+	}
 	
 	private static ItemStack setMeta(XMaterial material, String title) {
 		return setFillMeta(material, title, 1, null);
