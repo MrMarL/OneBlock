@@ -16,9 +16,6 @@ zleave: 0.0
 yawleave: 0.0
 #Should we enable the Progress Bar?
 Progress_bar: true
-#This is the speed/amount of block regenarating when a block is breaked in OneBlock 
-#Default value is 7, Increasing this may cause lag.
-frequency: 7
 #What shoud progress bar show?
 Progress_bar_text: level
 #Shoud we enable chat alert for Levels

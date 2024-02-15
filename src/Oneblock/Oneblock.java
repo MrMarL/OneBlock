@@ -1,4 +1,4 @@
-// Copyright © 2022 MrMarL. All rights reserved.
+// Copyright © 2024 MrMarL. All rights reserved.
 package Oneblock;
 
 import org.bukkit.plugin.Plugin;
@@ -50,6 +50,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -75,7 +76,6 @@ public class Oneblock extends JavaPlugin {
     static List <Player> plonl;
     String TextP = "";
     int sto = 100;
-    Long fr;
     BarColor Progress_color;
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean droptossup = true, physics = false;
@@ -176,10 +176,8 @@ public class Oneblock extends JavaPlugin {
     }
     
     public void UpdateBorder(final Player pl) {
-    	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, new Runnable() {
-	    	@Override public void run() { 
-	    		pl.setWorldBorder(pl.getWorldBorder()); 
-	    	}
+    	Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) this, () -> {
+	    		pl.setWorldBorder(pl.getWorldBorder());
 	    }, 10L);
     }
     
@@ -210,6 +208,22 @@ public class Oneblock extends JavaPlugin {
             drop.teleport(loc.add(0, .75, 0));
             drop.setVelocity(new Vector(0, .1, 0));
         }
+    	@EventHandler
+    	public void BlockBreak(final BlockBreakEvent e) {
+    		if (wor == null) return;
+    		final Block block = e.getBlock();
+    		if (block.getWorld() != wor) return;
+    		if (block.getY() != y) return;
+    		final Player ponl = e.getPlayer();
+    		final UUID uuid = ponl.getUniqueId();
+        	if (!PlayerInfo.ExistId(uuid)) return;
+        	final int plID = PlayerInfo.GetId(uuid);
+        	final int result[] = getFullCoord(plID);
+        	if (block.getX() != result[0]) return;
+        	if (block.getZ() != result[1]) return;
+
+            Bukkit.getScheduler().runTaskLater(Oneblock.this, () -> { BlockGen(result[0], result[1], plID, ponl, block); }, 1L);
+    	}
     }
     public class wor_null implements Runnable {
         public void run() {
@@ -240,9 +254,9 @@ public class Oneblock extends JavaPlugin {
 		Bukkit.getScheduler().cancelTasks(this);
 		if (config.getDouble("y") == 0) 
 			return;
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskUpdatePlayers(), 0, 100);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskUpdatePlayers(), 0, 110);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new TaskSaveData(), 200, 6000);
-		Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), fr, fr * 2);
+		Bukkit.getScheduler().runTaskTimer(this, (Runnable) new Task(), 40, 40);
 		on = true;
     }
     public void addinvite(UUID name, UUID to) {
@@ -294,10 +308,7 @@ public class Oneblock extends JavaPlugin {
 	}
 	
 	public class TaskUpdatePlayers implements Runnable {
-		public void run() {
-			plonl = wor.getPlayers();
-			Collections.shuffle(plonl);
-		}
+		public void run() { plonl = wor.getPlayers(); }
 	}
 	
 	public class TaskSaveData implements Runnable {
@@ -313,11 +324,12 @@ public class Oneblock extends JavaPlugin {
             	final int plID = PlayerInfo.GetId(uuid);
             	final int result[] = getFullCoord(plID);
                 final int X_pl = result[0], Z_pl = result[1];
+            	
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	int checkX = ponl.getLocation().getBlockX()-X_pl;
                 	int checkZ = СircleMode ? ponl.getLocation().getBlockZ()-Z_pl : 0;
-                	if (Math.abs(checkX) > 50 || Math.abs(checkZ) > 50) {
-                		if (Math.abs(checkX) > 200 || Math.abs(checkZ) > 200) {
+                	if (Math.abs(checkX)+1 > sto/2 || Math.abs(checkZ)+1 > sto/2) {
+                		if (Math.abs(checkX) > sto*2 || Math.abs(checkZ) > sto*2) {
                 			ponl.performCommand("ob j");
                 			continue;
                 		}
@@ -327,65 +339,57 @@ public class Oneblock extends JavaPlugin {
                 	}
                 }
                 final Block block = wor.getBlockAt(X_pl, y, Z_pl);
-                if (block.getType().equals(Material.AIR)) {
-                	final PlayerInfo inf = PlayerInfo.get(plID);
-                	Level lvl_inf = Level.get(inf.lvl); 
-                    if (++inf.breaks >= inf.getNeed()) {
-                    	inf.lvlup();
-                    	lvl_inf = Level.get(inf.lvl); 
-                        if (Progress_bar) {
-                        	inf.bar.setColor(lvl_inf.color);
-                        	if (lvl_bar_mode)
-                        		inf.bar.setTitle(lvl_inf.name);
-                        }
-                        if (chat_alert)
-                        	ponl.sendMessage(String.format("%s%s", ChatColor.GREEN, lvl_inf.name));
-                    }
-                    if (Progress_bar) {
-                        if (!lvl_bar_mode && PAPI)
-                        	inf.bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
-                        inf.bar.setProgress(inf.getPercent());
-                        inf.bar.addPlayer(ponl);
-                    }
-                    for (Player pll :PlLst(plID)) {
-                    	Location loc = pll.getLocation();
-                    	if (loc.getBlockX() == X_pl && loc.getY() - 1 < y && loc.getBlockZ() == Z_pl) {
-                    		loc.setY(y+1);
-                    		pll.teleport(loc);
-                    		break;
-                    	}
-                    }
-                    random = lvl_inf.blocks;
-                    if (random != 0) random = rnd.nextInt(random);
-                    if (blocks.get(random) == null) {
-                        XBlock.setType(block, GRASS_BLOCK);
-                        if (rnd.nextInt(3) == 1)
-                            XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl),flowers.get(rnd.nextInt(flowers.size())));
-                    } else if (blocks.get(random) == Material.CHEST) {
-                        block.setType(Material.CHEST);
-                        Chest chest = (Chest) block.getState();
-                        Inventory inv = chest.getInventory();
-                        ChestItems.type chestType;
-                        if (random < blocks.size() / 3)
-                        	chestType = ChestItems.type.SMALL;
-                        else if (random < blocks.size() / 1.5)
-                        	chestType = ChestItems.type.MEDIUM;
-                        else
-                        	chestType = ChestItems.type.HIGH;
-                        
-                        if (!ChestItems.fillChest(inv, chestType))
-                        getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
-                    } 
-                    else XBlock.setType(block, blocks.get(random), physics);
-
-                    if (rnd.nextInt(9) == 0) {
-                        if ((random = lvl_inf.mobs) != 0) random = rnd.nextInt(random);
-                        wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(random));
-                    }
-                }
+                if (block.getType().equals(Material.AIR)) 
+                	BlockGen(X_pl, Z_pl, plID, ponl, block);
             }
         }
     }
+    
+    public void BlockGen(final int X_pl, final int Z_pl, final int plID, final Player ponl, final Block block) {
+    	final PlayerInfo inf = PlayerInfo.get(plID);
+    	Level lvl_inf = Level.get(inf.lvl); 
+        if (++inf.breaks >= inf.getNeed()) {
+        	inf.lvlup();
+        	lvl_inf = Level.get(inf.lvl); 
+            if (Progress_bar) {
+            	inf.bar.setColor(lvl_inf.color);
+            	if (lvl_bar_mode)
+            		inf.bar.setTitle(lvl_inf.name);
+            }
+            if (chat_alert)
+            	ponl.sendMessage(String.format("%s%s", ChatColor.GREEN, lvl_inf.name));
+        }
+        if (Progress_bar) {
+            if (!lvl_bar_mode && PAPI)
+            	inf.bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
+            inf.bar.setProgress(inf.getPercent());
+            inf.bar.addPlayer(ponl);
+        }
+        random = lvl_inf.blocks;
+        if (random != 0) random = rnd.nextInt(random);
+        if (blocks.get(random) == null) {
+            XBlock.setType(block, GRASS_BLOCK);
+            if (rnd.nextInt(3) == 1)
+                XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
+        } else if (blocks.get(random) == Material.CHEST) {
+            block.setType(Material.CHEST);
+            Chest chest = (Chest) block.getState();
+            Inventory inv = chest.getInventory();
+            ChestItems.type chestType;
+            if (random < blocks.size() / 3)	chestType = ChestItems.type.SMALL;
+            else if (random < blocks.size() / 1.5)	chestType = ChestItems.type.MEDIUM;
+            else	chestType = ChestItems.type.HIGH;
+            	
+            if (!ChestItems.fillChest(inv, chestType))
+            	getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
+        } 
+        else XBlock.setType(block, blocks.get(random), physics);
+
+        if (rnd.nextInt(9) == 0) {
+            if ((random = lvl_inf.mobs) != 0) random = rnd.nextInt(random);
+            wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(random));
+        }
+	}
 
     public void onDisable() {
         config.set("custom_island", Island.map());
@@ -973,45 +977,6 @@ public class Oneblock extends JavaPlugin {
                 config.set("Chat_alert", chat_alert);
                 return true;
             }
-            case ("frequency"):{
-                if (!sender.hasPermission("Oneblock.set")) {
-                    sender.sendMessage(Messages.noperm);
-                    return true;
-                }
-                if (args.length == 1) {
-                    sender.sendMessage(ChatColor.YELLOW + "enter a valid value (4 to 20)\n7 by default");
-                    return true;
-                }
-                Long fr_;
-                String Sfr = "";
-                try {
-                    fr_ = Long.parseLong(args[1]);
-                } catch (Exception e) {
-                	sender.sendMessage(ChatColor.YELLOW + "enter a valid value (4 to 20)\n7 by default");
-                    return true;
-                }
-                if (fr_ >= 4L && fr_ <= 20L && on) {
-                    fr = fr_;
-                    config.set("frequency", fr);
-                    if (fr == 4L)
-                        Sfr = " (Extreme)";
-                    else if (fr < 7L)
-                        Sfr = " (Fast)";
-                    else if (fr == 7L)
-                        Sfr = " (Default)";
-                    else if (fr < 9L)
-                        Sfr = " (Normal)";
-                    else if (fr < 13L)
-                        Sfr = " (Slow)";
-                    else if (fr < 17L)
-                        Sfr = " (Slower)";
-                    else
-                        Sfr = " (Max TPS)";
-                    runMainTask();
-                }
-                sender.sendMessage(ChatColor.GREEN + "Now frequency = " + fr + Sfr);
-                return true;
-            }
             case ("islands"):{
                 if (!sender.hasPermission("Oneblock.set")) {
                     sender.sendMessage(Messages.noperm);
@@ -1124,7 +1089,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.4",
+            	"Create by MrMarL\nPlugin version: v1.1.5",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1132,14 +1097,6 @@ public class Oneblock extends JavaPlugin {
             sender.sendMessage(ChatColor.RED + "Error.");
             return false;
         }
-    }
-    
-    ArrayList<Player> PlLst(int id) {
-    	ArrayList<Player> pls = new ArrayList<Player>();
-    	for (Player ponl: plonl)
-    		if (id == PlayerInfo.GetId(ponl.getUniqueId()))
-    			pls.add(ponl);
-    	return pls;
     }
 
     private void Datafile() {
@@ -1346,7 +1303,6 @@ public class Oneblock extends JavaPlugin {
 	        lvl_bar_mode = TextP.equals("level");
         }
         chat_alert = Check("Chat_alert", !lvl_bar_mode);
-        fr = (long) Check("frequency", 7);
         il3x3 = Check("Island_for_new_players", true);
         rebirth = Check("Rebirth_on_the_island", true);
         Level.multiplier = Check("level_multiplier", Level.multiplier);
@@ -1416,7 +1372,7 @@ public class Oneblock extends JavaPlugin {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
-            		"reload","frequency","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
+            		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick")) {
@@ -1475,10 +1431,6 @@ public class Oneblock extends JavaPlugin {
                 case ("max_players_team"):
                 	for(int i = 0;i<4;)
 	            		commands.add(String.format("%d", i++));
-                case ("frequency"):
-                	for(int i = 4;i<=20;)
-	            		commands.add(String.format("%d", i++));
-	            	break;
                 case ("set"):
                 	commands.add("100");
                 	commands.add("500");
