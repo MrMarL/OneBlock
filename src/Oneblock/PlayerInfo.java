@@ -18,11 +18,6 @@ public class PlayerInfo {
 	public int breaks = 0;
 	public BossBar bar = null;
 	
-	public PlayerInfo(String name, UUID uuid) {
-		//nick = name;
-		this.uuid = uuid;
-	}
-	
 	public PlayerInfo(UUID uuid) {
 		//nick = Bukkit.getServer().getOfflinePlayer(uuid).getName();
 		this.uuid = uuid;

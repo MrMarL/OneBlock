@@ -1401,11 +1401,11 @@ public class Oneblock extends JavaPlugin {
     @SuppressWarnings("unchecked")
 	public static PlayerInfo gettop(int i) {
     	if (PlayerInfo.size() <= i)
-    		return new PlayerInfo("[None]", null);
+    		return new PlayerInfo(null);
     	ArrayList<PlayerInfo> ppii = (ArrayList<PlayerInfo>) PlayerInfo.list.clone();
     	Collections.sort(ppii, PlayerInfo.COMPARE_BY_LVL);
     	if (ppii.get(i).uuid == null)
-    		return new PlayerInfo("[None]", null);
+    		return new PlayerInfo(null);
         return ppii.get(i);
     }
     @Override
