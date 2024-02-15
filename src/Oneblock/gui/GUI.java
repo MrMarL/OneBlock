@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import Oneblock.ChestItems;
 import Oneblock.PlayerInfo;
+import Oneblock.WorldGuard.OBWorldGuard;
 import XSeriesOneBlock.XMaterial;
 
 public class GUI {
@@ -73,7 +74,8 @@ public class GUI {
 			case HIGH: list = ChestItems.h_ch; break;
 			default: list = ChestItems.s_ch;
 		}
-		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%s %schest.", chestType.name(), ChatColor.BLACK));
+		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%s %schest. %s", chestType.name(), ChatColor.BLACK
+				, OBWorldGuard.canUse?"":"[Edit only in premium]"));
 		for(ItemStack itm : list)
 			if (itm != null)
 				chestGUI.addItem(itm);
