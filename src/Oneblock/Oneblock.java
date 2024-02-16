@@ -472,8 +472,10 @@ public class Oneblock extends JavaPlugin {
             case ("leave"):{
                 Player p = (Player) sender;
                 PlayerInfo.removeBarStatic(p);
-                if (config.getDouble("yleave") == 0 || leavewor == null)
-                    return true;
+                if (config.getDouble("yleave") == 0 || leavewor == null) {
+                	sender.sendMessage(String.format("%sSorry, but the position was not set.", ChatColor.YELLOW));
+                	return true;
+                }
                 p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"),
                 		(float)config.getDouble("yawleave"), 0f));
                 return true;
@@ -494,7 +496,7 @@ public class Oneblock extends JavaPlugin {
                     try {
                     	temp = Integer.parseInt(args[1]);
                     } catch (NumberFormatException nfe) {
-                    	sender.sendMessage(String.format("%sinvalid value", ChatColor.RED));
+                    	sender.sendMessage(Messages.invalid_value);
                     	return true;
                     }
                     if (temp > 1000 || temp < -1000) {
@@ -903,7 +905,7 @@ public class Oneblock extends JavaPlugin {
                     try {
                     	temp = Integer.parseInt(args[1]);
                     } catch (NumberFormatException nfe) {
-                    	sender.sendMessage(String.format("%sinvalid value", ChatColor.RED));
+                    	sender.sendMessage(Messages.invalid_value);
                     	return true;
                     }
                     if (Level.size()<=temp||temp<0) {

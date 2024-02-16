@@ -8,18 +8,15 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
 public class PlayerInfo {
-	public static ArrayList <PlayerInfo> list = new ArrayList <>();
+	public static ArrayList <PlayerInfo> list = new ArrayList<>();
 	
-	//public String nick;
 	public UUID uuid;
-	//public ArrayList<String> nicks = new ArrayList<String>();
 	public ArrayList<UUID> uuids = new ArrayList<UUID>();
 	public int lvl = 0;
 	public int breaks = 0;
 	public BossBar bar = null;
 	
 	public PlayerInfo(UUID uuid) {
-		//nick = Bukkit.getServer().getOfflinePlayer(uuid).getName();
 		this.uuid = uuid;
 	}
 	
