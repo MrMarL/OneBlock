@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import Oneblock.ChestItems;
 import Oneblock.PlayerInfo;
@@ -31,6 +32,7 @@ public class GUI {
 	        baseGUI.addItem(setMeta(XMaterial.GRASS_BLOCK, ChatColor.GREEN + "/ob join"));
 	        baseGUI.setItem(2, setMeta(XMaterial.PODZOL, ChatColor.GREEN + "/ob leave"));
 	        baseGUI.setItem(4, setMeta(XMaterial.GOLD_BLOCK, ChatColor.GOLD + "/ob top"));
+	        baseGUI.setItem(6, setMeta(XMaterial.MELON, ChatColor.GREEN + "/ob visit"));
 	        baseGUI.setItem(8, setMeta(XMaterial.BARRIER, ChatColor.RED + "/ob idreset", String.format("%s[your island's data will be lost]", ChatColor.RED)));
         }
         p.openInventory(baseGUI);
@@ -62,6 +64,33 @@ public class GUI {
 		topGUI.setItem(24, setFillMeta(XMaterial.COAL_BLOCK, String.format("%s6th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
         p.openInventory(topGUI);
 	}
+	
+	public static void visitGUI(Player p, List<Player> plonl) {
+		if (!enabled) return;
+		Inventory visitGUI = Bukkit.createInventory(holder, 54, String.format("%s[OneBlock GUI] %s- %sVisit", ChatColor.GREEN, ChatColor.WHITE, ChatColor.BOLD));
+		ArrayList <PlayerInfo> list = new ArrayList<>();
+		int size = 0;
+		for (Player pl: plonl) {
+			PlayerInfo inf = PlayerInfo.get(pl.getUniqueId());
+			if (inf == null) continue;
+			if (!inf.allow_visit) continue;
+			list.add(inf);
+			size++;
+		}
+		size = size > 54 ? 54 : size;
+		for (int i = 0; i < size; i++)
+			visitGUI.setItem(i, getPlayerHead(plonl.get(i), parseUUID(list.get(i).uuid)));
+        p.openInventory(visitGUI);
+	}
+	
+	public static ItemStack getPlayerHead(Player player, String title) {
+        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+        skullMeta.setOwningPlayer(player);
+        skullMeta.setDisplayName(title);
+        skull.setItemMeta(skullMeta);
+        return skull;
+    }
 	
 	public static void chestGUI(Player p) {
 		chestGUI(p, ChestItems.type.SMALL);

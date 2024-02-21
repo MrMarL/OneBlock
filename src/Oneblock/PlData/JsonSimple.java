@@ -32,6 +32,7 @@ public class JsonSimple {
 			user.put("uuid", pl.uuid.toString());
 			user.put("lvl", pl.lvl);
 			user.put("breaks", pl.breaks);
+			if (pl.allow_visit) user.put("visit", pl.allow_visit);
 			
 			JSONArray arr = new JSONArray();
 			
@@ -77,6 +78,7 @@ public class JsonSimple {
 				pl = new PlayerInfo(server.getOfflinePlayer((String) user.get("nick")).getUniqueId());
 			pl.lvl = ((Number) user.get("lvl")).intValue();
 			pl.breaks = ((Number) user.get("breaks")).intValue();
+			pl.allow_visit = user.containsKey("visit");
 			JSONArray arr = (JSONArray) (user.containsKey("invated")? user.get("invated"): user.get("invited"));
 			for(int q = 0;q<arr.size();q++) {
 				String us = (String) arr.get(q);

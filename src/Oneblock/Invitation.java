@@ -15,7 +15,7 @@ public class Invitation {
 	}
 	
 	public static Invitation check(UUID uuid) {
-		for(Invitation item:Invitation.list)
+		for(Invitation item: list)
 			if (item.Invited.equals(uuid))
 				return item;
 		return null;

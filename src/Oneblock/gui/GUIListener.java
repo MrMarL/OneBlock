@@ -13,32 +13,25 @@ public class GUIListener implements Listener {
 
 	@EventHandler
     public void onPlayerClickInventory(final InventoryClickEvent e){
-    	if (!GUI.enabled)
-    		return;
+    	if (!GUI.enabled) return;
         Inventory inv = e.getInventory();
-        if (inv.getHolder() == null)
-        	return;
-        if (!inv.getHolder().getClass().isAssignableFrom(GUIHolder.class))
-        	return;
+        if (inv.getHolder() == null) return;
+        if (!inv.getHolder().getClass().isAssignableFrom(GUIHolder.class)) return;
         
         e.setCancelled(true);
+        
+        HumanEntity he = e.getWhoClicked();
+	    if (!(he instanceof Player)) return;
+	    Player pl = (Player) he;
 	        
 	    if (inv.getSize() == 9) {
-	    	HumanEntity he = e.getWhoClicked();
-		    if (!(he instanceof Player))
-		        return;
-		    Player pl = (Player) he;
-		    
 		    if (GUI.baseGUI != null && GUI.baseGUI.equals(inv)) {
-		    	if (e.getClickedInventory() != inv)
-		    		return;
+		    	if (e.getClickedInventory() != inv) return;
 		        ItemStack item = e.getCurrentItem();
-		        if (item == null)
-		        	return;
+		        if (item == null) return;
 		        pl.closeInventory();
 		        ItemMeta meta = item.getItemMeta();
-		        if (meta == null)
-		        	return;
+		        if (meta == null) return;
 		        String command = meta.getDisplayName();
 		        if (command.contains("/")) 
 		        	pl.performCommand(command.split("/")[1]);
@@ -48,6 +41,15 @@ public class GUIListener implements Listener {
 		        if (e.getRawSlot() == 2)
 		        	pl.performCommand("ob accept");
 		    }
+        } else if (inv.getSize() == 54) {
+		    if (e.getClickedInventory() != inv) return;
+	        ItemStack item = e.getCurrentItem();
+	        if (item == null) return;
+	        pl.closeInventory();
+	        ItemMeta meta = item.getItemMeta();
+	        if (meta == null) return;
+	        String command = meta.getDisplayName();
+	        pl.performCommand("ob visit " + command);
         }
     }
 }

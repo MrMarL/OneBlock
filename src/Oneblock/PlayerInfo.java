@@ -15,6 +15,7 @@ public class PlayerInfo {
 	public int lvl = 0;
 	public int breaks = 0;
 	public BossBar bar = null;
+	public boolean allow_visit = false;
 	
 	public PlayerInfo(UUID uuid) {
 		this.uuid = uuid;
@@ -66,13 +67,13 @@ public class PlayerInfo {
     	return false;
     }
     
-	public static boolean ExistId(UUID name) {
+	public static boolean ExistId(UUID uuid) {
     	for(PlayerInfo pl:PlayerInfo.list) {
     		if (pl.uuid == null)
     			continue;
-    		if (pl.uuid.equals(name))
+    		if (pl.uuid.equals(uuid))
     			return true;
-    		if (pl.uuids.contains(name))
+    		if (pl.uuids.contains(uuid))
     			return true;
     	}
     	return false;
@@ -82,8 +83,8 @@ public class PlayerInfo {
 		return list.get(id);
 	}
 	
-	public static PlayerInfo get(UUID name) {
-    	return list.get(GetId(name));
+	public static PlayerInfo get(UUID uuid) {
+    	return list.get(GetId(uuid));
 	}
 	
 	public static void set(int id, PlayerInfo pInf) {
