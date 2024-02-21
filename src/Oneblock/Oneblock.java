@@ -350,7 +350,8 @@ public class Oneblock extends JavaPlugin {
     public boolean CheckPosition(Location loc, int X_pl, int Z_pl) {
     	X_pl = loc.getBlockX()-X_pl;
     	Z_pl = СircleMode ? loc.getBlockZ()-Z_pl : 0;
-    	return !(Math.abs(X_pl) >= sto/2 || Math.abs(Z_pl) >= sto/2);
+    	int val = Math.abs(sto/2) + 1;
+    	return (Math.abs(X_pl) <= val && Math.abs(Z_pl) <= val);
     }
     
     public void BlockGen(final int X_pl, final int Z_pl, final int plID, final Player ponl, final Block block) {
@@ -514,7 +515,7 @@ public class Oneblock extends JavaPlugin {
             	final int result[] = getFullCoord(plID);
                 final int X_pl = result[0], Z_pl = result[1];
         		
-                Guest.list.add(new Guest(uuid, pl.getUniqueId()));
+                if (protection) Guest.list.add(new Guest(uuid, pl.getUniqueId()));
                 pl.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (Border) {
                 	WorldBorder br = Bukkit.createWorldBorder();
