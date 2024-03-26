@@ -632,23 +632,23 @@ public class Oneblock extends JavaPlugin {
             		sender.sendMessage(Messages.kick_usage);
             		return true;
             	}
-            	String name = args[1];
-            	UUID uuid = Bukkit.getPlayer(name).getUniqueId();
-            	if (!PlayerInfo.ExistNoInvaitId(uuid))
-            		return true;
-            	Player inv = Bukkit.getPlayer(name);
-            	if (inv == (Player) sender) {
+            	Player member = Bukkit.getPlayer(args[1]);
+            	if (member == null) return true;
+            	Player owner = (Player) sender;
+            	if (member == owner) {
             		sender.sendMessage(Messages.kick_yourself);
             		return true;
             	}
-            	int plID = PlayerInfo.GetId(uuid);
+            	UUID owner_uuid = owner.getUniqueId(), member_uuid = member.getUniqueId();
+            	if (!PlayerInfo.ExistNoInvaitId(owner_uuid))
+            		return true;
+            	int plID = PlayerInfo.GetId(owner_uuid);
             	PlayerInfo info = PlayerInfo.get(plID);
-            	if (info.uuids.contains(uuid)) {
-            		info.uuids.remove(uuid);
+            	if (info.uuids.contains(member_uuid)) {
+            		info.uuids.remove(member_uuid);
             		if (WorldGuard)
-        				OBWG.removeMember(uuid, plID);
-            		if (inv != null)
-            			inv.performCommand("ob j");
+        				OBWG.removeMember(member_uuid, plID);
+            		member.performCommand("ob j");
             	}
             	return true;
             }
@@ -1128,7 +1128,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.6",
+            	"Create by MrMarL\nPlugin version: v1.1.6f",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
