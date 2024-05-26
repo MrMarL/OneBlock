@@ -14,10 +14,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import Oneblock.ChestItems;
 import Oneblock.PlayerInfo;
 import Oneblock.WorldGuard.OBWorldGuard;
-import XSeriesOneBlock.XMaterial;
 
 public class GUI {
 	public static boolean enabled = true;

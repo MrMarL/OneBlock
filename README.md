@@ -1,7 +1,7 @@
 <a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page" align="right"></a>
 <div align="center">
   <h1>OneBlock</h1>
-  <h3>Support 1.8.X - 1.20.X and higher... Legacy support 1.6.X - 1.7.X</h3>
+  <h3>Support 1.8.X - 1.20.X and higher...</h3>
   <h3>Works on java 8 and bukkit/</h3>
 
   [![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)

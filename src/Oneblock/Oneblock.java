@@ -5,16 +5,18 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import com.cryptomorin.xseries.XBlock;
+import com.cryptomorin.xseries.XMaterial;
+
 import Oneblock.ChestItems.type;
 import Oneblock.PlData.JsonSimple;
 import Oneblock.PlData.ReadOldData;
+import Oneblock.UniversalPlace.*;
 import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.WorldGuard.OBWorldGuard6;
 import Oneblock.WorldGuard.OBWorldGuard7;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
-import XSeriesOneBlock.XBlock;
-import XSeriesOneBlock.XMaterial;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -89,8 +91,9 @@ public class Oneblock extends JavaPlugin {
     boolean saveplayerinventory = false;
     int max_players_team = 0;
     OBWorldGuard OBWG;
-    final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.GRASS;
+    final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
     final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    Place placer;
     
     public static World wor() { return wor; }
     
@@ -109,6 +112,7 @@ public class Oneblock extends JavaPlugin {
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Border = findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
+        placer = legacy ? new Place1_8to1_12() : new Place1_13plus();
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         getLogger().info(
@@ -392,7 +396,7 @@ public class Oneblock extends JavaPlugin {
             if (!ChestItems.fillChest(inv, chestType))
             	getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
         } 
-        else XBlock.setType(block, blocks.get(random), physics);
+        else placer.setType(block, blocks.get(random), physics);
 
         if (rnd.nextInt(9) == 0) {
             if ((random = lvl_inf.mobs) != 0) random = rnd.nextInt(random);
@@ -1128,7 +1132,7 @@ public class Oneblock extends JavaPlugin {
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.6f",
+            	"Create by MrMarL\nPlugin version: v1.1.7",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1209,7 +1213,7 @@ public class Oneblock extends JavaPlugin {
         		try { mobs.add(EntityType.valueOf(text)); continue; }
         		catch (Exception e) {}
         		//read a material
-        		if (legacy){
+        		if (legacy){ //XMaterial lib
         			Optional <XMaterial> a = XMaterial.matchXMaterial(text);
 	        		if (!a.isPresent()) {
 	        			blocks.add(null);

@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import XSeriesOneBlock.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 
 public class Config {
 	protected static File file;

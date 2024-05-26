@@ -41,7 +41,34 @@
               <pattern>org.bstats</pattern>
               <shadedPattern>Oneblock</shadedPattern>
             </relocation>
+            <relocation>
+              <pattern>com.cryptomorin.xseries</pattern>
+              <shadedPattern>Oneblock.utils</shadedPattern>
+            </relocation>
           </relocations>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>com/cryptomorin/xseries/particles/*</exclude>
+                <exclude>com/cryptomorin/xseries/abstractions/*</exclude>
+                <exclude>com/cryptomorin/xseries/messages/*</exclude>
+                <exclude>com/cryptomorin/xseries/reflection/*</exclude>
+                <exclude>com/cryptomorin/xseries/reflection/minecraft/*</exclude>
+                <exclude>com/cryptomorin/xseries/reflection/jvm/*</exclude>
+                <exclude>com/cryptomorin/xseries/reflection/jvm/classes/*</exclude>
+                <exclude>com/cryptomorin/xseries/XBi*</exclude>
+                <exclude>com/cryptomorin/xseries/N*</exclude>
+                <exclude>com/cryptomorin/xseries/S*</exclude>
+                <exclude>com/cryptomorin/xseries/XS*</exclude>
+                <exclude>com/cryptomorin/xseries/XT*</exclude>
+                <exclude>com/cryptomorin/xseries/XE*</exclude>
+                <exclude>com/cryptomorin/xseries/XP*</exclude>
+                <exclude>com/cryptomorin/xseries/XW*</exclude>
+                <exclude>com/cryptomorin/xseries/XI*</exclude>
+              </excludes>
+            </filter>
+          </filters>
         </configuration>
       </plugin>
     </plugins>
@@ -52,19 +79,16 @@
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <repository>
+      <id>spigot-repo-2</id>
+      <url>https://repo.phoenix616.dev/</url>
+    </repository>
+    <repository>
       <id>placeholderapi</id>
       <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
     <repository>
       <id>sk89q-repo</id>
       <url>https://maven.enginehub.org/repo/</url>
-    </repository>
-    <repository>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-      <id>XSeriesOneBlock-main</id>
-      <url>https://raw.github.com/MrMarL/XSeriesOneBlock/main/</url>
     </repository>
     <repository>
       <snapshots>

@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Oneblock</groupId>
 	<artifactId>Oneblock</artifactId>
-	<version>1.1.6f</version>
+	<version>1.1.7</version>
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,6 +16,11 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
+		
+		<repository>
+			<id>spigot-repo-2</id> <!-- Spigot repo for 1.7.10 -->
+			<url>https://repo.phoenix616.dev/</url>
+		</repository>
 
 		<repository>
 			<id>placeholderapi</id>
@@ -26,16 +31,7 @@
 			<id>sk89q-repo</id>
 			<url>https://maven.enginehub.org/repo/</url>
 		</repository>
-
-		<repository>
-			<id>XSeriesOneBlock-main</id>
-			<url>https://raw.github.com/MrMarL/XSeriesOneBlock/main/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-
+		
 		<repository>
 			<id>WorldGuardOneBlock-main</id>
 			<url>https://raw.github.com/MrMarL/WorldGuardOneBlock/main/</url>
@@ -105,10 +101,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>XSeriesOneBlock</groupId>
-			<artifactId>XSeriesOneBlock</artifactId>
-			<version>1.8</version> <!-- ver 1.8 for 1.8.X ~ 1.18.X; ver 1.7 for 1.6.X ~ 1.7.X; -->
-			<scope>compile</scope>
+		    <groupId>com.github.cryptomorin</groupId>
+		    <artifactId>XSeries</artifactId>
+		    <version>11.0.0-beta</version>
 		</dependency>
 	</dependencies>
 
@@ -144,7 +139,36 @@
 							<pattern>org.bstats</pattern>
 							<shadedPattern>Oneblock</shadedPattern>
 						</relocation>
+						
+						<relocation>
+			                <pattern>com.cryptomorin.xseries</pattern>
+			                <shadedPattern>Oneblock.utils</shadedPattern>
+			            </relocation>
 					</relocations>
+					
+					<filters>
+			            <filter>
+			                <artifact>*:*</artifact> <!-- Someone rewrite my filter... -->
+			                <excludes>
+				                <exclude>com/cryptomorin/xseries/particles/*</exclude>
+				                <exclude>com/cryptomorin/xseries/abstractions/*</exclude>
+				                <exclude>com/cryptomorin/xseries/messages/*</exclude>
+				                <exclude>com/cryptomorin/xseries/reflection/*</exclude>
+				                <exclude>com/cryptomorin/xseries/reflection/minecraft/*</exclude>
+				                <exclude>com/cryptomorin/xseries/reflection/jvm/*</exclude>
+				                <exclude>com/cryptomorin/xseries/reflection/jvm/classes/*</exclude>
+				                <exclude>com/cryptomorin/xseries/XBi*</exclude>
+				                <exclude>com/cryptomorin/xseries/N*</exclude>
+				                <exclude>com/cryptomorin/xseries/S*</exclude>
+				                <exclude>com/cryptomorin/xseries/XS*</exclude>
+				                <exclude>com/cryptomorin/xseries/XT*</exclude>
+				                <exclude>com/cryptomorin/xseries/XE*</exclude>
+				                <exclude>com/cryptomorin/xseries/XP*</exclude>
+				                <exclude>com/cryptomorin/xseries/XW*</exclude>
+				                <exclude>com/cryptomorin/xseries/XI*</exclude>
+			                </excludes>
+			            </filter>
+			        </filters>
 				</configuration>
 				<executions>
 					<execution>

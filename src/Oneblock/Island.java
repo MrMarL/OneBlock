@@ -11,8 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import XSeriesOneBlock.XBlock;
-import XSeriesOneBlock.XMaterial;
+import com.cryptomorin.xseries.XBlock;
+import com.cryptomorin.xseries.XMaterial;
 
 public class Island {
 	public static BlockData[][][] island = null;
