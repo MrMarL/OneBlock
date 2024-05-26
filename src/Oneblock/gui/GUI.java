@@ -1,6 +1,7 @@
 package Oneblock.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,17 +52,17 @@ public class GUI {
 		if (topGUI == null)
 			topGUI = Bukkit.createInventory(holder, 27, String.format("%s[OneBlock GUI] %s- %sTop", ChatColor.GREEN, ChatColor.WHITE, ChatColor.BOLD));
 		PlayerInfo inf = Oneblock.Oneblock.gettop(0);
-		topGUI.setItem(4, setFillMeta(XMaterial.NETHERITE_BLOCK, String.format("%s1st - %s", ChatColor.GOLD, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(4, setMeta(XMaterial.NETHERITE_BLOCK, String.format("%s1st - %s", ChatColor.GOLD, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(1);
-		topGUI.setItem(12, setFillMeta(XMaterial.DIAMOND_BLOCK, String.format("%s2nd - %s", ChatColor.GRAY, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(12, setMeta(XMaterial.DIAMOND_BLOCK, String.format("%s2nd - %s", ChatColor.GRAY, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(2);
-		topGUI.setItem(14, setFillMeta(XMaterial.IRON_BLOCK, String.format("%s3rd - %s", ChatColor.GRAY, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(14, setMeta(XMaterial.IRON_BLOCK, String.format("%s3rd - %s", ChatColor.GRAY, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(3);
-		topGUI.setItem(20, setFillMeta(XMaterial.GOLD_BLOCK, String.format("%s4th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(20, setMeta(XMaterial.GOLD_BLOCK, String.format("%s4th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(4);
-		topGUI.setItem(22, setFillMeta(XMaterial.COPPER_BLOCK, String.format("%s5th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(22, setMeta(XMaterial.COPPER_BLOCK, String.format("%s5th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(5);
-		topGUI.setItem(24, setFillMeta(XMaterial.COAL_BLOCK, String.format("%s6th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(24, setMeta(XMaterial.COAL_BLOCK, String.format("%s6th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
         p.openInventory(topGUI);
 	}
 	
@@ -111,43 +112,32 @@ public class GUI {
 		p.openInventory(chestGUI);
 	}
 	
-	private static ItemStack setMeta(XMaterial material, String title) {
-		return setFillMeta(material, title, 1, null);
+	private static String parseUUID(UUID uuid) {
+		try { return Bukkit.getOfflinePlayer(uuid).getName();
+		} catch (Exception e) {return "Unknown";}
 	}
 	
-	private static ItemStack setMeta(XMaterial material, String title, String Lore) {
-		return setMeta(material, title, 1, Lore);
-	}
-	
-	private static ItemStack setMeta(XMaterial material, String title, int amount, String Lore) {
-		ArrayList<String> lore = null;
-		if (Lore != null) {
-	        lore = new ArrayList<String>();
-	        lore.add(Lore);
-        }
-		return setFillMeta(material, title, 1, lore);
-	}
-	
-	private static List<String> parseUUIDs(List<UUID> uuids) {
-		List<String> Lore = new ArrayList<String>();
-		try {
-		for(UUID uuid : uuids)
-			Lore.add(Bukkit.getOfflinePlayer(uuid).getName());
-		} catch (Exception e) {Lore.add("Error");}
+	private static String[] parseUUIDs(List<UUID> uuids) {
+		String[] Lore = new String[uuids.size()];
+		for (int i = 0; i < uuids.size(); i++)
+			Lore[i] = parseUUID(uuids.get(i));
 		return Lore;
 	}
 	
-	private static String parseUUID(UUID uuid) {
-		try { return Bukkit.getOfflinePlayer(uuid).getName();
-		} catch (Exception e) {return "Error";}
+	private static ItemStack setMeta(XMaterial material, String title) {
+		return setMeta(material, title, 1);
 	}
 	
-	private static ItemStack setFillMeta(XMaterial material, String title, int amount, List<String> Lore) {
+	private static ItemStack setMeta(XMaterial material, String title, String ...Lore) {
+		return setMeta(material, title, 1, Lore);
+	}
+	
+	private static ItemStack setMeta(XMaterial material, String title, int amount, String ...Lore) {
 		Material m = material.parseMaterial();
 		ItemStack join = new ItemStack(m == null ? Material.EMERALD_BLOCK : m, amount);
         ItemMeta meta = join.getItemMeta();
         meta.setDisplayName(title);
-	    meta.setLore(Lore);
+	    meta.setLore(Arrays.asList(Lore));
         join.setItemMeta(meta);
 		return join;
 	}
