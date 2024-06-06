@@ -471,7 +471,7 @@ public class Oneblock extends JavaPlugin {
                 if (WorldGuard) OBWG.addMember(uuid, plID);
                 if (Border) {
                 	WorldBorder br = Bukkit.createWorldBorder();
-                	br.setCenter(X_pl, Z_pl);
+                	br.setCenter(X_pl+.5, Z_pl+.5);
                 	br.setSize(sto);
                 	p.setWorldBorder(br);
                 }
@@ -523,7 +523,7 @@ public class Oneblock extends JavaPlugin {
                 pl.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
                 if (Border) {
                 	WorldBorder br = Bukkit.createWorldBorder();
-                	br.setCenter(X_pl, Z_pl);
+                	br.setCenter(X_pl+.5, Z_pl+.5);
                 	br.setSize(sto);
                 	pl.setWorldBorder(br);
                 }
@@ -737,7 +737,7 @@ public class Oneblock extends JavaPlugin {
                             	int result[] = getFullCoord(PlayerInfo.GetId(uuid));
                                 int X_pl = result[0], Z_pl = result[1];
                             	WorldBorder br = Bukkit.createWorldBorder();
-                            	br.setCenter(X_pl, Z_pl);
+                            	br.setCenter(X_pl+.5, Z_pl+.5);
                             	br.setSize(sto);
                             	pl.setWorldBorder(br);
                             }
