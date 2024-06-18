@@ -2,7 +2,9 @@ package Oneblock;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,36 +13,30 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestItems {
 	public static File chest;
-	
-	public static List <ItemStack> s_ch = new ArrayList <>();
-	public static List <ItemStack> m_ch = new ArrayList <>();
-	public static List <ItemStack> h_ch = new ArrayList <>();
-	
-	public static enum type {
-		SMALL, MEDIUM, HIGH
-    }
+	private static Map<String, List<ItemStack>> chests = new HashMap<>();
 	
 	public static void save() {
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(chest);
-		config.set("small_chest", s_ch);
-		config.set("medium_chest", m_ch);
-		config.set("high_chest", h_ch);
+		
+		for (Map.Entry<String, List<ItemStack>> entry : chests.entrySet()) 
+			config.set(entry.getKey(), entry.getValue());
+		
 		try { config.save(chest); } catch (Exception e) { }
 	}
     
 	@SuppressWarnings("unchecked")
 	public static void load() {
     	YamlConfiguration config = YamlConfiguration.loadConfiguration(chest);
-    	s_ch.clear(); m_ch.clear(); h_ch.clear();
+    	chests.clear();
     	
-    	if (!loadMaterial(s_ch, config.getStringList("small_chest"))) 
-    		try {s_ch.addAll((List<ItemStack>) config.get("small_chest"));} catch(Exception e) {}
+    	for(String name : config.getKeys(false)) {
+    		List<ItemStack> items = new ArrayList<>();
     		
-    	if (!loadMaterial(m_ch, config.getStringList("medium_chest")))
-    		try {m_ch.addAll((List<ItemStack>) config.get("medium_chest"));} catch(Exception e) {}
-    	
-    	if (!loadMaterial(h_ch, config.getStringList("high_chest")))
-	    	try {h_ch.addAll((List<ItemStack>) config.get("high_chest"));} catch(Exception e) {}
+    		loadMaterial(items, config.getStringList(name));
+    		try { items.addAll((List<ItemStack>) config.get(name)); } catch(Exception e) {}
+    		
+    		chests.put(name, items);
+    	}
     }
 	
 	private static boolean loadMaterial(List<ItemStack> arr, List<String> data) {
@@ -53,19 +49,15 @@ public class ChestItems {
 		return result;
 	}
 	
-	public static type getType(String chestType) {
-		return type.valueOf(chestType);
+	public static ArrayList<String> getChestNames() {
+		return new ArrayList<>(chests.keySet());
 	}
 	
-	public static List <ItemStack> getChest(type chestType) {
-		switch (chestType) {
-			case MEDIUM: return m_ch;
-			case HIGH: return h_ch;
-			default: return s_ch;
-		}
+	public static List <ItemStack> getChest(String chestType) {
+		return chests.get(chestType);
 	}
 	
-	public static boolean fillChest(Inventory inv, type chestType) {
+	public static boolean fillChest(Inventory inv, String chestType) {
 		List <ItemStack> ch = getChest(chestType);
 		
 		final int max = Oneblock.rnd.nextInt(3) + 2;

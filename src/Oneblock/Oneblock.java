@@ -8,7 +8,6 @@ import org.bukkit.util.Vector;
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
-import Oneblock.ChestItems.type;
 import Oneblock.PlData.JsonSimple;
 import Oneblock.PlData.ReadOldData;
 import Oneblock.UniversalPlace.*;
@@ -126,9 +125,9 @@ public class Oneblock extends JavaPlugin {
         }
         Configfile();
         Datafile();
+        Chestfile();
         Blockfile();
         Flowerfile();
-        Chestfile();
         Messagefile();
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
@@ -291,9 +290,9 @@ public class Oneblock extends JavaPlugin {
     }
 
 	public int[] getFullCoord(final int id) {
-		int x = 0, z = 0;
 		if (!СircleMode)
 			return new int[] {id * sto + Oneblock.x, Oneblock.z};
+		int x = 0, z = 0;
 		for (int i = 0; i < id; i++) {
 			if (x > z)
 			    if (x > -z)
@@ -385,22 +384,21 @@ public class Oneblock extends JavaPlugin {
             if (rnd.nextInt(3) == 1)
                 XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
         } else if (blocks.get(random) == Material.CHEST) {
-            block.setType(Material.CHEST);
-            Chest chest = (Chest) block.getState();
-            Inventory inv = chest.getInventory();
-            ChestItems.type chestType;
-            if (random < blocks.size() / 3)	chestType = ChestItems.type.SMALL;
-            else if (random < blocks.size() / 1.5)	chestType = ChestItems.type.MEDIUM;
-            else	chestType = ChestItems.type.HIGH;
+            ArrayList<String> chestTypes = ChestItems.getChestNames();
+            if (chestTypes.size() > 0) {
+            	String type;
+            	if (random < blocks.size() / 3) type = chestTypes.get(0);
+            	else if (random < blocks.size() / 1.5 && chestTypes.size() > 1)	type = chestTypes.get(1);
+                else type = chestTypes.get(chestTypes.size()-1);
             	
-            if (!ChestItems.fillChest(inv, chestType))
-            	getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
+            	placer.setType(block, type, physics);
+            }
+            else getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
         } 
         else placer.setType(block, blocks.get(random), physics);
 
-        if (rnd.nextInt(9) == 0) {
-            if ((random = lvl_inf.mobs) != 0) random = rnd.nextInt(random);
-            wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(random));
+        if (rnd.nextInt(9) == 0 && (random = lvl_inf.mobs) != 0) {
+            wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(rnd.nextInt(random)));
         }
 	}
 
@@ -1001,9 +999,9 @@ public class Oneblock extends JavaPlugin {
                 }
                 if (args.length == 1) {
                     sender.sendMessage(String.format("%sReloading Plugin & Plugin Modules.", ChatColor.YELLOW));
+                    Chestfile();
                     Blockfile();
                     Flowerfile();
-                    Chestfile();
                     Messagefile();
                     ReCreateRegions();
                     sender.sendMessage(String.format("%sAll *.yml reloaded!", ChatColor.GREEN));
@@ -1109,30 +1107,26 @@ public class Oneblock extends JavaPlugin {
             	if (!sender.hasPermission("Oneblock.set"))
             		return true;
             	if (args.length < 2) {
-            		GUI.chestGUI((Player) sender, ChestItems.type.SMALL);
+            		for (String t : ChestItems.getChestNames())
+            			sender.sendMessage(t);
             		return true;
             	}
-            	
-            	for (type t : type.values()) 
-            		if (args[1].equals(t.name())) 
-            			GUI.chestGUI((Player) sender, ChestItems.type.valueOf(args[1]));
+            	for (String t : ChestItems.getChestNames())
+            		if (args[1].equals(t))
+            			GUI.chestGUI((Player) sender, t);
             	return true;
             }
             case ("help"):{
-            	if (sender.hasPermission("Oneblock.set"))
-            		sender.sendMessage(Messages.help_adm);
-            	else
-            		sender.sendMessage(Messages.help);
+            	sender.sendMessage(sender.hasPermission("Oneblock.set") ? Messages.help_adm:Messages.help);
             	return true;
             }
-            default:
-            //ver
+            default: //ver
             sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s 1.%d.X",
             	ChatColor.values()[rnd.nextInt(ChatColor.values().length)],
             	"  ▄▄    ▄▄",
             	"█    █  █▄▀",
             	"▀▄▄▀ █▄▀",
-            	"Create by MrMarL\nPlugin version: v1.1.7",
+            	"Create by MrMarL\nPlugin version: v1.2.0",
             	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
             return true;
             }
@@ -1206,9 +1200,16 @@ public class Oneblock extends JavaPlugin {
         		String text = bl_temp.get(q++);
         		//reading a custom block (command).
         		if (text.charAt(0) == '/') {
-	            	blocks.add(text.replaceFirst("/", ""));
+	            	blocks.add(text);
 	            	continue;
         		}
+        		//reading a custom chest.
+        		boolean check = false;
+        		for (String str : ChestItems.getChestNames())
+	        		if (text.equals(str)) {
+	        			check = blocks.add(str); break;
+	        		}
+        		if (check) continue;
         		//reading a mob.
         		try { mobs.add(EntityType.valueOf(text)); continue; }
         		catch (Exception e) {}
@@ -1239,7 +1240,7 @@ public class Oneblock extends JavaPlugin {
         }
         Level.max.blocks = blocks.size();
         if ((Level.max.mobs = mobs.size()) == 0) 
-        	{ mobs.add(EntityType.CREEPER); getLogger().warning("Mobs are not set in the blocks.yml"); }
+        	getLogger().warning("Mobs are not set in the blocks.yml"); // mobs.add(EntityType.CREEPER); 
         //Progress_bar
         if (!superlegacy && Progress_bar && PlayerInfo.size() > 0 && PlayerInfo.get(0).bar == null) {
         	Level.max.color = Progress_color;
@@ -1426,8 +1427,8 @@ public class Oneblock extends JavaPlugin {
         		switch (args[0])
                 {
         		case ("chest"):
-        			for (type t : type.values())
-        				commands.add(t.name());
+        			for (String t : ChestItems.getChestNames())
+        				commands.add(t);
                 case ("clear"):
                 case ("setlevel"):{
             		for (Player ponl: plonl)

@@ -93,19 +93,11 @@ public class GUI {
         skull.setItemMeta(skullMeta);
         return skull;
     }
-	
-	public static void chestGUI(Player p) {
-		chestGUI(p, ChestItems.type.SMALL);
-	}
 
-	public static void chestGUI(Player p, ChestItems.type chestType) {
-		List<ItemStack> list;
-		switch(chestType) {
-			case MEDIUM: list = ChestItems.m_ch; break;
-			case HIGH: list = ChestItems.h_ch; break;
-			default: list = ChestItems.s_ch;
-		}
-		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%s %schest. %s", chestType.name(), ChatColor.BLACK
+	public static void chestGUI(Player p, String chestType) {
+		List<ItemStack> list = ChestItems.getChest(chestType);
+		
+		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%s %schest. %s", chestType, ChatColor.BLACK
 				, OBWorldGuard.canUse?"":"[Edit only in premium]"));
 		for(ItemStack itm : list)
 			if (itm != null)
