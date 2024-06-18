@@ -32,8 +32,8 @@ public class ChestItems {
     	for(String name : config.getKeys(false)) {
     		List<ItemStack> items = new ArrayList<>();
     		
-    		loadMaterial(items, config.getStringList(name));
-    		try { items.addAll((List<ItemStack>) config.get(name)); } catch(Exception e) {}
+    		if (!loadMaterial(items, config.getStringList(name)))
+    			try { items.addAll((List<ItemStack>) config.get(name)); } catch(Exception e) {}
     		
     		chests.put(name, items);
     	}
