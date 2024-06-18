@@ -1,4 +1,5 @@
-# Small chest [low levels]
+# You can add your own chests.
+# The names of your chests are specified in blocks.yml as blocks.
 small_chest:
 - COAL
 - WOODEN_SHOVEL
@@ -15,7 +16,6 @@ small_chest:
 - SUGAR_CANE
 - CARROT
 - POTATO
-# Medium chest [medium levels]
 medium_chest:
 - GOLDEN_HOE
 - WHEAT
@@ -31,7 +31,6 @@ medium_chest:
 - GOLDEN_APPLE
 - APPLE
 - ENDER_PEARL
-# Hard chest [hight levels]
 high_chest:
 - GOLDEN_SWORD
 - QUARTZ

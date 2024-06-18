@@ -55,7 +55,7 @@ MaxLevel: 'Level: MAX'
 - DEEPSLATE_COPPER_ORE
 '7':
 - 'Level: 7 - The first chest'
-- CHEST
+- small_chest
 - MOSSY_COBBLESTONE
 - WHITE_TERRACOTTA
 - ORANGE_TERRACOTTA
@@ -83,7 +83,7 @@ MaxLevel: 'Level: MAX'
 '11':
 - 'Level: 11 - Red desert?'
 - CLAY
-- CHEST
+- medium_chest
 - WHITE_CONCRETE
 - RED_SAND
 - RED_SANDSTONE
@@ -166,12 +166,12 @@ MaxLevel: 'Level: MAX'
 '22':
 - 'Level: 22 - Never...'
 - NETHERRACK
-- CHEST
+- high_chest
 - CRIMSON_STEM
 '23':
 - 'Level: 23 - Ne...'
 - WARPED_STEM
-- CHEST
+- high_chest
 - OXIDIZED_COPPER
 - NETHER_GOLD_ORE
 '24':
