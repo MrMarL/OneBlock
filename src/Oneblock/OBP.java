@@ -3,6 +3,7 @@ package Oneblock;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -41,7 +42,7 @@ public class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return "1.1.4";
+        return "1.2.0";
     }
     @Override
     public String onPlaceholderRequest(Player p, String identifier) {
@@ -97,8 +98,11 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_top_%d_name%
         for(int i = 0;i<10;i++) {
-        	if (identifier.equals(String.format("top_%d_name", i + 1)))
-                return Bukkit.getOfflinePlayer(Oneblock.gettop(i).uuid).getName();
+        	if (identifier.equals(String.format("top_%d_name", i + 1))) {
+        		UUID uuid = Oneblock.gettop(i).uuid;
+        		if (uuid == null) return "[None]";
+        		return Bukkit.getOfflinePlayer(uuid).getName();
+        	}
         }
         // %OB_top_%d_lvl%
         for(int i = 0;i<10;i++) {
