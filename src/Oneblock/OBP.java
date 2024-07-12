@@ -84,7 +84,9 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_owner_name%
         if (identifier.equals("owner_name")) {
-            return Bukkit.getOfflinePlayer(PlayerInfo.get(p.getUniqueId()).uuid).getName();
+            UUID uuid = PlayerInfo.get(p.getUniqueId()).uuid;
+            if (uuid == null) return "[None]";
+            return Bukkit.getOfflinePlayer(uuid).getName();
         }
         // %OB_percent%
         if (identifier.equals("percent")) {
