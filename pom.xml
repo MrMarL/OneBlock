@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Oneblock</groupId>
 	<artifactId>Oneblock</artifactId>
-	<version>1.2.0f</version>
+	<version>1.2.1</version>
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -103,7 +103,7 @@
 		<dependency>
 		    <groupId>com.github.cryptomorin</groupId>
 		    <artifactId>XSeries</artifactId>
-		    <version>11.0.0-beta</version>
+		    <version>11.2.0</version>
 		</dependency>
 	</dependencies>
 

@@ -132,6 +132,7 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
+        pluginManager.registerEvents(new TeleportEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
         pluginManager.registerEvents(new GUIListener(), this);
         
@@ -173,6 +174,45 @@ public class Oneblock extends JavaPlugin {
 				if (Border) UpdateBorder(pl);
 			}
 		}
+    }
+    
+    public int findNeastRegionId(Location loc) {
+    	int id_ = 0, neast = Integer.MAX_VALUE;
+    	
+    	for (int i = 0; i < PlayerInfo.size() ;i++) {
+    		int coord[] = getFullCoord(i);
+            int distance = (int)Math.sqrt(Math.pow(coord[0] - loc.getBlockX(), 2) + Math.pow(coord[1] - loc.getBlockZ(), 2));
+            if (distance > neast) continue;
+            
+            neast = distance;
+            id_ = i;
+    	}
+    	return id_;
+    }
+    
+    public class TeleportEvent implements Listener {
+        @EventHandler
+        public void Teleport(final PlayerTeleportEvent e) {
+        	if (!Border) return;
+        	Location loc = e.getTo();
+        	World to = loc.getWorld();
+        	if (!to.equals(wor)) return; 
+        	
+        	Player p = e.getPlayer();
+        	UpdateBorderLocation(p, loc);
+        	UpdateBorder(p);
+        }
+    }
+    
+    public void UpdateBorderLocation(Player pl, Location loc) {
+    	int plID = findNeastRegionId(loc);
+		int result[] = getFullCoord(plID);
+        int X_pl = result[0], Z_pl = result[1];
+		
+		WorldBorder br = Bukkit.createWorldBorder();
+    	br.setCenter(X_pl+.5, Z_pl+.5);
+    	br.setSize(sto);
+    	pl.setWorldBorder(br);
     }
     
     public void UpdateBorder(final Player pl) {
@@ -463,12 +503,6 @@ public class Oneblock extends JavaPlugin {
 	            if (Progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
 	            p.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
 	            if (WorldGuard) OBWG.addMember(uuid, plID);
-	            if (Border) {
-	            	WorldBorder br = Bukkit.createWorldBorder();
-	            	br.setCenter(X_pl+.5, Z_pl+.5);
-	            	br.setSize(sto);
-	            	p.setWorldBorder(br);
-	            }
 	            return true;
 	        }
 	        case ("leave"):{
@@ -515,12 +549,6 @@ public class Oneblock extends JavaPlugin {
 	    		
 	            if (protection) Guest.list.add(new Guest(uuid, pl.getUniqueId()));
 	            pl.teleport(new Location(wor, X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
-	            if (Border) {
-	            	WorldBorder br = Bukkit.createWorldBorder();
-	            	br.setCenter(X_pl+.5, Z_pl+.5);
-	            	br.setSize(sto);
-	            	pl.setWorldBorder(br);
-	            }
 	    		PlayerInfo.removeBarStatic(pl);
 	            return true;
 	        }
@@ -741,17 +769,8 @@ public class Oneblock extends JavaPlugin {
 		            			Border = Boolean.valueOf(args[1]);
 		                    	config.set("Border", Border);
 		                    	if (Border) {
-		                    		for (Player pl: plonl) {
-		                    			UUID uuid = pl.getUniqueId();
-		                            	if (!PlayerInfo.ExistId(uuid))
-		                            		continue;
-		                            	int result[] = getFullCoord(PlayerInfo.GetId(uuid));
-		                                int X_pl = result[0], Z_pl = result[1];
-		                            	WorldBorder br = Bukkit.createWorldBorder();
-		                            	br.setCenter(X_pl+.5, Z_pl+.5);
-		                            	br.setSize(sto);
-		                            	pl.setWorldBorder(br);
-		                            }
+		                    		for (Player pl: plonl) 
+		                    			UpdateBorderLocation(pl, pl.getLocation());
 		                    	}
 		                    	else for (Player pl: plonl) 
 		                    			pl.setWorldBorder(null);
@@ -1061,7 +1080,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.0f",
+    		        	"Create by MrMarL\nPlugin version: v1.2.1",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
