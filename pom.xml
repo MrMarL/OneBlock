@@ -154,6 +154,7 @@
 				                <exclude>com/cryptomorin/xseries/abstractions/*</exclude>
 				                <exclude>com/cryptomorin/xseries/messages/*</exclude>
 				                <exclude>com/cryptomorin/xseries/reflection/*</exclude>
+				                <exclude>com/cryptomorin/xseries/reflection/parser/*</exclude>
 				                <exclude>com/cryptomorin/xseries/reflection/minecraft/*</exclude>
 				                <exclude>com/cryptomorin/xseries/reflection/jvm/*</exclude>
 				                <exclude>com/cryptomorin/xseries/reflection/jvm/classes/*</exclude>
