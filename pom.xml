@@ -103,7 +103,7 @@
 		<dependency>
 		    <groupId>com.github.cryptomorin</groupId>
 		    <artifactId>XSeries</artifactId>
-		    <version>11.0.0</version>
+		    <version>11.2.0</version>
 		</dependency>
 	</dependencies>
 
@@ -150,14 +150,9 @@
 			            <filter>
 			                <artifact>*:*</artifact> <!-- Someone rewrite my filter... -->
 			                <excludes>
-				                <exclude>com/cryptomorin/xseries/particles/*</exclude>
-				                <exclude>com/cryptomorin/xseries/abstractions/*</exclude>
-				                <exclude>com/cryptomorin/xseries/messages/*</exclude>
-				                <exclude>com/cryptomorin/xseries/reflection/*</exclude>
-				                <exclude>com/cryptomorin/xseries/reflection/parser/*</exclude>
-				                <exclude>com/cryptomorin/xseries/reflection/minecraft/*</exclude>
-				                <exclude>com/cryptomorin/xseries/reflection/jvm/*</exclude>
-				                <exclude>com/cryptomorin/xseries/reflection/jvm/classes/*</exclude>
+				                <exclude>com/cryptomorin/xseries/*/*</exclude>
+				                <exclude>com/cryptomorin/xseries/*/*/*</exclude>
+				                <exclude>com/cryptomorin/xseries/*/*/*/*</exclude>
 				                <exclude>com/cryptomorin/xseries/XBi*</exclude>
 				                <exclude>com/cryptomorin/xseries/N*</exclude>
 				                <exclude>com/cryptomorin/xseries/S*</exclude>
