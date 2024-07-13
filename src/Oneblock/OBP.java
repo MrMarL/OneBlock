@@ -86,7 +86,9 @@ public class OBP extends PlaceholderExpansion {
         if (identifier.equals("owner_name")) {
             UUID uuid = PlayerInfo.get(p.getUniqueId()).uuid;
             if (uuid == null) return "[None]";
-            return Bukkit.getOfflinePlayer(uuid).getName();
+            String name = Bukkit.getOfflinePlayer(uuid).getName();
+            if (name == null) return "[None]";
+    		return name;
         }
         // %OB_percent%
         if (identifier.equals("percent")) {
@@ -103,7 +105,9 @@ public class OBP extends PlaceholderExpansion {
         	if (identifier.equals(String.format("top_%d_name", i + 1))) {
         		UUID uuid = Oneblock.gettop(i).uuid;
         		if (uuid == null) return "[None]";
-        		return Bukkit.getOfflinePlayer(uuid).getName();
+        		String name = Bukkit.getOfflinePlayer(uuid).getName();
+        		if (name == null) return "[None]";
+        		return name;
         	}
         }
         // %OB_top_%d_lvl%
