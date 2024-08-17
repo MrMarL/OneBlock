@@ -17,6 +17,7 @@ public class Messages {
 	public static String invited = String.format("%sYou were invited by player %s.\n%s/ob accept to accept).", 
 			ChatColor.GREEN, "%s", ChatColor.RED);
 	public static String invited_succes = String.format("%sSuccesfully invited %s.", ChatColor.GREEN, "%s");
+	public static String kicked = String.format("%s has been kicked off your island!", ChatColor.YELLOW);
 	public static String kick_usage = String.format("%sUsage: /ob kick <username>", ChatColor.RED);
 	public static String kick_yourself = String.format("%sYou can't kick yourself.", ChatColor.YELLOW);
 	public static String accept_succes = String.format("%sSuccesfully accepted the invitation.", ChatColor.GREEN);

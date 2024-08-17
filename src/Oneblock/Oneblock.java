@@ -613,13 +613,18 @@ public class Oneblock extends JavaPlugin {
 	        	UUID owner_uuid = owner.getUniqueId(), member_uuid = member.getUniqueId();
 	        	if (!PlayerInfo.ExistNoInvaitId(owner_uuid))
 	        		return true;
-	        	int plID = PlayerInfo.GetId(owner_uuid);
-	        	PlayerInfo info = PlayerInfo.get(plID);
+	        	int ownerID = PlayerInfo.GetId(owner_uuid);
+	        	PlayerInfo info = PlayerInfo.get(ownerID);
 	        	if (info.uuids.contains(member_uuid)) {
 	        		info.uuids.remove(member_uuid);
 	        		if (WorldGuard)
-	    				OBWG.removeMember(member_uuid, plID);
-	        		member.performCommand("ob j");
+	    				OBWG.removeMember(member_uuid, ownerID);
+	        	}
+	        	int memberID = findNeastRegionId(member.getLocation());
+	        	if (memberID == ownerID) {
+	        		if (!member.hasPermission("Oneblock.set"))
+	        			member.performCommand("ob j");
+	        		sender.sendMessage(member.getName() + Messages.kicked);
 	        	}
 	        	return true;
 	        }
@@ -1222,6 +1227,7 @@ public class Oneblock extends JavaPlugin {
         Messages.invite_team = MessageCheck("invite_team", Messages.invite_team);
         Messages.invited = MessageCheck("invited", Messages.invited);
         Messages.invited_succes = MessageCheck("invited_succes", Messages.invited_succes);
+        Messages.kicked = MessageCheck("kicked", Messages.kicked);
         Messages.kick_usage = MessageCheck("kick_usage", Messages.kick_usage);
         Messages.kick_yourself = MessageCheck("kick_yourself", Messages.kick_yourself);
         Messages.accept_succes = MessageCheck("accept_succes", Messages.accept_succes);

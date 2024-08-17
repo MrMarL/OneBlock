@@ -42,6 +42,9 @@ invited: |
 invited_succes: |
     &aSuccesfully invited %s.
 
+kicked: |
+    &e has been kicked off your island!
+
 kick_usage: |
     &cUsage: /ob kick <username>
 
