@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 public class OBP extends PlaceholderExpansion {
 	
@@ -45,7 +45,8 @@ public class OBP extends PlaceholderExpansion {
         return "1.2.0";
     }
     @Override
-    public String onPlaceholderRequest(Player p, String identifier) {
+    public String onRequest(OfflinePlayer p, String identifier) {
+    	if (p == null) return null;
         // %OB_ver%
         if (identifier.equals("ver")) {
             return "1.1.4";
