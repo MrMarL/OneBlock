@@ -41,6 +41,7 @@ public class PlayerInfo {
 	}
 	
 	public static void removeBarStatic(Player p) {
+		if (list.size() == 0) return;
 		get(p.getUniqueId()).removeBar(p);
 	}
 	
