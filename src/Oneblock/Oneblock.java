@@ -1315,7 +1315,8 @@ public class Oneblock extends JavaPlugin {
         max_players_team = Check("max_players_team", max_players_team);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         GUI.enabled = Check("gui", GUI.enabled);
-        WorldGuard = Check("WorldGuard", WorldGuard);
+        if (OBWorldGuard.canUse)
+        	WorldGuard = Check("WorldGuard", OBWorldGuard.canUse);
         OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
         if (Border) Border = Check("Border", Border);
         sto = Check("set", 100);
