@@ -1,6 +1,6 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  1.2.2
+version:  1.2.2f
 api-version: 1.13
 author:  MrMarL
 softdepend: [PlaceholderAPI , WorldGuard]

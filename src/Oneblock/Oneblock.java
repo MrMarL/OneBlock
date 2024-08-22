@@ -730,6 +730,7 @@ public class Oneblock extends JavaPlugin {
 			                if (!on) runMainTask();
 			                wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
 			                ReCreateRegions();
+			                Config.Save(config);
 			                return true;
 			            }
 			            case ("setleave"):{
@@ -1089,7 +1090,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.2",
+    		        	"Create by MrMarL\nPlugin version: v1.2.2f",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
