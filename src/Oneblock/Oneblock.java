@@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
@@ -603,7 +604,7 @@ public class Oneblock extends JavaPlugin {
 	        		sender.sendMessage(Messages.kick_usage);
 	        		return true;
 	        	}
-	        	Player member = Bukkit.getPlayer(args[1]);
+	        	OfflinePlayer member = Bukkit.getOfflinePlayer(args[1]);
 	        	if (member == null) return true;
 	        	Player owner = (Player) sender;
 	        	if (member == owner) {
@@ -620,10 +621,12 @@ public class Oneblock extends JavaPlugin {
 	        		if (WorldGuard)
 	    				OBWG.removeMember(member_uuid, ownerID);
 	        	}
-	        	int memberID = findNeastRegionId(member.getLocation());
+	        	if (!(member instanceof Player)) return true;
+	        	Player member_ex = (Player) member;
+	        	int memberID = findNeastRegionId(member_ex.getLocation());
 	        	if (memberID == ownerID) {
-	        		if (!member.hasPermission("Oneblock.set"))
-	        			member.performCommand("ob j");
+	        		if (!member_ex.hasPermission("Oneblock.set"))
+	        			member_ex.performCommand("ob j");
 	        		sender.sendMessage(member.getName() + Messages.kicked);
 	        	}
 	        	return true;
