@@ -16,6 +16,8 @@ import Oneblock.WorldGuard.OBWorldGuard6;
 import Oneblock.WorldGuard.OBWorldGuard7;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
+import dev.lone.itemsadder.api.CustomBlock;
+import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -82,6 +84,7 @@ public class Oneblock extends JavaPlugin {
     boolean protection = false;
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
+    boolean ItemsAdder = false;
     boolean Border = true;
     boolean Progress_bar = true;
     boolean СircleMode = false;
@@ -110,7 +113,6 @@ public class Oneblock extends JavaPlugin {
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Border = findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
-        placer = legacy ? new Place1_8to1_12() : new Place1_13plus();
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         getLogger().info(
@@ -122,6 +124,8 @@ public class Oneblock extends JavaPlugin {
         	getLogger().info("PlaceholderAPI has been found!");
             new OBP().register();
         }
+        ItemsAdder = pluginManager.isPluginEnabled("ItemsAdder");
+        placer = legacy ? new Place1_8to1_12() : ItemsAdder ? new PlaceItemsAdder() : new Place1_13plus();
         Configfile();
         Datafile();
         Chestfile();
@@ -232,6 +236,11 @@ public class Oneblock extends JavaPlugin {
     }
     
     public class BlockEvent implements Listener {
+    	@EventHandler
+        public void ItemsAdderLoad(ItemsAdderLoadDataEvent event) {
+    		Blockfile();
+        }
+    	
     	@EventHandler(ignoreCancelled = true)
         public void ItemStackSpawn(final EntitySpawnEvent e) {
     		if (!droptossup) return;
@@ -997,6 +1006,8 @@ public class Oneblock extends JavaPlugin {
 			                    		sender.sendMessage(((Material)blocks.get(i)).name());
 			                    	else if (blocks.get(i).getClass() == XMaterial.class)
 			                    		sender.sendMessage(((XMaterial)blocks.get(i)).name());
+			                    	else if (ItemsAdder && blocks.get(i).getClass() == CustomBlock.class)
+			                    		sender.sendMessage(((CustomBlock)blocks.get(i)).getId());
 			                    	else
 			                    		sender.sendMessage((String)blocks.get(i));
 			                    return true;
@@ -1093,7 +1104,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.2f",
+    		        	"Create by MrMarL\nPlugin version: v1.2.3",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1193,9 +1204,14 @@ public class Oneblock extends JavaPlugin {
 	        			blocks.add(xmt);
         		}
         		else {
-        			Material a = Material.matchMaterial(text);
+        			Object a = Material.matchMaterial(text);
         			if (a != null && a.equals(Material.GRASS_BLOCK))
         				a = null;
+        			if (ItemsAdder && a == null) {
+        				CustomBlock customBlock = CustomBlock.getInstance(text);
+        				if(customBlock != null) 
+        					a = customBlock;
+        			}
         			blocks.add(a);
         		}
         	}

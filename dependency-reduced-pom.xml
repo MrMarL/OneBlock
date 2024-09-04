@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>1.2.2f</version>
+  <version>1.2.3</version>
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
@@ -87,6 +87,10 @@
       <url>https://maven.enginehub.org/repo/</url>
     </repository>
     <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <repository>
       <snapshots>
         <updatePolicy>always</updatePolicy>
       </snapshots>
@@ -136,6 +140,12 @@
           <groupId>org.bstats</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.github.LoneDev6</groupId>
+      <artifactId>api-itemsadder</artifactId>
+      <version>3.6.1</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <properties>
