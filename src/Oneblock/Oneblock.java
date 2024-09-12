@@ -140,6 +140,7 @@ public class Oneblock extends JavaPlugin {
         pluginManager.registerEvents(new TeleportEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
         pluginManager.registerEvents(new GUIListener(), this);
+        pluginManager.registerEvents(new ItemsAdderEvent(), this);
         
         if (config.getDouble("y") == 0) return;	
         if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null))
@@ -235,12 +236,14 @@ public class Oneblock extends JavaPlugin {
         }
     }
     
-    public class BlockEvent implements Listener {
+    public class ItemsAdderEvent implements Listener {
     	@EventHandler
         public void ItemsAdderLoad(ItemsAdderLoadDataEvent event) {
     		Blockfile();
         }
-    	
+    }
+    
+    public class BlockEvent implements Listener {
     	@EventHandler(ignoreCancelled = true)
         public void ItemStackSpawn(final EntitySpawnEvent e) {
     		if (!droptossup) return;
