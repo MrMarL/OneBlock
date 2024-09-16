@@ -126,6 +126,7 @@ public class GUI {
 	}
 	
 	private static ItemStack setMeta(XMaterial material, String title, int amount, String ...Lore) {
+		if (amount <= 0) amount = 1;
 		Material m = material.parseMaterial();
 		ItemStack join = new ItemStack(m == null ? Material.EMERALD_BLOCK : m, amount);
         ItemMeta meta = join.getItemMeta();
