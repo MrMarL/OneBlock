@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
@@ -91,9 +91,11 @@
       <url>https://jitpack.io</url>
     </repository>
     <repository>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
+      <id>oraxen</id>
+      <name>Oraxen Repository</name>
+      <url>https://repo.oraxen.com/releases</url>
+    </repository>
+    <repository>
       <id>WorldGuardOneBlock-main</id>
       <url>https://raw.github.com/MrMarL/WorldGuardOneBlock/main/</url>
     </repository>
@@ -146,6 +148,58 @@
       <artifactId>api-itemsadder</artifactId>
       <version>3.6.1</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.th0rgal</groupId>
+      <artifactId>oraxen</artifactId>
+      <version>1.182.0</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>actions-spigot</artifactId>
+          <groupId>me.gabytm.util</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>annotations</artifactId>
+          <groupId>org.jetbrains</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>PlayerAnimator</artifactId>
+          <groupId>com.ticxo</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>IF</artifactId>
+          <groupId>com.github.stefvanschie.inventoryframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>protectionlib</artifactId>
+          <groupId>io.th0rgal</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>triumph-gui</artifactId>
+          <groupId>dev.triumphteam</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bstats-bukkit</artifactId>
+          <groupId>org.bstats</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>custom-block-data</artifactId>
+          <groupId>com.jeff-media</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>persistent-data-serializer</artifactId>
+          <groupId>com.jeff-media</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>MorePersistentDataTypes</artifactId>
+          <groupId>com.jeff_media</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>java</artifactId>
+          <groupId>gs.mclo</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <properties>

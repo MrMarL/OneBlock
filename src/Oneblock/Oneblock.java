@@ -18,6 +18,7 @@ import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
+import io.th0rgal.oraxen.api.OraxenItems;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
@@ -85,6 +86,7 @@ public class Oneblock extends JavaPlugin {
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
     boolean ItemsAdder = false;
+    boolean Oraxen = false;
     boolean Border = true;
     boolean Progress_bar = true;
     boolean СircleMode = false;
@@ -125,7 +127,8 @@ public class Oneblock extends JavaPlugin {
             new OBP().register();
         }
         ItemsAdder = pluginManager.isPluginEnabled("ItemsAdder");
-        placer = legacy ? new Place1_8to1_12() : ItemsAdder ? new PlaceItemsAdder() : new Place1_13plus();
+        Oraxen = pluginManager.isPluginEnabled("Oraxen");
+        placer = legacy ? new Place1_8to1_12() : Oraxen ? new PlaceOraxen() : ItemsAdder ? new PlaceItemsAdder() : new Place1_13plus();
         Configfile();
         Datafile();
         Chestfile();
@@ -1107,7 +1110,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.4",
+    		        	"Create by MrMarL\nPlugin version: v1.2.5",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1123,7 +1126,7 @@ public class Oneblock extends JavaPlugin {
     }
     
     private void ReCreateRegions() {
-    	if (!WorldGuard || !OBWorldGuard.canUse)
+    	if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null)
     		return;
     	int id = PlayerInfo.size();
     	OBWG.RemoveRegions(id);
@@ -1210,10 +1213,16 @@ public class Oneblock extends JavaPlugin {
         			Object a = Material.matchMaterial(text);
         			if (a != null && a.equals(Material.GRASS_BLOCK))
         				a = null;
-        			if (ItemsAdder && a == null) {
-        				CustomBlock customBlock = CustomBlock.getInstance(text);
-        				if(customBlock != null) 
-        					a = customBlock;
+        			if (a == null) {
+	        			if (Oraxen) {
+	        				if (OraxenItems.exists(text))
+	        					a = text;
+	        			}
+	        			else if (ItemsAdder) {
+	        				CustomBlock customBlock = CustomBlock.getInstance(text);
+	        				if(customBlock != null) 
+	        					a = customBlock;
+	        			}
         			}
         			blocks.add(a);
         		}
