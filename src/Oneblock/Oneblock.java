@@ -1110,7 +1110,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.5",
+    		        	"Create by MrMarL\nPlugin version: v1.2.6",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1266,6 +1266,19 @@ public class Oneblock extends JavaPlugin {
         Messages.accept_none = MessageCheck("accept_none", Messages.accept_none);
         Messages.idreset = MessageCheck("idreset", Messages.idreset);
         Messages.protection = MessageCheck("protection", Messages.protection);
+        
+        File gui = new File(getDataFolder(), "gui.yml");
+        if (!gui.exists())
+            saveResource("gui.yml", false);
+        newConfigz = YamlConfiguration.loadConfiguration(gui);
+        
+        Messages.baseGUI = MessageCheck("baseGUI", Messages.baseGUI);
+        Messages.acceptGUI = MessageCheck("acceptGUI", Messages.acceptGUI);
+        Messages.acceptGUIignore = MessageCheck("acceptGUIignore", Messages.acceptGUIignore);
+        Messages.acceptGUIjoin = MessageCheck("acceptGUIjoin", Messages.acceptGUIjoin);
+        Messages.topGUI = MessageCheck("topGUI", Messages.topGUI);
+        Messages.visitGUI = MessageCheck("visitGUI", Messages.visitGUI);
+        Messages.idresetGUI = MessageCheck("idresetGUI", Messages.idresetGUI);
     }
     private String MessageCheck(String name, String def_message) {
     	if (newConfigz.isString(name))

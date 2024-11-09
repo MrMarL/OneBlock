@@ -24,4 +24,11 @@ public class Messages {
 	public static String accept_none = String.format("%s[There is no Pending invitations for you.]", ChatColor.RED);
 	public static String idreset = String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN);
 	public static String protection = String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED);
+	
+	//GUI
+	public static String baseGUI = "";
+	public static String acceptGUI = "", acceptGUIignore = "", acceptGUIjoin = "%s";
+	public static String topGUI = "";
+	public static String visitGUI = "";
+	public static String idresetGUI = "";
 }

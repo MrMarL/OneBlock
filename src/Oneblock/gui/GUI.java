@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import com.cryptomorin.xseries.XMaterial;
 
 import Oneblock.ChestItems;
+import Oneblock.Messages;
 import Oneblock.PlayerInfo;
 import Oneblock.WorldGuard.OBWorldGuard;
 
@@ -30,28 +31,28 @@ public class GUI {
 	public static void openGUI(Player p) {
 		if (!enabled) return;
 		if (baseGUI == null) {
-			baseGUI = Bukkit.createInventory(holder, 9, String.format("%s[OneBlock GUI] %s- main", ChatColor.GREEN, ChatColor.WHITE));
+			baseGUI = Bukkit.createInventory(holder, 9, Messages.baseGUI);
 	        baseGUI.addItem(setMeta(XMaterial.GRASS_BLOCK, ChatColor.GREEN + "/ob join"));
 	        baseGUI.setItem(2, setMeta(XMaterial.PODZOL, ChatColor.GREEN + "/ob leave"));
 	        baseGUI.setItem(4, setMeta(XMaterial.GOLD_BLOCK, ChatColor.GOLD + "/ob top"));
 	        baseGUI.setItem(6, setMeta(XMaterial.MELON, ChatColor.GREEN + "/ob visit"));
-	        baseGUI.setItem(8, setMeta(XMaterial.BARRIER, ChatColor.RED + "/ob idreset", String.format("%s[your island's data will be lost]", ChatColor.RED)));
+	        baseGUI.setItem(8, setMeta(XMaterial.BARRIER, ChatColor.RED + "/ob idreset", Messages.idresetGUI));
         }
         p.openInventory(baseGUI);
 	}
 	
 	public static void acceptGUI(Player p, String name) {
 		if (!enabled) return;
-		Inventory acceptGUI = Bukkit.createInventory(holder, 9, String.format("%sYou are invited to the island.", ChatColor.WHITE));
-		acceptGUI.setItem(6, setMeta(XMaterial.REDSTONE_BLOCK, ChatColor.RED + "Ignore"));
-		acceptGUI.setItem(2, setMeta(XMaterial.EMERALD_BLOCK, String.format("%sJoin %s%s%s's Island", ChatColor.GREEN, ChatColor.DARK_GREEN, name, ChatColor.GREEN), String.format("%s[your island's data will be lost]", ChatColor.RED)));
+		Inventory acceptGUI = Bukkit.createInventory(holder, 9, Messages.acceptGUI);
+		acceptGUI.setItem(6, setMeta(XMaterial.REDSTONE_BLOCK, Messages.acceptGUIignore));
+		acceptGUI.setItem(2, setMeta(XMaterial.EMERALD_BLOCK, String.format(Messages.acceptGUIjoin, name), Messages.idresetGUI));
         p.openInventory(acceptGUI);
 	}
 	
 	public static void topGUI(Player p) {
 		if (!enabled) return;
 		if (topGUI == null)
-			topGUI = Bukkit.createInventory(holder, 27, String.format("%s[OneBlock GUI] %s- %sTop", ChatColor.GREEN, ChatColor.WHITE, ChatColor.BOLD));
+			topGUI = Bukkit.createInventory(holder, 27, Messages.topGUI);
 		PlayerInfo inf = Oneblock.Oneblock.gettop(0);
 		topGUI.setItem(4, setMeta(XMaterial.NETHERITE_BLOCK, String.format("%s1st - %s", ChatColor.GOLD, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(1);
@@ -69,7 +70,7 @@ public class GUI {
 	
 	public static void visitGUI(Player p, List<Player> plonl) {
 		if (!enabled) return;
-		Inventory visitGUI = Bukkit.createInventory(holder, 54, String.format("%s[OneBlock GUI] %s- %sVisit", ChatColor.GREEN, ChatColor.WHITE, ChatColor.BOLD));
+		Inventory visitGUI = Bukkit.createInventory(holder, 54, Messages.visitGUI);
 		ArrayList <PlayerInfo> list = new ArrayList<>();
 		int size = 0;
 		for (Player pl: plonl) {
