@@ -67,7 +67,7 @@ public class Oneblock extends JavaPlugin {
     static int x = 0;
     static int y = 0;
     static int z = 0;
-    FileConfiguration config, newConfigz;
+    FileConfiguration config, config_temp;
     static World wor;
     World leavewor;
     int random = 0;
@@ -368,7 +368,7 @@ public class Oneblock extends JavaPlugin {
 	}
 	
 	public class TaskSaveData implements Runnable {
-		public void run() { saveData(); }
+		public void run() { SaveData(); }
 	}
 
     public class Task implements Runnable {
@@ -456,7 +456,7 @@ public class Oneblock extends JavaPlugin {
         }
 	}
 
-    public void onDisable() { saveData(); }
+    public void onDisable() { SaveData(); }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	if (!cmd.getName().equalsIgnoreCase("oneblock")) return false;
@@ -962,13 +962,12 @@ public class Oneblock extends JavaPlugin {
 			                        for (PlayerInfo inf:PlayerInfo.list)
 			                        	inf.bar.setTitle(Level.get(inf.lvl).name);
 			                        config.set("Progress_bar_text", "level");
-			                        return true;
 			                    } else {
 			                        for (PlayerInfo inf:PlayerInfo.list)
 			                        	inf.bar.setTitle("Progress bar");
 			                        config.set("Progress_bar_text", "Progress bar");
-			                        return true;
 			                    }
+			                    return true;
 			                }
 			                if (args[1].equalsIgnoreCase("settext")) {
 			                	if (!Progress_bar)
@@ -1144,12 +1143,9 @@ public class Oneblock extends JavaPlugin {
         }
     }
 
-    public void saveData() {
-        try {
-        	File PlData = new File(getDataFolder(), "PlData.json");
-    		JsonSimple.Write(PlayerInfo.list, PlData);
-        } 
-        catch (Exception e) { e.printStackTrace(); }
+    public void SaveData() {
+    	File PlData = new File(getDataFolder(), "PlData.json");
+    	JsonSimple.Write(PlayerInfo.list, PlData);
     }
 
     private void Blockfile() {
@@ -1159,11 +1155,11 @@ public class Oneblock extends JavaPlugin {
         File block = new File(getDataFolder(), "blocks.yml");
         if (!block.exists())
             saveResource("blocks.yml", false);
-        newConfigz = YamlConfiguration.loadConfiguration(block);
-        if (newConfigz.isString("MaxLevel"))
-        	Level.max.name = newConfigz.getString("MaxLevel");
-        for (int i = 0; newConfigz.isList(String.format("%d", i)); i++) {
-        	List <String> bl_temp = newConfigz.getStringList(String.format("%d", i));
+        config_temp = YamlConfiguration.loadConfiguration(block);
+        if (config_temp.isString("MaxLevel"))
+        	Level.max.name = config_temp.getString("MaxLevel");
+        for (int i = 0; config_temp.isList(String.format("%d", i)); i++) {
+        	List <String> bl_temp = config_temp.getStringList(String.format("%d", i));
         	Level level = new Level(bl_temp.get(0));
         	Level.levels.add(level);
         	int q = 1;
@@ -1247,7 +1243,7 @@ public class Oneblock extends JavaPlugin {
         File message = new File(getDataFolder(), "messages.yml");
         if (!message.exists())
             saveResource("messages.yml", false);
-        newConfigz = YamlConfiguration.loadConfiguration(message);
+        config_temp = YamlConfiguration.loadConfiguration(message);
         
         Messages.noperm = MessageCheck("noperm", Messages.noperm);
         Messages.noperm_inv = MessageCheck("noperm_inv", Messages.noperm_inv);
@@ -1270,7 +1266,7 @@ public class Oneblock extends JavaPlugin {
         File gui = new File(getDataFolder(), "gui.yml");
         if (!gui.exists())
             saveResource("gui.yml", false);
-        newConfigz = YamlConfiguration.loadConfiguration(gui);
+        config_temp = YamlConfiguration.loadConfiguration(gui);
         
         Messages.baseGUI = MessageCheck("baseGUI", Messages.baseGUI);
         Messages.acceptGUI = MessageCheck("acceptGUI", Messages.acceptGUI);
@@ -1281,8 +1277,8 @@ public class Oneblock extends JavaPlugin {
         Messages.idresetGUI = MessageCheck("idresetGUI", Messages.idresetGUI);
     }
     private String MessageCheck(String name, String def_message) {
-    	if (newConfigz.isString(name))
-        	return ChatColor.translateAlternateColorCodes('&',newConfigz.getString(name));
+    	if (config_temp.isString(name))
+        	return ChatColor.translateAlternateColorCodes('&',config_temp.getString(name));
     	return def_message;
     }
     private void Flowerfile() {
@@ -1290,9 +1286,9 @@ public class Oneblock extends JavaPlugin {
         File flower = new File(getDataFolder(), "flowers.yml");
         if (!flower.exists())
             saveResource("flowers.yml", false);
-        newConfigz = YamlConfiguration.loadConfiguration(flower);
+        config_temp = YamlConfiguration.loadConfiguration(flower);
         flowers.add(GRASS);
-        for(String list:newConfigz.getStringList("flowers"))
+        for(String list:config_temp.getStringList("flowers"))
         	if (!XMaterial.matchXMaterial(list).isPresent())
         		flowers.add(GRASS);
         	else
