@@ -509,10 +509,10 @@ public class Oneblock extends JavaPlugin {
 	            }
 	        	Player pl = (Player) sender;
 	            if (args.length < 2) {
-	        		GUI.visitGUI(pl, plonl);
+	        		GUI.visitGUI(pl, Bukkit.getOfflinePlayers());
 	        		return true;
 	        	}
-	            Player inv = Bukkit.getPlayer(args[1]);
+	            OfflinePlayer inv = Bukkit.getOfflinePlayer(args[1]);
 	        	if (inv == null) return true;
 	    		if (inv == pl) {
 	    			pl.performCommand("ob j");

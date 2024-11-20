@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -68,12 +69,12 @@ public class GUI {
         p.openInventory(topGUI);
 	}
 	
-	public static void visitGUI(Player p, List<Player> plonl) {
+	public static void visitGUI(Player p, OfflinePlayer[] offlinePlayers) {
 		if (!enabled) return;
 		Inventory visitGUI = Bukkit.createInventory(holder, 54, Messages.visitGUI);
 		ArrayList <PlayerInfo> list = new ArrayList<>();
 		int size = 0;
-		for (Player pl: plonl) {
+		for (OfflinePlayer pl: offlinePlayers) {
 			PlayerInfo inf = PlayerInfo.get(pl.getUniqueId());
 			if (inf == null) continue;
 			if (!inf.allow_visit) continue;
@@ -82,11 +83,11 @@ public class GUI {
 		}
 		size = size > 54 ? 54 : size;
 		for (int i = 0; i < size; i++)
-			visitGUI.setItem(i, getPlayerHead(plonl.get(i), parseUUID(list.get(i).uuid)));
+			visitGUI.setItem(i, getPlayerHead(offlinePlayers[i], parseUUID(list.get(i).uuid)));
         p.openInventory(visitGUI);
 	}
 	
-	public static ItemStack getPlayerHead(Player player, String title) {
+	public static ItemStack getPlayerHead(OfflinePlayer player, String title) {
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skullMeta.setOwningPlayer(player);
