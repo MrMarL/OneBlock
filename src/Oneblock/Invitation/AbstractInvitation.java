@@ -1,24 +1,14 @@
-package Oneblock;
+package Oneblock.Invitation;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
-public class Invitation {
-	public static ArrayList <Invitation> list = new ArrayList<>();
-	
+public abstract class AbstractInvitation {
 	public UUID Inviting;
 	public UUID Invited;
 	
-	public Invitation(UUID inviting, UUID invited) {
+	public AbstractInvitation(UUID inviting, UUID invited) {
 		Inviting = inviting;
 		Invited = invited;
-	}
-	
-	public static Invitation check(UUID uuid) {
-		for(Invitation item: list)
-			if (item.Invited.equals(uuid))
-				return item;
-		return null;
 	}
 	
 	@Override

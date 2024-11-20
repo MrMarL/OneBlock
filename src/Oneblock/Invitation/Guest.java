@@ -1,10 +1,16 @@
-package Oneblock;
+package Oneblock.Invitation;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Guest extends Invitation {
+import Oneblock.PlayerInfo;
+
+public class Guest extends AbstractInvitation {
 	public static ArrayList <Guest> list = new ArrayList<>();
+	
+	public Guest(UUID inviting, UUID invited) {
+		super(inviting, invited);
+	}
 	
 	public static Guest check(UUID uuid) {
 		for(Guest item: list)
@@ -13,8 +19,11 @@ public class Guest extends Invitation {
 		return null;
 	}
 	
-	public Guest(UUID inviting, UUID invited) { 
-		super(inviting, invited);
+	public static PlayerInfo getPlayerInfo(UUID uuid) {
+		Guest g = check(uuid);
+		if (g == null) return null;
+		if (!PlayerInfo.ExistId(g.Inviting)) return null;
+		return PlayerInfo.get(g.Inviting);
 	}
 	
 	public static boolean remove(UUID uuid) {

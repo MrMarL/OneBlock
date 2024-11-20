@@ -8,6 +8,8 @@ import org.bukkit.util.Vector;
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
+import Oneblock.Invitation.Guest;
+import Oneblock.Invitation.Invitation;
 import Oneblock.PlData.JsonSimple;
 import Oneblock.PlData.ReadOldData;
 import Oneblock.UniversalPlace.*;
@@ -62,15 +64,13 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.generator.ChunkGenerator;
 
 public class Oneblock extends JavaPlugin {
-    static final Random rnd = new Random(System.currentTimeMillis());
+    public static Oneblock plugin;
+	
+    final Random rnd = new Random(System.currentTimeMillis());
     boolean on = false;
-    static int x = 0;
-    static int y = 0;
-    static int z = 0;
+    int x = 0, y = 0, z = 0;
     FileConfiguration config, config_temp;
-    static World wor;
-    World leavewor;
-    int random = 0;
+    World wor, leavewor;
     boolean superlegacy, legacy;
     ArrayList <Object> blocks = new ArrayList <>();
     ArrayList <EntityType> mobs = new ArrayList <>();
@@ -88,7 +88,7 @@ public class Oneblock extends JavaPlugin {
     boolean ItemsAdder = false;
     boolean Oraxen = false;
     boolean Border = true;
-    boolean Progress_bar = true;
+    public boolean Progress_bar = true;
     boolean СircleMode = false;
     boolean UseEmptyIslands = true;
     boolean saveplayerinventory = false;
@@ -98,7 +98,7 @@ public class Oneblock extends JavaPlugin {
     final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     Place placer;
     
-    public static World wor() { return wor; }
+    public static World wor() { return Oneblock.plugin.wor; }
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
@@ -112,6 +112,7 @@ public class Oneblock extends JavaPlugin {
     
     @Override
     public void onEnable() {
+    	plugin = this;
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
         Border = findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
@@ -310,57 +311,25 @@ public class Oneblock extends JavaPlugin {
         else WorldGuard = false;
     }
 
-    public void addinvite(UUID name, UUID to) {
-    	for(Invitation item: Invitation.list) 
-			if (item.equals(name, to))
-				return;
-    	Invitation inv_ = new Invitation(name, to);
-    	Invitation.list.add(inv_);
-    	Bukkit.getScheduler().runTaskLaterAsynchronously(this, 
-    			() -> { Invitation.list.remove(inv_); }, 300L);
-    }
-    public boolean checkinvite(Player pl) {
-		UUID uuid = pl.getUniqueId();
-		Invitation inv_ = Invitation.check(uuid);
-		if (inv_ == null) return false; 
-		if (!PlayerInfo.ExistId(inv_.Inviting)) return false;
-			
-		if (PlayerInfo.ExistId(uuid)) {
-			if (Progress_bar)
-				PlayerInfo.get(uuid).bar.removePlayer(pl);
-			pl.performCommand("ob idreset /n");
-		}
-		PlayerInfo.get(inv_.Inviting).uuids.add(uuid);
-		pl.performCommand("ob j"); 
-		Invitation.list.remove(inv_);
-		return true; 
-    }
-    
-    public PlayerInfo checkguest(UUID uuid) {
-    	Guest g = Guest.check(uuid);
-		if (g == null) return null;
-		if (!PlayerInfo.ExistId(g.Inviting)) return null;
-		return PlayerInfo.get(g.Inviting);
-    }
 
 	public int[] getFullCoord(final int id) {
 		if (!СircleMode)
-			return new int[] {id * sto + Oneblock.x, Oneblock.z};
-		int x = 0, z = 0;
+			return new int[] {id * sto + x, z};
+		int X = 0, Z = 0;
 		for (int i = 0; i < id; i++) {
-			if (x > z)
-			    if (x > -z)
-				    z--;
+			if (X > Z)
+			    if (X > -Z)
+				    Z--;
 				else
-				    x--;
-			else if (-x > z || x == z && z < 0)
-				z++;
+				    X--;
+			else if (-X > Z || X == Z && Z < 0)
+				Z++;
 			else
-				x++;
+				X++;
 		}
-		x = x * sto + Oneblock.x;
-		z = z * sto + Oneblock.z;
-		return new int[] {x, z};
+		X = X * sto + x;
+		Z = Z * sto + z;
+		return new int[] {X, Z};
 	}
 	
 	public class TaskUpdatePlayers implements Runnable {
@@ -384,7 +353,7 @@ public class Oneblock extends JavaPlugin {
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
                 	boolean CheckGuest = false;
                 	Location loc = ponl.getLocation();
-            		PlayerInfo inf = checkguest(ponl.getUniqueId());
+            		PlayerInfo inf = Guest.getPlayerInfo(ponl.getUniqueId());
             		if (inf != null) {
                     	int crd[] = getFullCoord(PlayerInfo.GetId(inf.uuid));
                         CheckGuest = CheckPosition(loc, crd[0], crd[1]);
@@ -431,7 +400,7 @@ public class Oneblock extends JavaPlugin {
             inf.bar.setProgress(inf.getPercent());
             inf.bar.addPlayer(ponl);
         }
-        random = lvl_inf.blocks;
+        int random = lvl_inf.blocks;
         if (random != 0) random = rnd.nextInt(random);
         if (blocks.get(random) == null) {
             XBlock.setType(block, GRASS_BLOCK);
@@ -607,7 +576,7 @@ public class Oneblock extends JavaPlugin {
 	        			return true;
 	    			}
 	    		}
-	    		addinvite(uuid, inv.getUniqueId());
+	    		Invitation.add(uuid, inv.getUniqueId());
 	    		String name = pl.getName();
 	    		GUI.acceptGUI(inv, name);
 	    		inv.sendMessage(String.format(Messages.invited, name));
@@ -648,7 +617,7 @@ public class Oneblock extends JavaPlugin {
 	        }
 	        case ("accept"):{
 	        	Player pl = (Player) sender;
-	       	 	if (checkinvite(pl))
+	       	 	if (Invitation.check(pl))
 	       	 		sender.sendMessage(Messages.accept_succes);
 	       	 	else
 	       	 		sender.sendMessage(Messages.accept_none);

@@ -60,13 +60,13 @@ public class ChestItems {
 	public static boolean fillChest(Inventory inv, String chestType) {
 		List <ItemStack> ch = getChest(chestType);
 		
-		final int max = Oneblock.rnd.nextInt(3) + 2;
+		final int max = Oneblock.plugin.rnd.nextInt(3) + 2;
         try { for (int i = 0; i < max; i++) {
-        	ItemStack m = ch.get(Oneblock.rnd.nextInt(ch.size()));
+        	ItemStack m = ch.get(Oneblock.plugin.rnd.nextInt(ch.size()));
             if (m.getMaxStackSize() == 1)
             	m.setAmount(1);
             else
-            	m.setAmount(Oneblock.rnd.nextInt(4) + 2);
+            	m.setAmount(Oneblock.plugin.rnd.nextInt(4) + 2);
             inv.addItem(m);
             }
         } catch (Exception e) { return false; }
