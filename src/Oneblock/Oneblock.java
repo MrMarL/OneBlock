@@ -152,6 +152,7 @@ public class Oneblock extends JavaPlugin {
         else 
             runMainTask();
     }
+    
     public class RespawnJoinEvent implements Listener {
         @EventHandler
         public void Respawn(final PlayerRespawnEvent e) {
@@ -261,7 +262,7 @@ public class Oneblock extends JavaPlugin {
             if ((z - loc.getBlockZ()) % sto != 0) return;
 
             Entity drop = e.getEntity();
-            drop.teleport(loc.add(0, .75, 0));
+            drop.teleport(loc.add(0, .8, 0));
             drop.setVelocity(new Vector(0, .1, 0));
         }
     	@EventHandler
@@ -281,6 +282,7 @@ public class Oneblock extends JavaPlugin {
             Bukkit.getScheduler().runTaskLater(Oneblock.this, () -> { BlockGen(result[0], result[1], plID, ponl, block); }, 1L);
     	}
     }
+    
     public class wor_null implements Runnable {
         public void run() {
             if (wor == null) {
@@ -294,6 +296,7 @@ public class Oneblock extends JavaPlugin {
             }
         }
     }
+    
     public void runMainTask() {
     	Bukkit.getScheduler().cancelTasks(this);
 		if (config.getDouble("y") == 0) return;
@@ -310,7 +313,6 @@ public class Oneblock extends JavaPlugin {
         }
         else WorldGuard = false;
     }
-
 
 	public int[] getFullCoord(final int id) {
 		if (!СircleMode)
