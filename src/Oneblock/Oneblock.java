@@ -461,6 +461,7 @@ public class Oneblock extends JavaPlugin {
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
 	            		Island.clear(wor, X_pl, y, Z_pl, sto/4);
+	            	XBlock.setType(wor.getBlockAt(X_pl, y, Z_pl), XMaterial.GRASS_BLOCK);
 	                if (il3x3)
 	                	Island.place(wor, X_pl, y, Z_pl);
 	                if (WorldGuard) {
