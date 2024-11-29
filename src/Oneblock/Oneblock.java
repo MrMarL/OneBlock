@@ -373,7 +373,7 @@ public class Oneblock extends JavaPlugin {
                 	BlockGen(X_pl, Z_pl, plID, ponl, block);
             }
             // BlockParticle
-            if (particle)
+            if (particle && !superlegacy)
 	            for (Player ponl: cache.getPlayers()) {
 	            	final int result[] = cache.getFullCoord(ponl);
 	                final int X_pl = result[0], Z_pl = result[1];
