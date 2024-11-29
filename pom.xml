@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Oneblock</groupId>
 	<artifactId>Oneblock</artifactId>
-	<version>1.2.6f</version>
+	<version>1.2.7</version>
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +41,12 @@
 			<id>oraxen</id>
 			<name>Oraxen Repository</name>
 			<url>https://repo.oraxen.com/releases</url>
+		</repository>
+		
+		<repository>
+			<id>nexo</id>
+			<name>Nexo Repository</name>
+			<url>https://repo.nexomc.com/snapshots/</url>
 		</repository>
 		
 		<repository>
@@ -120,6 +126,14 @@
 		    <scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+		    <groupId>com.nexomc</groupId>
+		    <artifactId>nexo</artifactId>
+		    <version>0.1.0-dev.0</version>
+		    <scope>provided</scope>
+		    <classifier>dev</classifier>
+		</dependency>
+
 		<dependency>
 		    <groupId>io.th0rgal</groupId>
 		    <artifactId>oraxen</artifactId>

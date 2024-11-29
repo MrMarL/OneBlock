@@ -81,7 +81,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_player_count%
         if (identifier.equals("player_count")) {
-            return String.format("%d", Oneblock.plonl.size());
+            return String.format("%d", Oneblock.plugin.cache.getPlayers().size());
         }
         // %OB_owner_name%
         if (identifier.equals("owner_name")) {

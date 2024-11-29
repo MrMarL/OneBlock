@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>1.2.6f</version>
+  <version>1.2.7</version>
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
@@ -96,6 +96,11 @@
       <url>https://repo.oraxen.com/releases</url>
     </repository>
     <repository>
+      <id>nexo</id>
+      <name>Nexo Repository</name>
+      <url>https://repo.nexomc.com/snapshots/</url>
+    </repository>
+    <repository>
       <id>WorldGuardOneBlock-main</id>
       <url>https://raw.github.com/MrMarL/WorldGuardOneBlock/main/</url>
     </repository>
@@ -147,6 +152,13 @@
       <groupId>com.github.LoneDev6</groupId>
       <artifactId>api-itemsadder</artifactId>
       <version>3.6.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.nexomc</groupId>
+      <artifactId>nexo</artifactId>
+      <version>0.1.0-dev.0</version>
+      <classifier>dev</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
