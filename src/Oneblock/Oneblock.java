@@ -399,7 +399,7 @@ public class Oneblock extends JavaPlugin {
         if (++inf.breaks >= inf.getNeed()) {
         	inf.lvlup();
         	lvl_inf = Level.get(inf.lvl);
-        	lvl_inf.giveLevelRewards(ponl.getName());
+        	//lvl_inf.giveLevelRewards(ponl.getName());
             if (Progress_bar) {
             	inf.bar.setColor(lvl_inf.color);
             	if (lvl_bar_mode)
