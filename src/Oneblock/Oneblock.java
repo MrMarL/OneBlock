@@ -82,7 +82,7 @@ public class Oneblock extends JavaPlugin {
     BarColor Progress_color;
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean droptossup = true, physics = false;
-    boolean lvl_bar_mode = false, chat_alert = false, particle = false;
+    boolean lvl_bar_mode = false, chat_alert = false, particle = true;
     boolean protection = false;
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
