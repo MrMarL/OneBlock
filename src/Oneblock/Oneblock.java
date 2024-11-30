@@ -304,7 +304,8 @@ public class Oneblock extends JavaPlugin {
 		if (config.getDouble("y") == 0) return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskUpdatePlayers(), 0, 120);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskSaveData(), 200, 6000);
-		Bukkit.getScheduler().runTaskTimer(this, new Task(), 40, 40);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskParticle(), 40, 40);
+		Bukkit.getScheduler().runTaskTimer(this, new Task(), 40, 80);
 		on = true;
 		
     	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
@@ -343,10 +344,26 @@ public class Oneblock extends JavaPlugin {
 	public class TaskSaveData implements Runnable {
 		public void run() { SaveData(); }
 	}
+	
+	public class TaskParticle implements Runnable {
+		public void run() { // BlockParticle
+			if (superlegacy) return;
+			if (!particle) return;
+	        
+        	for (Player ponl: cache.getPlayers()) {
+        		final int result[] = cache.getFullCoord(ponl);
+        		final int X_pl = result[0], Z_pl = result[1];
+                
+        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl, y+.5, Z_pl), 5, 0, 0, 0, 0);
+        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl+1, y+.5, Z_pl), 5, 0, 0, 0, 0);
+        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl, y+.5, Z_pl+1), 5, 0, 0, 0, 0);
+        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl+1, y+.5, Z_pl+1), 5, 0, 0, 0, 0);
+        	}
+        }
+	}
 
     public class Task implements Runnable {
-        public void run() {
-        	// SubBlockGen
+        public void run() { // SubBlockGen
             for (Player ponl: cache.getPlayers()) {
             	final UUID uuid = ponl.getUniqueId();
             	final int result[] = cache.getFullCoord(ponl);
@@ -372,17 +389,6 @@ public class Oneblock extends JavaPlugin {
                 if (block.getType().equals(Material.AIR) && PlayerInfo.ExistId(uuid)) 
                 	BlockGen(X_pl, Z_pl, plID, ponl, block);
             }
-            // BlockParticle
-            if (particle && !superlegacy)
-	            for (Player ponl: cache.getPlayers()) {
-	            	final int result[] = cache.getFullCoord(ponl);
-	                final int X_pl = result[0], Z_pl = result[1];
-	                
-	                wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl, y+.5, Z_pl), 5, 0, 0, 0, 0);
-	                wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl+1, y+.5, Z_pl), 5, 0, 0, 0, 0);
-	                wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl, y+.5, Z_pl+1), 5, 0, 0, 0, 0);
-	                wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl+1, y+.5, Z_pl+1), 5, 0, 0, 0, 0);
-	            }
         }
     }
     
