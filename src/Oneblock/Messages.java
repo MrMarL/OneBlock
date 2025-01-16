@@ -24,6 +24,8 @@ public class Messages {
 	public static String accept_none = String.format("%s[There is no Pending invitations for you.]", ChatColor.RED);
 	public static String idreset = String.format("%sNow your data has been reset. You can create a new island /ob join.", ChatColor.GREEN);
 	public static String protection = String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED);
+	public static String leave_not_set = String.format("%sSorry, but the position was not set.", ChatColor.YELLOW);
+	public static String not_allow_visit = String.format("%sThe player did not allow visits.", ChatColor.YELLOW);
 	
 	//GUI
 	public static String baseGUI = "";

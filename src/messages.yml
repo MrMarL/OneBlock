@@ -62,3 +62,9 @@ idreset: |
 
 protection: |
     &eare you trying to go &coutside the island?
+
+leave_not_set: |
+    &eSorry, but the position was not set.
+
+not_allow_visit: |
+    &eThe player did not allow visits.

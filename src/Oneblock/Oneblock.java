@@ -142,6 +142,7 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
         metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
+        metrics.addCustomChart(new SimplePie("place_type", () -> String.valueOf(placetype)));
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
         pluginManager.registerEvents(new TeleportEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
@@ -512,7 +513,8 @@ public class Oneblock extends JavaPlugin {
 	            Player p = (Player) sender;
 	            PlayerInfo.removeBarStatic(p);
 	            if (config.getDouble("yleave") == 0 || leavewor == null) {
-	            	sender.sendMessage(String.format("%sSorry, but the position was not set.", ChatColor.YELLOW));
+	            	if (!args[args.length-1].equals("/n"))
+	            		sender.sendMessage(Messages.leave_not_set);
 	            	return true;
 	            }
 	            p.teleport(new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"),
@@ -545,7 +547,10 @@ public class Oneblock extends JavaPlugin {
 	    			return true;
 	    		}
 	    		PlayerInfo pinf = PlayerInfo.get(uuid);
-	    		if (!pinf.allow_visit) return true;
+	    		if (!pinf.allow_visit) {
+	    			sender.sendMessage(Messages.not_allow_visit);
+	    			return true;
+	    		}
 	    		final int plID = PlayerInfo.GetId(uuid);
 	        	final int result[] = getFullCoord(plID);
 	            final int X_pl = result[0], Z_pl = result[1];
@@ -668,6 +673,7 @@ public class Oneblock extends JavaPlugin {
 	        		OBWG.removeMember(uuid, PlId);
 	        	if (!args[args.length-1].equals("/n"))
 	        		sender.sendMessage(Messages.idreset);
+	        	pl.performCommand("ob leave /n");
 	        	return true;
 	        }
 	        case ("gui"):{
@@ -1100,7 +1106,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.7",
+    		        	"Create by MrMarL\nPlugin version: v1.2.8",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1260,6 +1266,8 @@ public class Oneblock extends JavaPlugin {
         Messages.accept_none = MessageCheck("accept_none", Messages.accept_none);
         Messages.idreset = MessageCheck("idreset", Messages.idreset);
         Messages.protection = MessageCheck("protection", Messages.protection);
+        Messages.leave_not_set = MessageCheck("leave_not_set", Messages.leave_not_set);
+        Messages.not_allow_visit = MessageCheck("not_allow_visit", Messages.not_allow_visit);
         
         File gui = new File(getDataFolder(), "gui.yml");
         if (!gui.exists())
