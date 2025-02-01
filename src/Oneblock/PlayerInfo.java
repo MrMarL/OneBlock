@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
@@ -26,9 +30,28 @@ public class PlayerInfo {
 		breaks = 0;
 	}
 	
-	public void removeBar(Player p) {
-		if (bar == null)
+	public void createBar() {
+		Level level = Level.get(lvl);
+		createBar(level.name, level.color);
+	}
+	
+	public void createBar(String title) {
+		Level level = Level.get(lvl);
+		createBar(title, level.color);
+	}
+	
+	private void createBar(String text, BarColor color) {
+		if (bar == null) {
+			bar = Bukkit.createBossBar(text, color, BarStyle.SOLID, BarFlag.DARKEN_SKY);
 			return;
+		}
+		
+		bar.setTitle(text);
+		bar.setColor(color);
+	}
+	
+	public void removeBar(Player p) {
+		if (bar == null) return;
 		bar.removePlayer(p);
 	}
 	

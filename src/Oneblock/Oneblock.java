@@ -45,8 +45,6 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -88,7 +86,7 @@ public class Oneblock extends JavaPlugin {
     boolean WorldGuard = OBWorldGuard.canUse;
     Place.Type placetype = Place.Type.basic;
     boolean Border = true;
-    public boolean Progress_bar = true;
+    public boolean Progress_bar = false;
     boolean СircleMode = false;
     boolean UseEmptyIslands = true;
     boolean saveplayerinventory = false;
@@ -118,6 +116,7 @@ public class Oneblock extends JavaPlugin {
         Border = findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
+        
         getLogger().info(
         		  "\n┏━┓····┏━━┓·····┏┓\n"
         		  + "┃┃┣━┳┳━┫┏┓┣┓┏━┳━┫┣┓\n"
@@ -127,33 +126,50 @@ public class Oneblock extends JavaPlugin {
         	getLogger().info("PlaceholderAPI has been found!");
             new OBP().register();
         }
-        if (pluginManager.isPluginEnabled("ItemsAdder")) placetype = Place.Type.ItemsAdder;
-        if (pluginManager.isPluginEnabled("Oraxen")) placetype = Place.Type.Oraxen;
-        if (pluginManager.isPluginEnabled("Nexo")) placetype = Place.Type.Nexo;
-        if (legacy) placetype = Place.Type.legacy;
+        
+        placetype = determinePlaceType(pluginManager);
         placer = Place.GetPlacerByType(placetype);
-        Configfile();
+        
         Datafile();
+        loadConfigFiles();
+        setupMetrics(metrics);
+        
+        pluginManager.registerEvents(new RespawnJoinEvent(), this);
+        pluginManager.registerEvents(new TeleportEvent(), this);
+        pluginManager.registerEvents(new BlockEvent(), this);
+        pluginManager.registerEvents(new GUIListener(), this);
+        if (placetype == Place.Type.ItemsAdder) pluginManager.registerEvents(new ItemsAdderEvent(), this);
+        if (!superlegacy) pluginManager.registerEvents(new ChangedWorld(), this);
+        
+        if (config.getDouble("y") == 0) return;
+        
+        if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null))
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new wor_null(), 32, 64);
+        else 
+            runMainTask();
+    }
+    
+    private Place.Type determinePlaceType(PluginManager pluginManager) {
+        if (pluginManager.isPluginEnabled("ItemsAdder")) return Place.Type.ItemsAdder;
+        if (pluginManager.isPluginEnabled("Oraxen")) return Place.Type.Oraxen;
+        if (pluginManager.isPluginEnabled("Nexo")) return Place.Type.Nexo;
+        return legacy ? Place.Type.legacy : Place.Type.basic;
+    }
+    
+    private void loadConfigFiles() {
+        Configfile();
         Chestfile();
         Blockfile();
         Flowerfile();
         Messagefile();
+    }
+    
+    private void setupMetrics(Metrics metrics) {
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
         metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
         metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
         metrics.addCustomChart(new SimplePie("place_type", () -> String.valueOf(placetype)));
-        pluginManager.registerEvents(new RespawnJoinEvent(), this);
-        pluginManager.registerEvents(new TeleportEvent(), this);
-        pluginManager.registerEvents(new BlockEvent(), this);
-        pluginManager.registerEvents(new GUIListener(), this);
-        pluginManager.registerEvents(new ItemsAdderEvent(), this);
-        
-        if (config.getDouble("y") == 0) return;	
-        if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null))
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new wor_null(), 32, 64);
-        else 
-            runMainTask();
     }
     
     public class RespawnJoinEvent implements Listener {
@@ -164,8 +180,12 @@ public class Oneblock extends JavaPlugin {
 			Player pl = e.getPlayer();
 			if (pl.getWorld().equals(wor) && PlayerInfo.ExistId(pl.getUniqueId())) {
 				int result[] = getFullCoord(PlayerInfo.GetId(pl.getUniqueId()));
-				e.setRespawnLocation(new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5));
-				if (Border) UpdateBorder(pl);
+				Location loc = new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5);
+				e.setRespawnLocation(loc);
+				if (Border) {
+					UpdateBorderLocation(pl, loc);
+					UpdateBorder(pl);
+				}
 			}
         }
         @EventHandler
@@ -185,7 +205,10 @@ public class Oneblock extends JavaPlugin {
 			Player pl = e.getPlayer();
 			if (pl.getWorld().equals(wor)) {
 				if (autojoin) pl.performCommand("ob j");
-				if (Border) UpdateBorder(pl);
+				if (Border) {
+					UpdateBorderLocation(pl, pl.getLocation());
+					UpdateBorder(pl);
+				}
 			}
 		}
     }
@@ -237,8 +260,7 @@ public class Oneblock extends JavaPlugin {
     public class ChangedWorld implements Listener {
     	@EventHandler
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
-    		if (PlayerInfo.size() == 0)
-    			return;
+    		if (PlayerInfo.size() == 0) return;
         	if (e.getFrom().equals(wor))
         		PlayerInfo.removeBarStatic(e.getPlayer());
         }
@@ -305,7 +327,7 @@ public class Oneblock extends JavaPlugin {
 		if (config.getDouble("y") == 0) return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskUpdatePlayers(), 0, 120);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskSaveData(), 200, 6000);
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskParticle(), 40, 40);
+		if (!superlegacy) Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskParticle(), 40, 40);
 		Bukkit.getScheduler().runTaskTimer(this, new Task(), 40, 80);
 		on = true;
 		
@@ -347,20 +369,21 @@ public class Oneblock extends JavaPlugin {
 	}
 	
 	public class TaskParticle implements Runnable {
-		public void run() { // BlockParticle
-			if (superlegacy) return;
-			if (!particle) return;
-	        
-        	for (Player ponl: cache.getPlayers()) {
-        		final int result[] = cache.getFullCoord(ponl);
-        		final int X_pl = result[0], Z_pl = result[1];
-                
-        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl, y+.5, Z_pl), 5, 0, 0, 0, 0);
-        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl+1, y+.5, Z_pl), 5, 0, 0, 0, 0);
-        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl, y+.5, Z_pl+1), 5, 0, 0, 0, 0);
-        		wor.spawnParticle(Particle.PORTAL, new Location(wor, X_pl+1, y+.5, Z_pl+1), 5, 0, 0, 0, 0);
-        	}
-        }
+	    public void run() {
+	        if (!particle) return;
+
+	        cache.getPlayers().forEach(ponl -> {
+	            int[] result = cache.getFullCoord(ponl);
+	            int X_pl = result[0], Z_pl = result[1];
+
+	            Arrays.asList(
+	                new Location(wor, X_pl, y + .5, Z_pl),
+	                new Location(wor, X_pl + 1, y + .5, Z_pl),
+	                new Location(wor, X_pl, y + .5, Z_pl + 1),
+	                new Location(wor, X_pl + 1, y + .5, Z_pl + 1)
+	            ).forEach(loc -> wor.spawnParticle(Particle.PORTAL, loc, 5, 0, 0, 0, 0));
+	        });
+	    }
 	}
 
     public class Task implements Runnable {
@@ -406,18 +429,13 @@ public class Oneblock extends JavaPlugin {
         if (++inf.breaks >= inf.getNeed()) {
         	inf.lvlup();
         	lvl_inf = Level.get(inf.lvl);
-        	//lvl_inf.giveLevelRewards(ponl.getName());
-            if (Progress_bar) {
-            	inf.bar.setColor(lvl_inf.color);
-            	if (lvl_bar_mode)
-            		inf.bar.setTitle(lvl_inf.name);
-            }
+        	if (Progress_bar) 
+             	inf.bar.setColor(lvl_inf.color);
             if (chat_alert)
             	ponl.sendMessage(String.format("%s%s", ChatColor.GREEN, lvl_inf.name));
         }
         if (Progress_bar) {
-            if (!lvl_bar_mode && PAPI)
-            	inf.bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, TextP));
+            inf.bar.setTitle(getBarTitle(ponl, inf.lvl));
             inf.bar.setProgress(inf.getPercent());
             inf.bar.addPlayer(ponl);
         }
@@ -445,6 +463,13 @@ public class Oneblock extends JavaPlugin {
             wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(rnd.nextInt(random)));
         }
 	}
+    
+    public String getBarTitle(Player p, int lvl) {
+        if (lvl_bar_mode) return Level.get(lvl).name;
+        if (PAPI) return PlaceholderAPI.setPlaceholders(p, TextP);
+        
+        return TextP;
+    }
 
     public void onDisable() { SaveData(); }
     
@@ -489,14 +514,8 @@ public class Oneblock extends JavaPlugin {
 	                	OBWG.CreateRegion(uuid, Block1, Block2, plID);
 	                }
 					PlayerInfo.set(plID, inf);
-	                if (!superlegacy && Progress_bar) {
-	                	String temp = TextP;
-	                    if (lvl_bar_mode)
-	                    	temp = Level.get(0).name;
-	                    else if (PAPI)
-	                    	temp = PlaceholderAPI.setPlaceholders(p, TextP);
-	                    inf.bar = Bukkit.createBossBar(temp, Level.get(0).color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
-	                }
+					if (!superlegacy)
+						inf.createBar(getBarTitle(p, 0));
 	            } 
 	            else {
 	            	plID = PlayerInfo.GetId(uuid);
@@ -656,7 +675,7 @@ public class Oneblock extends JavaPlugin {
 	        		return true;
 	        	int PlId = PlayerInfo.GetId(uuid);
 	        	PlayerInfo plp = PlayerInfo.get(PlId);
-	        	if (Progress_bar)
+	        	if (Progress_bar) 
 	        		plp.bar.removePlayer(pl);
 	        	if (plp.uuid.equals(uuid)) {
 	        		if (plp.uuids.size() > 0) {
@@ -789,12 +808,9 @@ public class Oneblock extends JavaPlugin {
 			                	(args[1].equals("true") || args[1].equals("false"))) {
 			            			Border = Boolean.valueOf(args[1]);
 			                    	config.set("Border", Border);
-			                    	if (Border) {
-			                    		for (Player pl: wor.getPlayers()) 
-			                    			UpdateBorderLocation(pl, pl.getLocation());
-			                    	}
-			                    	else for (Player pl: wor.getPlayers()) 
-			                    			pl.setWorldBorder(null);
+			                    	if (Border) 
+			                    		wor.getPlayers().forEach(pl -> UpdateBorderLocation(pl, pl.getLocation()));
+			                    	else wor.getPlayers().forEach(pl -> pl.setWorldBorder(null));
 			                }
 			                else sender.sendMessage(Messages.bool_format);
 			            	sender.sendMessage(String.format("%sthe Border is now %s", ChatColor.GREEN, (Border?"enabled.":"disabled.")));
@@ -824,7 +840,8 @@ public class Oneblock extends JavaPlugin {
 			                    sender.sendMessage(String.format("%sinvalid format. try: /ob setlevel 'nickname' 'level'", ChatColor.RED));
 			                    return true;
 			                }
-			                UUID uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+			                OfflinePlayer offpl = Bukkit.getOfflinePlayer(args[1]);
+			                UUID uuid = offpl.getUniqueId();
 			                if (PlayerInfo.ExistId(uuid)) {
 			                    int setlvl = 0;
 			                    try {
@@ -838,11 +855,10 @@ public class Oneblock extends JavaPlugin {
 			                        PlayerInfo inf = PlayerInfo.get(i);
 			                        inf.breaks = 0;
 			                        inf.lvl = setlvl;
-			                        if (lvl_bar_mode) {
-			                        	Level lvl = Level.get(inf.lvl);
-				                    	inf.bar.setTitle(lvl.name);
-				                    	inf.bar.setColor(lvl.color);
-			                        }
+			                        if (Progress_bar && offpl instanceof Player) {
+			                        	inf.createBar(getBarTitle((Player) offpl, inf.lvl));
+		                                inf.bar.setProgress(inf.getPercent());
+		                            }
 			                        sender.sendMessage(String.format("%sfor player %s, level %s is set.", ChatColor.GREEN, args[1], args[2]));
 			                        return true;
 			                    }
@@ -857,7 +873,7 @@ public class Oneblock extends JavaPlugin {
 			                    sender.sendMessage(String.format("%sinvalid format. try: /ob clear 'nickname'", ChatColor.RED));
 			                    return true;
 			                }
-			                UUID uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+			                UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
 			                if (PlayerInfo.ExistId(uuid)) {
 			                    int i = PlayerInfo.GetId(uuid);
 			                    PlayerInfo inf = PlayerInfo.get(i);
@@ -924,17 +940,13 @@ public class Oneblock extends JavaPlugin {
 			                }
 			                if (args[1].equals("true") || args[1].equals("false")) {
 			                    Progress_bar = Boolean.valueOf(args[1]);
-			                    if (Progress_bar) {
-			                        if (Progress_color == null)
-			                            Progress_color = BarColor.GREEN;
-			                    	Blockfile();
-			                    }
-			                    for (PlayerInfo bb:PlayerInfo.list)
-			                    	if (bb.bar != null)
-			                    		bb.bar.setVisible(Progress_bar);
+			                    Blockfile();
 			                    config.set("Progress_bar", Progress_bar);
 			                    return true;
 			                }
+			                
+			                if (!Progress_bar) return true;
+			                
 			                if (args[1].equalsIgnoreCase("color")) {
 			                    if (args.length == 2) {
 			                        sender.sendMessage(String.format("%senter a color name.", ChatColor.YELLOW));
@@ -942,8 +954,6 @@ public class Oneblock extends JavaPlugin {
 			                    }
 			                    try {
 			                        Progress_color = BarColor.valueOf(args[2]);
-			                        for (PlayerInfo bb:PlayerInfo.list)
-			                            bb.bar.setColor(Progress_color);
 			                        Blockfile();
 			                        config.set("Progress_bar_color", Progress_color.toString());
 			                    } catch (Exception e) {
@@ -953,32 +963,18 @@ public class Oneblock extends JavaPlugin {
 			                    return true;
 			                }
 			                if (args[1].equalsIgnoreCase("level")) {
-			                	if (!Progress_bar)
-			                		return true;
-			                    if (lvl_bar_mode = !lvl_bar_mode) {
-			                        for (PlayerInfo inf:PlayerInfo.list)
-			                        	inf.bar.setTitle(Level.get(inf.lvl).name);
-			                        config.set("Progress_bar_text", "level");
-			                    } else {
-			                        for (PlayerInfo inf:PlayerInfo.list)
-			                        	inf.bar.setTitle("Progress bar");
-			                        config.set("Progress_bar_text", "Progress bar");
-			                    }
+			                	lvl_bar_mode = true;
+			                    config.set("Progress_bar_text", "level");
+			                    SetupProgressBar();
 			                    return true;
 			                }
 			                if (args[1].equalsIgnoreCase("settext")) {
-			                	if (!Progress_bar)
-			                		return true;
 			                    String txt_bar = "";
 								for (int i = 2; i < args.length; i++)
 									txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
 			                    lvl_bar_mode = false;
-			                    if (PAPI) for (Player ponl : wor.getPlayers())
-			                    	PlayerInfo.get(ponl.getUniqueId()).bar.setTitle(PlaceholderAPI.setPlaceholders(ponl, txt_bar));
-			                    else 
-			                    	for (PlayerInfo bb : PlayerInfo.list) bb.bar.setTitle(txt_bar);
-			                    config.set("Progress_bar_text", txt_bar);
-			                    TextP = txt_bar;
+			                    config.set("Progress_bar_text", TextP = txt_bar);
+			                    SetupProgressBar();
 			                    return true;
 			                }
 			                sender.sendMessage(String.format("%strue, false, settext or level only!", ChatColor.RED));
@@ -1020,14 +1016,10 @@ public class Oneblock extends JavaPlugin {
 			            }
 			            case ("reload"):{
 			            	sender.sendMessage(String.format("%sReloading Plugin & Plugin Modules.", ChatColor.YELLOW));
-			            	Configfile();
-		                    Chestfile();
-		                    Blockfile();
-		                    Flowerfile();
-		                    Messagefile();
-		                    ReCreateRegions();
-		                    sender.sendMessage(String.format("%sAll *.yml reloaded!", ChatColor.GREEN));
-		                    return true;
+			            	loadConfigFiles();
+			            	ReCreateRegions();
+			            	sender.sendMessage(String.format("%sAll *.yml reloaded!", ChatColor.GREEN));
+			            	return true;
 			            }
 			            case ("chat_alert"):{
 			                chat_alert = !chat_alert;
@@ -1090,8 +1082,7 @@ public class Oneblock extends JavaPlugin {
 			            }
 			            case ("chest"):{
 			            	if (args.length < 2) {
-			            		for (String t : ChestItems.getChestNames())
-			            			sender.sendMessage(t);
+			            		ChestItems.getChestNames().forEach(t -> sender.sendMessage(t));
 			            		return true;
 			            	}
 			            	for (String t : ChestItems.getChestNames())
@@ -1106,7 +1097,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.8",
+    		        	"Create by MrMarL\nPlugin version: v1.2.9",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1160,7 +1151,7 @@ public class Oneblock extends JavaPlugin {
         	Level level = new Level(bl_temp.get(0));
         	Level.levels.add(level);
         	int q = 1;
-        	if (Progress_bar && q<bl_temp.size())
+        	if (!superlegacy && q < bl_temp.size())
         		try {//reading a custom color for the level.
         			level.color = BarColor.valueOf(bl_temp.get(q).toUpperCase());
         			q++;
@@ -1232,17 +1223,30 @@ public class Oneblock extends JavaPlugin {
         }
         Level.max.blocks = blocks.size();
         if ((Level.max.mobs = mobs.size()) == 0) 
-        	getLogger().warning("Mobs are not set in the blocks.yml"); // mobs.add(EntityType.CREEPER); 
-        //Progress_bar
-        if (!superlegacy && Progress_bar && PlayerInfo.size() > 0 && PlayerInfo.get(0).bar == null) {
-        	Level.max.color = Progress_color;
-            for (PlayerInfo inf:PlayerInfo.list) {
-                Level lvl = Level.get(inf.lvl);
-                inf.bar = Bukkit.createBossBar(lvl_bar_mode?lvl.name:TextP, lvl.color, BarStyle.SEGMENTED_10, BarFlag.DARKEN_SKY);
-            }
-            Bukkit.getPluginManager().registerEvents(new ChangedWorld(), this);
-    	}
+        	getLogger().warning("Mobs are not set in the blocks.yml");
+        
+        SetupProgressBar();
     }
+	
+	private void SetupProgressBar() {
+		if (superlegacy) return;
+		if (PlayerInfo.size() == 0) return;
+		
+		if (Progress_color == null)
+			Progress_color = BarColor.GREEN;
+		
+		Level.max.color = Progress_color;
+		PlayerInfo.list.forEach(inf -> {
+			Player p = Bukkit.getPlayer(inf.uuid);
+			if (p == null)
+				inf.createBar();
+			else
+				inf.createBar(getBarTitle(p, inf.lvl));
+        	        	
+			inf.bar.setVisible(Progress_bar);
+        });
+	}
+	
     private void Messagefile() {
         File message = new File(getDataFolder(), "messages.yml");
         if (!message.exists())
@@ -1348,9 +1352,9 @@ public class Oneblock extends JavaPlugin {
         Check("yleave", .0);
         Check("zleave", .0);
         Check("yawleave", .0);
-        if (Progress_bar = !superlegacy && Check("Progress_bar", true))
-        	Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
         if (!superlegacy) {
+        	Progress_bar = Check("Progress_bar", true);
+        	Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
 	        TextP = Check("Progress_bar_text", "level");
 	        lvl_bar_mode = TextP.equals("level");
         }
