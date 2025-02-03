@@ -58,6 +58,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.generator.ChunkGenerator;
@@ -81,6 +82,7 @@ public class Oneblock extends JavaPlugin {
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean droptossup = true, physics = false;
     boolean lvl_bar_mode = false, chat_alert = false, particle = true;
+    boolean allow_nether = true;
     boolean protection = false;
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
@@ -233,11 +235,23 @@ public class Oneblock extends JavaPlugin {
         	if (!Border) return;
         	Location loc = e.getTo();
         	World to = loc.getWorld();
-        	if (!to.equals(wor)) return; 
+        	if (!to.equals(wor)) return;
         	
         	Player p = e.getPlayer();
         	UpdateBorderLocation(p, loc);
         	UpdateBorder(p);
+        }
+        
+        @EventHandler
+        public void NetherPortal(final PlayerPortalEvent e) {
+        	if (allow_nether) return;
+        	World from = e.getFrom().getWorld();
+        	World to = e.getTo().getWorld();
+        	
+        	if (!from.equals(wor)) return;
+        	
+            if (to.getEnvironment() == World.Environment.NETHER) 
+            	e.setCancelled(true);
         }
     }
     
@@ -824,6 +838,7 @@ public class Oneblock extends JavaPlugin {
 			            case ("physics"):
 			            case ("autojoin"):
 			            case ("particle"):
+			            case ("allow_nether"):
 			            case ("saveplayerinventory"):{
 			            	if (args.length > 1 &&
 			                    	(args[1].equals("true") || args[1].equals("false"))) {
@@ -1097,7 +1112,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.9",
+    		        	"Create by MrMarL\nPlugin version: v1.2.9f",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1236,7 +1251,7 @@ public class Oneblock extends JavaPlugin {
 			Progress_color = BarColor.GREEN;
 		
 		Level.max.color = Progress_color;
-		PlayerInfo.list.forEach(inf -> {
+		PlayerInfo.list.forEach(inf -> {if (inf.uuid != null){
 			Player p = Bukkit.getPlayer(inf.uuid);
 			if (p == null)
 				inf.createBar();
@@ -1244,7 +1259,7 @@ public class Oneblock extends JavaPlugin {
 				inf.createBar(getBarTitle(p, inf.lvl));
         	        	
 			inf.bar.setVisible(Progress_bar);
-        });
+        }});
 	}
 	
     private void Messagefile() {
@@ -1384,6 +1399,7 @@ public class Oneblock extends JavaPlugin {
         droptossup = Check("droptossup", droptossup);
         physics = Check("physics", physics);
         particle = Check("particle", particle);
+        allow_nether = Check("allow_nether", allow_nether);
     }
     
     public static int getlvl(UUID pl_uuid) {
@@ -1430,7 +1446,7 @@ public class Oneblock extends JavaPlugin {
         	if (sender.hasPermission("Oneblock.visit")) commands.addAll(Arrays.asList("visit","allow_visit"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
-            		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","UseEmptyIslands"));
+            		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit")) {
@@ -1461,6 +1477,7 @@ public class Oneblock extends JavaPlugin {
 	                commands.add("set_my_by_def");
 	                commands.add("default");
                 case ("UseEmptyIslands"):
+                case ("allow_nether"):
                 case ("island_rebirth"):
                 case ("saveplayerinventory"):
                 case ("protection"):
