@@ -98,7 +98,11 @@
     <repository>
       <id>nexo</id>
       <name>Nexo Repository</name>
-      <url>https://repo.nexomc.com/snapshots/</url>
+      <url>https://repo.nexomc.com/releases</url>
+    </repository>
+    <repository>
+      <id>AlessioDP</id>
+      <url>https://repo.alessiodp.com/releases/</url>
     </repository>
     <repository>
       <id>WorldGuardOneBlock-main</id>
@@ -157,8 +161,7 @@
     <dependency>
       <groupId>com.nexomc</groupId>
       <artifactId>nexo</artifactId>
-      <version>0.1.0-dev.0</version>
-      <classifier>dev</classifier>
+      <version>1.1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -212,6 +215,12 @@
           <groupId>gs.mclo</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>net.byteflux</groupId>
+      <artifactId>libby-bukkit</artifactId>
+      <version>1.3.1</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <properties>

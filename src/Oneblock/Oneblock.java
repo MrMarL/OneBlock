@@ -7,7 +7,7 @@ import org.bukkit.util.Vector;
 
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
-import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.api.NexoBlocks;
 
 import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
@@ -131,6 +131,7 @@ public class Oneblock extends JavaPlugin {
         
         placetype = determinePlaceType(pluginManager);
         placer = Place.GetPlacerByType(placetype);
+        getLogger().info(placetype.name());
         
         Datafile();
         loadConfigFiles();
@@ -1112,7 +1113,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.9f",
+    		        	"Create by MrMarL\nPlugin version: v1.2.9n",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1224,7 +1225,7 @@ public class Oneblock extends JavaPlugin {
 	        					a = text;
 							break;
 						case Nexo:
-							if (NexoItems.exists(text))
+							if (NexoBlocks.isCustomBlock(text))
 	        					a = text;
 							break;
 						default: break;

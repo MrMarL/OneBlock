@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import com.nexomc.nexo.api.NexoBlocks;
-import com.nexomc.nexo.api.NexoItems;
 
 public class PlaceNexo extends Place{
 
@@ -16,7 +15,7 @@ public class PlaceNexo extends Place{
 			block.setType((Material)material_, physics);
 		else if (matClass == String.class) {
 			String material = (String)material_;
-			if (NexoItems.exists(material)) {
+			if (NexoBlocks.isCustomBlock(material)) {
 				NexoBlocks.place(material, block.getLocation());
 				return true;
 			}
