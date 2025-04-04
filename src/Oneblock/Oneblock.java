@@ -146,10 +146,7 @@ public class Oneblock extends JavaPlugin {
         
         if (config.getDouble("y") == 0) return;
         
-        if (wor == null || (config.getDouble("yleave") != 0 && leavewor == null))
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, (Runnable) new wor_null(), 32, 64);
-        else 
-            runMainTask();
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Initialization(), 32, 80);
     }
     
     private Place.Type determinePlaceType(PluginManager pluginManager) {
@@ -165,6 +162,11 @@ public class Oneblock extends JavaPlugin {
         Blockfile();
         Flowerfile();
         Messagefile();
+    }
+    
+    private void reload() {
+    	loadConfigFiles();
+    	ReCreateRegions();
     }
     
     private void setupMetrics(Metrics metrics) {
@@ -185,10 +187,6 @@ public class Oneblock extends JavaPlugin {
 				int result[] = getFullCoord(PlayerInfo.GetId(pl.getUniqueId()));
 				Location loc = new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5);
 				e.setRespawnLocation(loc);
-				if (Border) {
-					UpdateBorderLocation(pl, loc);
-					UpdateBorder(pl);
-				}
 			}
         }
         @EventHandler
@@ -236,11 +234,27 @@ public class Oneblock extends JavaPlugin {
         	if (!Border) return;
         	Location loc = e.getTo();
         	World to = loc.getWorld();
-        	if (!to.equals(wor)) return;
-        	
         	Player p = e.getPlayer();
+        	
+        	if (!to.equals(wor)) {
+        		p.setWorldBorder(null);
+        		return;
+        	}
         	UpdateBorderLocation(p, loc);
         	UpdateBorder(p);
+        }
+        
+        @EventHandler
+        public void Respawn(final PlayerRespawnEvent e) {
+			if (!Border) return;
+			Location loc = e.getRespawnLocation();
+			Player p = e.getPlayer();
+			if (wor.equals(p.getWorld())) {
+				UpdateBorderLocation(p, loc);
+				UpdateBorder(p);
+			}
+			else
+				p.setWorldBorder(null);
         }
         
         @EventHandler
@@ -323,7 +337,7 @@ public class Oneblock extends JavaPlugin {
     	}
     }
     
-    public class wor_null implements Runnable {
+    public class Initialization implements Runnable {
         public void run() {
             if (wor == null) {
             	getLogger().info("Waiting for the initialization of the world");
@@ -338,6 +352,7 @@ public class Oneblock extends JavaPlugin {
     }
     
     public void runMainTask() {
+    	reload();
     	Bukkit.getScheduler().cancelTasks(this);
 		if (config.getDouble("y") == 0) return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskUpdatePlayers(), 0, 120);
@@ -1032,8 +1047,7 @@ public class Oneblock extends JavaPlugin {
 			            }
 			            case ("reload"):{
 			            	sender.sendMessage(String.format("%sReloading Plugin & Plugin Modules.", ChatColor.YELLOW));
-			            	loadConfigFiles();
-			            	ReCreateRegions();
+			            	reload();
 			            	sender.sendMessage(String.format("%sAll *.yml reloaded!", ChatColor.GREEN));
 			            	return true;
 			            }
