@@ -347,12 +347,12 @@ public class Oneblock extends JavaPlugin {
             } else {
             	getLogger().info("The initialization of the world was successful!");
             	runMainTask();
+            	reload();
             }
         }
     }
     
     public void runMainTask() {
-    	reload();
     	Bukkit.getScheduler().cancelTasks(this);
 		if (config.getDouble("y") == 0) return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskUpdatePlayers(), 0, 120);
