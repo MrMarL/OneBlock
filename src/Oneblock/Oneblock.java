@@ -419,6 +419,7 @@ public class Oneblock extends JavaPlugin {
     public class Task implements Runnable {
         public void run() { // SubBlockGen
             for (Player ponl: cache.getPlayers()) {
+            	if (!ponl.getWorld().equals(wor)) continue;
             	final UUID uuid = ponl.getUniqueId();
             	final int result[] = cache.getFullCoord(ponl);
                 final int X_pl = result[0], Z_pl = result[1], plID = result[2];
@@ -1127,7 +1128,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.9q",
+    		        	"Create by MrMarL\nPlugin version: v1.2.9w",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
