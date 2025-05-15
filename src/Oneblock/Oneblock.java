@@ -687,6 +687,7 @@ public class Oneblock extends JavaPlugin {
 	        	if (memberID == ownerID) {
 	        		if (!member_ex.hasPermission("Oneblock.set"))
 	        			member_ex.performCommand("ob j");
+	        		info.removeBar(member_ex);
 	        		sender.sendMessage(member.getName() + Messages.kicked);
 	        	}
 	        	return true;
