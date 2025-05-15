@@ -1129,7 +1129,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.9w",
+    		        	"Create by MrMarL\nPlugin version: v1.2.9x",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
