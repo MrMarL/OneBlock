@@ -1,4 +1,4 @@
-// Copyright © 2022 MrMarL. All rights reserved.
+// Copyright © 2025 MrMarL. The MIT License (MIT).
 package Oneblock;
 
 import java.io.BufferedReader;
@@ -17,11 +17,8 @@ public class Config {
 	
 	public static void Save (final FileConfiguration fc, final File f) {
 		file = f;
-		if (XMaterial.supports(18)) {
-			try { fc.save(f); return; } 
-			catch (Exception e) {}
-		} 
-		else try {
+		// 1.8.x - 1.17.x
+		if (!XMaterial.supports(18)) try {
 	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
 	        StringBuffer inputBuffer = new StringBuffer();
 	        String line;
@@ -53,14 +50,13 @@ public class Config {
 	        FileOutputStream fileOut = new FileOutputStream(f);
 	        fileOut.write(inputBuffer.toString().getBytes());
 	        fileOut.close();
+	        return;
+		} 
+		catch (Exception e) {}
 		
-		} catch (Exception e) {
-			try {
-				fc.save(f);
-			} catch (Exception e1) {
-				System.out.println("Problem reading config.yml.");
-			}
-		}
+		// 1.18+
+		try { fc.save(f); } 
+		catch (Exception e) {}
 	}
 	
 	public static void Save (final FileConfiguration fc) {

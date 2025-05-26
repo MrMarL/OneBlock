@@ -1,4 +1,4 @@
-// Copyright © 2024 MrMarL. All rights reserved.
+// Copyright © 2025 MrMarL. The MIT License (MIT).
 package Oneblock;
 
 import org.bukkit.plugin.PluginManager;
@@ -11,12 +11,9 @@ import com.nexomc.nexo.api.NexoBlocks;
 
 import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
-import Oneblock.PlData.JsonSimple;
-import Oneblock.PlData.ReadOldData;
+import Oneblock.PlData.*;
 import Oneblock.UniversalPlace.*;
-import Oneblock.WorldGuard.OBWorldGuard;
-import Oneblock.WorldGuard.OBWorldGuard6;
-import Oneblock.WorldGuard.OBWorldGuard7;
+import Oneblock.WorldGuard.*;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
 import dev.lone.itemsadder.api.CustomBlock;
@@ -47,7 +44,6 @@ import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -69,7 +65,7 @@ public class Oneblock extends JavaPlugin {
     final Random rnd = new Random(System.currentTimeMillis());
     boolean on = false;
     int x = 0, y = 0, z = 0;
-    FileConfiguration config, config_temp;
+    YamlConfiguration config, config_temp;
     World wor, leavewor;
     boolean superlegacy, legacy;
     ArrayList <Object> blocks = new ArrayList <>();
@@ -89,7 +85,7 @@ public class Oneblock extends JavaPlugin {
     Place.Type placetype = Place.Type.basic;
     boolean Border = true;
     public boolean Progress_bar = false;
-    boolean СircleMode = false;
+    boolean CircleMode = true;
     boolean UseEmptyIslands = true;
     boolean saveplayerinventory = false;
     int max_players_team = 0;
@@ -171,7 +167,7 @@ public class Oneblock extends JavaPlugin {
     
     private void setupMetrics(Metrics metrics) {
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
-        metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(СircleMode)));
+        metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(CircleMode)));
         metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
         metrics.addCustomChart(new SimplePie("place_type", () -> String.valueOf(placetype)));
@@ -369,10 +365,14 @@ public class Oneblock extends JavaPlugin {
         }
         else WorldGuard = false;
     }
+    
+    public int[] getFullCoord(final int id) {
+		if (!CircleMode) return new int[] {id * sto + x, z, id};
+		
+		return getFullCoordGibrid(id);
+	}
 
-	public int[] getFullCoord(final int id) {
-		if (!СircleMode)
-			return new int[] {id * sto + x, z, id};
+	public int[] getFullCoordIter(final int id) {
 		int X = 0, Z = 0;
 		for (int i = 0; i < id; i++) {
 			if (X > Z)
@@ -388,6 +388,41 @@ public class Oneblock extends JavaPlugin {
 		X = X * sto + x;
 		Z = Z * sto + z;
 		return new int[] {X, Z, id};
+	}
+	
+	public int[] getFullCoordGibrid(final int id) {
+	    if (id <= 30) return getFullCoordIter(id);
+
+	    int ring = (int) Math.floor((Math.sqrt(id) + 1) / 2);
+	    int firstInRing = (2 * ring - 1) * (2 * ring - 1) + 1;
+	    int posInRing = id + 1 - firstInRing;
+	    int sideLength = 2 * ring;
+	    int side = posInRing / sideLength;
+	    int offset = posInRing % sideLength;
+
+	    int X, Z;
+
+	    switch (side) {
+	        case 0:
+	            X = ring;
+	            Z = ring - 1 - offset;
+	            break;
+	        case 1:
+	            X = ring - 1 - offset;
+	            Z = -ring;
+	            break;
+	        case 2:
+	            X = -ring;
+	            Z = -ring + 1 + offset;
+	            break;
+	        default:
+	        	X = -ring + 1 + offset;
+	            Z = ring;
+	    }
+
+	    X = X * sto + x;
+	    Z = Z * sto + z;
+	    return new int[] {X, Z, id};
 	}
 	
 	public class TaskUpdatePlayers implements Runnable {
@@ -449,7 +484,7 @@ public class Oneblock extends JavaPlugin {
     
     public boolean CheckPosition(Location loc, int X_pl, int Z_pl) {
     	X_pl = loc.getBlockX()-X_pl;
-    	Z_pl = СircleMode ? loc.getBlockZ()-Z_pl : 0;
+    	Z_pl = CircleMode ? loc.getBlockZ()-Z_pl : 0;
     	int val = Math.abs(sto/2) + 1;
     	return (Math.abs(X_pl) <= val && Math.abs(Z_pl) <= val);
     }
@@ -727,29 +762,6 @@ public class Oneblock extends JavaPlugin {
 	        	pl.performCommand("ob leave /n");
 	        	return true;
 	        }
-	        case ("gui"):{
-	        	if (args.length == 1) {
-	        		GUI.openGUI((Player) sender);
-	        		return true;
-	        	}
-	        	if (!sender.hasPermission("Oneblock.set")) {
-	                sender.sendMessage(Messages.noperm);
-	                return true;
-	            }
-	        	if (args.length > 1 &&
-	                	(args[1].equals("true") || args[1].equals("false"))) {
-	        			config = YamlConfiguration.loadConfiguration(Config.file);
-	                	config.set(parametr, Boolean.valueOf(args[1]));
-	                	Config.Save(config);
-	                    GUI.enabled = Check("gui", GUI.enabled);
-	            }
-	            else sender.sendMessage(Messages.bool_format);
-	        	if (!GUI.enabled)
-	        		for (Player pl : wor.getPlayers())
-	        			pl.closeInventory();
-	            sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (GUI.enabled?"enabled.":"disabled.")));
-	        	return true;
-	        }
 	        case ("top"):{
 	        	GUI.topGUI((Player) sender);
 	        	return true;
@@ -757,6 +769,12 @@ public class Oneblock extends JavaPlugin {
 	        case ("help"):{
 	        	sender.sendMessage(sender.hasPermission("Oneblock.set") ? Messages.help_adm:Messages.help);
 	        	return true;
+	        }
+	        case ("gui"):{
+	        	if (args.length == 1) {
+	        		GUI.openGUI((Player) sender);
+	        		return true;
+	        	} //else admin commands
 	        }
 	        default: {//admin commands
 	        	if (!sender.hasPermission("Oneblock.set"))
@@ -849,7 +867,6 @@ public class Oneblock extends JavaPlugin {
 			           		return true;
 			            }
 			            case ("circlemode"):
-			            	parametr = "СircleMode";
 			            case ("useemptyislands"):
 			            case ("protection"):
 			            case ("droptossup"):
@@ -857,7 +874,10 @@ public class Oneblock extends JavaPlugin {
 			            case ("autojoin"):
 			            case ("particle"):
 			            case ("allow_nether"):
-			            case ("saveplayerinventory"):{
+			            case ("saveplayerinventory"):
+			            case ("gui"):
+			            case ("chat_alert"):
+			            case ("rebirth_on_the_island"):{
 			            	if (args.length > 1 &&
 			                    	(args[1].equals("true") || args[1].equals("false"))) {
 			                    	config.set(parametr, Boolean.valueOf(args[1]));
@@ -1053,12 +1073,6 @@ public class Oneblock extends JavaPlugin {
 			            	sender.sendMessage(String.format("%sAll *.yml reloaded!", ChatColor.GREEN));
 			            	return true;
 			            }
-			            case ("chat_alert"):{
-			                chat_alert = !chat_alert;
-			                sender.sendMessage(ChatColor.GREEN + (chat_alert?"Alerts are now on!":"Alerts are now disabled!"));
-			                config.set("Chat_alert", chat_alert);
-			                return true;
-			            }
 			            case ("islands"):{
 			                if (args.length == 1) {
 			                    sender.sendMessage(Messages.bool_format);
@@ -1098,20 +1112,6 @@ public class Oneblock extends JavaPlugin {
 			                sender.sendMessage(Messages.bool_format);
 			                return true;
 			            }
-			            case ("island_rebirth"):{
-			                if (args.length == 1) {
-			                    sender.sendMessage(Messages.bool_format);
-			                    return true;
-			                }
-			                if (args[1].equals("true") || args[1].equals("false")) {
-			                    rebirth = Boolean.valueOf(args[1]);
-			                    config.set("Rebirth_on_the_island", rebirth);
-			                    sender.sendMessage(ChatColor.GREEN + "Rebirth_on_the_island = " + rebirth);
-			                    return true;
-			                }
-			                sender.sendMessage(Messages.bool_format);
-			                return true;
-			            }
 			            case ("chest"):{
 			            	if (args.length < 2) {
 			            		ChestItems.getChestNames().forEach(t -> sender.sendMessage(t));
@@ -1129,7 +1129,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.2.9x",
+    		        	"Create by MrMarL\nPlugin version: v1.3.0",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }
@@ -1374,7 +1374,7 @@ public class Oneblock extends JavaPlugin {
     	File con = new File(getDataFolder(), "config.yml");
         if (!con.exists())
             saveResource("config.yml", false);
-        config = YamlConfiguration.loadConfiguration(con);
+        config = LowerCaseYaml.loadAndFixConfig(con);
         wor = Bukkit.getWorld(Check("world", "world"));
         x = (int) Check("x", (double) x);
         y = (int) Check("y", (double) y);
@@ -1385,22 +1385,20 @@ public class Oneblock extends JavaPlugin {
         Check("zleave", .0);
         Check("yawleave", .0);
         if (!superlegacy) {
-        	Progress_bar = Check("Progress_bar", true);
-        	Progress_color = BarColor.valueOf(Check("Progress_bar_color", "GREEN"));
-	        TextP = Check("Progress_bar_text", "level");
+        	Progress_bar = Check("progress_bar", true);
+        	Progress_color = BarColor.valueOf(Check("progress_bar_color", "GREEN"));
+	        TextP = Check("progress_bar_text", "level");
 	        lvl_bar_mode = TextP.equals("level");
         }
-        chat_alert = Check("Chat_alert", !lvl_bar_mode);
-        il3x3 = Check("Island_for_new_players", true);
-        rebirth = Check("Rebirth_on_the_island", true);
+        il3x3 = Check("island_for_new_players", true);
         Level.multiplier = Check("level_multiplier", Level.multiplier);
         max_players_team = Check("max_players_team", max_players_team);
         UpdateParametrs();// СircleMode;protection;autojoin;droptossup
         GUI.enabled = Check("gui", GUI.enabled);
         if (OBWorldGuard.canUse)
-        	WorldGuard = Check("WorldGuard", OBWorldGuard.canUse);
-        OBWorldGuard.flags = Check("WGflags", OBWorldGuard.flags);
-        if (Border) Border = Check("Border", Border);
+        	WorldGuard = Check("worldguard", OBWorldGuard.canUse);
+        OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
+        if (Border) Border = Check("border", Border);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy)
         	Island.read(config);
@@ -1408,7 +1406,7 @@ public class Oneblock extends JavaPlugin {
     }
     
     public void UpdateParametrs() {
-    	СircleMode = Check("СircleMode", СircleMode);
+    	CircleMode = Check("circlemode", CircleMode);
     	UseEmptyIslands = Check("useemptyislands", UseEmptyIslands);
     	saveplayerinventory = Check("saveplayerinventory", saveplayerinventory);
         protection = Check("protection", protection);
@@ -1417,6 +1415,9 @@ public class Oneblock extends JavaPlugin {
         physics = Check("physics", physics);
         particle = Check("particle", particle);
         allow_nether = Check("allow_nether", allow_nether);
+        GUI.enabled = Check("gui", GUI.enabled);
+        chat_alert = Check("chat_alert", chat_alert);
+        rebirth = Check("rebirth_on_the_island", rebirth);
     }
     
     public static int getlvl(UUID pl_uuid) {
@@ -1505,6 +1506,7 @@ public class Oneblock extends JavaPlugin {
                 case ("droptossup"):
                 case ("physics"):
                 case ("gui"):
+                case ("chat_alert"):
 	                commands.add("true");
 	                commands.add("false");
 	                break;

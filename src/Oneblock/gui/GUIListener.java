@@ -13,7 +13,6 @@ public class GUIListener implements Listener {
 
 	@EventHandler
     public void onPlayerClickInventory(final InventoryClickEvent e){
-    	if (!GUI.enabled) return;
         Inventory inv = e.getInventory();
         if (inv.getHolder() == null) return;
         if (!inv.getHolder().getClass().isAssignableFrom(GUIHolder.class)) return;
