@@ -437,8 +437,9 @@ public class Oneblock extends JavaPlugin {
 	    public void run() {
 	        if (!particle) return;
 
-	        cache.getPlayers().forEach(ponl -> {
+	        for (Player ponl: cache.getPlayers()) {
 	            int[] result = cache.getFullCoord(ponl);
+	            if (result == null) continue;
 	            int X_pl = result[0], Z_pl = result[1];
 
 	            Arrays.asList(
@@ -447,7 +448,7 @@ public class Oneblock extends JavaPlugin {
 	                new Location(wor, X_pl, y + .5, Z_pl + 1),
 	                new Location(wor, X_pl + 1, y + .5, Z_pl + 1)
 	            ).forEach(loc -> wor.spawnParticle(Particle.PORTAL, loc, 5, 0, 0, 0, 0));
-	        });
+	        }
 	    }
 	}
 
@@ -1129,7 +1130,7 @@ public class Oneblock extends JavaPlugin {
     		        	"  ▄▄    ▄▄",
     		        	"█    █  █▄▀",
     		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.3.0",
+    		        	"Create by MrMarL\nPlugin version: v1.3.0f",
     		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
     		        return true;
 		    }

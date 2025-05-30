@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Oneblock</groupId>
 	<artifactId>Oneblock</artifactId>
-	<version>1.3.0</version>
+	<version>1.3.0f</version>
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -49,12 +49,10 @@
 			<url>https://repo.nexomc.com/releases</url>
 		</repository>
 		
-		
 		<repository>
 			<id>AlessioDP</id>
 			<url>https://repo.alessiodp.com/releases/</url>
 		</repository>
-		
 		
 		<repository>
 			<id>WorldGuardOneBlock-main</id>
