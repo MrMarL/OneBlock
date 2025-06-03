@@ -68,3 +68,9 @@ leave_not_set: |
 
 not_allow_visit: |
     &eThe player did not allow visits.
+
+allowed_visit: |
+    &aYou have allowed other players to visit your island!
+
+forbidden_visit: |
+    &eYou have Forbidden other players from visiting your island!

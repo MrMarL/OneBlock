@@ -26,6 +26,8 @@ public class Messages {
 	public static String protection = String.format("%sare you trying to go %soutside the island?", ChatColor.YELLOW, ChatColor.RED);
 	public static String leave_not_set = String.format("%sSorry, but the position was not set.", ChatColor.YELLOW);
 	public static String not_allow_visit = String.format("%sThe player did not allow visits.", ChatColor.YELLOW);
+	public static String allowed_visit = String.format("%sYou have allowed other players to visit your island!", ChatColor.GREEN);
+	public static String forbidden_visit = String.format("%sYou have forbidden other players from visiting your island!", ChatColor.YELLOW);
 	
 	//GUI
 	public static String baseGUI = "";

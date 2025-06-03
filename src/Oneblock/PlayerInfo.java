@@ -118,6 +118,12 @@ public class PlayerInfo {
 			list.add(pInf);
 	}
 	
+	public static int getFreeId(boolean UseEmptyIslands) {
+		if (UseEmptyIslands)
+			return PlayerInfo.getNull();
+		return PlayerInfo.size();
+	}
+	
 	public static int size() {
 		return list.size();
 	}

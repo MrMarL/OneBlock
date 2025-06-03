@@ -564,10 +564,7 @@ public class Oneblock extends JavaPlugin {
 	            int X_pl = 0, Z_pl = 0;
 	            if (!PlayerInfo.ExistId(uuid)) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
-	            	if (UseEmptyIslands)
-	            		plID = PlayerInfo.getNull();
-	            	else
-	            		plID = PlayerInfo.size();
+	            	plID = PlayerInfo.getFreeId(UseEmptyIslands);
 	            	int result[] = getFullCoord(plID);
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
@@ -575,11 +572,8 @@ public class Oneblock extends JavaPlugin {
 	            	XBlock.setType(wor.getBlockAt(X_pl, y, Z_pl), XMaterial.GRASS_BLOCK);
 	                if (il3x3)
 	                	Island.place(wor, X_pl, y, Z_pl);
-	                if (WorldGuard) {
-	                	Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
-	                	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-	                	OBWG.CreateRegion(uuid, Block1, Block2, plID);
-	                }
+	                if (WorldGuard) 
+	                	OBWG.CreateRegion(uuid, X_pl, Z_pl, sto, plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
 						inf.createBar(getBarTitle(p, 0));
@@ -656,7 +650,7 @@ public class Oneblock extends JavaPlugin {
 	        	if (!PlayerInfo.ExistId(uuid)) return true;
 	        	PlayerInfo inf = PlayerInfo.get(uuid);
 	        	inf.allow_visit = !inf.allow_visit;
-	        	pl.sendMessage(String.format("%sYou have %s a visit to your island.", ChatColor.GREEN, (inf.allow_visit?"allowed":"forbidden")));
+	        	pl.sendMessage(inf.allow_visit ? Messages.allowed_visit : Messages.forbidden_visit);
 	        	return true;
 	        }
 	        case ("invite"):{
@@ -1154,11 +1148,8 @@ public class Oneblock extends JavaPlugin {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.uuid == null)
     			continue;
-            int result[] = getFullCoord(i);
-            int X_pl = result[0], Z_pl = result[1];
-			Vector Block1 = new Vector(X_pl - sto/2 + 1, 0, Z_pl - sto/2 + 1);
-        	Vector Block2 = new Vector(X_pl + sto/2 - 1, 255, Z_pl + sto/2 - 1);
-        	OBWG.CreateRegion(owner.uuid, Block1, Block2, i);
+            int pos[] = getFullCoord(i);
+        	OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
             for (UUID member: owner.uuids) 
             	OBWG.addMember(member, i);
         }
@@ -1305,6 +1296,8 @@ public class Oneblock extends JavaPlugin {
         Messages.protection = MessageCheck("protection", Messages.protection);
         Messages.leave_not_set = MessageCheck("leave_not_set", Messages.leave_not_set);
         Messages.not_allow_visit = MessageCheck("not_allow_visit", Messages.not_allow_visit);
+        Messages.allowed_visit = MessageCheck("allowed_visit", Messages.allowed_visit);
+        Messages.forbidden_visit = MessageCheck("forbidden_visit", Messages.forbidden_visit);
         
         File gui = new File(getDataFolder(), "gui.yml");
         if (!gui.exists())
