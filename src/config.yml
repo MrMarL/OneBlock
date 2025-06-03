@@ -19,7 +19,7 @@ progress_bar: true
 #What shoud progress bar show?
 progress_bar_text: level
 #Shoud we enable chat alert for Levels
-phat_alert: true
+chat_alert: true
 #ProgressBar Color
 progress_bar_color: GREEN
 #Shoud we Create New Islands for New Players?
