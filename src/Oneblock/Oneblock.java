@@ -82,7 +82,6 @@ public class Oneblock extends JavaPlugin {
     boolean protection = false;
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
-    Place.Type placetype = Place.Type.basic;
     boolean Border = true;
     public boolean Progress_bar = false;
     boolean CircleMode = true;
@@ -92,9 +91,10 @@ public class Oneblock extends JavaPlugin {
     OBWorldGuard OBWG;
     final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
     final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    Place.Type placetype = Place.Type.basic;
     Place placer;
     
-    public static World wor() { return Oneblock.plugin.wor; }
+    public static World wor() { return plugin.wor; }
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
@@ -776,8 +776,8 @@ public class Oneblock extends JavaPlugin {
 	                sender.sendMessage(Messages.noperm);
 	        	else 
 		        {
-	        		config = YamlConfiguration.loadConfiguration(Config.file); // Loading the config.yml file before making changes.
-	        		Bukkit.getScheduler().runTaskLater(Oneblock.this, () -> { Config.Save(config); }, 1L); // Saving the config.yml file after making changes.
+	        		config = YamlConfiguration.loadConfiguration(LegacyConfigSaver.file); // Loading the config.yml file before making changes.
+	        		Bukkit.getScheduler().runTaskLater(Oneblock.this, () -> { LegacyConfigSaver.Save(config); }, 1L); // Saving the config.yml file after making changes.
 		        	switch (parametr) {
 			            case ("set"):{
 			                Player p = (Player) sender;
@@ -808,7 +808,7 @@ public class Oneblock extends JavaPlugin {
 			                if (!on) runMainTask();
 			                wor.getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
 			                ReCreateRegions();
-			                Config.Save(config);
+			                LegacyConfigSaver.Save(config);
 			                return true;
 			            }
 			            case ("setleave"):{
@@ -1395,7 +1395,7 @@ public class Oneblock extends JavaPlugin {
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy)
         	Island.read(config);
-        Config.Save(config, con);
+        LegacyConfigSaver.Save(config, con);
     }
     
     public void UpdateParametrs() {

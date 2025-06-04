@@ -12,10 +12,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.cryptomorin.xseries.XMaterial;
 
-public class Config {
+public class LegacyConfigSaver {
 	protected static File file;
 	
-	public static void Save (final FileConfiguration fc, final File f) {
+	public static void Save(final FileConfiguration fc, final File f) {
 		file = f;
 		// 1.8.x - 1.17.x
 		if (!XMaterial.supports(18)) try {
