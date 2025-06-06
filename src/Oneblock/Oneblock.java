@@ -505,28 +505,20 @@ public class Oneblock extends JavaPlugin {
         }
         int random = lvl_inf.blocks;
         if (random != 0) random = rnd.nextInt(random);
-        if (blocks.get(random) == null) {
+        Object newblocktype = blocks.get(random);
+        if (newblocktype == null) {
             XBlock.setType(block, GRASS_BLOCK);
-            if (rnd.nextInt(3) == 1)
-                XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
-        } else if (blocks.get(random) == Material.CHEST) {
-            ArrayList<String> chestTypes = ChestItems.getChestNames();
-            if (chestTypes.size() > 0) {
-            	String type;
-            	if (random < blocks.size() / 3) type = chestTypes.get(0);
-            	else if (random < blocks.size() / 1.5 && chestTypes.size() > 1)	type = chestTypes.get(1);
-                else type = chestTypes.get(chestTypes.size()-1);
-            	
-            	placer.setType(block, type, physics);
-            }
-            else getLogger().warning("Error when generating items for the chest! Pls redo chests.yml!");
-        } 
-        else placer.setType(block, blocks.get(random), physics);
-
-        if (rnd.nextInt(9) == 0 && (random = lvl_inf.mobs) != 0) {
-            wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(rnd.nextInt(random)));
+            if (rnd.nextInt(3) == 1) XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
         }
+        else placer.setType(block, newblocktype, physics);
+
+        if (rnd.nextInt(9) == 0) spawnRandomMob(Z_pl, Z_pl, lvl_inf);
 	}
+    
+    public void spawnRandomMob(int x, int z, Level level) {
+        if (level.mobs == 0) return;
+        wor.spawnEntity(new Location(wor, x + .5, y + 1, z + .5), mobs.get(rnd.nextInt(level.mobs)));
+    }
     
     public String getBarTitle(Player p, int lvl) {
         if (lvl_bar_mode) return Level.get(lvl).name;
