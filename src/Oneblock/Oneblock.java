@@ -25,7 +25,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -102,10 +101,7 @@ public class Oneblock extends JavaPlugin {
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
 	
 	public boolean findMethod(final Class<?> cl, String name) {
-		for (Method m : cl.getMethods())
-			if (m.getName().equals(name))
-				return true;
-		return false;
+		return Arrays.stream(cl.getMethods()).anyMatch(m -> m.getName().equals(name));
 	}
     
     @Override
@@ -139,8 +135,8 @@ public class Oneblock extends JavaPlugin {
         pluginManager.registerEvents(new TeleportEvent(), this);
         pluginManager.registerEvents(new BlockEvent(), this);
         pluginManager.registerEvents(new GUIListener(), this);
-        if (placetype == Place.Type.ItemsAdder) pluginManager.registerEvents(new ItemsAdderEvent(), this);
         if (!superlegacy) pluginManager.registerEvents(new ChangedWorld(), this);
+        if (placetype == Place.Type.ItemsAdder) pluginManager.registerEvents(new ItemsAdderEvent(), this);
         getCommand("oneblock").setTabCompleter(new CommandTabCompleter());
         
         if (config.getDouble("y") == 0) return;
@@ -1143,18 +1139,19 @@ public class Oneblock extends JavaPlugin {
     }
     
     private void ReCreateRegions() {
-    	if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null)
-    		return;
+    	if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null) return;
+    	
     	int id = PlayerInfo.size();
     	OBWG.RemoveRegions(id);
-		for (int i = 0; i < id; i++) {
-			PlayerInfo owner = PlayerInfo.get(i);
-			if (owner.uuid == null)
-    			continue;
-            int pos[] = getFullCoord(i);
-        	OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
-            for (UUID member: owner.uuids) 
-            	OBWG.addMember(member, i);
+    	
+    	for (int i = 0; i < id; i++) {
+    		PlayerInfo owner = PlayerInfo.get(i);
+    		if (owner.uuid == null) continue;
+			
+    		int pos[] = getFullCoord(i);
+    		OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
+    		for (UUID member: owner.uuids) 
+    			OBWG.addMember(member, i);
         }
     }
 
@@ -1440,15 +1437,11 @@ public class Oneblock extends JavaPlugin {
     public static int getlenght(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).getNeed();
     }
-  
-    @SuppressWarnings("unchecked")
-	public static PlayerInfo gettop(int i) {
-    	if (PlayerInfo.size() <= i)
-    		return new PlayerInfo(null);
-    	ArrayList<PlayerInfo> ppii = (ArrayList<PlayerInfo>) PlayerInfo.list.clone();
-    	Collections.sort(ppii, PlayerInfo.COMPARE_BY_LVL);
-    	if (ppii.get(i).uuid == null)
-    		return new PlayerInfo(null);
-        return ppii.get(i);
+    public static PlayerInfo gettop(int i) {
+    	if (PlayerInfo.size() <= i) return new PlayerInfo(null);
+    	
+    	List<PlayerInfo> sorted = new ArrayList<>(PlayerInfo.list);
+    	sorted.sort(PlayerInfo.COMPARE_BY_LVL);
+    	return sorted.get(i).uuid == null ? new PlayerInfo(null) : sorted.get(i);
     }
 }
