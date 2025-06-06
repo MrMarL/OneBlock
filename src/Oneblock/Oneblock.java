@@ -493,19 +493,16 @@ public class Oneblock extends JavaPlugin {
         if (++inf.breaks >= inf.getNeed()) {
         	inf.lvlup();
         	lvl_inf = Level.get(inf.lvl);
-        	if (Progress_bar) 
-             	inf.bar.setColor(lvl_inf.color);
-            if (chat_alert)
-            	ponl.sendMessage(String.format("%s%s", ChatColor.GREEN, lvl_inf.name));
+        	if (Progress_bar) inf.bar.setColor(lvl_inf.color);
+        	if (chat_alert) ponl.sendMessage(ChatColor.GREEN + lvl_inf.name);
         }
         if (Progress_bar) {
             inf.bar.setTitle(getBarTitle(ponl, inf.lvl));
             inf.bar.setProgress(inf.getPercent());
             inf.bar.addPlayer(ponl);
         }
-        int random = lvl_inf.blocks;
-        if (random != 0) random = rnd.nextInt(random);
-        Object newblocktype = blocks.get(random);
+        
+        Object newblocktype = blocks.get(lvl_inf.blocks == 0 ? 0 : rnd.nextInt(lvl_inf.blocks));
         if (newblocktype == null) {
             XBlock.setType(block, GRASS_BLOCK);
             if (rnd.nextInt(3) == 1) XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
@@ -534,7 +531,7 @@ public class Oneblock extends JavaPlugin {
         if (args.length == 0) return ((Player)sender).performCommand("ob j");
         
         if (!sender.hasPermission("Oneblock.join")) {
-            sender.sendMessage(String.format("%sYou don't have permission [Oneblock.join].", ChatColor.RED));
+            sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.join].");
             return true;
         }
         
@@ -544,7 +541,7 @@ public class Oneblock extends JavaPlugin {
 	        case ("j"):
 	        case ("join"):{
 	            if (y == 0 || wor == null) {
-	            	sender.sendMessage(String.format("%sFirst you need to set the reference coordinates '/ob set'.", ChatColor.YELLOW));
+	            	sender.sendMessage(ChatColor.YELLOW + "First you need to set the reference coordinates '/ob set'.");
 	            	return true;
 	            }
 	            Player p = (Player) sender;
@@ -596,7 +593,7 @@ public class Oneblock extends JavaPlugin {
 	                return true;
 	            }
 	        	if (OBWG == null || !WorldGuard) {
-	                sender.sendMessage(String.format("%sThis feature is only available when worldguard is enabled.", ChatColor.YELLOW));
+	                sender.sendMessage(ChatColor.YELLOW + "This feature is only available when worldguard is enabled.");
 	                return true;
 	            }
 	        	Player pl = (Player) sender;

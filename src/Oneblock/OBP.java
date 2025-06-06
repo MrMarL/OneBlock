@@ -42,18 +42,14 @@ public class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return "1.2.0";
+        return "1.3.0";
     }
     @Override
     public String onRequest(OfflinePlayer p, String identifier) {
     	if (p == null) return null;
-        // %OB_ver%
-        if (identifier.equals("ver")) {
-            return "1.1.4";
-        }
         // %OB_lvl%
         if (identifier.equals("lvl")) {
-            return String.format("%d", Oneblock.getlvl(p.getUniqueId()));
+            return Integer.toString(Oneblock.getlvl(p.getUniqueId()));
         }
         // %OB_lvl_name%
         if (identifier.equals("lvl_name")) {
@@ -61,7 +57,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_next_lvl%
         if (identifier.equals("next_lvl")) {
-            return String.format("%d", Oneblock.getnextlvl(p.getUniqueId()));
+            return Integer.toString(Oneblock.getnextlvl(p.getUniqueId()));
         }
         // %OB_next_lvl_name%
         if (identifier.equals("next_lvl_name")) {
@@ -69,19 +65,19 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_break_on_this_lvl%
         if (identifier.equals("break_on_this_lvl")) {
-            return String.format("%d", Oneblock.getblocks(p.getUniqueId()));
+            return Integer.toString(Oneblock.getblocks(p.getUniqueId()));
         }
         // %OB_lvl_lenght%
         if (identifier.equals("lvl_lenght")) {
-            return String.format("%d", Oneblock.getlenght(p.getUniqueId()));
+            return Integer.toString(Oneblock.getlenght(p.getUniqueId()));
         }
         // %OB_need_to_lvl_up%
         if (identifier.equals("need_to_lvl_up")) {
-            return String.format("%d", Oneblock.getneed(p.getUniqueId()));
+            return Integer.toString(Oneblock.getneed(p.getUniqueId()));
         }
         // %OB_player_count%
         if (identifier.equals("player_count")) {
-            return String.format("%d", Oneblock.plugin.cache.getPlayers().size());
+            return Integer.toString(Oneblock.plugin.cache.getPlayers().size());
         }
         // %OB_owner_name%
         if (identifier.equals("owner_name")) {
@@ -94,7 +90,7 @@ public class OBP extends PlaceholderExpansion {
         // %OB_percent%
         if (identifier.equals("percent")) {
         	PlayerInfo inf = PlayerInfo.get(p.getUniqueId());
-        	return String.format("%d%%", (int) (inf.getPercent() * 100));
+        	return Integer.toString((int) (inf.getPercent() * 100)) + "%";
         }
         // %OB_scale%
         if (identifier.equals("scale")) {
@@ -103,7 +99,7 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_top_%d_name%
         for(int i = 0;i<10;i++) {
-        	if (identifier.equals(String.format("top_%d_name", i + 1))) {
+        	if (identifier.equals("top_"+(i+1)+"_name")) {
         		UUID uuid = Oneblock.gettop(i).uuid;
         		if (uuid == null) return "[None]";
         		String name = Bukkit.getOfflinePlayer(uuid).getName();
@@ -113,12 +109,16 @@ public class OBP extends PlaceholderExpansion {
         }
         // %OB_top_%d_lvl%
         for(int i = 0;i<10;i++) {
-        	if (identifier.equals(String.format("top_%d_lvl", i+1)))
-                return String.format("%d",Oneblock.gettop(i).lvl);
+        	if (identifier.equals("top_"+(i+1)+"_lvl"))
+                return Integer.toString(Oneblock.gettop(i).lvl);
         }
         // %OB_number_of_invited%
         if (identifier.equals("number_of_invited")) {
-            return String.format("%d", PlayerInfo.get(p.getUniqueId()).uuids.size());
+            return Integer.toString(PlayerInfo.get(p.getUniqueId()).uuids.size());
+        }
+        // %OB_ver%
+        if (identifier.equals("ver")) {
+            return "1.3.0";
         }
         return null; 
     }
