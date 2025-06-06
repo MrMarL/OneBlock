@@ -40,7 +40,7 @@ public class Invitation extends AbstractInvitation {
 		if (!PlayerInfo.ExistId(inv_.Inviting)) return false;
 			
 		if (PlayerInfo.ExistId(uuid)) {
-			if (Oneblock.plugin.Progress_bar)
+			if (Oneblock.plugin.isProgressBarEnabled())
 				PlayerInfo.get(uuid).bar.removePlayer(pl);
 			pl.performCommand("ob idreset /n");
 		}

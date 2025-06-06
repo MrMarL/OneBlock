@@ -71,7 +71,7 @@ public class Oneblock extends JavaPlugin {
     ArrayList <Object> blocks = new ArrayList <>();
     ArrayList <EntityType> mobs = new ArrayList <>();
     ArrayList <XMaterial> flowers = new ArrayList <>();
-    PlayerCache cache = new PlayerCache();
+    public PlayerCache cache = new PlayerCache();
     String TextP = "";
     int sto = 100;
     BarColor Progress_color;
@@ -83,7 +83,7 @@ public class Oneblock extends JavaPlugin {
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
     boolean Border = true;
-    public boolean Progress_bar = false;
+    boolean Progress_bar = false;
     boolean CircleMode = true;
     boolean UseEmptyIslands = true;
     boolean saveplayerinventory = false;
@@ -94,7 +94,9 @@ public class Oneblock extends JavaPlugin {
     Place.Type placetype = Place.Type.basic;
     Place placer;
     
-    public static World wor() { return plugin.wor; }
+    public World getWorld() { return plugin.wor; }
+    public boolean isPAPIEnabled() { return PAPI; }
+    public boolean isProgressBarEnabled() { return Progress_bar; }
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
@@ -139,6 +141,7 @@ public class Oneblock extends JavaPlugin {
         pluginManager.registerEvents(new GUIListener(), this);
         if (placetype == Place.Type.ItemsAdder) pluginManager.registerEvents(new ItemsAdderEvent(), this);
         if (!superlegacy) pluginManager.registerEvents(new ChangedWorld(), this);
+        getCommand("oneblock").setTabCompleter(new CommandTabCompleter());
         
         if (config.getDouble("y") == 0) return;
         
@@ -1447,91 +1450,5 @@ public class Oneblock extends JavaPlugin {
     	if (ppii.get(i).uuid == null)
     		return new PlayerInfo(null);
         return ppii.get(i);
-    }
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        List<String> commands = new ArrayList<>();
-
-        if (args.length == 1) {
-        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
-        	if (sender.hasPermission("Oneblock.visit")) commands.addAll(Arrays.asList("visit","allow_visit"));
-            if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
-            		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
-            }
-        } else if (args.length == 2) {
-        	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit")) {
-        		for (Player ponl: cache.getPlayers())
-        			commands.add(ponl.getName());
-        	}
-        	else if (sender.hasPermission("Oneblock.set")) {
-        		switch (args[0])
-                {
-        		case ("chest"):
-        			for (String t : ChestItems.getChestNames())
-        				commands.add(t);
-                case ("clear"):
-                case ("setlevel"):{
-            		for (Player ponl: cache.getPlayers())
-            			commands.add(ponl.getName());
-            		break;
-            	}
-                case ("Progress_bar"):{
-	                commands.add("true");
-	                commands.add("false");
-	                commands.add("level");
-	                commands.add("settext");
-	                commands.add("color");
-	                break;
-	            }
-                case ("islands"):
-	                commands.add("set_my_by_def");
-	                commands.add("default");
-                case ("UseEmptyIslands"):
-                case ("allow_nether"):
-                case ("island_rebirth"):
-                case ("saveplayerinventory"):
-                case ("protection"):
-                case ("circlemode"):
-                case ("worldguard"):
-                case ("border"):
-                case ("autoJoin"):
-                case ("droptossup"):
-                case ("physics"):
-                case ("gui"):
-                case ("chat_alert"):
-	                commands.add("true");
-	                commands.add("false");
-	                break;
-                case ("listlvl"):
-	            	for(int i = 0;i<Level.size();)
-	            		commands.add(String.format("%d", i++));
-	            	break;
-                case ("lvl_mult"):
-                case ("max_players_team"):
-                	for(int i = 0;i<4;)
-	            		commands.add(String.format("%d", i++));
-                case ("set"):
-                	commands.add("100");
-                	commands.add("500");
-                }
-        	}
-        }
-        else if (sender.hasPermission("Oneblock.set") && args.length == 3) 
-        	if (args[0].equals("Progress_bar")) {
-        		if (args[1].equals("color"))
-        			for (BarColor bc:BarColor.values())
-        				commands.add(bc.name());
-        		if (args[1].equals("settext")) {
-        			commands.add("...");
-        			if (PAPI)
-        				commands.add("%OB_lvl_name%. There are %OB_need_to_lvl_up% block(s) left.");
-        		}
-        	}
-        	else if (args[0].equals("setlevel"))
-            	for (int i = 0;i<Level.size();)
-            		commands.add(String.format("%d", i++));
-        Collections.sort(commands);
-        return commands;
     }
 }
