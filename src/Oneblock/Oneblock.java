@@ -22,7 +22,6 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,38 +59,37 @@ import org.bukkit.generator.ChunkGenerator;
 
 public class Oneblock extends JavaPlugin {
     public static Oneblock plugin;
-	
+    
     final Random rnd = new Random(System.currentTimeMillis());
-    boolean on = false;
-    int x = 0, y = 0, z = 0;
+    final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
+    final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    Place placer;
+    Place.Type placetype = Place.Type.basic;
+    OBWorldGuard OBWG;
     YamlConfiguration config, config_temp;
-    World wor, leavewor;
+    boolean on = false;
     boolean superlegacy, legacy;
-    ArrayList <Object> blocks = new ArrayList <>();
-    ArrayList <EntityType> mobs = new ArrayList <>();
-    ArrayList <XMaterial> flowers = new ArrayList <>();
-    public PlayerCache cache = new PlayerCache();
-    String TextP = "";
-    int sto = 100;
-    BarColor Progress_color;
+    
+    World wor, leavewor;
+    int x = 0, y = 0, z = 0, sto = 100, max_players_team = 0;
     boolean il3x3 = false, rebirth = false, autojoin = false;
     boolean droptossup = true, physics = false;
     boolean lvl_bar_mode = false, chat_alert = false, particle = true;
-    boolean allow_nether = true;
-    boolean protection = false;
+    boolean allow_nether = true, protection = false;
+    boolean saveplayerinventory = false;
     boolean PAPI = false;
     boolean WorldGuard = OBWorldGuard.canUse;
     boolean Border = true;
-    boolean Progress_bar = false;
     boolean CircleMode = true;
     boolean UseEmptyIslands = true;
-    boolean saveplayerinventory = false;
-    int max_players_team = 0;
-    OBWorldGuard OBWG;
-    final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
-    final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
-    Place.Type placetype = Place.Type.basic;
-    Place placer;
+    boolean Progress_bar = false;
+    BarColor Progress_color;
+    String TextP = "";
+    
+    ArrayList <Object> blocks = new ArrayList<>();
+    ArrayList <EntityType> mobs = new ArrayList<>();
+    ArrayList <XMaterial> flowers = new ArrayList<>();
+    public PlayerCache cache = new PlayerCache();
     
     public World getWorld() { return plugin.wor; }
     public boolean isPAPIEnabled() { return PAPI; }
