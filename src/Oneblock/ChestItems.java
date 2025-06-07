@@ -18,35 +18,47 @@ public class ChestItems {
 	public static void save() {
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(chest);
 		
-		for (Map.Entry<String, List<ItemStack>> entry : chests.entrySet()) 
-			config.set(entry.getKey(), entry.getValue());
+		for (Map.Entry<String, List<ItemStack>> entry : chests.entrySet()) {
+			List<Object> simplifiedItems = new ArrayList<>();
+            
+			for (ItemStack item : entry.getValue()) {
+				if (item == null || item.getType() == Material.AIR) continue;
+                    
+				if (!item.hasItemMeta()) 
+					simplifiedItems.add(item.getType().name());
+				else 
+					simplifiedItems.add(item);
+			}
+			config.set(entry.getKey(), simplifiedItems);
+		}
 		
 		try { config.save(chest); } catch (Exception e) { }
 	}
     
-	@SuppressWarnings("unchecked")
 	public static void load() {
     	YamlConfiguration config = YamlConfiguration.loadConfiguration(chest);
     	chests.clear();
     	
     	for(String name : config.getKeys(false)) {
     		List<ItemStack> items = new ArrayList<>();
-    		
-    		if (!loadMaterial(items, config.getStringList(name)))
-    			try { items.addAll((List<ItemStack>) config.get(name)); } catch(Exception e) {}
-    		
+    		loadItems(items, config.getList(name));
     		chests.put(name, items);
     	}
     }
 	
-	private static boolean loadMaterial(List<ItemStack> arr, List<String> data) {
-		boolean result = false;
-		for (String s: data) {
-    		Material m = Material.getMaterial(s);
-    		if (m != null)
-    			result = arr.add(new ItemStack(m));
-    	}
-		return result;
+	private static void loadItems(List<ItemStack> arr, List<?> data) {
+		if (data == null) return;
+		for (Object entry : data) {
+	        if (entry instanceof ItemStack) {
+	        	arr.add((ItemStack) entry);
+	        } 
+	        else if (entry instanceof String) {
+	        	Material m = Material.getMaterial((String) entry);
+	    		if (m != null) {
+	    			arr.add(new ItemStack(m));
+	    		}
+	        }
+	    }
 	}
 	
 	public static ArrayList<String> getChestNames() {
