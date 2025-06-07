@@ -1105,14 +1105,14 @@ public class Oneblock extends JavaPlugin {
 			            }
 			        }
 	        	}
-	        	sender.sendMessage(String.format("%s%s\n%s\n%s\n%s\n%s%s 1.%d.X",
-    		        	ChatColor.values()[rnd.nextInt(ChatColor.values().length)],
-    		        	"  ▄▄    ▄▄",
-    		        	"█    █  █▄▀",
-    		        	"▀▄▄▀ █▄▀",
-    		        	"Create by MrMarL\nPlugin version: v1.3.0f",
-    		        	"Server version: ", superlegacy?"super legacy":(legacy?"legacy":""), XMaterial.getVersion()));
-    		        return true;
+	        	sender.sendMessage(
+	        		    ChatColor.values()[rnd.nextInt(ChatColor.values().length)] + 
+	        		    "  ▄▄    ▄▄\n" +
+	        		    "█    █  █▄▀\n" +
+	        		    "▀▄▄▀ █▄▀\n" +
+	        		    "Create by MrMarL\nPlugin version: v1.3.1\n" +
+	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
+    		     return true;
 		    }
 	    }
     }
