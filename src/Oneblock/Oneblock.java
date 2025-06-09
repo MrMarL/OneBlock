@@ -509,9 +509,13 @@ public class Oneblock extends JavaPlugin {
         }
         else placer.setType(block, newblocktype, physics);
 
-        //MobSpawn
-        if (rnd.nextInt(9) == 0 && lvl_inf.mobs != 0) wor.spawnEntity(new Location(wor, X_pl + .5, y + 1, Z_pl + .5), mobs.get(rnd.nextInt(lvl_inf.mobs)));
+        if (rnd.nextInt(9) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
 	}
+    
+    public void spawnRandomMob(int pos_x, int pos_z, Level level) {
+        if (level.mobs == 0) return;
+        wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
+    }
     
     public String getBarTitle(Player p, int lvl) {
         if (lvl_bar_mode) return Level.get(lvl).name;
@@ -1106,7 +1110,7 @@ public class Oneblock extends JavaPlugin {
 	        		    "  ▄▄    ▄▄\n" +
 	        		    "█    █  █▄▀\n" +
 	        		    "▀▄▄▀ █▄▀\n" +
-	        		    "Create by MrMarL\nPlugin version: v1.3.2f\n" +
+	        		    "Create by MrMarL\nPlugin version: v1.3.2\n" +
 	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;
 		    }
