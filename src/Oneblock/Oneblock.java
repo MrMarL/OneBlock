@@ -173,14 +173,15 @@ public class Oneblock extends JavaPlugin {
     public class RespawnJoinEvent implements Listener {
         @EventHandler
         public void Respawn(final PlayerRespawnEvent e) {
-			if (!rebirth)
-				return;
+			if (!rebirth) return;
 			Player pl = e.getPlayer();
-			if (pl.getWorld().equals(wor) && PlayerInfo.ExistId(pl.getUniqueId())) {
-				int result[] = getFullCoord(PlayerInfo.GetId(pl.getUniqueId()));
-				Location loc = new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5);
-				e.setRespawnLocation(loc);
-			}
+			if (!pl.getWorld().equals(wor)) return;
+			int plID = PlayerInfo.GetId(pl.getUniqueId());
+			if (plID == -1) return;
+			
+			int result[] = getFullCoord(plID);
+			Location loc = new Location(wor, result[0] + 0.5, y + 1.2013, result[1] + 0.5);
+			e.setRespawnLocation(loc);
         }
         @EventHandler
         public void AutoJoin(final PlayerTeleportEvent e) {
@@ -275,8 +276,9 @@ public class Oneblock extends JavaPlugin {
     }
     
     public void UpdateBorder(final Player pl) {
+    	WorldBorder border = pl.getWorldBorder();
     	Bukkit.getScheduler().runTaskLaterAsynchronously(this, 
-    		() -> { pl.setWorldBorder(pl.getWorldBorder()); }, 10L);
+    		() -> { pl.setWorldBorder(border); }, 10L);
     }
     
     public class ChangedWorld implements Listener {
@@ -320,8 +322,8 @@ public class Oneblock extends JavaPlugin {
     		if (block.getY() != y) return;
     		final Player ponl = e.getPlayer();
     		final UUID uuid = ponl.getUniqueId();
-        	if (!PlayerInfo.ExistId(uuid)) return;
         	final int plID = PlayerInfo.GetId(uuid);
+        	if (plID == -1) return;
         	final int result[] = getFullCoord(plID);
         	if (block.getX() != result[0]) return;
         	if (block.getZ() != result[1]) return;
@@ -474,8 +476,10 @@ public class Oneblock extends JavaPlugin {
                 }
                 
                 final Block block = wor.getBlockAt(X_pl, y, Z_pl);
-                if (block.getType().equals(Material.AIR) && PlayerInfo.ExistId(uuid)) 
-                	BlockGen(X_pl, Z_pl, plID, ponl, block);
+                if (!block.getType().equals(Material.AIR)) continue;
+                if (PlayerInfo.GetId(uuid) == -1) continue;
+                
+                BlockGen(X_pl, Z_pl, plID, ponl, block);
             }
         }
     }
@@ -491,8 +495,7 @@ public class Oneblock extends JavaPlugin {
     	final PlayerInfo inf = PlayerInfo.get(plID);
     	Level lvl_inf = Level.get(inf.lvl); 
         if (++inf.breaks >= inf.getNeed()) {
-        	inf.lvlup();
-        	lvl_inf = Level.get(inf.lvl);
+        	lvl_inf = inf.lvlup();
         	if (Progress_bar) inf.bar.setColor(lvl_inf.color);
         	if (chat_alert) ponl.sendMessage(ChatColor.GREEN + lvl_inf.name);
         }
@@ -546,9 +549,9 @@ public class Oneblock extends JavaPlugin {
 	            }
 	            Player p = (Player) sender;
 	            UUID uuid = p.getUniqueId();
-	            int plID = 0;
 	            int X_pl = 0, Z_pl = 0;
-	            if (!PlayerInfo.ExistId(uuid)) {
+	            int plID = PlayerInfo.GetId(uuid);
+	            if (plID == -1) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
 	            	plID = PlayerInfo.getFreeId(UseEmptyIslands);
 	            	int result[] = getFullCoord(plID);
@@ -565,7 +568,6 @@ public class Oneblock extends JavaPlugin {
 						inf.createBar(getBarTitle(p, 0));
 	            } 
 	            else {
-	            	plID = PlayerInfo.GetId(uuid);
 	            	int result[] = getFullCoord(plID);
 	                X_pl = result[0]; Z_pl = result[1];
 	            }
@@ -608,7 +610,8 @@ public class Oneblock extends JavaPlugin {
 	    			return true;
 	    		}
 	    		UUID uuid = inv.getUniqueId();
-	    		if (!PlayerInfo.ExistId(uuid)) {
+	    		final int plID = PlayerInfo.GetId(uuid);
+	    		if (plID == -1) {
 	    			sender.sendMessage(Messages.invite_no_island);
 	    			return true;
 	    		}
@@ -617,7 +620,6 @@ public class Oneblock extends JavaPlugin {
 	    			sender.sendMessage(Messages.not_allow_visit);
 	    			return true;
 	    		}
-	    		final int plID = PlayerInfo.GetId(uuid);
 	        	final int result[] = getFullCoord(plID);
 	            final int X_pl = result[0], Z_pl = result[1];
 	    		
@@ -633,7 +635,7 @@ public class Oneblock extends JavaPlugin {
 	            }
 	        	Player pl = (Player) sender;
 	        	UUID uuid = pl.getUniqueId();
-	        	if (!PlayerInfo.ExistId(uuid)) return true;
+	        	if (PlayerInfo.GetId(uuid) == -1) return true;
 	        	PlayerInfo inf = PlayerInfo.get(uuid);
 	        	inf.allow_visit = !inf.allow_visit;
 	        	pl.sendMessage(inf.allow_visit ? Messages.allowed_visit : Messages.forbidden_visit);
@@ -649,15 +651,14 @@ public class Oneblock extends JavaPlugin {
 	        		return true;
 	        	}
 	        	Player inv = Bukkit.getPlayer(args[1]);
-	        	if (inv == null) 
-	        		return true;
+	        	if (inv == null) return true;
 	        	Player pl = (Player) sender;
 	    		if (inv == pl) {
 	    			sender.sendMessage(Messages.invite_yourself);
 	    			return true;
 	    		}
 	    		UUID uuid = pl.getUniqueId();
-	    		if (!PlayerInfo.ExistId(uuid)) {
+	    		if (PlayerInfo.GetId(uuid) == -1) {
 	    			sender.sendMessage(Messages.invite_no_island);
 	    			return true;
 	    		}
@@ -719,9 +720,8 @@ public class Oneblock extends JavaPlugin {
 	        case ("idreset"):{
 	        	Player pl = (Player)sender;
 	        	UUID uuid = pl.getUniqueId();
-	        	if (!PlayerInfo.ExistId(uuid))
-	        		return true;
 	        	int PlId = PlayerInfo.GetId(uuid);
+	        	if (PlId == -1) return true;
 	        	PlayerInfo plp = PlayerInfo.get(PlId);
 	        	plp.removeBar(pl);
 	        	plp.removeUUID(uuid);
@@ -868,7 +868,8 @@ public class Oneblock extends JavaPlugin {
 			                }
 			                OfflinePlayer offpl = Bukkit.getOfflinePlayer(args[1]);
 			                UUID uuid = offpl.getUniqueId();
-			                if (PlayerInfo.ExistId(uuid)) {
+			                int plID = PlayerInfo.GetId(uuid);
+			                if (plID != -1) {
 			                    int setlvl = 0;
 			                    try {
 			                        setlvl = Integer.parseInt(args[2]);
@@ -877,8 +878,7 @@ public class Oneblock extends JavaPlugin {
 			                        return true;
 			                    }
 			                    if (setlvl >= 0 && 10000 > setlvl) {
-			                        int i = PlayerInfo.GetId(uuid);
-			                        PlayerInfo inf = PlayerInfo.get(i);
+			                        PlayerInfo inf = PlayerInfo.get(plID);
 			                        inf.breaks = 0;
 			                        inf.lvl = setlvl;
 			                        if (Progress_bar && offpl instanceof Player) {
@@ -900,7 +900,7 @@ public class Oneblock extends JavaPlugin {
 			                    return true;
 			                }
 			                UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-			                if (PlayerInfo.ExistId(uuid)) {
+			                if (PlayerInfo.GetId(uuid) != -1) {
 			                    int i = PlayerInfo.GetId(uuid);
 			                    PlayerInfo inf = PlayerInfo.get(i);
 			                    inf.breaks = 0;
@@ -1064,7 +1064,7 @@ public class Oneblock extends JavaPlugin {
 			                	}
 			                	Player p = (Player) sender;
 			                	UUID uuid = p.getUniqueId();
-			                    if (PlayerInfo.ExistId(uuid)) {
+			                    if (PlayerInfo.GetId(uuid) != -1) {
 			                        int result[] = getFullCoord(PlayerInfo.GetId(uuid));
 			                        Island.scan(wor, result[0], y, result[1]);
 			                        sender.sendMessage(ChatColor.GREEN + "Your island has been successfully saved and set as default for new players!");
@@ -1102,7 +1102,7 @@ public class Oneblock extends JavaPlugin {
 	        		    "  ▄▄    ▄▄\n" +
 	        		    "█    █  █▄▀\n" +
 	        		    "▀▄▄▀ █▄▀\n" +
-	        		    "Created by MrMarL\nPlugin version: v1.3.2f\n" +
+	        		    "Created by MrMarL\nPlugin version: v1.3.3\n" +
 	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;
 		    }

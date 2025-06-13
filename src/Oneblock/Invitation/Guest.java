@@ -22,7 +22,7 @@ public class Guest extends AbstractInvitation {
 	public static PlayerInfo getPlayerInfo(UUID uuid) {
 		Guest g = check(uuid);
 		if (g == null) return null;
-		if (!PlayerInfo.ExistId(g.Inviting)) return null;
+		if (PlayerInfo.GetId(g.Inviting) == -1) return null;
 		return PlayerInfo.get(g.Inviting);
 	}
 	

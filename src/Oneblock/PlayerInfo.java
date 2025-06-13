@@ -1,9 +1,5 @@
 package Oneblock;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
@@ -11,8 +7,10 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
+import java.util.*;
+
 public class PlayerInfo {
-	public static ArrayList <PlayerInfo> list = new ArrayList<>();
+	public static ArrayList<PlayerInfo> list = new ArrayList<>();
 	
 	public UUID uuid;
 	public ArrayList<UUID> uuids = new ArrayList<UUID>();
@@ -25,9 +23,10 @@ public class PlayerInfo {
 		this.uuid = uuid;
 	}
 	
-	public void lvlup() {
+	public Level lvlup() {
 		++lvl;
 		breaks = 0;
+		return Level.get(lvl);
 	}
 	
 	public void createBar() {
@@ -89,7 +88,7 @@ public class PlayerInfo {
     		if (pl.uuids.contains(name))
     			return i;
     	}
-    	return 0;
+    	return -1;
     }
 	
 	public static boolean ExistNoInvaitId(UUID name) {
@@ -101,25 +100,15 @@ public class PlayerInfo {
     	}
     	return false;
     }
-    
-	public static boolean ExistId(UUID uuid) {
-    	for(PlayerInfo pl:PlayerInfo.list) {
-    		if (pl.uuid == null)
-    			continue;
-    		if (pl.uuid.equals(uuid))
-    			return true;
-    		if (pl.uuids.contains(uuid))
-    			return true;
-    	}
-    	return false;
-    }
 	
 	public static PlayerInfo get(int id) {
 		return list.get(id);
 	}
 	
 	public static PlayerInfo get(UUID uuid) {
-    	return list.get(GetId(uuid));
+		int plID = GetId(uuid);
+		if (plID == -1) return new PlayerInfo(null);	
+		return list.get(plID);
 	}
 	
 	public static void set(int id, PlayerInfo pInf) {

@@ -37,9 +37,9 @@ public class Invitation extends AbstractInvitation {
 		UUID uuid = pl.getUniqueId();
 		Invitation inv_ = check(uuid);
 		if (inv_ == null) return false; 
-		if (!PlayerInfo.ExistId(inv_.Inviting)) return false;
+		if (PlayerInfo.GetId(inv_.Inviting) == -1) return false;
 			
-		if (PlayerInfo.ExistId(uuid)) {
+		if (PlayerInfo.GetId(uuid) != -1) {
 			if (Oneblock.plugin.isProgressBarEnabled())
 				PlayerInfo.get(uuid).bar.removePlayer(pl);
 			pl.performCommand("ob idreset /n");

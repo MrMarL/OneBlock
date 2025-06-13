@@ -13,9 +13,9 @@ public class PlayerCache {
         players.clear();
         onlinePlayers.forEach(player -> {
         	final UUID uuid = player.getUniqueId();
-            if (!PlayerInfo.ExistId(uuid))
-            	return;
-            final int plID = PlayerInfo.GetId(uuid);
+        	final int plID = PlayerInfo.GetId(uuid);
+        	if (plID == -1)
+        		return;
         	players.put(player, Oneblock.plugin.getFullCoord(plID));
         });
     }
