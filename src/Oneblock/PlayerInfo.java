@@ -55,6 +55,17 @@ public class PlayerInfo {
 		bar.removePlayer(p);
 	}
 	
+	public void removeUUID(UUID deleted) {
+		if (uuid.equals(deleted)) {
+			if (uuids.size() > 0) {
+				uuid = uuids.get(0);
+				uuids.remove(0);
+			}
+			else uuid = null;
+		}
+		else uuids.remove(deleted);
+	}
+	
 	public int getNeed() {
         return Level.get(lvl).length;
     }

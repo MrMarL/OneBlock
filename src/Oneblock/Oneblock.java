@@ -723,16 +723,8 @@ public class Oneblock extends JavaPlugin {
 	        		return true;
 	        	int PlId = PlayerInfo.GetId(uuid);
 	        	PlayerInfo plp = PlayerInfo.get(PlId);
-	        	if (Progress_bar) 
-	        		plp.bar.removePlayer(pl);
-	        	if (plp.uuid.equals(uuid)) {
-	        		if (plp.uuids.size() > 0) {
-	        			plp.uuid = plp.uuids.get(0);
-	        			plp.uuids.remove(0);
-	        		}
-	        		else plp.uuid = null;
-	        	}
-	        	else plp.uuids.remove(uuid);
+	        	plp.removeBar(pl);
+	        	plp.removeUUID(uuid);
 	        	
 	        	if (!saveplayerinventory) pl.getInventory().clear();
 	        		
