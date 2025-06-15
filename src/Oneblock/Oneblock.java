@@ -95,6 +95,15 @@ public class Oneblock extends JavaPlugin {
     public boolean isPAPIEnabled() { return PAPI; }
     public boolean isProgressBarEnabled() { return Progress_bar; }
     
+    public int[] getFullCoord(final int id) { return IslandCoordinateCalculator.getById(id, x, z, sto, CircleMode); }
+    
+    public String getBarTitle(Player p, int lvl) {
+        if (lvl_bar_mode) return Level.get(lvl).name;
+        if (PAPI) return PlaceholderAPI.setPlaceholders(p, TextP);
+        
+        return TextP;
+    }
+    
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
 	
@@ -364,65 +373,6 @@ public class Oneblock extends JavaPlugin {
         }
         else WorldGuard = false;
     }
-    
-    public int[] getFullCoord(final int id) {
-		if (!CircleMode) return new int[] {id * sto + x, z, id};
-		
-		return getFullCoordGibrid(id);
-	}
-
-	public int[] getFullCoordIter(final int id) {
-		int X = 0, Z = 0;
-		for (int i = 0; i < id; i++) {
-			if (X > Z)
-			    if (X > -Z)
-				    Z--;
-				else
-				    X--;
-			else if (-X > Z || X == Z && Z < 0)
-				Z++;
-			else
-				X++;
-		}
-		X = X * sto + x;
-		Z = Z * sto + z;
-		return new int[] {X, Z, id};
-	}
-	
-	public int[] getFullCoordGibrid(final int id) {
-	    if (id <= 30) return getFullCoordIter(id);
-
-	    int ring = (int) Math.floor((Math.sqrt(id) + 1) / 2);
-	    int firstInRing = (2 * ring - 1) * (2 * ring - 1) + 1;
-	    int posInRing = id + 1 - firstInRing;
-	    int sideLength = 2 * ring;
-	    int side = posInRing / sideLength;
-	    int offset = posInRing % sideLength;
-
-	    int X, Z;
-
-	    switch (side) {
-	        case 0:
-	            X = ring;
-	            Z = ring - 1 - offset;
-	            break;
-	        case 1:
-	            X = ring - 1 - offset;
-	            Z = -ring;
-	            break;
-	        case 2:
-	            X = -ring;
-	            Z = -ring + 1 + offset;
-	            break;
-	        default:
-	        	X = -ring + 1 + offset;
-	            Z = ring;
-	    }
-
-	    X = X * sto + x;
-	    Z = Z * sto + z;
-	    return new int[] {X, Z, id};
-	}
 	
 	public class TaskUpdatePlayers implements Runnable {
 		public void run() { cache.updateCache(wor.getPlayers()); }
@@ -520,13 +470,6 @@ public class Oneblock extends JavaPlugin {
         wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
     }
     
-    public String getBarTitle(Player p, int lvl) {
-        if (lvl_bar_mode) return Level.get(lvl).name;
-        if (PAPI) return PlaceholderAPI.setPlaceholders(p, TextP);
-        
-        return TextP;
-    }
-
     public void onDisable() { SaveData(); }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
