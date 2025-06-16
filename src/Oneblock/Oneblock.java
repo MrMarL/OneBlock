@@ -179,6 +179,13 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("place_type", () -> String.valueOf(placetype)));
     }
     
+    public class ItemsAdderEvent implements Listener {
+    	@EventHandler
+        public void ItemsAdderLoad(ItemsAdderLoadDataEvent event) {
+    		Blockfile();
+        }
+    }
+    
     public class RespawnJoinEvent implements Listener {
         @EventHandler
         public void Respawn(final PlayerRespawnEvent e) {
@@ -215,20 +222,6 @@ public class Oneblock extends JavaPlugin {
 				}
 			}
 		}
-    }
-    
-    public int findNeastRegionId(Location loc) {
-    	int id_ = 0, neast = Integer.MAX_VALUE;
-    	
-    	for (int i = 0; i < PlayerInfo.size() ;i++) {
-    		int coord[] = getFullCoord(i);
-            int distance = (int)Math.sqrt(Math.pow(coord[0] - loc.getBlockX(), 2) + Math.pow(coord[1] - loc.getBlockZ(), 2));
-            if (distance > neast) continue;
-            
-            neast = distance;
-            id_ = i;
-    	}
-    	return id_;
     }
     
     public class TeleportEvent implements Listener {
@@ -273,36 +266,12 @@ public class Oneblock extends JavaPlugin {
         }
     }
     
-    public void UpdateBorderLocation(Player pl, Location loc) {
-    	int plID = findNeastRegionId(loc);
-		int result[] = getFullCoord(plID);
-        int X_pl = result[0], Z_pl = result[1];
-		
-		WorldBorder br = Bukkit.createWorldBorder();
-    	br.setCenter(X_pl+.5, Z_pl+.5);
-    	br.setSize(sto);
-    	pl.setWorldBorder(br);
-    }
-    
-    public void UpdateBorder(final Player pl) {
-    	WorldBorder border = pl.getWorldBorder();
-    	Bukkit.getScheduler().runTaskLaterAsynchronously(this, 
-    		() -> { pl.setWorldBorder(border); }, 10L);
-    }
-    
     public class ChangedWorld implements Listener {
     	@EventHandler
         public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
     		if (PlayerInfo.size() == 0) return;
         	if (e.getFrom().equals(wor))
         		PlayerInfo.removeBarStatic(e.getPlayer());
-        }
-    }
-    
-    public class ItemsAdderEvent implements Listener {
-    	@EventHandler
-        public void ItemsAdderLoad(ItemsAdderLoadDataEvent event) {
-    		Blockfile();
         }
     }
     
@@ -373,7 +342,7 @@ public class Oneblock extends JavaPlugin {
         }
         else WorldGuard = false;
     }
-	
+
 	public class TaskUpdatePlayers implements Runnable {
 		public void run() { cache.updateCache(wor.getPlayers()); }
 	}
@@ -434,13 +403,6 @@ public class Oneblock extends JavaPlugin {
         }
     }
     
-    public boolean CheckPosition(Location loc, int X_pl, int Z_pl) {
-    	X_pl = loc.getBlockX()-X_pl;
-    	Z_pl = CircleMode ? loc.getBlockZ()-Z_pl : 0;
-    	int val = Math.abs(sto/2) + 1;
-    	return (Math.abs(X_pl) <= val && Math.abs(Z_pl) <= val);
-    }
-    
     public void BlockGen(final int X_pl, final int Z_pl, final int plID, final Player ponl, final Block block) {
     	final PlayerInfo inf = PlayerInfo.get(plID);
     	Level lvl_inf = Level.get(inf.lvl); 
@@ -470,7 +432,79 @@ public class Oneblock extends JavaPlugin {
         wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
     }
     
-    public void onDisable() { SaveData(); }
+    public int findNeastRegionId(Location loc) {
+    	int id_ = 0, neast = Integer.MAX_VALUE;
+    	
+    	for (int i = 0; i < PlayerInfo.size() ;i++) {
+    		int coord[] = getFullCoord(i);
+            int distance = (int)Math.sqrt(Math.pow(coord[0] - loc.getBlockX(), 2) + Math.pow(coord[1] - loc.getBlockZ(), 2));
+            if (distance > neast) continue;
+            
+            neast = distance;
+            id_ = i;
+    	}
+    	return id_;
+    }
+    
+    private void ReCreateRegions() {
+    	if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null) return;
+    	
+    	int id = PlayerInfo.size();
+    	OBWG.RemoveRegions(id);
+    	
+    	for (int i = 0; i < id; i++) {
+    		PlayerInfo owner = PlayerInfo.get(i);
+    		if (owner.uuid == null) continue;
+			
+    		int pos[] = getFullCoord(i);
+    		OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
+    		for (UUID member: owner.uuids) 
+    			OBWG.addMember(member, i);
+        }
+    }
+    
+    private void SetupProgressBar() {
+		if (superlegacy) return;
+		if (PlayerInfo.size() == 0) return;
+		
+		if (Progress_color == null)
+			Progress_color = BarColor.GREEN;
+		
+		Level.max.color = Progress_color;
+		PlayerInfo.list.forEach(inf -> {if (inf.uuid != null){
+			Player p = Bukkit.getPlayer(inf.uuid);
+			if (p == null)
+				inf.createBar();
+			else
+				inf.createBar(getBarTitle(p, inf.lvl));
+        	        	
+			inf.bar.setVisible(Progress_bar);
+        }});
+	}
+    
+    public void UpdateBorderLocation(Player pl, Location loc) {
+    	int plID = findNeastRegionId(loc);
+		int result[] = getFullCoord(plID);
+        int X_pl = result[0], Z_pl = result[1];
+		
+		WorldBorder br = Bukkit.createWorldBorder();
+    	br.setCenter(X_pl+.5, Z_pl+.5);
+    	br.setSize(sto);
+    	pl.setWorldBorder(br);
+    }
+    
+    public void UpdateBorder(final Player pl) {
+    	WorldBorder border = pl.getWorldBorder();
+    	Bukkit.getScheduler().runTaskLaterAsynchronously(this, 
+    		() -> { pl.setWorldBorder(border); }, 10L);
+    }
+    
+    public boolean CheckPosition(Location loc, int X_pl, int Z_pl) {
+    	X_pl = loc.getBlockX()-X_pl;
+    	Z_pl = CircleMode ? loc.getBlockZ()-Z_pl : 0;
+    	int val = Math.abs(sto/2) + 1;
+    	return (Math.abs(X_pl) <= val && Math.abs(Z_pl) <= val);
+    }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	if (!cmd.getName().equalsIgnoreCase("oneblock")) return false;
@@ -1051,6 +1085,13 @@ public class Oneblock extends JavaPlugin {
 		    }
 	    }
     }
+    
+    public void onDisable() { SaveData(); }
+    
+    public void SaveData() {
+    	File PlData = new File(getDataFolder(), "PlData.json");
+    	JsonSimple.Write(PlayerInfo.list, PlData);
+    }
 
     private void Datafile() {
     	File PlData = new File(getDataFolder(), "PlData.json");
@@ -1058,28 +1099,6 @@ public class Oneblock extends JavaPlugin {
 			PlayerInfo.list = JsonSimple.Read(PlData);
 		else
 			PlayerInfo.list = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
-    }
-    
-    private void ReCreateRegions() {
-    	if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null) return;
-    	
-    	int id = PlayerInfo.size();
-    	OBWG.RemoveRegions(id);
-    	
-    	for (int i = 0; i < id; i++) {
-    		PlayerInfo owner = PlayerInfo.get(i);
-    		if (owner.uuid == null) continue;
-			
-    		int pos[] = getFullCoord(i);
-    		OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
-    		for (UUID member: owner.uuids) 
-    			OBWG.addMember(member, i);
-        }
-    }
-
-    public void SaveData() {
-    	File PlData = new File(getDataFolder(), "PlData.json");
-    	JsonSimple.Write(PlayerInfo.list, PlData);
     }
 
 	private void Blockfile() {
@@ -1173,25 +1192,6 @@ public class Oneblock extends JavaPlugin {
         
         SetupProgressBar();
     }
-	
-	private void SetupProgressBar() {
-		if (superlegacy) return;
-		if (PlayerInfo.size() == 0) return;
-		
-		if (Progress_color == null)
-			Progress_color = BarColor.GREEN;
-		
-		Level.max.color = Progress_color;
-		PlayerInfo.list.forEach(inf -> {if (inf.uuid != null){
-			Player p = Bukkit.getPlayer(inf.uuid);
-			if (p == null)
-				inf.createBar();
-			else
-				inf.createBar(getBarTitle(p, inf.lvl));
-        	        	
-			inf.bar.setVisible(Progress_bar);
-        }});
-	}
 	
     private void Messagefile() {
         File message = new File(getDataFolder(), "messages.yml");
