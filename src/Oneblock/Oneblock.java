@@ -95,14 +95,14 @@ public class Oneblock extends JavaPlugin {
     public boolean isPAPIEnabled() { return PAPI; }
     public boolean isProgressBarEnabled() { return Progress_bar; }
     
-    public int[] getFullCoord(final int id) { return IslandCoordinateCalculator.getById(id, x, z, sto, CircleMode); }
+	public int[] getFullCoord(final int id) { return IslandCoordinateCalculator.getById(id, x, z, sto, CircleMode); }
     
-    public String getBarTitle(Player p, int lvl) {
-        if (lvl_bar_mode) return Level.get(lvl).name;
-        if (PAPI) return PlaceholderAPI.setPlaceholders(p, TextP);
+	public String getBarTitle(Player p, int lvl) {
+		if (lvl_bar_mode) return Level.get(lvl).name;
+		if (PAPI) return PlaceholderAPI.setPlaceholders(p, TextP);
         
-        return TextP;
-    }
+		return TextP;
+	}
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
@@ -427,10 +427,10 @@ public class Oneblock extends JavaPlugin {
         if (rnd.nextInt(9) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
 	}
     
-    public void spawnRandomMob(int pos_x, int pos_z, Level level) {
-        if (level.mobs == 0) return;
-        wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
-    }
+	public void spawnRandomMob(int pos_x, int pos_z, Level level) {
+		if (level.mobs == 0) return;
+		wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
+	}
     
     public int findNeastRegionId(Location loc) {
     	int id_ = 0, neast = Integer.MAX_VALUE;
@@ -444,24 +444,24 @@ public class Oneblock extends JavaPlugin {
             id_ = i;
     	}
     	return id_;
-    }
+	}
     
-    private void ReCreateRegions() {
-    	if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null) return;
+	private void ReCreateRegions() {
+		if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null) return;
+		
+		int id = PlayerInfo.size();
+		OBWG.RemoveRegions(id);
     	
-    	int id = PlayerInfo.size();
-    	OBWG.RemoveRegions(id);
-    	
-    	for (int i = 0; i < id; i++) {
-    		PlayerInfo owner = PlayerInfo.get(i);
-    		if (owner.uuid == null) continue;
+		for (int i = 0; i < id; i++) {
+			PlayerInfo owner = PlayerInfo.get(i);
+			if (owner.uuid == null) continue;
 			
-    		int pos[] = getFullCoord(i);
-    		OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
-    		for (UUID member: owner.uuids) 
-    			OBWG.addMember(member, i);
-        }
-    }
+			int pos[] = getFullCoord(i);
+			OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
+			for (UUID member: owner.uuids) 
+				OBWG.addMember(member, i);
+		}
+	}
     
     private void SetupProgressBar() {
 		if (superlegacy) return;
