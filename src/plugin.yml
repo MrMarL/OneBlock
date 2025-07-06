@@ -1,9 +1,10 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  1.3.3
+version:  1.3.3f
 api-version: 1.13
 author:  MrMarL
-softdepend: [Multiverse-Core , PlaceholderAPI , WorldGuard , ItemsAdder , Oraxen , Nexo]
+loadbefore: ['Multiverse-Core']
+softdepend: ['PlaceholderAPI', 'WorldGuard', 'ItemsAdder', 'Oraxen', 'Nexo']
 commands:
   oneblock:
     description: Oneblock main command.
