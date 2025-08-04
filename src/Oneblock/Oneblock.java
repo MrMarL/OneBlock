@@ -47,6 +47,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -187,7 +188,7 @@ public class Oneblock extends JavaPlugin {
     }
     
     public class RespawnJoinEvent implements Listener {
-        @EventHandler
+    	@EventHandler(priority = EventPriority.HIGHEST)
         public void Respawn(final PlayerRespawnEvent e) {
 			if (!rebirth) return;
 			Player pl = e.getPlayer();
