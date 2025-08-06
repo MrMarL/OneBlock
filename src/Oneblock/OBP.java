@@ -87,6 +87,21 @@ public class OBP extends PlaceholderExpansion {
             if (name == null) return "[None]";
     		return name;
         }
+        // %OB_owner_online%
+        if (identifier.equals("owner_online")) {
+            UUID uuid = PlayerInfo.get(p.getUniqueId()).uuid;
+            if (uuid == null) return "offline";
+            if (Bukkit.getPlayer(uuid) == null) return "offline";
+    		return "online";
+        }
+        // %OB_visit_allowed%
+        if (identifier.equals("visit_allowed")) {
+        	return Boolean.toString(Oneblock.getvisitallowed(p));
+        }
+        // %OB_visits%
+        if (identifier.equals("visits")) {
+        	return Integer.toString(Oneblock.getvisits(p.getUniqueId()));
+        }
         // %OB_percent%
         if (identifier.equals("percent")) {
         	PlayerInfo inf = PlayerInfo.get(p.getUniqueId());

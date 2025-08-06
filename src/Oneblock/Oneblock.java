@@ -258,10 +258,9 @@ public class Oneblock extends JavaPlugin {
         public void NetherPortal(final PlayerPortalEvent e) {
         	if (allow_nether) return;
         	World from = e.getFrom().getWorld();
-        	World to = e.getTo().getWorld();
-        	
         	if (!from.equals(wor)) return;
         	
+        	World to = e.getTo().getWorld();
             if (to.getEnvironment() == World.Environment.NETHER) 
             	e.setCancelled(true);
         }
@@ -1359,6 +1358,20 @@ public class Oneblock extends JavaPlugin {
     }
     public static int getlenght(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).getNeed();
+    }
+    public static boolean getvisitallowed(OfflinePlayer pl) {
+    	Location loc = pl.getLocation();
+    	if (loc == null) return false;
+    	return PlayerInfo.get(plugin.findNeastRegionId(loc)).allow_visit;
+    }
+    public static int getvisits(UUID pl_uuid) {
+    	int count = 0;
+    	int reg_id = PlayerInfo.GetId(pl_uuid);
+    	if (reg_id != -1)
+	    	for (Player ponl: plugin.cache.getPlayers())
+	    		if (plugin.findNeastRegionId(ponl.getLocation()) == reg_id)
+	    			count++;
+    	return count;
     }
     public static PlayerInfo gettop(int i) {
     	if (PlayerInfo.size() <= i) return new PlayerInfo(null);
