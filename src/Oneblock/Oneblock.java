@@ -241,12 +241,12 @@ public class Oneblock extends JavaPlugin {
         	UpdateBorder(p);
         }
         
-        @EventHandler
+        @EventHandler(priority = EventPriority.MONITOR)
         public void Respawn(final PlayerRespawnEvent e) {
 			if (!Border) return;
 			Location loc = e.getRespawnLocation();
 			Player p = e.getPlayer();
-			if (wor.equals(p.getWorld())) {
+			if (wor.equals(loc.getWorld())) {
 				UpdateBorderLocation(p, loc);
 				UpdateBorder(p);
 			}
