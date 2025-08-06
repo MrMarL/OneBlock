@@ -1362,7 +1362,11 @@ public class Oneblock extends JavaPlugin {
     public static boolean getvisitallowed(OfflinePlayer pl) {
     	Location loc = pl.getLocation();
     	if (loc == null) return false;
-    	return PlayerInfo.get(plugin.findNeastRegionId(loc)).allow_visit;
+    	if (!loc.getWorld().equals(plugin.wor)) return false;
+    	int id = plugin.findNeastRegionId(loc);
+    	if (id < 0 || id >= PlayerInfo.size()) return false;
+    	
+    	return PlayerInfo.get(id).allow_visit;
     }
     public static int getvisits(UUID pl_uuid) {
     	int count = 0;
