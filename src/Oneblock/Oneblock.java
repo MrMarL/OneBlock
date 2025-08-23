@@ -566,6 +566,7 @@ public class Oneblock extends JavaPlugin {
 	            		(float)config.getDouble("yawleave"), 0f));
 	            return true;
 	        }
+	        case ("v"):
 	        case ("visit"):{
 	        	if (!sender.hasPermission("Oneblock.visit")) {
 	                sender.sendMessage(Messages.noperm_inv);

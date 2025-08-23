@@ -27,4 +27,8 @@ public class PlayerCache {
     public int[] getFullCoord(Player player) {
         return players.get(player);
     }
+    
+    public boolean removePlayer(Player player) {
+        return players.remove(player) != null;
+    }
 }
