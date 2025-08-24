@@ -24,7 +24,7 @@ public class CommandTabCompleter implements TabCompleter {
             		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
-        	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit")) {
+        	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit") || args[0].equals("v")) {
         		addOnlinePlayers(commands);
         	}
         	else if (sender.hasPermission("Oneblock.set")) {
