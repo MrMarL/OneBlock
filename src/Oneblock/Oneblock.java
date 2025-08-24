@@ -13,6 +13,7 @@ import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
 import Oneblock.PlData.*;
 import Oneblock.UniversalPlace.*;
+import Oneblock.Utils.*;
 import Oneblock.WorldGuard.*;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
@@ -57,6 +58,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class Oneblock extends JavaPlugin {
     public static Oneblock plugin;
@@ -107,17 +109,14 @@ public class Oneblock extends JavaPlugin {
     
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
-	
-	public boolean findMethod(final Class<?> cl, String name) {
-		return Arrays.stream(cl.getMethods()).anyMatch(m -> m.getName().equals(name));
-	}
     
     @Override
     public void onEnable() {
     	plugin = this;
         superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
         legacy = !XMaterial.supports(13);// Is version 1.13 supported?
-        Border = findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
+        Border = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
+        GUI.legacy = !Utils.findMethod(SkullMeta.class, "setOwningPlayer");
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         
@@ -801,7 +800,7 @@ public class Oneblock extends JavaPlugin {
 			           		return true;
 			            }
 			            case ("border"):{
-			            	if (!findMethod(Bukkit.class, "createWorldBorder")){
+			            	if (!Utils.findMethod(Bukkit.class, "createWorldBorder")){
 			                    sender.sendMessage(String.format("%sThe border can only be used on version 1.18.2 and above!", ChatColor.YELLOW));
 			                    return true;
 			                }
@@ -1080,7 +1079,7 @@ public class Oneblock extends JavaPlugin {
 	        		    "  ▄▄    ▄▄\n" +
 	        		    "█    █  █▄▀\n" +
 	        		    "▀▄▄▀ █▄▀\n" +
-	        		    "Created by MrMarL\nPlugin version: v1.3.4\n" +
+	        		    "Created by MrMarL\nPlugin version: v1.3.5\n" +
 	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;
 		    }
@@ -1237,7 +1236,7 @@ public class Oneblock extends JavaPlugin {
     }
     private String MessageCheck(String name, String def_message) {
     	if (config_temp.isString(name))
-        	return ChatColor.translateAlternateColorCodes('&',config_temp.getString(name));
+        	return Utils.translateColorCodes(config_temp.getString(name));
     	return def_message;
     }
     private void Flowerfile() {

@@ -24,6 +24,7 @@ import Oneblock.WorldGuard.OBWorldGuard;
 
 public class GUI {
 	public static boolean enabled = true;
+	public static boolean legacy = false;
 	
 	static Inventory topGUI = null;
 	
@@ -54,17 +55,17 @@ public class GUI {
 		if (topGUI == null)
 			topGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.TOP), 27, Messages.topGUI);
 		PlayerInfo inf = Oneblock.Oneblock.gettop(0);
-		topGUI.setItem(4, setMeta(XMaterial.NETHERITE_BLOCK, String.format("%s1st - %s", ChatColor.GOLD, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(4, setMeta(XMaterial.NETHERITE_BLOCK, ChatColor.GOLD + "1st - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(1);
-		topGUI.setItem(12, setMeta(XMaterial.DIAMOND_BLOCK, String.format("%s2nd - %s", ChatColor.GRAY, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(12, setMeta(XMaterial.DIAMOND_BLOCK, ChatColor.GRAY + "2nd - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(2);
-		topGUI.setItem(14, setMeta(XMaterial.IRON_BLOCK, String.format("%s3rd - %s", ChatColor.GRAY, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(14, setMeta(XMaterial.IRON_BLOCK, ChatColor.GRAY + "3rd - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(3);
-		topGUI.setItem(20, setMeta(XMaterial.GOLD_BLOCK, String.format("%s4th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(20, setMeta(XMaterial.GOLD_BLOCK, ChatColor.DARK_RED + "4th - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(4);
-		topGUI.setItem(22, setMeta(XMaterial.COPPER_BLOCK, String.format("%s5th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(22, setMeta(XMaterial.COPPER_BLOCK, ChatColor.DARK_RED + "5th - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
 		inf = Oneblock.Oneblock.gettop(5);
-		topGUI.setItem(24, setMeta(XMaterial.COAL_BLOCK, String.format("%s6th - %s", ChatColor.DARK_RED, parseUUID(inf.uuid)), inf.lvl, parseUUIDs(inf.uuids)));
+		topGUI.setItem(24, setMeta(XMaterial.COAL_BLOCK, ChatColor.DARK_RED + "6th - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
         p.openInventory(topGUI);
 	}
 	
@@ -87,9 +88,9 @@ public class GUI {
 	}
 	
 	public static ItemStack getPlayerHead(OfflinePlayer player, String title) {
-        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+        ItemStack skull = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        skullMeta.setOwningPlayer(player);
+        if (!legacy) skullMeta.setOwningPlayer(player);
         skullMeta.setDisplayName(title);
         skull.setItemMeta(skullMeta);
         return skull;
