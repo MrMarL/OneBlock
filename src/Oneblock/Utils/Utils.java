@@ -14,7 +14,7 @@ public class Utils {
         if (message == null) return null;
         
         message = translateHexColorCodes(message);
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
     }
     
     private static String translateHexColorCodes(String message) {
@@ -34,9 +34,13 @@ public class Utils {
     }
 
     public static boolean isHexColorSupported() {
-        try {
-            ChatColor.of("#FFFFFF");
-            return true;
-        } catch (Exception e) { return false; }
-    }
+		try {
+			ChatColor.of("#FFFFFF");
+			return true;
+		} catch (NoSuchMethodError e) {
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
