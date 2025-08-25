@@ -8,6 +8,8 @@ MaxLevel: 'Level: MAX'
 - 'Level: 0 - Grass starter'
 ### [optional] Custom color of the progress bar:
 - GREEN
+### [optional] Custom style of the progress bar:
+- SEGMENTED_20
 ### [optional] Custom level size:
 - 16
 ### List of blocks:

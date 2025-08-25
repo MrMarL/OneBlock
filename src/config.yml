@@ -22,6 +22,8 @@ progress_bar_text: level
 chat_alert: true
 #ProgressBar Color
 progress_bar_color: GREEN
+#ProgressBar Style
+progress_bar_style: SOLID
 #Shoud we Create New Islands for New Players?
 island_for_new_players: true
 #Should the player get tp-ed to the island again after the death in game?
