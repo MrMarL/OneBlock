@@ -41,6 +41,7 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -86,7 +87,6 @@ public class Oneblock extends JavaPlugin {
     boolean CircleMode = true;
     boolean UseEmptyIslands = true;
     boolean Progress_bar = false;
-    BarColor Progress_color;
     String TextP = "";
     
     ArrayList <Object> blocks = new ArrayList<>();
@@ -121,10 +121,10 @@ public class Oneblock extends JavaPlugin {
         final PluginManager pluginManager = Bukkit.getPluginManager();
         
         getLogger().info(
-        		  "\n┏━┓····┏━━┓·····┏┓\n"
-        		  + "┃┃┣━┳┳━┫┏┓┣┓┏━┳━┫┣┓\n"
-        		  + "┃┃┃┃┃┃┻┫┏┓┃┗┫╋┃━┫━┫\n"
-        		  + "┗━┻┻━┻━┻━━┻━┻━┻━┻┻┛ by MrMarL");
+        		"\n█▀█ ░░░░ ░░░ █▀▄ ░░░ ░░░ ░░░ ░░░" + 
+        		"\n█░█ █▄░█ █▀▀ █▄▀ █░░ █▀█ █▀▀ █▄▀" + 
+        		"\n█▄█ █░▀█ ██▄ █▄▀ █▄▄ █▄█ █▄▄ █░█\n" + 
+        		"\nby MrMarL");
         if (PAPI = pluginManager.isPluginEnabled("PlaceholderAPI")) {
         	getLogger().info("PlaceholderAPI has been found!");
             new OBP().register();
@@ -466,10 +466,9 @@ public class Oneblock extends JavaPlugin {
 		if (superlegacy) return;
 		if (PlayerInfo.size() == 0) return;
 		
-		if (Progress_color == null)
-			Progress_color = BarColor.GREEN;
+		if (Level.max.color == null) Level.max.color = BarColor.GREEN;
+		if (Level.max.style == null) Level.max.style = BarStyle.SOLID;
 		
-		Level.max.color = Progress_color;
 		PlayerInfo.list.forEach(inf -> {if (inf.uuid != null){
 			Player p = Bukkit.getPlayer(inf.uuid);
 			if (p == null)
@@ -956,13 +955,28 @@ public class Oneblock extends JavaPlugin {
 			                        return true;
 			                    }
 			                    try {
-			                        Progress_color = BarColor.valueOf(args[2]);
+			                    	Level.max.color = BarColor.valueOf(args[2]);
 			                        Blockfile();
-			                        config.set("Progress_bar_color", Progress_color.toString());
+			                        config.set("Progress_bar_color", Level.max.color.toString());
 			                    } catch (Exception e) {
 			                        sender.sendMessage(String.format("%sPlease enter a valid color. For example: RED", ChatColor.YELLOW));
 			                    }
-			                    sender.sendMessage(String.format("%sProgress bar color = %s", ChatColor.GREEN, Progress_color.toString()));
+			                    sender.sendMessage(String.format("%sProgress bar color = %s", ChatColor.GREEN, Level.max.color.toString()));
+			                    return true;
+			                }
+			                if (args[1].equalsIgnoreCase("style")) {
+			                    if (args.length == 2) {
+			                        sender.sendMessage(String.format("%senter a style name.", ChatColor.YELLOW));
+			                        return true;
+			                    }
+			                    try {
+			                    	Level.max.style = BarStyle.valueOf(args[2]);
+			                        Blockfile();
+			                        config.set("Progress_bar_style", Level.max.style.toString());
+			                    } catch (Exception e) {
+			                        sender.sendMessage(String.format("%sPlease enter a valid style. For example: SOLID", ChatColor.YELLOW));
+			                    }
+			                    sender.sendMessage(String.format("%sProgress bar style = %s", ChatColor.GREEN, Level.max.style.toString()));
 			                    return true;
 			                }
 			                if (args[1].equalsIgnoreCase("level")) {
@@ -1002,7 +1016,7 @@ public class Oneblock extends JavaPlugin {
 			                    	i = Level.get(temp-1).blocks;
 			                    for(;i<Level.get(temp).blocks;i++)
 			                    	if (blocks.get(i) == null)
-			                    		sender.sendMessage("Grass or undefined");
+			                    		sender.sendMessage("Grass (undefined)");
 			                    	else if (blocks.get(i).getClass() == Material.class)
 			                    		sender.sendMessage(((Material)blocks.get(i)).name());
 			                    	else if (blocks.get(i).getClass() == XMaterial.class)
@@ -1044,7 +1058,7 @@ public class Oneblock extends JavaPlugin {
 			                    if (PlayerInfo.GetId(uuid) != -1) {
 			                        int result[] = getFullCoord(PlayerInfo.GetId(uuid));
 			                        Island.scan(wor, result[0], y, result[1]);
-			                        sender.sendMessage(ChatColor.GREEN + "Your island has been successfully saved and set as default for new players!");
+			                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
 			                        config.set("custom_island", Island.map());
 			                    } else
 			                        sender.sendMessage(ChatColor.RED + "You don't have an island!");
@@ -1055,7 +1069,7 @@ public class Oneblock extends JavaPlugin {
 			                		sender.sendMessage(ChatColor.RED + "Not supported in legacy versions!");
 			                		return true;
 			                	}
-			                    config.set("custom_island", Island.island = null);
+			                    config.set("custom_island", Island.custom = null);
 			                    sender.sendMessage(ChatColor.GREEN + "The default island is installed.");
 			                    return true;
 			                }
@@ -1076,10 +1090,10 @@ public class Oneblock extends JavaPlugin {
 	        	}
 	        	sender.sendMessage(
 	        		    ChatColor.values()[rnd.nextInt(ChatColor.values().length)] + 
-	        		    "  ▄▄    ▄▄\n" +
-	        		    "█    █  █▄▀\n" +
-	        		    "▀▄▄▀ █▄▀\n" +
-	        		    "Created by MrMarL\nPlugin version: v1.3.5\n" +
+	        		    "\n▄▄▄ ▄▄ " +
+	        		    "\n█░█ █▄▀" +
+	        		    "\n█▄█ █▄▀ by MrMarL\n" +
+	        		    "Plugin version: v1.3.5+\n" +
 	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;
 		    }
@@ -1120,7 +1134,11 @@ public class Oneblock extends JavaPlugin {
         		try {//reading a custom color for the level.
         			level.color = BarColor.valueOf(bl_temp.get(q).toUpperCase());
         			q++;
-        		} catch(Exception e) {level.color = Progress_color;}
+        		} catch(Exception e) {level.color = Level.max.color;}
+	        	try {//reading a custom style for the level.
+	    			level.style = BarStyle.valueOf(bl_temp.get(q).toUpperCase());
+	    			q++;
+	    		} catch(Exception e) {level.style = Level.max.style;}
 	        	try {//reading a custom size for the level.
 	        		int value = Integer.parseInt(bl_temp.get(q));
 	    			level.length = value > 0 ? value : 1;
@@ -1302,7 +1320,8 @@ public class Oneblock extends JavaPlugin {
         Check("yawleave", .0);
         if (!superlegacy) {
         	Progress_bar = Check("progress_bar", true);
-        	Progress_color = BarColor.valueOf(Check("progress_bar_color", "GREEN"));
+        	Level.max.color = BarColor.valueOf(Check("progress_bar_color", "GREEN"));
+        	Level.max.style = BarStyle.valueOf(Check("progress_bar_style", "SOLID"));
 	        TextP = Check("progress_bar_text", "level");
 	        lvl_bar_mode = TextP.equals("level");
         }

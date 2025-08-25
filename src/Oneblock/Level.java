@@ -3,6 +3,7 @@ package Oneblock;
 import java.util.ArrayList;
 
 import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 
 public class Level {
 	public static Level max = new Level("Level: MAX");
@@ -23,6 +24,7 @@ public class Level {
 	public int blocks = 0;
 	public int mobs = 0;
 	public BarColor color;
+	public BarStyle style;
 	public int length = 100;
 	
 	public Level(String name) {

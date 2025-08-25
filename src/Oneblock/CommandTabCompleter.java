@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -20,7 +21,7 @@ public class CommandTabCompleter implements TabCompleter {
         	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
         	if (sender.hasPermission("Oneblock.visit")) commands.addAll(Arrays.asList("v","visit","allow_visit"));
             if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","Progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
+            	commands.addAll(Arrays.asList("set","setleave","progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
             		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
@@ -37,12 +38,13 @@ public class CommandTabCompleter implements TabCompleter {
                 	addOnlinePlayers(commands);
             		break;
             	}
-                case ("Progress_bar"):{
+                case ("progress_bar"):{
 	                commands.add("true");
 	                commands.add("false");
 	                commands.add("level");
 	                commands.add("settext");
 	                commands.add("color");
+	                commands.add("style");
 	                break;
 	            }
                 case ("islands"):
@@ -79,9 +81,12 @@ public class CommandTabCompleter implements TabCompleter {
         	}
         }
         else if (sender.hasPermission("Oneblock.set") && args.length == 3) 
-        	if (args[0].equals("Progress_bar")) {
+        	if (args[0].equals("progress_bar")) {
         		if (args[1].equals("color"))
         			for (BarColor bc:BarColor.values())
+        				commands.add(bc.name());
+        		if (args[1].equals("style"))
+        			for (BarStyle bc:BarStyle.values())
         				commands.add(bc.name());
         		if (args[1].equals("settext")) {
         			commands.add("...");

@@ -31,22 +31,22 @@ public class PlayerInfo {
 	
 	public void createBar() {
 		Level level = Level.get(lvl);
-		createBar(level.name, level.color);
+		createBar(level.name, level.color, level.style);
 	}
 	
 	public void createBar(String title) {
 		Level level = Level.get(lvl);
-		createBar(title, level.color);
+		createBar(title, level.color, level.style);
 	}
 	
-	private void createBar(String text, BarColor color) {
+	private void createBar(String text, BarColor color, BarStyle style) {
 		if (bar == null) {
-			bar = Bukkit.createBossBar(text, color, BarStyle.SOLID, BarFlag.DARKEN_SKY);
+			bar = Bukkit.createBossBar(text, color, style, BarFlag.DARKEN_SKY);
 			return;
 		}
-		
 		bar.setTitle(text);
 		bar.setColor(color);
+		bar.setStyle(style);
 	}
 	
 	public void removeBar(Player p) {
