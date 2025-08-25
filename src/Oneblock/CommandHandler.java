@@ -81,7 +81,7 @@ public class CommandHandler implements CommandExecutor {
 	        case ("leave"):{
 	            Player p = (Player) sender;
 	            PlayerInfo.removeBarStatic(p);
-	            if (plugin.leavewor == null) {
+	            if (plugin.leavewor == null || config.getDouble("yleave") == 0) {
 	            	if (!args[args.length-1].equals("/n"))
 	            		sender.sendMessage(Messages.leave_not_set);
 	            	return true;
