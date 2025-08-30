@@ -124,7 +124,7 @@ for example:
 - '/setblock %d %d %d IC2:blockOreTin'
 - '/setblock %d %d %d IC2:blockOreUran'
 - '/setblock %d %d %d ic2:resource 4'
-- or
+or
 - '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreCopper'
 - '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreTin'
 - '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreUran'
