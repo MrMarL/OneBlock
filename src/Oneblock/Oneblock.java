@@ -7,8 +7,6 @@ import org.bukkit.util.Vector;
 
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
-import com.nexomc.nexo.api.NexoBlocks;
-
 import Oneblock.Invitation.Guest;
 import Oneblock.PlData.*;
 import Oneblock.UniversalPlace.*;
@@ -16,16 +14,13 @@ import Oneblock.Utils.*;
 import Oneblock.WorldGuard.*;
 import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
-import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
-import io.th0rgal.oraxen.api.OraxenItems;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import org.bstats.bukkit.Metrics;
@@ -39,8 +34,6 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -64,8 +57,11 @@ public class Oneblock extends JavaPlugin {
     public static final Random rnd = new Random(System.currentTimeMillis());
     public static final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
     public static final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
+    public static final boolean isBorderSupported = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?;
     public static final boolean legacy = !XMaterial.supports(13);// Is version 1.13 supported?
     public static final boolean superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
+    
+    public static ConfigManager configManager = new ConfigManager();
     
     public static int x = 0, y = 0, z = 0, sto = 100, max_players_team = 0;
     public static boolean il3x3 = false, rebirth = false, autojoin = false;
@@ -80,10 +76,11 @@ public class Oneblock extends JavaPlugin {
     public static boolean Progress_bar = false;
     public static String TextP = "";
     
+    public static YamlConfiguration config;
+    
     OBWorldGuard OBWG;
     Place placer;
     Place.Type placetype = Place.Type.basic;
-    public static YamlConfiguration config, config_temp;
     
     World wor, leavewor;
     boolean enabled = false;
@@ -110,7 +107,6 @@ public class Oneblock extends JavaPlugin {
     @Override
     public void onEnable() {
     	plugin = this;
-        Border = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?
         GUI.legacy = !Utils.findMethod(SkullMeta.class, "setOwningPlayer");
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -130,7 +126,7 @@ public class Oneblock extends JavaPlugin {
         getLogger().info(placetype.name());
         
         Datafile();
-        loadConfigFiles();
+        configManager.loadConfigFiles();
         setupMetrics(metrics);
         
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
@@ -154,16 +150,8 @@ public class Oneblock extends JavaPlugin {
         return legacy ? Place.Type.legacy : Place.Type.basic;
     }
     
-    private void loadConfigFiles() {
-        Configfile();
-        Chestfile();
-        Blockfile();
-        Flowerfile();
-        Messagefile();
-    }
-    
     public void reload() {
-    	loadConfigFiles();
+    	configManager.loadConfigFiles();
     	ReCreateRegions();
     }
     
@@ -178,7 +166,7 @@ public class Oneblock extends JavaPlugin {
     public class ItemsAdderEvent implements Listener {
     	@EventHandler
         public void ItemsAdderLoad(ItemsAdderLoadDataEvent event) {
-    		Blockfile();
+    		configManager.Blockfile();
         }
     }
     
@@ -458,24 +446,6 @@ public class Oneblock extends JavaPlugin {
 		}
 	}
     
-    public void SetupProgressBar() {
-		if (superlegacy) return;
-		if (PlayerInfo.size() == 0) return;
-		
-		if (Level.max.color == null) Level.max.color = BarColor.GREEN;
-		if (Level.max.style == null) Level.max.style = BarStyle.SOLID;
-		
-		PlayerInfo.list.forEach(inf -> {if (inf.uuid != null){
-			Player p = Bukkit.getPlayer(inf.uuid);
-			if (p == null)
-				inf.createBar();
-			else
-				inf.createBar(getBarTitle(p, inf.lvl));
-        	        	
-			inf.bar.setVisible(Progress_bar);
-        }});
-	}
-    
     public void UpdateBorderLocation(Player pl, Location loc) {
     	int plID = findNeastRegionId(loc);
 		int result[] = getFullCoord(plID);
@@ -491,6 +461,11 @@ public class Oneblock extends JavaPlugin {
     	WorldBorder border = pl.getWorldBorder();
     	Bukkit.getScheduler().runTaskLaterAsynchronously(this, 
     		() -> { pl.setWorldBorder(border); }, 10L);
+    }
+    
+    public void ReloadBorders() {
+    	if (Border) getWorld().getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
+    	else getWorld().getPlayers().forEach(pl -> pl.setWorldBorder(null));
     }
     
     public boolean CheckPosition(Location loc, int X_pl, int Z_pl) {
@@ -514,249 +489,10 @@ public class Oneblock extends JavaPlugin {
 		else
 			PlayerInfo.list = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
     }
-
-	public void Blockfile() {
-    	blocks.clear();
-    	mobs.clear();
-    	Level.levels.clear();
-        File block = new File(getDataFolder(), "blocks.yml");
-        if (!block.exists())
-            saveResource("blocks.yml", false);
-        config_temp = YamlConfiguration.loadConfiguration(block);
-        if (config_temp.isString("MaxLevel"))
-        	Level.max.name = config_temp.getString("MaxLevel");
-        for (int i = 0; config_temp.isList(String.format("%d", i)); i++) {
-        	List <String> bl_temp = config_temp.getStringList(String.format("%d", i));
-        	Level level = new Level(bl_temp.get(0));
-        	Level.levels.add(level);
-        	int q = 1;
-        	if (!superlegacy && q < bl_temp.size()) {
-        		try {//reading a custom color for the level.
-        			level.color = BarColor.valueOf(bl_temp.get(q).toUpperCase());
-        			q++;
-        		} catch(Exception e) {level.color = Level.max.color;}
-	        	try {//reading a custom style for the level.
-	    			level.style = BarStyle.valueOf(bl_temp.get(q).toUpperCase());
-	    			q++;
-	    		} catch(Exception e) {level.style = Level.max.style;}
-	        } try {//reading a custom size for the level.
-	        	int value = Integer.parseInt(bl_temp.get(q));
-	    		level.length = value > 0 ? value : 1;
-	    		q++;
-	    	} catch(Exception e) {level.length = 16 + level.getId() * Level.multiplier;}
-        	while (q < bl_temp.size()) {
-        		String text = bl_temp.get(q++);
-        		//reading a custom block (command).
-        		if (text.charAt(0) == '/') {
-	            	blocks.add(text);
-	            	continue;
-        		}
-        		//reading a custom chest.
-        		boolean check = false;
-        		for (String str : ChestItems.getChestNames())
-	        		if (text.equals(str)) {
-	        			check = blocks.add(str); break;
-	        		}
-        		if (check) continue;
-        		//reading a mob.
-        		try { mobs.add(EntityType.valueOf(text)); continue; }
-        		catch (Exception e) {}
-        		//read a material
-        		if (legacy){ //XMaterial lib
-        			Optional <XMaterial> a = XMaterial.matchXMaterial(text);
-	        		if (!a.isPresent()) {
-	        			blocks.add(null);
-	        			continue;
-	        		}
-	        		XMaterial xmt = a.get();
-	        		if (xmt == GRASS_BLOCK)
-		                blocks.add(null);
-	        		else if (xmt == XMaterial.CHEST)
-		                blocks.add(Material.CHEST);
-	        		else
-	        			blocks.add(xmt);
-        		}
-        		else {
-        			Object a = Material.matchMaterial(text);
-        			if (a != null && a.equals(Material.GRASS_BLOCK))
-        				a = null;
-        			if (a == null) {
-        				switch (placetype) {
-						case ItemsAdder:
-							CustomBlock customBlock = CustomBlock.getInstance(text);
-	        				if(customBlock != null) 
-	        					a = customBlock;
-							break;
-						case Oraxen:
-							if (OraxenItems.exists(text))
-	        					a = text;
-							break;
-						case Nexo:
-							if (NexoBlocks.isCustomBlock(text))
-	        					a = text;
-							break;
-						default: break;
-        				}
-        			}
-        			blocks.add(a);
-        		}
-        	}
-        	level.blocks = blocks.size();
-        	level.mobs = mobs.size();
-        }
-        Level.max.blocks = blocks.size();
-        if ((Level.max.mobs = mobs.size()) == 0) 
-        	getLogger().warning("Mobs are not set in the blocks.yml");
-        
-        SetupProgressBar();
-    }
-	
-    private void Messagefile() {
-        File message = new File(getDataFolder(), "messages.yml");
-        if (!message.exists())
-            saveResource("messages.yml", false);
-        config_temp = YamlConfiguration.loadConfiguration(message);
-        
-        Messages.noperm = MessageCheck("noperm", Messages.noperm);
-        Messages.noperm_inv = MessageCheck("noperm_inv", Messages.noperm_inv);
-        Messages.help = MessageCheck("help", Messages.help);
-        Messages.help_adm = MessageCheck("help_adm", Messages.help_adm);
-        Messages.invite_usage = MessageCheck("invite_usage", Messages.invite_usage);
-        Messages.invite_yourself = MessageCheck("invite_yourself", Messages.invite_yourself);
-        Messages.invite_no_island = MessageCheck("invite_no_island", Messages.invite_no_island);
-        Messages.invite_team = MessageCheck("invite_team", Messages.invite_team);
-        Messages.invited = MessageCheck("invited", Messages.invited);
-        Messages.invited_succes = MessageCheck("invited_succes", Messages.invited_succes);
-        Messages.kicked = MessageCheck("kicked", Messages.kicked);
-        Messages.kick_usage = MessageCheck("kick_usage", Messages.kick_usage);
-        Messages.kick_yourself = MessageCheck("kick_yourself", Messages.kick_yourself);
-        Messages.accept_succes = MessageCheck("accept_succes", Messages.accept_succes);
-        Messages.accept_none = MessageCheck("accept_none", Messages.accept_none);
-        Messages.idreset = MessageCheck("idreset", Messages.idreset);
-        Messages.protection = MessageCheck("protection", Messages.protection);
-        Messages.leave_not_set = MessageCheck("leave_not_set", Messages.leave_not_set);
-        Messages.not_allow_visit = MessageCheck("not_allow_visit", Messages.not_allow_visit);
-        Messages.allowed_visit = MessageCheck("allowed_visit", Messages.allowed_visit);
-        Messages.forbidden_visit = MessageCheck("forbidden_visit", Messages.forbidden_visit);
-        
-        File gui = new File(getDataFolder(), "gui.yml");
-        if (!gui.exists())
-            saveResource("gui.yml", false);
-        config_temp = YamlConfiguration.loadConfiguration(gui);
-        
-        Messages.baseGUI = MessageCheck("baseGUI", Messages.baseGUI);
-        Messages.acceptGUI = MessageCheck("acceptGUI", Messages.acceptGUI);
-        Messages.acceptGUIignore = MessageCheck("acceptGUIignore", Messages.acceptGUIignore);
-        Messages.acceptGUIjoin = MessageCheck("acceptGUIjoin", Messages.acceptGUIjoin);
-        Messages.topGUI = MessageCheck("topGUI", Messages.topGUI);
-        Messages.visitGUI = MessageCheck("visitGUI", Messages.visitGUI);
-        Messages.idresetGUI = MessageCheck("idresetGUI", Messages.idresetGUI);
-    }
-    private String MessageCheck(String name, String def_message) {
-    	if (config_temp.isString(name))
-        	return Utils.translateColorCodes(config_temp.getString(name));
-    	return def_message;
-    }
-    private void Flowerfile() {
-        flowers.clear();
-        File flower = new File(getDataFolder(), "flowers.yml");
-        if (!flower.exists())
-            saveResource("flowers.yml", false);
-        config_temp = YamlConfiguration.loadConfiguration(flower);
-        flowers.add(GRASS);
-        for(String list:config_temp.getStringList("flowers"))
-        	if (!XMaterial.matchXMaterial(list).isPresent())
-        		flowers.add(GRASS);
-        	else
-        		flowers.add(XMaterial.matchXMaterial(list).get());
-    }
-    private void Chestfile() {
-        File chest = new File(getDataFolder(), "chests.yml");
-        if (!chest.exists())
-            saveResource("chests.yml", false);
-        ChestItems.chest = chest;
-        ChestItems.load();
-    }
-    
-    String Check(String type, String data) {
-    	if (!config.isString(type))
-            config.set(type, data);
-    	return config.getString(type);
-    }
-    int Check(String type, int data) {
-    	if (!config.isInt(type))
-            config.set(type, data);
-    	return config.getInt(type);
-    }
-    double Check(String type, double data) {
-    	if (!config.isDouble(type))
-            config.set(type, data);
-    	return config.getDouble(type);
-    }
-    boolean Check(String type, boolean data) {
-    	if (!config.isBoolean(type))
-            config.set(type, data);
-    	return config.getBoolean(type);
-    }
-    List<String> Check(String type, List<String> data) {
-    	if (!config.isList(type))
-            config.set(type, data);
-    	return config.getStringList(type);
-    }
-
-    private void Configfile() {
-    	File con = new File(getDataFolder(), "config.yml");
-        if (!con.exists())
-            saveResource("config.yml", false);
-        config = LowerCaseYaml.loadAndFixConfig(con);
-        wor = Bukkit.getWorld(Check("world", "world"));
-        x = (int) Check("x", (double) x);
-        y = (int) Check("y", (double) y);
-        z = (int) Check("z", (double) z);
-        leavewor = Bukkit.getWorld(Check("leaveworld", "world"));
-        Check("xleave", .0);
-        Check("yleave", .0);
-        Check("zleave", .0);
-        Check("yawleave", .0);
-        if (!superlegacy) {
-        	Progress_bar = Check("progress_bar", true);
-        	Level.max.color = BarColor.valueOf(Check("progress_bar_color", "GREEN"));
-        	Level.max.style = BarStyle.valueOf(Check("progress_bar_style", "SOLID"));
-	        TextP = Check("progress_bar_text", "level");
-	        lvl_bar_mode = TextP.equals("level");
-        }
-        il3x3 = Check("island_for_new_players", true);
-        Level.multiplier = Check("level_multiplier", Level.multiplier);
-        max_players_team = Check("max_players_team", max_players_team);
-        UpdateParametrs();// СircleMode;protection;autojoin;droptossup
-        if (OBWorldGuard.canUse)
-        	WorldGuard = Check("worldguard", OBWorldGuard.canUse);
-        OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
-        if (Border) Border = Check("border", Border);
-        sto = Check("set", 100);
-        if (config.isSet("custom_island") && !legacy)
-        	Island.read(config);
-        LegacyConfigSaver.Save(config, con);
-    }
-    
-    public void UpdateParametrs() {
-    	CircleMode = Check("circlemode", CircleMode);
-    	UseEmptyIslands = Check("useemptyislands", UseEmptyIslands);
-    	saveplayerinventory = Check("saveplayerinventory", saveplayerinventory);
-        protection = Check("protection", protection);
-        autojoin = Check("autojoin", autojoin);
-        droptossup = Check("droptossup", droptossup);
-        physics = Check("physics", physics);
-        particle = Check("particle", particle);
-        allow_nether = Check("allow_nether", allow_nether);
-        GUI.enabled = Check("gui", GUI.enabled);
-        chat_alert = Check("chat_alert", chat_alert);
-        rebirth = Check("rebirth_on_the_island", rebirth);
-    }
     
     public void setPosition(Location loc) { setPosition(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()); }
     public void setPosition(World world, int x_, int y_, int z_) { 
-    	config.set("world", (wor = world).getName());
+    	if (world != null) config.set("world", (wor = world).getName());
         config.set("x", (double) (x = x_));
         config.set("y", (double) (y = y_));
         config.set("z", (double) (z = z_));

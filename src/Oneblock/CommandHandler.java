@@ -23,7 +23,6 @@ import com.cryptomorin.xseries.XMaterial;
 import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
 import Oneblock.UniversalPlace.Place;
-import Oneblock.Utils.Utils;
 import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
 import dev.lone.itemsadder.api.CustomBlock;
@@ -309,23 +308,12 @@ public class CommandHandler implements CommandExecutor {
 			            	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
 			           		return true;
 			            }
-			            case ("border"):{
-			            	if (!Utils.findMethod(Bukkit.class, "createWorldBorder")){
+			            case ("border"):
+			            	if (!isBorderSupported){
 			                    sender.sendMessage(String.format("%sThe border can only be used on version 1.18.2 and above!", ChatColor.YELLOW));
 			                    return true;
 			                }
-			            	if (args.length > 1 &&
-			                	(args[1].equals("true") || args[1].equals("false"))) {
-			            			Border = Boolean.valueOf(args[1]);
-			                    	config.set("Border", Border);
-			                    	if (Border) 
-			                    		getWorld().getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
-			                    	else getWorld().getPlayers().forEach(pl -> pl.setWorldBorder(null));
-			                }
-			                else sender.sendMessage(Messages.bool_format);
-			            	sender.sendMessage(String.format("%sthe Border is now %s", ChatColor.GREEN, (Border?"enabled.":"disabled.")));
-			           		return true;
-			            }
+			            	Bukkit.getScheduler().runTaskLater(plugin, () -> { plugin.ReloadBorders(); }, 2L);
 			            case ("circlemode"):
 			            case ("useemptyislands"):
 			            case ("protection"):
@@ -341,7 +329,7 @@ public class CommandHandler implements CommandExecutor {
 			            	if (args.length > 1 &&
 			                    	(args[1].equals("true") || args[1].equals("false"))) {
 			                    	config.set(parametr, Boolean.valueOf(args[1]));
-			                    	plugin.UpdateParametrs();
+			                    	configManager.UpdateBoolParametrs();
 			                }
 			                else sender.sendMessage(Messages.bool_format);
 			                sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (config.getBoolean(parametr)?"enabled.":"disabled.")));
@@ -417,7 +405,7 @@ public class CommandHandler implements CommandExecutor {
 			                if (lvl <= 20 && lvl >= 0) {
 			                	Level.multiplier = lvl;
 			                    config.set("level_multiplier", Level.multiplier);
-			                    plugin.Blockfile();
+			                    configManager.Blockfile();
 			                } else
 			                    sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
 			                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, Level.multiplier));
@@ -453,7 +441,7 @@ public class CommandHandler implements CommandExecutor {
 			                }
 			                if (args[1].equals("true") || args[1].equals("false")) {
 			                    Progress_bar = Boolean.valueOf(args[1]);
-			                    plugin.Blockfile();
+			                    configManager.Blockfile();
 			                    config.set("Progress_bar", Progress_bar);
 			                    return true;
 			                }
@@ -467,7 +455,7 @@ public class CommandHandler implements CommandExecutor {
 			                    }
 			                    try {
 			                    	Level.max.color = BarColor.valueOf(args[2]);
-			                    	plugin.Blockfile();
+			                    	configManager.Blockfile();
 			                        config.set("Progress_bar_color", Level.max.color.toString());
 			                    } catch (Exception e) {
 			                        sender.sendMessage(String.format("%sPlease enter a valid color. For example: RED", ChatColor.YELLOW));
@@ -482,7 +470,7 @@ public class CommandHandler implements CommandExecutor {
 			                    }
 			                    try {
 			                    	Level.max.style = BarStyle.valueOf(args[2]);
-			                    	plugin.Blockfile();
+			                    	configManager.Blockfile();
 			                        config.set("Progress_bar_style", Level.max.style.toString());
 			                    } catch (Exception e) {
 			                        sender.sendMessage(String.format("%sPlease enter a valid style. For example: SOLID", ChatColor.YELLOW));
@@ -493,7 +481,7 @@ public class CommandHandler implements CommandExecutor {
 			                if (args[1].equalsIgnoreCase("level")) {
 			                	lvl_bar_mode = true;
 			                    config.set("Progress_bar_text", "level");
-			                    plugin.SetupProgressBar();
+			                    configManager.SetupProgressBar();
 			                    return true;
 			                }
 			                if (args[1].equalsIgnoreCase("settext")) {
@@ -502,7 +490,7 @@ public class CommandHandler implements CommandExecutor {
 									txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
 			                    lvl_bar_mode = false;
 			                    config.set("Progress_bar_text", TextP = txt_bar);
-			                    plugin.SetupProgressBar();
+			                    configManager.SetupProgressBar();
 			                    return true;
 			                }
 			                sender.sendMessage(String.format("%strue, false, settext or level only!", ChatColor.RED));
