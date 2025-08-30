@@ -123,8 +123,12 @@ for example:
 - '/setblock %d %d %d IC2:blockOreCopper'
 - '/setblock %d %d %d IC2:blockOreTin'
 - '/setblock %d %d %d IC2:blockOreUran'
-- or
 - '/setblock %d %d %d ic2:resource 4'
+- or
+- '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreCopper'
+- '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreTin'
+- '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreUran'
+- '/execute in minecraft:oneblock run setblock ~ ~ ~ ic2:resource 4'
 
 ![Custom Blocks support](https://cdn.modrinth.com/data/cached_images/99fd24cc477a54d9490e64ae509de3583a22bc38.png)
 
