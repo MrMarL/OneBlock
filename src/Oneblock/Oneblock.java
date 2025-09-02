@@ -403,7 +403,8 @@ public class Oneblock extends JavaPlugin {
     
     public Location getLeave() { return new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"), (float)config.getDouble("yawleave"), 0f); }
     public void setLeave(Location loc) { setLeave(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw()); }
-    public void setLeave(World world, double x_, double y_, double z_, float yaw) { 
+    public void setLeave(World world, double x_, double y_, double z_, float yaw) {
+    	if (world == null) return;
     	leavewor = world;
         config.set("leaveworld", leavewor.getName());
         config.set("xleave", x_);
