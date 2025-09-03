@@ -116,6 +116,9 @@ You can specify the color of the progress bar for each level separately! In the 
 ## Nexo Blocks
 **Native id support in blocks.yml**
 
+## CraftEngine Blocks
+**Native id support in blocks.yml**
+
 ## Other
 In addition, you can spawn custom blocks (from mods or plugins) using the commands specified in blocks.yml
 
