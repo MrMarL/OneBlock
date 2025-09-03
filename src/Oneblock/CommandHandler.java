@@ -583,7 +583,7 @@ public class CommandHandler implements CommandExecutor {
 	        		    "\n▄▄▄ ▄▄ " +
 	        		    "\n█░█ █▄▀" +
 	        		    "\n█▄█ █▄▀ by MrMarL\n" +
-	        		    "Plugin version: v1.3.7\n" +
+	        		    "Plugin version: v1.3.8\n" +
 	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;
 		    }
