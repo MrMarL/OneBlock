@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.World;
+
 public class Utils {
+    public static boolean isWorldMinHeightSupported = findMethod(World.class, "getMinHeight");
+	
     public static boolean findMethod(final Class<?> cl, String name) {
         return Arrays.stream(cl.getMethods()).anyMatch(m -> m.getName().equals(name));
     }
@@ -43,4 +47,10 @@ public class Utils {
 			return false;
 		}
 	}
+    
+    public static int getWorldMinHeight(World world) {
+        if (isWorldMinHeightSupported) 
+            return world.getMinHeight();
+        return 0;
+    }
 }
