@@ -21,7 +21,6 @@ public class Island {
     private static final int SIZE = 7;
     private static final int HEIGHT = 12;
     private static final int OFFSET_Y = 5;
-    private static final BlockData AIR_DATA = Material.AIR.createBlockData();
 
     public static HashMap<String, List<String>> map() {
         if (custom == null) return null;
@@ -43,6 +42,7 @@ public class Island {
 
     public static void read(FileConfiguration config) {
         custom = new BlockData[SIZE][HEIGHT][SIZE];
+        BlockData AIR_DATA = Material.AIR.createBlockData();
         
         // Initializing the array with air
         for (int y = 0; y < HEIGHT; y++) {

@@ -68,7 +68,7 @@ public class Oneblock extends JavaPlugin {
     public static boolean allow_nether = true, protection = false;
     public static boolean saveplayerinventory = false;
     public static boolean WorldGuard = OBWorldGuard.canUse;
-    public static boolean Border = true;
+    public static boolean Border = false;
     public static boolean CircleMode = true;
     public static boolean UseEmptyIslands = true;
     public static boolean Progress_bar = false;
