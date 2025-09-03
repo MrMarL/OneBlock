@@ -133,7 +133,7 @@ or
 ![Custom Blocks support](https://cdn.modrinth.com/data/cached_images/99fd24cc477a54d9490e64ae509de3583a22bc38.png)
 
 # 🏝️ Island Templates
-Create custom default islands (7x3x7 area):
+Create custom default islands (7x12x7 area):
 ```
 /ob islands set_my_by_def
 ```
