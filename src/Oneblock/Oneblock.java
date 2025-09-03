@@ -3,11 +3,10 @@ package Oneblock;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
-
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
+import Oneblock.Events.BlockEvent;
 import Oneblock.Events.ItemsAdderEvent;
 import Oneblock.Events.RespawnJoinEvent;
 import Oneblock.Events.TeleportEvent;
@@ -23,7 +22,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -39,18 +37,17 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class Oneblock extends JavaPlugin {
     public static Oneblock plugin;
+    
+    private static final int MOB_SPAWN_CHANCE = 9;
+    private static final int FLOWER_CHANCE = 3;
+    private static final double[][] PARTICLE_OFFSETS = {{0.5, 0.5}, {1.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}};
     
     public static final Random rnd = new Random(System.currentTimeMillis());
     public static final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
@@ -162,41 +159,6 @@ public class Oneblock extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("place_type", () -> String.valueOf(placetype)));
     }
     
-    public class BlockEvent implements Listener {
-    	@EventHandler(ignoreCancelled = true)
-        public void ItemStackSpawn(final EntitySpawnEvent e) {
-    		if (!droptossup) return;
-    		if (wor == null) return;
-            if (!EntityType.DROPPED_ITEM.equals(e.getEntityType())) return;
-                
-            Location loc = e.getLocation();
-            if (!wor.equals(loc.getWorld())) return;
-            if (loc.getBlockY() != y) return;
-            if ((x - loc.getBlockX()) % sto != 0) return;
-            if ((z - loc.getBlockZ()) % sto != 0) return;
-
-            Entity drop = e.getEntity();
-            drop.teleport(loc.add(0, .8, 0));
-            drop.setVelocity(new Vector(0, .1, 0));
-        }
-    	@EventHandler
-    	public void BlockBreak(final BlockBreakEvent e) {
-    		if (wor == null) return;
-    		final Block block = e.getBlock();
-    		if (block.getWorld() != wor) return;
-    		if (block.getY() != y) return;
-    		final Player ponl = e.getPlayer();
-    		final UUID uuid = ponl.getUniqueId();
-        	final int plID = PlayerInfo.GetId(uuid);
-        	if (plID == -1) return;
-        	final int result[] = getFullCoord(plID);
-        	if (block.getX() != result[0]) return;
-        	if (block.getZ() != result[1]) return;
-
-            Bukkit.getScheduler().runTaskLater(Oneblock.this, () -> { BlockGen(result[0], result[1], plID, ponl, block); }, 1L);
-    	}
-    }
-    
     public class Initialization implements Runnable {
         public void run() {
             if (wor == null) {
@@ -246,13 +208,12 @@ public class Oneblock extends JavaPlugin {
 	            int[] result = cache.getFullCoord(ponl);
 	            if (result == null) continue;
 	            int X_pl = result[0], Z_pl = result[1];
+	            double baseY = y + 0.5;
 
-	            Arrays.asList(
-	                new Location(wor, X_pl, y + .5, Z_pl),
-	                new Location(wor, X_pl + 1, y + .5, Z_pl),
-	                new Location(wor, X_pl, y + .5, Z_pl + 1),
-	                new Location(wor, X_pl + 1, y + .5, Z_pl + 1)
-	            ).forEach(loc -> wor.spawnParticle(Particle.PORTAL, loc, 5, 0, 0, 0, 0));
+	            for (double[] offset : PARTICLE_OFFSETS) {
+	                Location loc = new Location(wor, X_pl + offset[0], baseY, Z_pl + offset[1]);
+	                wor.spawnParticle(Particle.PORTAL, loc, 5, 0, 0, 0, 0);
+	            }
 	        }
 	    }
 	}
@@ -307,11 +268,11 @@ public class Oneblock extends JavaPlugin {
         Object newblocktype = blocks.get(lvl_inf.blocks == 0 ? 0 : rnd.nextInt(lvl_inf.blocks));
         if (newblocktype == null) {
             XBlock.setType(block, GRASS_BLOCK);
-            if (rnd.nextInt(3) == 1) XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
+            if (rnd.nextInt(FLOWER_CHANCE) == 1) XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
         }
         else placer.setType(block, newblocktype, physics);
 
-        if (rnd.nextInt(9) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
+        if (rnd.nextInt(MOB_SPAWN_CHANCE) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
 	}
     
 	public void spawnRandomMob(int pos_x, int pos_z, Level level) {
