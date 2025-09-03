@@ -256,7 +256,7 @@ public class Oneblock extends JavaPlugin {
     	Level lvl_inf = Level.get(inf.lvl); 
         if (++inf.breaks >= inf.getNeed()) {
         	lvl_inf = inf.lvlup();
-        	if (Progress_bar) inf.bar.setColor(lvl_inf.color);
+        	if (Progress_bar) inf.createBar();
         	if (chat_alert) ponl.sendMessage(ChatColor.GREEN + lvl_inf.name);
         }
         if (Progress_bar) {
