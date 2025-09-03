@@ -23,6 +23,8 @@ import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
 import dev.lone.itemsadder.api.CustomBlock;
 import io.th0rgal.oraxen.api.OraxenItems;
+import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
+import net.momirealms.craftengine.core.util.Key;
 
 public class ConfigManager {
 	public YamlConfiguration config_temp;
@@ -169,6 +171,14 @@ public class ConfigManager {
 						case Nexo:
 							if (NexoBlocks.isCustomBlock(text))
 	        					a = text;
+							break;
+						case CraftEngine:
+							String[] pcid = text.split(":");
+							if (pcid.length >= 2) {
+								Key key = Key.of(pcid);
+								if (CraftEngineBlocks.byId(key) != null)
+									a = key;
+							}
 							break;
 						default: break;
         				}

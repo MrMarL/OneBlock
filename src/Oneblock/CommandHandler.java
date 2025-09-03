@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -22,10 +21,8 @@ import com.cryptomorin.xseries.XMaterial;
 
 import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
-import Oneblock.UniversalPlace.Place;
 import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
-import dev.lone.itemsadder.api.CustomBlock;
 
 public class CommandHandler implements CommandExecutor {
     @Override
@@ -516,14 +513,8 @@ public class CommandHandler implements CommandExecutor {
 			                    for(;i<Level.get(temp).blocks;i++)
 			                    	if (plugin.blocks.get(i) == null)
 			                    		sender.sendMessage("Grass (undefined)");
-			                    	else if (plugin.blocks.get(i).getClass() == Material.class)
-			                    		sender.sendMessage(((Material)plugin.blocks.get(i)).name());
-			                    	else if (plugin.blocks.get(i).getClass() == XMaterial.class)
-			                    		sender.sendMessage(((XMaterial)plugin.blocks.get(i)).name());
-			                    	else if (Place.Type.ItemsAdder == plugin.placetype && plugin.blocks.get(i).getClass() == CustomBlock.class)
-			                    		sender.sendMessage(((CustomBlock)plugin.blocks.get(i)).getId());
 			                    	else
-			                    		sender.sendMessage((String)plugin.blocks.get(i));
+			                    		sender.sendMessage(plugin.blocks.get(i).toString());
 			                    return true;
 			                }
 			                for(int i = 0;i<Level.size();i++)

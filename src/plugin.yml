@@ -4,7 +4,7 @@ version:  1.3.7
 api-version: 1.13
 author:  MrMarL
 loadbefore: ['Multiverse-Core']
-softdepend: ['PlaceholderAPI', 'WorldGuard', 'ItemsAdder', 'Oraxen', 'Nexo']
+softdepend: ['PlaceholderAPI', 'WorldGuard', 'ItemsAdder', 'Oraxen', 'Nexo', 'CraftEngine']
 commands:
   oneblock:
     description: Oneblock main command.

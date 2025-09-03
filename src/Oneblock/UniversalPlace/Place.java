@@ -16,7 +16,8 @@ public abstract class Place {
 	    basic,
 	    ItemsAdder,
 	    Oraxen,
-	    Nexo
+	    Nexo,
+	    CraftEngine
 	}
 	
 	public static Place GetPlacerByType(Type type) {
@@ -29,6 +30,8 @@ public abstract class Place {
 			return new PlaceOraxen();
 		case Nexo:
 			return new PlaceNexo();
+		case CraftEngine:
+			return new PlaceCraftEngine();
 		default:
 			return new Place1_13plus();
 		}

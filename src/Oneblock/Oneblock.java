@@ -145,6 +145,7 @@ public class Oneblock extends JavaPlugin {
         if (pluginManager.isPluginEnabled("ItemsAdder")) return Place.Type.ItemsAdder;
         if (pluginManager.isPluginEnabled("Oraxen")) return Place.Type.Oraxen;
         if (pluginManager.isPluginEnabled("Nexo")) return Place.Type.Nexo;
+        if (pluginManager.isPluginEnabled("CraftEngine")) return Place.Type.CraftEngine;
         return legacy ? Place.Type.legacy : Place.Type.basic;
     }
     
