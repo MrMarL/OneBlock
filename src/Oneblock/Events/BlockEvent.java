@@ -50,7 +50,7 @@ public class BlockEvent implements Listener {
 		final UUID uuid = ponl.getUniqueId();
 		final int plID = PlayerInfo.GetId(uuid);
 		if (plID == -1) return;
-		final int result[] = getFullCoord(plID);
+		final int result[] = plugin.getFullCoord(plID);
 		if (block.getX() != result[0]) return;
 		if (block.getZ() != result[1]) return;
 

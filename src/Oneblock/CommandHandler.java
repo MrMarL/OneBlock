@@ -51,7 +51,7 @@ public class CommandHandler implements CommandExecutor {
 	            if (plID == -1) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
 	            	plID = PlayerInfo.getFreeId(UseEmptyIslands);
-	            	int result[] = getFullCoord(plID);
+	            	int result[] = plugin.getFullCoord(plID);
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
 	            		Island.clear(getWorld(), X_pl, y, Z_pl, sto/4);
@@ -65,7 +65,7 @@ public class CommandHandler implements CommandExecutor {
 						inf.createBar(getBarTitle(p, 0));
 	            } 
 	            else {
-	            	int result[] = getFullCoord(plID);
+	            	int result[] = plugin.getFullCoord(plID);
 	                X_pl = result[0]; Z_pl = result[1];
 	            }
 	            if (!plugin.enabled) plugin.runMainTask();
@@ -117,7 +117,7 @@ public class CommandHandler implements CommandExecutor {
 	    			sender.sendMessage(Messages.not_allow_visit);
 	    			return true;
 	    		}
-	        	final int result[] = getFullCoord(plID);
+	        	final int result[] = plugin.getFullCoord(plID);
 	            final int X_pl = result[0], Z_pl = result[1];
 	    		
 	            if (protection) Guest.list.add(new Guest(uuid, pl.getUniqueId()));
@@ -379,7 +379,7 @@ public class CommandHandler implements CommandExecutor {
 			                    inf.lvl = 0;
 			                    if (Progress_bar)
 			                    	inf.bar.setVisible(false);
-			                    int result[] = getFullCoord(i);
+			                    int result[] = plugin.getFullCoord(i);
 			                    Island.clear(getWorld(), result[0], y, result[1], sto/4);
 			                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
 			                    return true;
@@ -546,7 +546,7 @@ public class CommandHandler implements CommandExecutor {
 			                	Player p = (Player) sender;
 			                	UUID uuid = p.getUniqueId();
 			                    if (PlayerInfo.GetId(uuid) != -1) {
-			                        int result[] = getFullCoord(PlayerInfo.GetId(uuid));
+			                        int result[] = plugin.getFullCoord(PlayerInfo.GetId(uuid));
 			                        Island.scan(getWorld(), result[0], y, result[1]);
 			                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
 			                        config.set("custom_island", Island.map());

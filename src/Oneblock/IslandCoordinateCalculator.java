@@ -1,6 +1,35 @@
 package Oneblock;
 
+import org.bukkit.Location;
+
 public final class IslandCoordinateCalculator {
+	
+	public static int findNeastRegionId(Location loc) {
+	    int nearestId = 0;
+	    int minDistSq = Integer.MAX_VALUE;
+	    int locX = loc.getBlockX();
+	    int locZ = loc.getBlockZ();
+	    int size = PlayerInfo.size();
+	    
+	    int halfStoSquared = (Oneblock.sto / 2) * (Oneblock.sto / 2);
+	    
+	    for (int i = 0; i < size; i++) {
+	        int[] coord = Oneblock.plugin.getFullCoord(i);
+	        int dx = coord[0] - locX;
+	        int dz = coord[1] - locZ;
+	        int distSq = dx * dx + dz * dz;
+	        
+	        if (distSq < minDistSq) {
+	            minDistSq = distSq;
+	            nearestId = i;
+	            
+	            if (minDistSq <= halfStoSquared) {
+	                break;
+	            }
+	        }
+	    }
+	    return nearestId;
+	}
 	
 	public static int[] getById(int id, int x, int z, int diameter, boolean CircleMode) {
 		if (!CircleMode) return new int[] {id * diameter + x, z, id};

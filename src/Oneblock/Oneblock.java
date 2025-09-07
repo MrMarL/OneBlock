@@ -86,9 +86,11 @@ public class Oneblock extends JavaPlugin {
     public ArrayList <XMaterial> flowers = new ArrayList<>();
     public PlayerCache cache = new PlayerCache();
     
-    public boolean isPAPIEnabled() { return PAPI; }
-    public static int[] getFullCoord(final int id) { return IslandCoordinateCalculator.getById(id, x, z, sto, CircleMode); }
     public static World getWorld() { return plugin.wor; }
+    public boolean isPAPIEnabled() { return PAPI; }
+    public int[] getFullCoord(final int id) { return IslandCoordinateCalculator.getById(id, x, z, sto, CircleMode); }
+    public int findNeastRegionId(final Location loc) { return IslandCoordinateCalculator.findNeastRegionId(loc); }
+    
     @Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
     
@@ -278,20 +280,6 @@ public class Oneblock extends JavaPlugin {
 	public void spawnRandomMob(int pos_x, int pos_z, Level level) {
 		if (level.mobs == 0) return;
 		wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
-	}
-    
-    public int findNeastRegionId(Location loc) {
-    	int id_ = 0, neast = Integer.MAX_VALUE;
-    	
-    	for (int i = 0; i < PlayerInfo.size() ;i++) {
-    		int coord[] = getFullCoord(i);
-            int distance = (int)Math.sqrt(Math.pow(coord[0] - loc.getBlockX(), 2) + Math.pow(coord[1] - loc.getBlockZ(), 2));
-            if (distance > neast) continue;
-            
-            neast = distance;
-            id_ = i;
-    	}
-    	return id_;
 	}
     
 	public void ReCreateRegions() {
