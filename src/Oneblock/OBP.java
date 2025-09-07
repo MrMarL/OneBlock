@@ -42,7 +42,7 @@ public class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return "1.3.0";
+        return Oneblock.plugin.version;
     }
     @Override
     public String onRequest(OfflinePlayer p, String identifier) {

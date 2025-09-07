@@ -578,13 +578,14 @@ public class CommandHandler implements CommandExecutor {
 			            }
 			        }
 	        	}
+	        	
 	        	sender.sendMessage(
 	        		    ChatColor.values()[rnd.nextInt(ChatColor.values().length)] + 
 	        		    "\n▄▄▄ ▄▄ " +
 	        		    "\n█░█ █▄▀" +
-	        		    "\n█▄█ █▄▀ by MrMarL\n" +
-	        		    "Plugin version: v1.3.8\n" +
-	        		    "Server version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
+	        		    "\n█▄█ █▄▀ by MrMarL" +
+	        		    "\nPlugin version: v" + plugin.version +
+	        		    "\nServer version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;
 		    }
 	    }

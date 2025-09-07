@@ -73,9 +73,10 @@ public class Oneblock extends JavaPlugin {
     
     public static YamlConfiguration config;
     
-    OBWorldGuard OBWG;
-    Place placer;
-    Place.Type placetype = Place.Type.basic;
+    public final String version = getDescription().getVersion();
+    public OBWorldGuard OBWG;
+    public Place.Type placetype = Place.Type.basic;
+    private Place placer;
     
     World wor, leavewor;
     boolean enabled = false;
