@@ -6,10 +6,42 @@ import java.util.UUID;
 
 import org.bukkit.util.Vector;
 
-public abstract class OBWorldGuard {
+import Oneblock.Oneblock;
+import Oneblock.PlayerInfo;
+
+public class OBWorldGuard {
 	public static final boolean canUse = false;
 	public static final String regionName = "OB_WG_%d";
-	public static List <String> flags = new ArrayList <>();
+
+	public static List<String> flags = new ArrayList<>();
+
+	private static boolean enabled = canUse;
+	
+	public static boolean isEnabled() {
+	    return enabled;
+	}
+
+	public static void setEnabled(boolean value) {
+		if (!canUse) return;
+		enabled = value;
+	}
+	
+	public void ReCreateRegions() {
+		if (!enabled) return;
+		
+		int id = PlayerInfo.size();
+		RemoveRegions(id);
+    	
+		for (int i = 0; i < id; i++) {
+			PlayerInfo owner = PlayerInfo.get(i);
+			if (owner.uuid == null) continue;
+			
+			int pos[] = Oneblock.plugin.getFullCoord(i);
+			CreateRegion(owner.uuid, pos[0], pos[1], Oneblock.sto, i);
+			for (UUID member: owner.uuids) 
+				addMember(member, i);
+		}
+	}
 	
 	public boolean CreateRegion(UUID pl, int x, int z, int offset, int id) {
 		int radius = offset/2;
@@ -20,11 +52,11 @@ public abstract class OBWorldGuard {
 		return CreateRegion(pl, Block1, Block2, id);
 	}
 	
-	public abstract boolean CreateRegion(UUID pl, Vector coord1, Vector coord2, int id) ;
+	public boolean CreateRegion(UUID pl, Vector coord1, Vector coord2, int id) {return true;}
 	
-	public abstract boolean addMember(UUID pl, int id) ;
+	public boolean addMember(UUID pl, int id) {return true;}
 	
-	public abstract boolean removeMember(UUID pl, int id) ;
+	public boolean removeMember(UUID pl, int id) {return true;}
 	
-	public abstract boolean RemoveRegions(int id) ;
+	public boolean RemoveRegions(int id) {return true;}
 }

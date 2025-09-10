@@ -67,8 +67,7 @@ public class ConfigManager {
         Level.multiplier = Check("level_multiplier", Level.multiplier);
         max_players_team = Check("max_players_team", max_players_team);
         UpdateBoolParametrs();
-        if (OBWorldGuard.canUse)
-        	WorldGuard = Check("worldguard", OBWorldGuard.canUse);
+        OBWorldGuard.setEnabled(Check("worldguard", OBWorldGuard.canUse));
         OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
         sto = Check("set", 100);
         if (config.isSet("custom_island") && !legacy)

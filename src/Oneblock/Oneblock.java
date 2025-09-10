@@ -64,7 +64,6 @@ public class Oneblock extends JavaPlugin {
     public static boolean lvl_bar_mode = false, chat_alert = false, particle = true;
     public static boolean allow_nether = true, protection = false;
     public static boolean saveplayerinventory = false;
-    public static boolean WorldGuard = OBWorldGuard.canUse;
     public static boolean Border = false;
     public static boolean CircleMode = true;
     public static boolean UseEmptyIslands = true;
@@ -74,7 +73,7 @@ public class Oneblock extends JavaPlugin {
     public static YamlConfiguration config;
     
     public final String version = getDescription().getVersion();
-    public OBWorldGuard OBWG;
+    public OBWorldGuard OBWG = new OBWorldGuard();
     public Place.Type placetype = Place.Type.basic;
     private Place placer;
     
@@ -151,7 +150,7 @@ public class Oneblock extends JavaPlugin {
     
     public void reload() {
     	configManager.loadConfigFiles();
-    	ReCreateRegions();
+    	OBWG.ReCreateRegions();
     }
     
     private void setupMetrics(Metrics metrics) {
@@ -188,11 +187,10 @@ public class Oneblock extends JavaPlugin {
 		
     	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
         	getLogger().info("WorldGuard has been found!");
-        	if (legacy) OBWG = new OBWorldGuard6();
-			else OBWG = new OBWorldGuard7();
-        	ReCreateRegions();
+        	OBWG = legacy ? new OBWorldGuard6() : new OBWorldGuard7();
+        	OBWG.ReCreateRegions();
         }
-        else WorldGuard = false;
+        else OBWorldGuard.setEnabled(false);
     }
 
 	public class TaskUpdatePlayers implements Runnable {
@@ -281,23 +279,6 @@ public class Oneblock extends JavaPlugin {
 	public void spawnRandomMob(int pos_x, int pos_z, Level level) {
 		if (level.mobs == 0) return;
 		wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
-	}
-    
-	public void ReCreateRegions() {
-		if (!WorldGuard || !OBWorldGuard.canUse || OBWG == null) return;
-		
-		int id = PlayerInfo.size();
-		OBWG.RemoveRegions(id);
-    	
-		for (int i = 0; i < id; i++) {
-			PlayerInfo owner = PlayerInfo.get(i);
-			if (owner.uuid == null) continue;
-			
-			int pos[] = getFullCoord(i);
-			OBWG.CreateRegion(owner.uuid, pos[0], pos[1], sto, i);
-			for (UUID member: owner.uuids) 
-				OBWG.addMember(member, i);
-		}
 	}
     
     public void UpdateBorderLocation(Player pl, Location loc) {

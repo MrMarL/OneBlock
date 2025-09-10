@@ -58,7 +58,7 @@ public class CommandHandler implements CommandExecutor {
 	            	XBlock.setType(getWorld().getBlockAt(X_pl, y, Z_pl), XMaterial.GRASS_BLOCK);
 	                if (il3x3)
 	                	Island.place(getWorld(), X_pl, y, Z_pl);
-	                if (WorldGuard) 
+	                if (OBWorldGuard.isEnabled()) 
 	                	plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, sto, plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
@@ -71,7 +71,7 @@ public class CommandHandler implements CommandExecutor {
 	            if (!plugin.enabled) plugin.runMainTask();
 	            if (Progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
 	            p.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
-	            if (WorldGuard) plugin.OBWG.addMember(uuid, plID);
+	            if (OBWorldGuard.isEnabled()) plugin.OBWG.addMember(uuid, plID);
 	            return true;
 	        }
 	        case ("leave"):{
@@ -91,7 +91,7 @@ public class CommandHandler implements CommandExecutor {
 	                sender.sendMessage(Messages.noperm_inv);
 	                return true;
 	            }
-	        	if (plugin.OBWG == null || !WorldGuard) {
+	        	if (!OBWorldGuard.isEnabled()) {
 	                sender.sendMessage(ChatColor.YELLOW + "This feature is only available when worldguard is enabled.");
 	                return true;
 	            }
@@ -192,7 +192,7 @@ public class CommandHandler implements CommandExecutor {
 	        	PlayerInfo info = PlayerInfo.get(ownerID);
 	        	if (info.uuids.contains(member_uuid)) {
 	        		info.uuids.remove(member_uuid);
-	        		if (WorldGuard)
+	        		if (OBWorldGuard.isEnabled())
 	        			plugin.OBWG.removeMember(member_uuid, ownerID);
 	        	}
 	        	if (!(member instanceof Player)) return true;
@@ -225,7 +225,7 @@ public class CommandHandler implements CommandExecutor {
 	        	
 	        	if (!saveplayerinventory) pl.getInventory().clear();
 	        		
-	        	if (WorldGuard) 
+	        	if (OBWorldGuard.isEnabled()) 
 	        		plugin.OBWG.removeMember(uuid, PlId);
 	        	if (!args[args.length-1].equals("/n"))
 	        		sender.sendMessage(Messages.idreset);
@@ -274,7 +274,7 @@ public class CommandHandler implements CommandExecutor {
 			                plugin.setPosition(p.getLocation());
 			                if (!plugin.enabled) plugin.runMainTask();
 			                getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
-			                plugin.ReCreateRegions();
+			                plugin.OBWG.ReCreateRegions();
 			                LegacyConfigSaver.Save(config);
 			                return true;
 			            }
@@ -288,21 +288,21 @@ public class CommandHandler implements CommandExecutor {
 			                    sender.sendMessage(String.format("%sThe WorldGuard plugin was not detected!", ChatColor.YELLOW));
 			                    return true;
 			                }
-			            	if (plugin.OBWG == null || !OBWorldGuard.canUse) {
+			            	if (!OBWorldGuard.canUse) {
 			                    sender.sendMessage(String.format("%sThis feature is only available in the premium version of the plugin!", ChatColor.YELLOW));
 			                    return true;
 			                }
 			            	if (args.length > 1 &&
 			                	(args[1].equals("true") || args[1].equals("false"))) {
-			                    	WorldGuard = Boolean.valueOf(args[1]);
-			                    	config.set("WorldGuard", WorldGuard);
-			                    	if (WorldGuard)
-			                    		plugin.ReCreateRegions();
+			            			OBWorldGuard.setEnabled(Boolean.valueOf(args[1]));
+			                    	config.set("WorldGuard", OBWorldGuard.isEnabled());
+			                    	if (OBWorldGuard.isEnabled())
+			                    		plugin.OBWG.ReCreateRegions();
 			                    	else
 			                    		plugin.OBWG.RemoveRegions(PlayerInfo.size());
 			                }
 			                else sender.sendMessage(Messages.bool_format);
-			            	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (WorldGuard?"enabled.":"disabled.")));
+			            	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (OBWorldGuard.isEnabled()?"enabled.":"disabled.")));
 			           		return true;
 			            }
 			            case ("border"):
