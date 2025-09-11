@@ -151,6 +151,7 @@ public class Oneblock extends JavaPlugin {
     public void reload() {
     	configManager.loadConfigFiles();
     	OBWG.ReCreateRegions();
+    	ReloadBorders();
     }
     
     private void setupMetrics(Metrics metrics) {
@@ -299,8 +300,9 @@ public class Oneblock extends JavaPlugin {
     }
     
     public void ReloadBorders() {
-    	if (Border) getWorld().getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
-    	else getWorld().getPlayers().forEach(pl -> pl.setWorldBorder(null));
+    	if (!isBorderSupported) return;
+    	if (Border) wor.getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
+    	else wor.getPlayers().forEach(pl -> pl.setWorldBorder(null));
     }
     
     public boolean isWithinIslandBounds(Location loc, int centerX, int centerZ) {
