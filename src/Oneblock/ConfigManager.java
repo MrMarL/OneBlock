@@ -69,7 +69,7 @@ public class ConfigManager {
         UpdateBoolParametrs();
         OBWorldGuard.setEnabled(Check("worldguard", OBWorldGuard.canUse));
         OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
-        sto = Check("set", 100);
+        offset = Check("set", 100);
         if (config.isSet("custom_island") && !legacy)
         	Island.read(config);
         LegacyConfigSaver.Save(config, con);

@@ -51,21 +51,21 @@ public class CommandHandler implements CommandExecutor {
 	            if (plID == -1) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
 	            	plID = PlayerInfo.getFreeId(UseEmptyIslands);
-	            	int result[] = plugin.getFullCoord(plID);
+	            	int result[] = plugin.getIslandCoordinates(plID);
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
-	            		Island.clear(getWorld(), X_pl, y, Z_pl, sto/4);
+	            		Island.clear(getWorld(), X_pl, y, Z_pl, offset/4);
 	            	XBlock.setType(getWorld().getBlockAt(X_pl, y, Z_pl), XMaterial.GRASS_BLOCK);
 	                if (il3x3)
 	                	Island.place(getWorld(), X_pl, y, Z_pl);
 	                if (OBWorldGuard.isEnabled()) 
-	                	plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, sto, plID);
+	                	plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, offset, plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
 						inf.createBar(getBarTitle(p, 0));
 	            } 
 	            else {
-	            	int result[] = plugin.getFullCoord(plID);
+	            	int result[] = plugin.getIslandCoordinates(plID);
 	                X_pl = result[0]; Z_pl = result[1];
 	            }
 	            if (!plugin.enabled) plugin.runMainTask();
@@ -117,7 +117,7 @@ public class CommandHandler implements CommandExecutor {
 	    			sender.sendMessage(Messages.not_allow_visit);
 	    			return true;
 	    		}
-	        	final int result[] = plugin.getFullCoord(plID);
+	        	final int result[] = plugin.getIslandCoordinates(plID);
 	            final int X_pl = result[0], Z_pl = result[1];
 	    		
 	            if (protection) Guest.list.add(new Guest(uuid, pl.getUniqueId()));
@@ -197,7 +197,7 @@ public class CommandHandler implements CommandExecutor {
 	        	}
 	        	if (!(member instanceof Player)) return true;
 	        	Player member_ex = (Player) member;
-	        	int memberID = plugin.findNeastRegionId(member_ex.getLocation());
+	        	int memberID = plugin.findNearestRegionId(member_ex.getLocation());
 	        	if (memberID == ownerID) {
 	        		if (!member_ex.hasPermission("Oneblock.set"))
 	        			member_ex.performCommand("ob j");
@@ -268,8 +268,8 @@ public class CommandHandler implements CommandExecutor {
 			                    	sender.sendMessage(String.format("%spossible values are from -1000 to 1000", ChatColor.RED));
 			                    	return true;
 			                    }
-			                    sto = temp;
-			                    config.set("set", sto);
+			                    offset = temp;
+			                    config.set("set", offset);
 			                }
 			                plugin.setPosition(p.getLocation());
 			                if (!plugin.enabled) plugin.runMainTask();
@@ -379,8 +379,8 @@ public class CommandHandler implements CommandExecutor {
 			                    inf.lvl = 0;
 			                    if (Progress_bar)
 			                    	inf.bar.setVisible(false);
-			                    int result[] = plugin.getFullCoord(i);
-			                    Island.clear(getWorld(), result[0], y, result[1], sto/4);
+			                    int result[] = plugin.getIslandCoordinates(i);
+			                    Island.clear(getWorld(), result[0], y, result[1], offset/4);
 			                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
 			                    return true;
 			                }
@@ -546,7 +546,7 @@ public class CommandHandler implements CommandExecutor {
 			                	Player p = (Player) sender;
 			                	UUID uuid = p.getUniqueId();
 			                    if (PlayerInfo.GetId(uuid) != -1) {
-			                        int result[] = plugin.getFullCoord(PlayerInfo.GetId(uuid));
+			                        int result[] = plugin.getIslandCoordinates(PlayerInfo.GetId(uuid));
 			                        Island.scan(getWorld(), result[0], y, result[1]);
 			                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
 			                        config.set("custom_island", Island.map());

@@ -32,8 +32,8 @@ public class BlockEvent implements Listener {
 		Location loc = e.getLocation();
 		if (!world.equals(loc.getWorld())) return;
 		if (loc.getBlockY() != y) return;
-		if ((x - loc.getBlockX()) % sto != 0) return;
-		if ((z - loc.getBlockZ()) % sto != 0) return;
+		if ((x - loc.getBlockX()) % offset != 0) return;
+		if ((z - loc.getBlockZ()) % offset != 0) return;
 
 		Entity drop = e.getEntity();
 		drop.teleport(loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0));
@@ -50,7 +50,7 @@ public class BlockEvent implements Listener {
 		final UUID uuid = ponl.getUniqueId();
 		final int plID = PlayerInfo.GetId(uuid);
 		if (plID == -1) return;
-		final int result[] = plugin.getFullCoord(plID);
+		final int result[] = plugin.getIslandCoordinates(plID);
 		if (block.getX() != result[0]) return;
 		if (block.getZ() != result[1]) return;
 

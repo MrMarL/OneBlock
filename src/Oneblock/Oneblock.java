@@ -58,7 +58,7 @@ public class Oneblock extends JavaPlugin {
     
     public static ConfigManager configManager = new ConfigManager();
     
-    public static int x = 0, y = 0, z = 0, sto = 100, max_players_team = 0;
+    public static int x = 0, y = 0, z = 0, offset = 100, max_players_team = 0;
     public static boolean il3x3 = false, rebirth = false, autojoin = false;
     public static boolean droptossup = true, physics = false;
     public static boolean lvl_bar_mode = false, chat_alert = false, particle = true;
@@ -88,8 +88,8 @@ public class Oneblock extends JavaPlugin {
     
     public static World getWorld() { return plugin.wor; }
     public boolean isPAPIEnabled() { return PAPI; }
-    public int[] getFullCoord(final int id) { return IslandCoordinateCalculator.getById(id, x, z, sto, CircleMode); }
-    public int findNeastRegionId(final Location loc) { return IslandCoordinateCalculator.findNeastRegionId(loc); }
+    public int[] getIslandCoordinates(final int id) { return IslandCoordinateCalculator.getById(id, x, z, offset, CircleMode); }
+    public int findNearestRegionId(final Location loc) { return IslandCoordinateCalculator.findNearestRegionId(loc); }
     
     @Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {return GenVoid;}
@@ -206,7 +206,7 @@ public class Oneblock extends JavaPlugin {
 	        if (!particle) return;
 
 	        for (Player ponl: cache.getPlayers()) {
-	            int[] result = cache.getFullCoord(ponl);
+	            int[] result = cache.getIslandCoordinates(ponl);
 	            if (result == null) continue;
 	            int X_pl = result[0], Z_pl = result[1];
 	            double baseY = y + 0.5;
@@ -224,7 +224,7 @@ public class Oneblock extends JavaPlugin {
             for (Player ponl: cache.getPlayers()) {
             	if (!ponl.getWorld().equals(wor)) continue;
             	final UUID uuid = ponl.getUniqueId();
-            	final int result[] = cache.getFullCoord(ponl);
+            	final int result[] = cache.getIslandCoordinates(ponl);
                 final int X_pl = result[0], Z_pl = result[1], plID = result[2];
             	
                 if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
@@ -232,11 +232,11 @@ public class Oneblock extends JavaPlugin {
                 	Location loc = ponl.getLocation();
             		PlayerInfo inf = Guest.getPlayerInfo(ponl.getUniqueId());
             		if (inf != null) {
-                    	int crd[] = getFullCoord(PlayerInfo.GetId(inf.uuid));
-                        CheckGuest = CheckPosition(loc, crd[0], crd[1]);
+                    	int crd[] = getIslandCoordinates(PlayerInfo.GetId(inf.uuid));
+                        CheckGuest = isWithinIslandBounds(loc, crd[0], crd[1]);
                         if (!CheckGuest) Guest.remove(uuid);
             		}
-            		if (!CheckPosition(loc, X_pl, Z_pl) && !CheckGuest) {
+            		if (!isWithinIslandBounds(loc, X_pl, Z_pl) && !CheckGuest) {
                     	ponl.performCommand("ob j");
                 		ponl.sendMessage(Messages.protection);
                     	continue;
@@ -282,13 +282,13 @@ public class Oneblock extends JavaPlugin {
 	}
     
     public void UpdateBorderLocation(Player pl, Location loc) {
-    	int plID = findNeastRegionId(loc);
-		int result[] = getFullCoord(plID);
+    	int plID = findNearestRegionId(loc);
+		int result[] = getIslandCoordinates(plID);
         int X_pl = result[0], Z_pl = result[1];
 		
 		WorldBorder br = Bukkit.createWorldBorder();
     	br.setCenter(X_pl+.5, Z_pl+.5);
-    	br.setSize(sto);
+    	br.setSize(offset);
     	pl.setWorldBorder(br);
     }
     
@@ -303,11 +303,12 @@ public class Oneblock extends JavaPlugin {
     	else getWorld().getPlayers().forEach(pl -> pl.setWorldBorder(null));
     }
     
-    public boolean CheckPosition(Location loc, int X_pl, int Z_pl) {
-    	X_pl = loc.getBlockX()-X_pl;
-    	Z_pl = CircleMode ? loc.getBlockZ()-Z_pl : 0;
-    	int val = Math.abs(sto/2) + 1;
-    	return (Math.abs(X_pl) <= val && Math.abs(Z_pl) <= val);
+    public boolean isWithinIslandBounds(Location loc, int centerX, int centerZ) {
+        int deltaX = loc.getBlockX() - centerX;
+        int deltaZ = CircleMode ? loc.getBlockZ() - centerZ : 0;
+        int radius = Math.abs(offset >> 1) + 1;
+        
+        return Math.abs(deltaX) <= radius && Math.abs(deltaZ) <= radius;
     }
     
     public void onDisable() { SaveData(); }
@@ -373,7 +374,7 @@ public class Oneblock extends JavaPlugin {
     	Location loc = pl.getLocation();
     	if (loc == null) return false;
     	if (!loc.getWorld().equals(plugin.wor)) return false;
-    	int id = plugin.findNeastRegionId(loc);
+    	int id = plugin.findNearestRegionId(loc);
     	if (id < 0 || id >= PlayerInfo.size()) return false;
     	
     	return PlayerInfo.get(id).allow_visit;
@@ -383,7 +384,7 @@ public class Oneblock extends JavaPlugin {
     	int reg_id = PlayerInfo.GetId(pl_uuid);
     	if (reg_id != -1)
 	    	for (Player ponl: plugin.cache.getPlayers())
-	    		if (plugin.findNeastRegionId(ponl.getLocation()) == reg_id)
+	    		if (plugin.findNearestRegionId(ponl.getLocation()) == reg_id)
 	    			count++;
     	return count;
     }

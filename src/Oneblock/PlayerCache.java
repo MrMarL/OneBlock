@@ -16,7 +16,7 @@ public class PlayerCache {
         	final int plID = PlayerInfo.GetId(uuid);
         	if (plID == -1)
         		return;
-        	players.put(player, Oneblock.plugin.getFullCoord(plID));
+        	players.put(player, Oneblock.plugin.getIslandCoordinates(plID));
         });
     }
     
@@ -24,7 +24,7 @@ public class PlayerCache {
         return players.keySet();
     }
 
-    public int[] getFullCoord(Player player) {
+    public int[] getIslandCoordinates(Player player) {
         return players.get(player);
     }
     

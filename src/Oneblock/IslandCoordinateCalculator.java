@@ -4,17 +4,17 @@ import org.bukkit.Location;
 
 public final class IslandCoordinateCalculator {
 	
-	public static int findNeastRegionId(Location loc) {
+	public static int findNearestRegionId(Location loc) {
 	    int nearestId = 0;
 	    int minDistSq = Integer.MAX_VALUE;
 	    int locX = loc.getBlockX();
 	    int locZ = loc.getBlockZ();
 	    int size = PlayerInfo.size();
 	    
-	    int halfStoSquared = (Oneblock.sto / 2) * (Oneblock.sto / 2);
+	    int halfStoSquared = (Oneblock.offset / 2) * (Oneblock.offset / 2);
 	    
 	    for (int i = 0; i < size; i++) {
-	        int[] coord = Oneblock.plugin.getFullCoord(i);
+	        int[] coord = Oneblock.plugin.getIslandCoordinates(i);
 	        int dx = coord[0] - locX;
 	        int dz = coord[1] - locZ;
 	        int distSq = dx * dx + dz * dz;
