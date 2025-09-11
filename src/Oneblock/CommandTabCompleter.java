@@ -18,7 +18,7 @@ public class CommandTabCompleter implements TabCompleter {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","ver","IDreset","help","gui","top"));
+        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","IDreset","help","gui","top"));
         	if (sender.hasPermission("Oneblock.visit")) commands.addAll(Arrays.asList("v","visit","allow_visit"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
