@@ -21,6 +21,7 @@ import Oneblock.PlayerInfo;
 
 public class BlockEvent implements Listener {
 	private static final double DROP_TELEPORT_HEIGHT_OFFSET = 0.8;
+	private static final Vector UPWARD_VELOCITY = new Vector(0, .1, 0);
 	
 	@EventHandler(ignoreCancelled = true)
 	public void ItemStackSpawn(final EntitySpawnEvent e) {
@@ -37,7 +38,7 @@ public class BlockEvent implements Listener {
 
 		Entity drop = e.getEntity();
 		drop.teleport(loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0));
-		drop.setVelocity(new Vector(0, .1, 0));
+		drop.setVelocity(UPWARD_VELOCITY);
     }
 	@EventHandler
 	public void BlockBreak(final BlockBreakEvent e) {
