@@ -47,7 +47,7 @@ public class Oneblock extends JavaPlugin {
     
     private static final int MOB_SPAWN_CHANCE = 9;
     private static final int FLOWER_CHANCE = 3;
-    private static final double[][] PARTICLE_OFFSETS = {{0.5, 0.5}, {1.5, 0.5}, {0.5, 1.5}, {1.5, 1.5}};
+    private static final double[][] PARTICLE_OFFSETS = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     
     public static final Random rnd = new Random(System.currentTimeMillis());
     public static final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
