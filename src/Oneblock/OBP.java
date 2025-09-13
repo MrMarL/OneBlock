@@ -131,10 +131,6 @@ public class OBP extends PlaceholderExpansion {
         if (identifier.equals("number_of_invited")) {
             return Integer.toString(PlayerInfo.get(p.getUniqueId()).uuids.size());
         }
-        // %OB_ver%
-        if (identifier.equals("ver")) {
-            return "1.3.0";
-        }
         return null; 
     }
 }
