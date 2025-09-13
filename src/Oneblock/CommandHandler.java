@@ -439,7 +439,7 @@ public class CommandHandler implements CommandExecutor {
 			                if (args[1].equals("true") || args[1].equals("false")) {
 			                    Progress_bar = Boolean.valueOf(args[1]);
 			                    configManager.Blockfile();
-			                    config.set("Progress_bar", Progress_bar);
+			                    config.set("progress_bar", Progress_bar);
 			                    return true;
 			                }
 			                
@@ -453,7 +453,7 @@ public class CommandHandler implements CommandExecutor {
 			                    try {
 			                    	Level.max.color = BarColor.valueOf(args[2]);
 			                    	configManager.Blockfile();
-			                        config.set("Progress_bar_color", Level.max.color.toString());
+			                        config.set("progress_bar_color", Level.max.color.toString());
 			                    } catch (Exception e) {
 			                        sender.sendMessage(String.format("%sPlease enter a valid color. For example: RED", ChatColor.YELLOW));
 			                    }
@@ -468,7 +468,7 @@ public class CommandHandler implements CommandExecutor {
 			                    try {
 			                    	Level.max.style = BarStyle.valueOf(args[2]);
 			                    	configManager.Blockfile();
-			                        config.set("Progress_bar_style", Level.max.style.toString());
+			                        config.set("progress_bar_style", Level.max.style.toString());
 			                    } catch (Exception e) {
 			                        sender.sendMessage(String.format("%sPlease enter a valid style. For example: SOLID", ChatColor.YELLOW));
 			                    }
@@ -477,7 +477,7 @@ public class CommandHandler implements CommandExecutor {
 			                }
 			                if (args[1].equalsIgnoreCase("level")) {
 			                	lvl_bar_mode = true;
-			                    config.set("Progress_bar_text", "level");
+			                    config.set("progress_bar_text", "level");
 			                    configManager.SetupProgressBar();
 			                    return true;
 			                }
@@ -486,7 +486,7 @@ public class CommandHandler implements CommandExecutor {
 								for (int i = 2; i < args.length; i++)
 									txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
 			                    lvl_bar_mode = false;
-			                    config.set("Progress_bar_text", TextP = txt_bar);
+			                    config.set("progress_bar_text", TextP = txt_bar);
 			                    configManager.SetupProgressBar();
 			                    return true;
 			                }
