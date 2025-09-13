@@ -22,7 +22,7 @@ public class CommandTabCompleter implements TabCompleter {
         	if (sender.hasPermission("Oneblock.visit")) commands.addAll(Arrays.asList("v","visit","allow_visit"));
             if (sender.hasPermission("Oneblock.set")) {
             	commands.addAll(Arrays.asList("set","setleave","progress_bar","chat_alert","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
-            		"reload","islands","island_rebirth","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
+            		"reload","islands","rebirth_on_the_island","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
             }
         } else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit") || args[0].equals("v")) {
@@ -52,7 +52,7 @@ public class CommandTabCompleter implements TabCompleter {
 	                commands.add("default");
                 case ("UseEmptyIslands"):
                 case ("allow_nether"):
-                case ("island_rebirth"):
+                case ("rebirth_on_the_island"):
                 case ("saveplayerinventory"):
                 case ("protection"):
                 case ("circlemode"):

@@ -252,7 +252,7 @@ public class CommandHandler implements CommandExecutor {
 	        	else 
 		        {
 	        		config = YamlConfiguration.loadConfiguration(LegacyConfigSaver.file); // Loading the config.yml file before making changes.
-	        		Bukkit.getScheduler().runTaskLater(plugin, () -> { LegacyConfigSaver.Save(config); }, 1L); // Saving the config.yml file after making changes.
+	        		Bukkit.getScheduler().runTaskLater(plugin, () -> { LegacyConfigSaver.Save(config); }, 2L); // Saving the config.yml file after making changes.
 		        	switch (parametr) {
 			            case ("set"):{
 			                Player p = (Player) sender;
