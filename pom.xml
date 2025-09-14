@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>3.0.0</version>
+			<version>3.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -233,7 +233,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
+				<version>3.14.0</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -243,7 +243,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.4</version>
+				<version>3.6.1</version>
 				<configuration>
 					<relocations>
 						<relocation>
@@ -253,7 +253,7 @@
 						
 						<relocation>
 			                <pattern>com.cryptomorin.xseries</pattern>
-			                <shadedPattern>Oneblock.utils</shadedPattern>
+			                <shadedPattern>Oneblock.Utils</shadedPattern>
 			            </relocation>
 					</relocations>
 					
@@ -261,9 +261,7 @@
 			            <filter>
 			                <artifact>*:*</artifact> <!-- Someone rewrite my filter... -->
 			                <excludes>
-				                <exclude>com/cryptomorin/xseries/*/*</exclude>
-				                <exclude>com/cryptomorin/xseries/*/*/*</exclude>
-				                <exclude>com/cryptomorin/xseries/*/*/*/*</exclude>
+			                	<exclude>com/cryptomorin/xseries/*/*/**</exclude>
 				                <exclude>com/cryptomorin/xseries/XBi*</exclude>
 				                <exclude>com/cryptomorin/xseries/N*</exclude>
 				                <exclude>com/cryptomorin/xseries/S*</exclude>

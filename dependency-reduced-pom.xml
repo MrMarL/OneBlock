@@ -18,7 +18,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
+        <version>3.14.0</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -26,7 +26,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -43,16 +43,14 @@
             </relocation>
             <relocation>
               <pattern>com.cryptomorin.xseries</pattern>
-              <shadedPattern>Oneblock.utils</shadedPattern>
+              <shadedPattern>Oneblock.Utils</shadedPattern>
             </relocation>
           </relocations>
           <filters>
             <filter>
               <artifact>*:*</artifact>
               <excludes>
-                <exclude>com/cryptomorin/xseries/*/*</exclude>
-                <exclude>com/cryptomorin/xseries/*/*/*</exclude>
-                <exclude>com/cryptomorin/xseries/*/*/*/*</exclude>
+                <exclude>com/cryptomorin/xseries/*/*/**</exclude>
                 <exclude>com/cryptomorin/xseries/XBi*</exclude>
                 <exclude>com/cryptomorin/xseries/N*</exclude>
                 <exclude>com/cryptomorin/xseries/S*</exclude>
@@ -240,8 +238,8 @@
     </dependency>
   </dependencies>
   <properties>
-    <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <src.dir>src</src.dir>
   </properties>
