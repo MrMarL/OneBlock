@@ -126,7 +126,7 @@
 		<dependency>
 		    <groupId>com.github.cryptomorin</groupId>
 		    <artifactId>XSeries</artifactId>
-		    <version>11.3.0</version>
+		    <version>13.4.0</version>
 		</dependency>
 		
 		<dependency>
@@ -248,12 +248,12 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats</pattern>
-							<shadedPattern>Oneblock</shadedPattern>
+							<shadedPattern>Oneblock.Utils.stats</shadedPattern>
 						</relocation>
 						
 						<relocation>
 			                <pattern>com.cryptomorin.xseries</pattern>
-			                <shadedPattern>Oneblock.Utils</shadedPattern>
+			                <shadedPattern>Oneblock.Utils.lib</shadedPattern>
 			            </relocation>
 					</relocations>
 					
@@ -261,16 +261,21 @@
 			            <filter>
 			                <artifact>*:*</artifact> <!-- Someone rewrite my filter... -->
 			                <excludes>
-			                	<exclude>com/cryptomorin/xseries/*/*/**</exclude>
-				                <exclude>com/cryptomorin/xseries/XBi*</exclude>
-				                <exclude>com/cryptomorin/xseries/N*</exclude>
-				                <exclude>com/cryptomorin/xseries/S*</exclude>
-				                <exclude>com/cryptomorin/xseries/XS*</exclude>
-				                <exclude>com/cryptomorin/xseries/XT*</exclude>
-				                <exclude>com/cryptomorin/xseries/XE*</exclude>
-				                <exclude>com/cryptomorin/xseries/XP*</exclude>
-				                <exclude>com/cryptomorin/xseries/XW*</exclude>
-				                <exclude>com/cryptomorin/xseries/XI*</exclude>
+			                	<exclude>com/cryptomorin/xseries/*/*/*/**</exclude>
+			                	<exclude>com/cryptomorin/xseries/base/XM*</exclude>
+			                	<exclude>com/cryptomorin/xseries/base/*y*</exclude>
+			                	<exclude>com/cryptomorin/xseries/*r*/*/**</exclude>
+			                	<exclude>com/cryptomorin/xseries/m*/*/**</exclude>
+			                	<exclude>com/cryptomorin/xseries/*bstr*</exclude>
+			                	<exclude>com/cryptomorin/xseries/N*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XA*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XS*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XE*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XI*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XP*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XT*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XW*</exclude>
+			                	<exclude>com/cryptomorin/xseries/XBi*</exclude>
 			                </excludes>
 			            </filter>
 			        </filters>
