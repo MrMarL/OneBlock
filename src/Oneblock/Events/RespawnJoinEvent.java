@@ -25,7 +25,7 @@ public class RespawnJoinEvent implements Listener {
 		if (plID == -1) return;
 		
 		int result[] = plugin.getIslandCoordinates(plID);
-		Location loc = new Location(world, result[0] + 0.5, y + 1.2013, result[1] + 0.5);
+		Location loc = new Location(world, result[0] + .5, y + 1.75, result[1] + .5);
 		e.setRespawnLocation(loc);
     }
     @EventHandler
