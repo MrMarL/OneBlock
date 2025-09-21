@@ -79,7 +79,6 @@ or simply **/ob**
 You can specify the color of the progress bar for each level separately! In the blocks.yml file, the second line (after the line with the name of the level)
 
 # 📊 PlaceholderAPI Support
-- %OB_ver%
 - %OB_lvl% - The player's level number.
 - %OB_next_lvl% - The number of the next level.
 - %OB_break_on_this_lvl% - The number of broken blocks at this level.
