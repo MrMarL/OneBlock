@@ -59,7 +59,7 @@ public class Oneblock extends JavaPlugin {
     public static ConfigManager configManager = new ConfigManager();
     
     public static int x = 0, y = 0, z = 0, offset = 100, max_players_team = 0;
-    public static boolean il3x3 = false, rebirth = false, autojoin = false;
+    public static boolean island_for_new_players = false, rebirth = false, autojoin = false;
     public static boolean droptossup = true, physics = false;
     public static boolean lvl_bar_mode = false, chat_alert = false, particle = true;
     public static boolean allow_nether = true, protection = false;

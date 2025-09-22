@@ -55,11 +55,8 @@ public class CommandHandler implements CommandExecutor {
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
 	            		Island.clear(getWorld(), X_pl, y, Z_pl, offset/4);
-	            	XBlock.setType(getWorld().getBlockAt(X_pl, y, Z_pl), XMaterial.GRASS_BLOCK);
-	                if (il3x3)
-	                	Island.place(getWorld(), X_pl, y, Z_pl);
-	                if (OBWorldGuard.isEnabled()) 
-	                	plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, offset, plID);
+	                Island.place(getWorld(), X_pl, y, Z_pl);
+	                plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, offset, plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
 						inf.createBar(getBarTitle(p, 0));
@@ -533,9 +530,9 @@ public class CommandHandler implements CommandExecutor {
 			                    return true;
 			                }
 			                if (args[1].equals("true") || args[1].equals("false")) {
-			                    il3x3 = Boolean.valueOf(args[1]);
-			                    config.set("Island_for_new_players", il3x3);
-			                    sender.sendMessage(ChatColor.GREEN + "Island_for_new_players = " + il3x3);
+			                    island_for_new_players = Boolean.valueOf(args[1]);
+			                    config.set("Island_for_new_players", island_for_new_players);
+			                    sender.sendMessage(ChatColor.GREEN + "Island_for_new_players = " + island_for_new_players);
 			                    return true;
 			                }
 			                if (args[1].equals("set_my_by_def")) {

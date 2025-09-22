@@ -63,7 +63,7 @@ public class ConfigManager {
 	        TextP = Check("progress_bar_text", "level");
 	        lvl_bar_mode = TextP.equals("level");
         }
-        il3x3 = Check("island_for_new_players", true);
+        island_for_new_players = Check("island_for_new_players", true);
         Level.multiplier = Check("level_multiplier", Level.multiplier);
         max_players_team = Check("max_players_team", max_players_team);
         UpdateBoolParametrs();

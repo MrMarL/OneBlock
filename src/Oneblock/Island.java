@@ -1,5 +1,8 @@
 package Oneblock;
 
+import static Oneblock.Oneblock.getWorld;
+import static Oneblock.Oneblock.y;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +98,9 @@ public class Island {
     }
 
     public static void place(World world, int x, int y, int z) {
+    	XBlock.setType(getWorld().getBlockAt(x, y, z), XMaterial.GRASS_BLOCK);
+    	
+    	if (!Oneblock.island_for_new_players) return;
         if (custom == null) {
             createDefaultIsland(world, x, y, z);
             return;

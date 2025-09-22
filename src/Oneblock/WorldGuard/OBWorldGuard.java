@@ -29,21 +29,26 @@ public class OBWorldGuard {
 	public void ReCreateRegions() {
 		if (!enabled) return;
 		
-		int id = PlayerInfo.size();
-		RemoveRegions(id);
+		int maxId = PlayerInfo.size();
+		RemoveRegions(maxId);
     	
-		for (int i = 0; i < id; i++) {
+		for (int i = 0; i < maxId; i++) {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.uuid == null) continue;
 			
 			int pos[] = Oneblock.plugin.getIslandCoordinates(i);
-			CreateRegion(owner.uuid, pos[0], pos[1], Oneblock.offset, i);
+			CreateRegion_(owner.uuid, pos[0], pos[1], Oneblock.offset, i);
 			for (UUID member: owner.uuids) 
 				addMember(member, i);
 		}
 	}
 	
 	public boolean CreateRegion(UUID pl, int x, int z, int offset, int id) {
+		if (!enabled) return false;
+		return CreateRegion_(pl, x, z, offset, id);
+	}
+	
+	private boolean CreateRegion_(UUID pl, int x, int z, int offset, int id) {
 		int radius = offset/2;
 		
 		Vector Block1 = new Vector(x - radius + 1, 0, z - radius + 1);
