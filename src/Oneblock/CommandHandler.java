@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
 import Oneblock.Invitation.Guest;

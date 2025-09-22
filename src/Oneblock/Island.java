@@ -1,8 +1,6 @@
 package Oneblock;
 
 import static Oneblock.Oneblock.getWorld;
-import static Oneblock.Oneblock.y;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
