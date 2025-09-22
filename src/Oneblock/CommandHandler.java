@@ -269,7 +269,7 @@ public class CommandHandler implements CommandExecutor {
 			                }
 			                plugin.setPosition(p.getLocation());
 			                if (!plugin.enabled) plugin.runMainTask();
-			                getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.parseMaterial());
+			                getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.get());
 			                plugin.OBWG.ReCreateRegions();
 			                LegacyConfigSaver.Save(config);
 			                return true;
