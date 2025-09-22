@@ -317,7 +317,6 @@ public class CommandHandler implements CommandExecutor {
 			            case ("allow_nether"):
 			            case ("saveplayerinventory"):
 			            case ("gui"):
-			            case ("chat_alert"):
 			            case ("rebirth_on_the_island"):{
 			            	if (args.length > 1 &&
 			                    	(args[1].equals("true") || args[1].equals("false"))) {

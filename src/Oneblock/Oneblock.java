@@ -28,7 +28,6 @@ import java.util.UUID;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -61,7 +60,7 @@ public class Oneblock extends JavaPlugin {
     public static int x = 0, y = 0, z = 0, offset = 100, max_players_team = 0;
     public static boolean island_for_new_players = false, rebirth = false, autojoin = false;
     public static boolean droptossup = true, physics = false;
-    public static boolean lvl_bar_mode = false, chat_alert = false, particle = true;
+    public static boolean lvl_bar_mode = false, particle = true;
     public static boolean allow_nether = true, protection = false;
     public static boolean saveplayerinventory = false;
     public static boolean Border = false;
@@ -259,7 +258,7 @@ public class Oneblock extends JavaPlugin {
         if (++inf.breaks >= inf.getNeed()) {
         	lvl_inf = inf.lvlup();
         	if (Progress_bar) inf.createBar();
-        	if (chat_alert) ponl.sendMessage(ChatColor.GREEN + lvl_inf.name);
+        	configManager.reward.executeRewards(ponl, inf.lvl, lvl_inf.name);
         }
         if (Progress_bar) {
             inf.bar.setTitle(getBarTitle(ponl, inf.lvl));

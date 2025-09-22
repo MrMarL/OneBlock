@@ -28,6 +28,7 @@ import net.momirealms.craftengine.core.util.Key;
 
 public class ConfigManager {
 	public YamlConfiguration config_temp;
+	public RewardManager reward = new RewardManager();
 	
     public void loadConfigFiles() {
         Configfile();
@@ -35,6 +36,7 @@ public class ConfigManager {
         Blockfile();
         Flowerfile();
         Messagefile();
+        reward.loadRewards();
     }
 	
 	private void Configfile() {
@@ -86,7 +88,6 @@ public class ConfigManager {
         particle = Check("particle", particle);
         allow_nether = Check("allow_nether", allow_nether);
         GUI.enabled = Check("gui", GUI.enabled);
-        chat_alert = Check("chat_alert", chat_alert);
         rebirth = Check("rebirth_on_the_island", rebirth);
         if (isBorderSupported) Border = Check("border", Border);
     }
@@ -100,10 +101,10 @@ public class ConfigManager {
         	plugin.saveResource("blocks.yml", false);
         config_temp = YamlConfiguration.loadConfiguration(block);
         if (config_temp.isString("MaxLevel"))
-        	Level.max.name = config_temp.getString("MaxLevel");
+        	Level.max.name = Utils.translateColorCodes(config_temp.getString("MaxLevel"));
         for (int i = 0; config_temp.isList(String.format("%d", i)); i++) {
         	List <String> bl_temp = config_temp.getStringList(String.format("%d", i));
-        	Level level = new Level(bl_temp.get(0));
+        	Level level = new Level(Utils.translateColorCodes(bl_temp.get(0)));
         	Level.levels.add(level);
         	int q = 1;
         	if (!superlegacy && q < bl_temp.size()) {

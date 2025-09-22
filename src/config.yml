@@ -18,8 +18,6 @@ yawleave: 0.0
 progress_bar: true
 #What shoud progress bar show?
 progress_bar_text: level
-#Shoud we enable chat alert for Levels
-chat_alert: true
 #ProgressBar Color
 progress_bar_color: GREEN
 #ProgressBar Style
