@@ -59,7 +59,6 @@ or simply **/ob**
 ### Other Commands:
 - /ob setleave
 - /ob leave
-- /ob chat_alert true - Display the level in the chat
 - /ob Progress_bar color [COLOR] - Set color
 - /ob Progress_bar [true/false] - Toggle progress bar
 - /ob Progress_bar level - Progress_bar level mode
