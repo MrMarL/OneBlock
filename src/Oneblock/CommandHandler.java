@@ -24,6 +24,23 @@ import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
 
 public class CommandHandler implements CommandExecutor {
+	
+	public static boolean idresetCommand(Player pl) {
+    	UUID uuid = pl.getUniqueId();
+    	int PlId = PlayerInfo.GetId(uuid);
+    	if (PlId == -1) return false;
+    	PlayerInfo plp = PlayerInfo.get(PlId);
+    	plp.removeBar(pl);
+    	plp.removeUUID(uuid);
+    	
+    	if (!saveplayerinventory) pl.getInventory().clear();
+    		
+    	if (OBWorldGuard.isEnabled()) 
+    		plugin.OBWG.removeMember(uuid, PlId);
+    	
+    	return true;
+	}
+	
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	if (!cmd.getName().equalsIgnoreCase("oneblock")) return false;
@@ -212,19 +229,8 @@ public class CommandHandler implements CommandExecutor {
 	        }
 	        case ("idreset"):{
 	        	Player pl = (Player)sender;
-	        	UUID uuid = pl.getUniqueId();
-	        	int PlId = PlayerInfo.GetId(uuid);
-	        	if (PlId == -1) return true;
-	        	PlayerInfo plp = PlayerInfo.get(PlId);
-	        	plp.removeBar(pl);
-	        	plp.removeUUID(uuid);
-	        	
-	        	if (!saveplayerinventory) pl.getInventory().clear();
-	        		
-	        	if (OBWorldGuard.isEnabled()) 
-	        		plugin.OBWG.removeMember(uuid, PlId);
-	        	if (!args[args.length-1].equals("/n"))
-	        		sender.sendMessage(Messages.idreset);
+	        	if (!idresetCommand(pl)) return true;
+	        	sender.sendMessage(Messages.idreset);
 	        	pl.performCommand("ob leave /n");
 	        	return true;
 	        }

@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import Oneblock.CommandHandler;
 import Oneblock.Oneblock;
 import Oneblock.PlayerInfo;
 
@@ -38,14 +39,11 @@ public class Invitation extends AbstractInvitation {
 		Invitation inv_ = check(uuid);
 		if (inv_ == null) return false; 
 		if (PlayerInfo.GetId(inv_.Inviting) == -1) return false;
-			
-		if (PlayerInfo.GetId(uuid) != -1) {
-			if (Oneblock.Progress_bar)
-				PlayerInfo.get(uuid).bar.removePlayer(pl);
-			pl.performCommand("ob idreset /n");
-		}
+		
+		CommandHandler.idresetCommand(pl);
+		
 		PlayerInfo.get(inv_.Inviting).uuids.add(uuid);
-		pl.performCommand("ob j"); 
+		pl.performCommand("ob j");
 		list.remove(inv_);
 		return true; 
     }

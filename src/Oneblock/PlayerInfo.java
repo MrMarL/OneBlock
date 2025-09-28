@@ -56,11 +56,10 @@ public class PlayerInfo {
 	
 	public void removeUUID(UUID deleted) {
 		if (uuid.equals(deleted)) {
-			if (uuids.size() > 0) {
-				uuid = uuids.get(0);
-				uuids.remove(0);
-			}
-			else uuid = null;
+			if (!uuids.isEmpty())
+				uuid = uuids.remove(0);
+			else 
+				uuid = null;
 		}
 		else uuids.remove(deleted);
 	}
@@ -128,7 +127,7 @@ public class PlayerInfo {
 		return list.size();
 	}
 	
-	public static int getNull() {
+	private static int getNull() {
 		for (int i = 0; list.size() > i; i++)
 			if (list.get(i).uuid == null) 
 				return i;
