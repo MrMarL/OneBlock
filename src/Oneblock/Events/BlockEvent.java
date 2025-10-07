@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +27,7 @@ public class BlockEvent implements Listener {
 		if (!droptossup) return;
 		World world = getWorld();
 		if (world == null) return;
-		if (!EntityType.DROPPED_ITEM.equals(e.getEntityType())) return;
+		if (e.getEntityType().getTypeId() != 1) return;
             
 		Location loc = e.getLocation();
 		if (!world.equals(loc.getWorld())) return;
