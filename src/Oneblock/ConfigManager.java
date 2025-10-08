@@ -173,8 +173,8 @@ public class ConfigManager {
 	        					a = text;
 							break;
 						case CraftEngine:
-							String[] pcid = text.split(":");
-							if (pcid.length >= 2) {
+							String[] pcid = text.split(":", 2);
+							if (pcid.length == 2) {
 								Key key = Key.of(pcid);
 								if (CraftEngineBlocks.byId(key) != null)
 									a = key;
