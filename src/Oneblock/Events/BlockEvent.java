@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,9 +26,10 @@ public class BlockEvent implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void ItemStackSpawn(final EntitySpawnEvent e) {
 		if (!droptossup) return;
+		if (!(e.getEntity() instanceof Item)) return;
+		
 		World world = getWorld();
 		if (world == null) return;
-		if (e.getEntityType().getTypeId() != 1) return;
             
 		Location loc = e.getLocation();
 		if (!world.equals(loc.getWorld())) return;
