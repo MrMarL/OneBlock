@@ -11,6 +11,7 @@ import java.util.*;
 
 public class PlayerInfo {
 	public static ArrayList<PlayerInfo> list = new ArrayList<>();
+	public static final PlayerInfo not_found = new PlayerInfo(null);
 	
 	public UUID uuid;
 	public ArrayList<UUID> uuids = new ArrayList<UUID>();
@@ -106,7 +107,7 @@ public class PlayerInfo {
 	
 	public static PlayerInfo get(UUID uuid) {
 		int plID = GetId(uuid);
-		if (plID == -1) return new PlayerInfo(null);	
+		if (plID == -1) return not_found;	
 		return list.get(plID);
 	}
 	

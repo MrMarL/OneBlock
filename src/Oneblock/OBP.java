@@ -136,7 +136,7 @@ public class OBP extends PlaceholderExpansion {
             
             PlayerInfo topPlayer = Oneblock.gettop(position);
             
-            if (topPlayer == null || topPlayer.uuid == null) return NONE_PLACEHOLDER;
+            if (topPlayer.uuid == null) return NONE_PLACEHOLDER;
             
             switch (parts[2]) {
 	            case "name":

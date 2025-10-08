@@ -390,10 +390,10 @@ public class Oneblock extends JavaPlugin {
     	return count;
     }
     public static PlayerInfo gettop(int i) {
-    	if (PlayerInfo.size() <= i) return new PlayerInfo(null);
+    	if (PlayerInfo.size() <= i) return PlayerInfo.not_found;
     	
     	List<PlayerInfo> sorted = new ArrayList<>(PlayerInfo.list);
     	sorted.sort(PlayerInfo.COMPARE_BY_LVL);
-    	return sorted.get(i).uuid == null ? new PlayerInfo(null) : sorted.get(i);
+    	return sorted.get(i).uuid == null ? PlayerInfo.not_found : sorted.get(i);
     }
 }
