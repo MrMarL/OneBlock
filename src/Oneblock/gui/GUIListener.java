@@ -17,7 +17,7 @@ public class GUIListener implements Listener {
         Inventory inv = e.getInventory();
         InventoryHolder _holder = inv.getHolder();
         if (_holder == null) return;
-        if (!_holder.getClass().isAssignableFrom(GUIHolder.class)) return;
+        if (!(_holder instanceof GUIHolder)) return;
         
         e.setCancelled(true);
         GUIHolder holder = (GUIHolder)_holder;
