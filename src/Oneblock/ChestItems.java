@@ -74,7 +74,7 @@ public class ChestItems {
 		
 		final int max = Oneblock.rnd.nextInt(3) + 2;
         try { for (int i = 0; i < max; i++) {
-        	ItemStack m = ch.get(Oneblock.plugin.rnd.nextInt(ch.size()));
+        	ItemStack m = ch.get(Oneblock.rnd.nextInt(ch.size()));
             if (m.getMaxStackSize() == 1)
             	m.setAmount(1);
             else
