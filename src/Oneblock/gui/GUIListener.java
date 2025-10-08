@@ -35,8 +35,9 @@ public class GUIListener implements Listener {
 		        ItemMeta meta = item.getItemMeta();
 		        if (meta == null) return;
 		        String command = meta.getDisplayName();
-		        if (command.contains("/"))
-		            pl.performCommand(command.split("/")[1]);
+		        String[] parts = command.split("/", 2);
+		        if (parts.length > 1) 
+		            pl.performCommand(parts[1]);
 		        return;
 		        
 		    case INVITE:
