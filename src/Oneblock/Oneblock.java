@@ -288,7 +288,7 @@ public class Oneblock extends JavaPlugin {
 		
 		WorldBorder br = Bukkit.createWorldBorder();
     	br.setCenter(X_pl+.5, Z_pl+.5);
-    	br.setSize(offset);
+    	br.setSize(offset - 1 + (offset & 1));
     	pl.setWorldBorder(br);
     }
     

@@ -49,7 +49,7 @@ public class OBWorldGuard {
 	}
 	
 	private boolean CreateRegion_(UUID pl, int x, int z, int offset, int id) {
-		int radius = offset/2;
+		int radius = (offset + (offset & 1)) / 2;
 		
 		Vector Block1 = new Vector(x - radius + 1, 0, z - radius + 1);
 		Vector Block2 = new Vector(x + radius - 1, 255, z + radius - 1);
