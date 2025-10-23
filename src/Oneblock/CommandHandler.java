@@ -383,44 +383,35 @@ public class CommandHandler implements CommandExecutor {
 			                sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
 			                return true;
 			            }
-			            case ("lvl_mult"):{
-			                if (args.length <= 1) {
-			                    sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, Level.multiplier));
-			                    return true;
+			            case ("lvl_mult"): {
+			                if (args.length > 1) {
+				                try {
+				                    int lvl = Integer.parseInt(args[1]);
+				                    if (lvl < 0 || lvl > 20) throw new NumberFormatException();
+				                    config.set("level_multiplier", Level.multiplier = lvl);
+				                    configManager.Blockfile();
+				                } 
+				                catch (NumberFormatException nfe) {
+				                    sender.sendMessage(String.format("%sinvalid multiplier value. Possible values: from 0 to 20.", ChatColor.RED));
+				                    return true;
+				                }
 			                }
-			                int lvl = Level.multiplier;
-			                try {
-			                    lvl = Integer.parseInt(args[1]);
-			                } catch (NumberFormatException nfe) {
-			                    sender.sendMessage(String.format("%sinvalid multiplier value.", ChatColor.RED));
-			                    return true;
-			                }
-			                if (lvl <= 20 && lvl >= 0) {
-			                	Level.multiplier = lvl;
-			                    config.set("level_multiplier", Level.multiplier);
-			                    configManager.Blockfile();
-			                } else
-			                    sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
 			                sender.sendMessage(String.format("%slevel multiplier now: %d\n5 by default", ChatColor.GREEN, Level.multiplier));
 			                return true;
 			            }
-			            case ("max_players_team"):{
-			                if (args.length <= 1) {
-			                    sender.sendMessage(String.format("%smax_players_team now: %d\n5 by default", ChatColor.GREEN, max_players_team));
-			                    return true;
+			            case ("max_players_team"): {
+			                if (args.length > 1) {
+				                try {
+				                    int mpt = Integer.parseInt(args[1]);
+				                    if (mpt < 0 || mpt > 20) throw new NumberFormatException();
+				                    config.set("max_players_team", max_players_team = mpt);
+				                } 
+				                catch (NumberFormatException nfe) {
+				                    sender.sendMessage(String.format("%sinvalid max_players_team value. Possible values: from 0 to 20.", ChatColor.RED));
+				                    return true;
+				                }
 			                }
-			                int mpt = max_players_team;
-			                try {
-			                	mpt = Integer.parseInt(args[1]);
-			                } catch (NumberFormatException nfe) {
-			                    sender.sendMessage(String.format("%sinvalid max_players_team value.", ChatColor.RED));
-			                    return true;
-			                }
-			                if (mpt <= 20 && mpt >= 0) 
-			                    config.set("max_players_team", max_players_team = mpt);
-			                else
-			                    sender.sendMessage(String.format("%spossible values: from 0 to 20.", ChatColor.RED));
-			                sender.sendMessage(String.format("%smax_players_team now: %d", ChatColor.GREEN, max_players_team));
+			                sender.sendMessage(String.format("%smax_players_team now: %d\n0 is unlimited", ChatColor.GREEN, max_players_team));
 			                return true;
 			            }
 			            case ("progress_bar"):{
@@ -490,22 +481,18 @@ public class CommandHandler implements CommandExecutor {
 			                return true;
 			            }
 			            case ("listlvl"):{
-			                if (args.length >= 2) {
+			                if (args.length > 1) {
 			                	int temp = 0;
 			                    try {
 			                    	temp = Integer.parseInt(args[1]);
-			                    } catch (NumberFormatException nfe) {
-			                    	sender.sendMessage(Messages.invalid_value);
-			                    	return true;
-			                    }
-			                    if (Level.size()<=temp||temp<0) {
+			                    	if (temp < 0 || temp >= Level.size()) throw new NumberFormatException();
+			                    } 
+			                    catch (NumberFormatException nfe) {
 			                    	sender.sendMessage(String.format("%sundefined lvl", ChatColor.RED));
 			                    	return true;
 			                    }
 			                    sender.sendMessage(String.format("%s%s",ChatColor.GREEN, Level.get(temp).name));
-			                    int i = 0;
-			                    if (temp !=0)
-			                    	i = Level.get(temp-1).blocks;
+			                    int i = (temp == 0) ? 0 : Level.get(temp-1).blocks;
 			                    for(;i<Level.get(temp).blocks;i++)
 			                    	if (plugin.blocks.get(i) == null)
 			                    		sender.sendMessage("Grass (undefined)");
