@@ -331,7 +331,6 @@ public class CommandHandler implements CommandExecutor {
 			                sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (config.getBoolean(parametr)?"enabled.":"disabled.")));
 			           		return true;
 			            }
-			            //LVL
 			            case ("setlevel"):{
 			                if (args.length <= 2) {
 			                    sender.sendMessage(String.format("%sinvalid format. try: /ob setlevel 'nickname' 'level'", ChatColor.RED));
@@ -343,24 +342,22 @@ public class CommandHandler implements CommandExecutor {
 			                if (plID != -1) {
 			                    int setlvl = 0;
 			                    try {
-			                        setlvl = Integer.parseInt(args[2]);
-			                    } catch (NumberFormatException nfe) {
-			                        sender.sendMessage(String.format("%sinvalid level value.", ChatColor.RED));
-			                        return true;
+			                    	setlvl = Integer.parseInt(args[2]);
+			                    	if (setlvl < 0 || setlvl > 10000) throw new NumberFormatException();
+			                    } 
+			                    catch (NumberFormatException nfe) {
+			                    	sender.sendMessage(String.format("%sinvalid level value.", ChatColor.RED));
+			                    	return true;
 			                    }
-			                    if (setlvl >= 0 && 10000 > setlvl) {
-			                        PlayerInfo inf = PlayerInfo.get(plID);
-			                        inf.breaks = 0;
-			                        inf.lvl = setlvl;
-			                        if (Progress_bar && offpl instanceof Player) {
-			                        	inf.createBar(getBarTitle((Player) offpl, inf.lvl));
-		                                inf.bar.setProgress(inf.getPercent());
-		                            }
-			                        sender.sendMessage(String.format("%sfor player %s, level %s is set.", ChatColor.GREEN, args[1], args[2]));
-			                        return true;
-			                    }
-			                    sender.sendMessage(String.format("%sinvalid level value.", ChatColor.RED));
-			                    return true;
+			                    PlayerInfo inf = PlayerInfo.get(plID);
+		                        inf.breaks = 0;
+		                        inf.lvl = setlvl;
+		                        if (Progress_bar && offpl instanceof Player) {
+		                        	inf.createBar(getBarTitle((Player) offpl, inf.lvl));
+	                                inf.bar.setProgress(inf.getPercent());
+	                            }
+		                        sender.sendMessage(String.format("%sfor player %s, level %s is set.", ChatColor.GREEN, args[1], args[2]));
+		                        return true;
 			                }
 			                sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
 			                return true;
