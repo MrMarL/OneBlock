@@ -368,20 +368,20 @@ public class CommandHandler implements CommandExecutor {
 			                    return true;
 			                }
 			                UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-			                if (PlayerInfo.GetId(uuid) != -1) {
-			                    int i = PlayerInfo.GetId(uuid);
-			                    PlayerInfo inf = PlayerInfo.get(i);
-			                    inf.breaks = 0;
-			                    inf.lvl = 0;
-			                    if (Progress_bar)
-			                    	inf.bar.setVisible(false);
-			                    int result[] = plugin.getIslandCoordinates(i);
-			                    Island.clear(getWorld(), result[0], y, result[1], offset/4);
-			                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
-			                    return true;
+			                int id = PlayerInfo.GetId(uuid);
+			                if (id == -1) {
+			                	sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
+				                return true;
 			                }
-			                sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
-			                return true;
+			                PlayerInfo inf = PlayerInfo.get(id);
+		                    inf.breaks = 0;
+		                    inf.lvl = 0;
+		                    if (Progress_bar)
+		                    	inf.bar.setVisible(false);
+		                    int result[] = plugin.getIslandCoordinates(id);
+		                    Island.clear(getWorld(), result[0], y, result[1], offset/4);
+		                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
+		                    return true;
 			            }
 			            case ("lvl_mult"): {
 			                if (args.length > 1) {
