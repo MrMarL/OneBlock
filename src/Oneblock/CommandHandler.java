@@ -262,17 +262,15 @@ public class CommandHandler implements CommandExecutor {
 			                if (args.length >= 2) {
 			                    try {
 			                    	temp = Integer.parseInt(args[1]);
-			                    } catch (NumberFormatException nfe) {
+			                    	if (temp > 10000 || temp < -10000) throw new NumberFormatException();
+			                    } 
+			                    catch (NumberFormatException nfe) {
 			                    	sender.sendMessage(Messages.invalid_value);
 			                    	return true;
 			                    }
-			                    if (temp > 1000 || temp < -1000) {
-			                    	sender.sendMessage(String.format("%spossible values are from -1000 to 1000", ChatColor.RED));
-			                    	return true;
-			                    }
 			                    offset = temp;
-			                    config.set("set", offset);
 			                }
+			                config.set("set", offset);
 			                plugin.setPosition(p.getLocation());
 			                if (!plugin.enabled) plugin.runMainTask();
 			                getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.get());
