@@ -432,34 +432,27 @@ public class CommandHandler implements CommandExecutor {
 			                
 			                if (!Progress_bar) return true;
 			                
-			                if (args[1].equalsIgnoreCase("color")) {
+			                boolean isColor = args[1].equalsIgnoreCase("color");
+			                if (isColor || args[1].equalsIgnoreCase("style")) {
 			                    if (args.length == 2) {
-			                        sender.sendMessage(String.format("%senter a color name.", ChatColor.YELLOW));
+			                        sender.sendMessage(String.format("%senter a %s name.", ChatColor.YELLOW, args[1].toLowerCase()));
 			                        return true;
 			                    }
+			                    
 			                    try {
-			                    	Level.max.color = BarColor.valueOf(args[2]);
-			                    	configManager.Blockfile();
-			                        config.set("progress_bar_color", Level.max.color.toString());
-			                    } catch (Exception e) {
-			                        sender.sendMessage(String.format("%sPlease enter a valid color. For example: RED", ChatColor.YELLOW));
+			                        if (isColor) {
+			                            Level.max.color = BarColor.valueOf(args[2]);
+			                            config.set("progress_bar_color", Level.max.color.toString());
+			                        } else {
+			                            Level.max.style = BarStyle.valueOf(args[2]);
+			                            config.set("progress_bar_style", Level.max.style.toString());
+			                        }
+			                        configManager.Blockfile();
+			                        sender.sendMessage(String.format("%sProgress bar %s = %s", ChatColor.GREEN, args[1].toLowerCase(), args[2]));
+			                    } 
+			                    catch (Exception e) {
+			                        sender.sendMessage(String.format("%sPlease enter a valid %s. For example: %s", ChatColor.YELLOW, args[1].toLowerCase(), isColor ? "RED" : "SOLID"));
 			                    }
-			                    sender.sendMessage(String.format("%sProgress bar color = %s", ChatColor.GREEN, Level.max.color.toString()));
-			                    return true;
-			                }
-			                if (args[1].equalsIgnoreCase("style")) {
-			                    if (args.length == 2) {
-			                        sender.sendMessage(String.format("%senter a style name.", ChatColor.YELLOW));
-			                        return true;
-			                    }
-			                    try {
-			                    	Level.max.style = BarStyle.valueOf(args[2]);
-			                    	configManager.Blockfile();
-			                        config.set("progress_bar_style", Level.max.style.toString());
-			                    } catch (Exception e) {
-			                        sender.sendMessage(String.format("%sPlease enter a valid style. For example: SOLID", ChatColor.YELLOW));
-			                    }
-			                    sender.sendMessage(String.format("%sProgress bar style = %s", ChatColor.GREEN, Level.max.style.toString()));
 			                    return true;
 			                }
 			                if (args[1].equalsIgnoreCase("level")) {
