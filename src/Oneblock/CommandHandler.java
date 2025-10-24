@@ -544,12 +544,11 @@ public class CommandHandler implements CommandExecutor {
 			            }
 			            case ("chest"):{
 			            	if (args.length < 2) {
-			            		ChestItems.getChestNames().forEach(t -> sender.sendMessage(t));
+			            		ChestItems.getChestNames().forEach(sender::sendMessage);
 			            		return true;
 			            	}
-			            	for (String t : ChestItems.getChestNames())
-			            		if (args[1].equals(t))
-			            			GUI.chestGUI((Player) sender, t);
+			            	if (ChestItems.getChestNames().contains(args[1]))
+			            		GUI.chestGUI((Player) sender, args[1]);
 			            	return true;
 			            }
 			        }
