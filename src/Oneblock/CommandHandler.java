@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
@@ -256,28 +257,61 @@ public class CommandHandler implements CommandExecutor {
 	        		config = YamlConfiguration.loadConfiguration(LegacyConfigSaver.file); // Loading the config.yml file before making changes.
 	        		Bukkit.getScheduler().runTaskLater(plugin, () -> { LegacyConfigSaver.Save(config); }, 2L); // Saving the config.yml file after making changes.
 		        	switch (parametr) {
-			            case ("set"):{
-			                Player p = (Player) sender;
-			                int temp = 100;
-			                if (args.length >= 2) {
-			                    try {
-			                    	temp = Integer.parseInt(args[1]);
-			                    	if (temp > 10000 || temp < -10000) throw new NumberFormatException();
-			                    } 
-			                    catch (NumberFormatException nfe) {
-			                    	sender.sendMessage(Messages.invalid_value);
-			                    	return true;
-			                    }
-			                    offset = temp;
-			                }
-			                config.set("set", offset);
-			                plugin.setPosition(p.getLocation());
-			                if (!plugin.enabled) plugin.runMainTask();
-			                getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.get());
-			                plugin.OBWG.ReCreateRegions();
-			                LegacyConfigSaver.Save(config);
-			                return true;
-			            }
+			        	case ("set"): {
+			        		Player player = sender instanceof Player ? (Player) sender : null;
+			        	    
+			        		if (player == null && args.length < 6) {
+			        	        sender.sendMessage(ChatColor.RED + "Usage from console: /ob set <offset> <x> <y> <z> [world]");
+			        	        return true;
+			        	    }
+			        	    
+			        	    if (args.length >= 2) {
+			        	        try {
+			        	            offset = Integer.parseInt(args[1]);
+			        	            if (offset > 10000 || offset < -10000) throw new NumberFormatException();
+			        	        } catch (NumberFormatException nfe) {
+			        	            sender.sendMessage(Messages.invalid_value);
+			        	            return true;
+			        	        }
+			        	    }
+			        	    
+			        	    Location location;
+			        	    if (args.length >= 5) {
+			        	        try {
+			        	            int x = Integer.parseInt(args[2]);
+			        	            int y = Integer.parseInt(args[3]);
+			        	            int z = Integer.parseInt(args[4]);
+			        	            if (y == 0) throw new NumberFormatException();
+			        	            
+			        	            World world = args.length >= 6 ? Bukkit.getWorld(args[5]) : 
+			        	                         (player != null ? player.getWorld() : null);
+			        	            
+			        	            if (world == null) {
+			        	                sender.sendMessage(ChatColor.YELLOW + "World not found!");
+			        	                return true;
+			        	            }
+			        	            
+			        	            location = new Location(world, x, y, z);
+			        	        } catch (NumberFormatException nfe) {
+			        	            sender.sendMessage(Messages.invalid_value);
+			        	            return true;
+			        	        }
+			        	    } else location = player.getLocation();
+			        	    
+			        	    config.set("set", offset);
+			        	    plugin.setPosition(location);
+			        	    
+			        	    if (!plugin.enabled) plugin.runMainTask();
+			        	    
+			        	    getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.get());
+			        	    plugin.OBWG.ReCreateRegions();
+			        	    LegacyConfigSaver.Save(config);
+			        	    
+			        	    sender.sendMessage(ChatColor.GREEN + "set OneBlock on: \n" +
+			        	                      ChatColor.WHITE + x + " " + y + " " + z + 
+			        	                      "\nin world " + getWorld().getName());
+			        	    return true;
+			        	}
 			            case ("setleave"):{
 			                Player p = (Player) sender;
 			                plugin.setLeave(p.getLocation());
