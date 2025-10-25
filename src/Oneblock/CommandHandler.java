@@ -27,30 +27,37 @@ import Oneblock.gui.GUI;
 public class CommandHandler implements CommandExecutor {
 	
 	public static boolean idresetCommand(Player pl) {
-    	UUID uuid = pl.getUniqueId();
-    	int PlId = PlayerInfo.GetId(uuid);
-    	if (PlId == -1) return false;
-    	PlayerInfo plp = PlayerInfo.get(PlId);
-    	plp.removeBar(pl);
-    	plp.removeUUID(uuid);
-    	
-    	if (!saveplayerinventory) pl.getInventory().clear();
-    		
-    	if (OBWorldGuard.isEnabled()) 
-    		plugin.OBWG.removeMember(uuid, PlId);
-    	
-    	return true;
+		if (pl == null) return false;
+		UUID uuid = pl.getUniqueId();
+		int PlId = PlayerInfo.GetId(uuid);
+		if (PlId == -1) return false;
+		PlayerInfo plp = PlayerInfo.get(PlId);
+		plp.removeBar(pl);
+		plp.removeUUID(uuid);
+
+		if (!saveplayerinventory) pl.getInventory().clear();
+
+		if (OBWorldGuard.isEnabled())
+			plugin.OBWG.removeMember(uuid, PlId);
+
+		return true;
+	}
+	
+	private boolean requirePermission(CommandSender sender, String permission) {
+	    if (!sender.hasPermission(permission)) {
+	        sender.sendMessage(ChatColor.RED + "You don't have permission [" + permission + "].");
+	        return false;
+	    }
+	    return true;
 	}
 	
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	if (!cmd.getName().equalsIgnoreCase("oneblock")) return false;
-        if (args.length == 0) return ((Player)sender).performCommand("ob j");
+        if (!requirePermission(sender, "Oneblock.join")) return true;
+        if (args.length == 0) args = new String[] {"j"};
         
-        if (!sender.hasPermission("Oneblock.join")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission [Oneblock.join].");
-            return true;
-        }
+        Player player = sender instanceof Player ? (Player) sender : null;
         
         String parametr = args[0].toLowerCase();
         switch (parametr) 
@@ -61,8 +68,8 @@ public class CommandHandler implements CommandExecutor {
 	            	sender.sendMessage(ChatColor.YELLOW + "First you need to set the reference coordinates '/ob set'.");
 	            	return true;
 	            }
-	            Player p = (Player) sender;
-	            UUID uuid = p.getUniqueId();
+	            if (player == null) return false;
+	            UUID uuid = player.getUniqueId();
 	            int X_pl = 0, Z_pl = 0;
 	            int plID = PlayerInfo.GetId(uuid);
 	            if (plID == -1) {
@@ -76,7 +83,7 @@ public class CommandHandler implements CommandExecutor {
 	                plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, offset, plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
-						inf.createBar(getBarTitle(p, 0));
+						inf.createBar(getBarTitle(player, 0));
 	            } 
 	            else {
 	            	int result[] = plugin.getIslandCoordinates(plID);
@@ -84,40 +91,37 @@ public class CommandHandler implements CommandExecutor {
 	            }
 	            if (!plugin.enabled) plugin.runMainTask();
 	            if (Progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
-	            p.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
+	            player.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
 	            if (OBWorldGuard.isEnabled()) plugin.OBWG.addMember(uuid, plID);
 	            return true;
 	        }
 	        case ("leave"):{
-	            Player p = (Player) sender;
-	            PlayerInfo.removeBarStatic(p);
+	        	if (player == null) return false;
+	            PlayerInfo.removeBarStatic(player);
 	            if (plugin.leavewor == null || config.getDouble("yleave") == 0) {
 	            	if (!args[args.length-1].equals("/n"))
 	            		sender.sendMessage(Messages.leave_not_set);
 	            	return true;
 	            }
-	            p.teleport(plugin.getLeave());
+	            player.teleport(plugin.getLeave());
 	            return true;
 	        }
 	        case ("v"):
 	        case ("visit"):{
-	        	if (!sender.hasPermission("Oneblock.visit")) {
-	                sender.sendMessage(Messages.noperm_inv);
-	                return true;
-	            }
+	        	if (!requirePermission(sender, "Oneblock.visit")) return true;
 	        	if (!OBWorldGuard.isEnabled()) {
 	                sender.sendMessage(ChatColor.YELLOW + "This feature is only available when worldguard is enabled.");
 	                return true;
 	            }
-	        	Player pl = (Player) sender;
+	        	if (player == null) return false;
 	            if (args.length < 2) {
-	        		GUI.visitGUI(pl, Bukkit.getOfflinePlayers());
+	        		GUI.visitGUI(player, Bukkit.getOfflinePlayers());
 	        		return true;
 	        	}
 	            OfflinePlayer inv = Bukkit.getOfflinePlayer(args[1]);
 	        	if (inv == null) return true;
-	    		if (inv == pl) {
-	    			pl.performCommand("ob j");
+	    		if (inv == player) {
+	    			player.performCommand("ob j");
 	    			return true;
 	    		}
 	    		UUID uuid = inv.getUniqueId();
@@ -134,41 +138,35 @@ public class CommandHandler implements CommandExecutor {
 	        	final int result[] = plugin.getIslandCoordinates(plID);
 	            final int X_pl = result[0], Z_pl = result[1];
 	    		
-	            if (protection) Guest.list.add(new Guest(uuid, pl.getUniqueId()));
-	            pl.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
-	    		PlayerInfo.removeBarStatic(pl);
+	            if (protection) Guest.list.add(new Guest(uuid, player.getUniqueId()));
+	            player.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
+	    		PlayerInfo.removeBarStatic(player);
 	            return true;
 	        }
 	        case ("allow_visit"):{
-	        	if (!sender.hasPermission("Oneblock.visit")) {
-	                sender.sendMessage(Messages.noperm_inv);
-	                return true;
-	            }
-	        	Player pl = (Player) sender;
-	        	UUID uuid = pl.getUniqueId();
+	        	if (!requirePermission(sender, "Oneblock.visit")) return true;
+	        	if (player == null) return false;
+	        	UUID uuid = player.getUniqueId();
 	        	if (PlayerInfo.GetId(uuid) == -1) return true;
 	        	PlayerInfo inf = PlayerInfo.get(uuid);
 	        	inf.allow_visit = !inf.allow_visit;
-	        	pl.sendMessage(inf.allow_visit ? Messages.allowed_visit : Messages.forbidden_visit);
+	        	player.sendMessage(inf.allow_visit ? Messages.allowed_visit : Messages.forbidden_visit);
 	        	return true;
 	        }
 	        case ("invite"):{
-	        	if (!sender.hasPermission("Oneblock.invite")) {
-	                sender.sendMessage(Messages.noperm_inv);
-	                return true;
-	            }
+	        	if (!requirePermission(sender, "Oneblock.invite")) return true;
 	        	if (args.length < 2) {
 	        		sender.sendMessage(Messages.invite_usage);
 	        		return true;
 	        	}
+	        	if (player == null) return false;
 	        	Player inv = Bukkit.getPlayer(args[1]);
 	        	if (inv == null) return true;
-	        	Player pl = (Player) sender;
-	    		if (inv == pl) {
+	    		if (inv == player) {
 	    			sender.sendMessage(Messages.invite_yourself);
 	    			return true;
 	    		}
-	    		UUID uuid = pl.getUniqueId();
+	    		UUID uuid = player.getUniqueId();
 	    		if (PlayerInfo.GetId(uuid) == -1) {
 	    			sender.sendMessage(Messages.invite_no_island);
 	    			return true;
@@ -181,7 +179,7 @@ public class CommandHandler implements CommandExecutor {
 	    			}
 	    		}
 	    		Invitation.add(uuid, inv.getUniqueId());
-	    		String name = pl.getName();
+	    		String name = player.getName();
 	    		GUI.acceptGUI(inv, name);
 	    		inv.sendMessage(String.format(Messages.invited, name));
 	    		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
@@ -194,12 +192,12 @@ public class CommandHandler implements CommandExecutor {
 	        	}
 	        	OfflinePlayer member = Bukkit.getOfflinePlayer(args[1]);
 	        	if (member == null) return true;
-	        	Player owner = (Player) sender;
-	        	if (member == owner) {
+	        	if (player == null) return false;
+	        	if (member == player) {
 	        		sender.sendMessage(Messages.kick_yourself);
 	        		return true;
 	        	}
-	        	UUID owner_uuid = owner.getUniqueId(), member_uuid = member.getUniqueId();
+	        	UUID owner_uuid = player.getUniqueId(), member_uuid = member.getUniqueId();
 	        	if (!PlayerInfo.ExistNoInvaitId(owner_uuid))
 	        		return true;
 	        	int ownerID = PlayerInfo.GetId(owner_uuid);
@@ -221,22 +219,20 @@ public class CommandHandler implements CommandExecutor {
 	        	return true;
 	        }
 	        case ("accept"):{
-	        	Player pl = (Player) sender;
-	       	 	if (Invitation.check(pl))
+	       	 	if (Invitation.check(player))
 	       	 		sender.sendMessage(Messages.accept_succes);
 	       	 	else
 	       	 		sender.sendMessage(Messages.accept_none);
 	       		return true;
 	        }
 	        case ("idreset"):{
-	        	Player pl = (Player)sender;
-	        	if (!idresetCommand(pl)) return true;
+	        	if (!idresetCommand(player)) return true;
 	        	sender.sendMessage(Messages.idreset);
-	        	pl.performCommand("ob leave /n");
+	        	player.performCommand("ob leave /n");
 	        	return true;
 	        }
 	        case ("top"):{
-	        	GUI.topGUI((Player) sender);
+	        	GUI.topGUI(player);
 	        	return true;
 	        }
 	        case ("help"):{
@@ -245,21 +241,17 @@ public class CommandHandler implements CommandExecutor {
 	        }
 	        case ("gui"):{
 	        	if (args.length == 1) {
-	        		GUI.openGUI((Player) sender);
+	        		GUI.openGUI(player);
 	        		return true;
-	        	} //else admin commands
+	        	}
 	        }
 	        default: {//admin commands
-	        	if (!sender.hasPermission("Oneblock.set"))
-	                sender.sendMessage(Messages.noperm);
-	        	else 
+	        	if (requirePermission(sender, "Oneblock.set")) 
 		        {
 	        		config = YamlConfiguration.loadConfiguration(LegacyConfigSaver.file); // Loading the config.yml file before making changes.
 	        		Bukkit.getScheduler().runTaskLater(plugin, () -> { LegacyConfigSaver.Save(config); }, 2L); // Saving the config.yml file after making changes.
 		        	switch (parametr) {
 			        	case ("set"): {
-			        		Player player = sender instanceof Player ? (Player) sender : null;
-			        	    
 			        		if (player == null && args.length < 6) {
 			        	        sender.sendMessage(ChatColor.RED + "Usage from console: /ob set <offset> <x> <y> <z> [world]");
 			        	        return true;
@@ -313,8 +305,8 @@ public class CommandHandler implements CommandExecutor {
 			        	    return true;
 			        	}
 			            case ("setleave"):{
-			                Player p = (Player) sender;
-			                plugin.setLeave(p.getLocation());
+			            	if (player == null) return false;
+			                plugin.setLeave(player.getLocation());
 			                return true;
 			            }
 			            case ("worldguard"):{

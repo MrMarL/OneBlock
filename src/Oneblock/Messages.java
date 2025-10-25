@@ -6,8 +6,6 @@ public class Messages {
 	public static final String bool_format = String.format("%sEnter a valid value true or false", ChatColor.YELLOW);
 	public static final String invalid_value = String.format("%sinvalid value", ChatColor.RED);
 	
-	public static String noperm = String.format("%sYou don't have permission [Oneblock.set].", ChatColor.RED);
-	public static String noperm_inv = String.format("%sYou don't have the permission to execute this command", ChatColor.RED);
 	public static String help = "none";
 	public static String help_adm = "none";
 	public static String invite_usage = String.format("%sUsage: /ob invite <username>", ChatColor.RED);

@@ -35,6 +35,7 @@ public class Invitation extends AbstractInvitation {
 	}
 	
 	public static boolean check(Player pl) {
+		if (pl == null) return false; 
 		UUID uuid = pl.getUniqueId();
 		Invitation inv_ = check(uuid);
 		if (inv_ == null) return false; 

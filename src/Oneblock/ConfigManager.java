@@ -220,8 +220,6 @@ public class ConfigManager {
         	plugin.saveResource("messages.yml", false);
         config_temp = YamlConfiguration.loadConfiguration(message);
         
-        Messages.noperm = MessageCheck("noperm", Messages.noperm);
-        Messages.noperm_inv = MessageCheck("noperm_inv", Messages.noperm_inv);
         Messages.help = MessageCheck("help", Messages.help);
         Messages.help_adm = MessageCheck("help_adm", Messages.help_adm);
         Messages.invite_usage = MessageCheck("invite_usage", Messages.invite_usage);

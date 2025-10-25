@@ -1,10 +1,4 @@
 # Messages
-noperm: |
-    &cYou don't have permission [Oneblock.set].
-
-noperm_inv: |
-    &cYou don't have the permission to execute this command
-
 help: |
     &a OneBlock Plugin Help
     &7 /ob j &f- join a new one or your own island.

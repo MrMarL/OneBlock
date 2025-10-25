@@ -30,11 +30,14 @@ public class GUI {
 	
 	public static void openGUI(Player p) {
 		if (!enabled) return;
+		if (p == null) return;
 		Inventory mainGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.MAIN_MENU), 18, Messages.baseGUI);
 		mainGUI.addItem(setMeta(XMaterial.GRASS_BLOCK, ChatColor.GREEN + "/ob join"));
 		mainGUI.setItem(9, setMeta(XMaterial.PODZOL, ChatColor.GREEN + "/ob leave"));
-		mainGUI.setItem(10, setMeta(XMaterial.EMERALD_BLOCK, ChatColor.GREEN + "/ob allow_visit"));
-		mainGUI.setItem(2, setMeta(XMaterial.MELON, ChatColor.GREEN + "/ob visit"));
+		if (p.hasPermission("Oneblock.visit")) {
+			mainGUI.setItem(10, setMeta(XMaterial.EMERALD_BLOCK, ChatColor.GREEN + "/ob allow_visit"));
+			mainGUI.setItem(2, setMeta(XMaterial.MELON, ChatColor.GREEN + "/ob visit"));
+		}
 		mainGUI.setItem(4, setMeta(XMaterial.GOLD_BLOCK, ChatColor.GOLD + "/ob top"));
 		mainGUI.setItem(6, setMeta(XMaterial.PAPER, ChatColor.GRAY + "/ob help"));
 		mainGUI.setItem(8, setMeta(XMaterial.BARRIER, ChatColor.RED + "/ob idreset", Messages.idresetGUI));
@@ -44,6 +47,7 @@ public class GUI {
 	
 	public static void acceptGUI(Player p, String name) {
 		if (!enabled) return;
+		if (p == null) return;
 		Inventory acceptGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.INVITE), 9, Messages.acceptGUI);
 		acceptGUI.setItem(6, setMeta(XMaterial.REDSTONE_BLOCK, Messages.acceptGUIignore));
 		acceptGUI.setItem(2, setMeta(XMaterial.EMERALD_BLOCK, String.format(Messages.acceptGUIjoin, name), Messages.idresetGUI));
@@ -52,6 +56,7 @@ public class GUI {
 	
 	public static void topGUI(Player p) {
 		if (!enabled) return;
+		if (p == null) return;
 		if (topGUI == null)
 			topGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.TOP), 27, Messages.topGUI);
 		PlayerInfo inf = Oneblock.Oneblock.gettop(0);
@@ -71,6 +76,7 @@ public class GUI {
 	
 	public static void visitGUI(Player p, OfflinePlayer[] offlinePlayers) {
 		if (!enabled) return;
+		if (p == null) return;
 		Inventory visitGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.VISIT), 54, Messages.visitGUI);
 		ArrayList <PlayerInfo> list = new ArrayList<>();
 		int size = 0;
@@ -97,6 +103,7 @@ public class GUI {
     }
 
 	public static void chestGUI(Player p, String chestType) {
+		if (p == null) return;
 		List<ItemStack> list = ChestItems.getChest(chestType);
 		
 		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%s %schest. %s", chestType, ChatColor.BLACK

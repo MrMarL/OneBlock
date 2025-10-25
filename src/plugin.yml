@@ -1,6 +1,6 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  1.4.2c
+version:  1.4.3
 api-version: 1.13
 author:  MrMarL
 loadbefore: ['Multiverse-Core']
@@ -9,7 +9,7 @@ commands:
   oneblock:
     description: Oneblock main command.
     aliases: ob
-    usage: /ob join
+    usage: Are you using the command incorrectly?
   ob j:
 permissions:
     Oneblock.set:
