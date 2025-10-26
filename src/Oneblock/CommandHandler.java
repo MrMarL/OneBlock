@@ -537,7 +537,7 @@ public class CommandHandler implements CommandExecutor {
 			                }
 			                if (args[1].equals("true") || args[1].equals("false")) {
 			                    island_for_new_players = Boolean.valueOf(args[1]);
-			                    config.set("Island_for_new_players", island_for_new_players);
+			                    config.set("island_for_new_players", island_for_new_players);
 			                    sender.sendMessage(ChatColor.GREEN + "Island_for_new_players = " + island_for_new_players);
 			                    return true;
 			                }
