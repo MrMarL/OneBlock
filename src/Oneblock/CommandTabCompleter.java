@@ -13,18 +13,22 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 public class CommandTabCompleter implements TabCompleter {
+	private final List<String> BASE_COMMANDS = Arrays.asList("j","join","leave","invite","accept","kick","help","gui","top");
+	private final List<String> VISIT_COMMANDS = Arrays.asList("v","visit","allow_visit");
+	private final List<String> ADMIN_COMMANDS = Arrays.asList("set","setleave","progress_bar","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
+            "reload","islands","rebirth_on_the_island","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands");
+	
 	@Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-        	commands.addAll(Arrays.asList("j","join","leave","invite","accept","kick","IDreset","help","gui","top"));
-        	if (sender.hasPermission("Oneblock.visit")) commands.addAll(Arrays.asList("v","visit","allow_visit"));
-            if (sender.hasPermission("Oneblock.set")) {
-            	commands.addAll(Arrays.asList("set","setleave","progress_bar","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
-            		"reload","islands","rebirth_on_the_island","protection","worldguard","border","listlvl","autoJoin","droptossup","physics","particle","allow_nether","UseEmptyIslands"));
-            }
-        } else if (args.length == 2) {
+        	commands.addAll(BASE_COMMANDS);
+        	if (sender.hasPermission("Oneblock.idreset")) commands.add("IDreset");
+        	if (sender.hasPermission("Oneblock.visit")) commands.addAll(VISIT_COMMANDS);
+        	if (sender.hasPermission("Oneblock.set")) commands.addAll(ADMIN_COMMANDS);
+        }
+        else if (args.length == 2) {
         	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit") || args[0].equals("v")) {
         		addOnlinePlayers(commands);
         	}

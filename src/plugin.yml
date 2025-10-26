@@ -1,6 +1,6 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  1.4.3
+version:  1.4.3b
 api-version: 1.13
 author:  MrMarL
 loadbefore: ['Multiverse-Core']
@@ -24,3 +24,5 @@ permissions:
         default: false
     Oneblock.ignoreBarrier:
         default: op
+    Oneblock.idreset:
+        default: true

@@ -226,6 +226,7 @@ public class CommandHandler implements CommandExecutor {
 	       		return true;
 	        }
 	        case ("idreset"):{
+	        	if (!requirePermission(sender, "Oneblock.idreset")) return true;
 	        	if (!idresetCommand(player)) return true;
 	        	sender.sendMessage(Messages.idreset);
 	        	player.performCommand("ob leave /n");
