@@ -85,7 +85,7 @@ public class Oneblock extends JavaPlugin {
     public ArrayList <XMaterial> flowers = new ArrayList<>();
     public PlayerCache cache = new PlayerCache();
     
-    public static World getWorld() { return plugin.wor; }
+    public final static World getWorld() { return plugin.wor; }
     public boolean isPAPIEnabled() { return PAPI; }
     public int[] getIslandCoordinates(final int id) { return IslandCoordinateCalculator.getById(id, x, z, offset, CircleMode); }
     public int findNearestRegionId(final Location loc) { return IslandCoordinateCalculator.findNearestRegionId(loc); }

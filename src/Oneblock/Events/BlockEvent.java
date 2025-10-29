@@ -9,12 +9,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.util.Vector;
 
 import Oneblock.PlayerInfo;
@@ -24,9 +23,8 @@ public class BlockEvent implements Listener {
 	private static final Vector UPWARD_VELOCITY = new Vector(0, .1, 0);
 	
 	@EventHandler(ignoreCancelled = true)
-	public void ItemStackSpawn(final EntitySpawnEvent e) {
+	public void ItemStackSpawn(final ItemSpawnEvent e) {
 		if (!droptossup) return;
-		if (!(e.getEntity() instanceof Item)) return;
 		
 		World world = getWorld();
 		if (world == null) return;
@@ -36,11 +34,12 @@ public class BlockEvent implements Listener {
 		if (loc.getBlockY() != y) return;
 		if ((x - loc.getBlockX()) % offset != 0) return;
 		if ((z - loc.getBlockZ()) % offset != 0) return;
-
+		
 		Entity drop = e.getEntity();
 		drop.teleport(loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0));
 		drop.setVelocity(UPWARD_VELOCITY);
     }
+	
 	@EventHandler
 	public void BlockBreak(final BlockBreakEvent e) {
 		World world = getWorld();
