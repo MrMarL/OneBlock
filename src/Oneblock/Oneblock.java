@@ -221,33 +221,33 @@ public class Oneblock extends JavaPlugin {
 
     public class Task implements Runnable {
         public void run() { // SubBlockGen
-            for (Player ponl: cache.getPlayers()) {
-            	if (!ponl.getWorld().equals(wor)) continue;
-            	final UUID uuid = ponl.getUniqueId();
-            	final int result[] = cache.getIslandCoordinates(ponl);
+            for (Player player : cache.getPlayers()) {
+            	if (!player.getWorld().equals(wor)) continue;
+            	final UUID uuid = player.getUniqueId();
+            	final int result[] = cache.getIslandCoordinates(player);
                 final int X_pl = result[0], Z_pl = result[1], plID = result[2];
             	
-                if (protection && !ponl.hasPermission("Oneblock.ignoreBarrier")) {
+                if (protection && !player.hasPermission("Oneblock.ignoreBarrier")) {
                 	boolean CheckGuest = false;
-                	Location loc = ponl.getLocation();
-            		PlayerInfo inf = Guest.getPlayerInfo(ponl.getUniqueId());
+                	Location loc = player.getLocation();
+            		PlayerInfo inf = Guest.getPlayerInfo(uuid);
             		if (inf != null) {
                     	int crd[] = getIslandCoordinates(PlayerInfo.GetId(inf.uuid));
                         CheckGuest = isWithinIslandBounds(loc, crd[0], crd[1]);
                         if (!CheckGuest) Guest.remove(uuid);
             		}
             		if (!isWithinIslandBounds(loc, X_pl, Z_pl) && !CheckGuest) {
-                    	ponl.performCommand("ob j");
-                		ponl.sendMessage(Messages.protection);
+            			player.performCommand("ob j");
+            			player.sendMessage(Messages.protection);
                     	continue;
                     }
                 }
                 
                 final Block block = wor.getBlockAt(X_pl, y, Z_pl);
-                if (!block.getType().equals(Material.AIR)) continue;
+                if (block.getType() != Material.AIR) continue;
                 if (PlayerInfo.GetId(uuid) == -1) continue;
                 
-                BlockGen(X_pl, Z_pl, plID, ponl, block);
+                BlockGen(X_pl, Z_pl, plID, player, block);
             }
         }
     }
