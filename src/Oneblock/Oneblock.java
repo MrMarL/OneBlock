@@ -222,7 +222,7 @@ public class Oneblock extends JavaPlugin {
     public class Task implements Runnable {
         public void run() { // SubBlockGen
             for (Player player : cache.getPlayers()) {
-            	if (!player.getWorld().equals(wor)) continue;
+            	if (player.getWorld() != wor) continue;
             	final UUID uuid = player.getUniqueId();
             	final int result[] = cache.getIslandCoordinates(player);
                 final int X_pl = result[0], Z_pl = result[1], plID = result[2];
