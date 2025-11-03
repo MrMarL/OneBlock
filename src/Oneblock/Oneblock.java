@@ -374,7 +374,7 @@ public class Oneblock extends JavaPlugin {
     public static boolean getvisitallowed(OfflinePlayer pl) {
     	Location loc = pl.getLocation();
     	if (loc == null) return false;
-    	if (!loc.getWorld().equals(plugin.wor)) return false;
+    	if (loc.getWorld() != plugin.wor) return false;
     	int id = plugin.findNearestRegionId(loc);
     	if (id < 0 || id >= PlayerInfo.size()) return false;
     	
