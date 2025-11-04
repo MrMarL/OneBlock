@@ -140,7 +140,7 @@ public class CommandHandler implements CommandExecutor {
 	            return true;
 	        }
 	        case ("allow_visit"):{
-	        	if (!requirePermission(sender, "Oneblock.island.public")) return true;
+	        	if (!requirePermission(sender, "Oneblock.allow_visit")) return true;
 	        	if (player == null) return false;
 	        	UUID uuid = player.getUniqueId();
 	        	if (PlayerInfo.GetId(uuid) == -1) return true;

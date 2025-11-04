@@ -32,6 +32,6 @@ permissions:
     Oneblock.idreset:
         description: Allows resetting your island ID
         default: true
-    Oneblock.island.public:
+    Oneblock.allow_visit:
         description: Allow players to open their island for visitors
         default: op

@@ -26,7 +26,7 @@ public class CommandTabCompleter implements TabCompleter {
         	commands.addAll(BASE_COMMANDS);
         	if (sender.hasPermission("Oneblock.idreset")) commands.add("IDreset");
         	if (sender.hasPermission("Oneblock.visit")) commands.addAll(VISIT_COMMANDS);
-        	if (sender.hasPermission("Oneblock.island.public")) commands.add("allow_visit");
+        	if (sender.hasPermission("Oneblock.allow_visit")) commands.add("allow_visit");
         	if (sender.hasPermission("Oneblock.set")) commands.addAll(ADMIN_COMMANDS);
         }
         else if (args.length == 2) {
