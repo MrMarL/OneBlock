@@ -12,7 +12,7 @@ commands:
     aliases: ob
     usage: Are you using the command incorrectly?
   ob j:
-	
+
 permissions:
     Oneblock.set:
         description: Access to admin commands and settings
@@ -21,16 +21,16 @@ permissions:
         description: Main permission
         default: true
     Oneblock.invite:
-		description: Allows you to invite other players to your island to play together
+        description: Allows you to invite other players to your island to play together
         default: true
     Oneblock.visit:
-		description: Allows visiting other players islands
+        description: Allows visiting other players islands
         default: false
     Oneblock.ignoreBarrier:
-		description: Allows bypassing island barriers and restrictions
+        description: Allows bypassing island barriers and restrictions
         default: op
     Oneblock.idreset:
-		description: Allows resetting your island ID
+        description: Allows resetting your island ID
         default: true
     Oneblock.island.public:
         description: Allow players to open their island for visitors

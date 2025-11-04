@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Oneblock</groupId>
   <artifactId>Oneblock</artifactId>
-  <version>1.4.3b</version>
+  <version>1.4.3c</version>
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
