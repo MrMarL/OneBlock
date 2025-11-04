@@ -1,28 +1,37 @@
 name:  Oneblock
 main:  Oneblock.Oneblock
-version:  1.4.3b
+version:  1.4.3c
 api-version: 1.13
 author:  MrMarL
 loadbefore: ['Multiverse-Core']
 softdepend: ['PlaceholderAPI', 'WorldGuard', 'ItemsAdder', 'Oraxen', 'Nexo', 'CraftEngine']
+
 commands:
   oneblock:
     description: Oneblock main command.
     aliases: ob
     usage: Are you using the command incorrectly?
   ob j:
+	
 permissions:
     Oneblock.set:
-        description: For admin
+        description: Access to admin commands and settings
         default: op
     Oneblock.join:
-        description: For all
+        description: Main permission
         default: true
     Oneblock.invite:
+		description: Allows you to invite other players to your island to play together
         default: true
     Oneblock.visit:
+		description: Allows visiting other players islands
         default: false
     Oneblock.ignoreBarrier:
+		description: Allows bypassing island barriers and restrictions
         default: op
     Oneblock.idreset:
+		description: Allows resetting your island ID
         default: true
+    Oneblock.island.public:
+        description: Allow players to open their island for visitors
+        default: op

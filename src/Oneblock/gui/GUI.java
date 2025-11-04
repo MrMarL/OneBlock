@@ -34,10 +34,8 @@ public class GUI {
 		Inventory mainGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.MAIN_MENU), 18, Messages.baseGUI);
 		mainGUI.addItem(setMeta(XMaterial.GRASS_BLOCK, ChatColor.GREEN + "/ob join"));
 		mainGUI.setItem(9, setMeta(XMaterial.PODZOL, ChatColor.GREEN + "/ob leave"));
-		if (p.hasPermission("Oneblock.visit")) {
-			mainGUI.setItem(10, setMeta(XMaterial.EMERALD_BLOCK, ChatColor.GREEN + "/ob allow_visit"));
-			mainGUI.setItem(2, setMeta(XMaterial.MELON, ChatColor.GREEN + "/ob visit"));
-		}
+		if (p.hasPermission("Oneblock.visit")) mainGUI.setItem(2, setMeta(XMaterial.MELON, ChatColor.GREEN + "/ob visit"));
+		if (p.hasPermission("Oneblock.island.public")) mainGUI.setItem(10, setMeta(XMaterial.EMERALD_BLOCK, ChatColor.GREEN + "/ob allow_visit"));
 		mainGUI.setItem(4, setMeta(XMaterial.GOLD_BLOCK, ChatColor.GOLD + "/ob top"));
 		mainGUI.setItem(6, setMeta(XMaterial.PAPER, ChatColor.GRAY + "/ob help"));
 		if (p.hasPermission("Oneblock.idreset"))

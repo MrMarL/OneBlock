@@ -109,10 +109,6 @@ public class CommandHandler implements CommandExecutor {
 	        case ("v"):
 	        case ("visit"):{
 	        	if (!requirePermission(sender, "Oneblock.visit")) return true;
-	        	if (!OBWorldGuard.isEnabled()) {
-	                sender.sendMessage(ChatColor.YELLOW + "This feature is only available when worldguard is enabled.");
-	                return true;
-	            }
 	        	if (player == null) return false;
 	            if (args.length < 2) {
 	        		GUI.visitGUI(player, Bukkit.getOfflinePlayers());
@@ -144,7 +140,7 @@ public class CommandHandler implements CommandExecutor {
 	            return true;
 	        }
 	        case ("allow_visit"):{
-	        	if (!requirePermission(sender, "Oneblock.visit")) return true;
+	        	if (!requirePermission(sender, "Oneblock.island.public")) return true;
 	        	if (player == null) return false;
 	        	UUID uuid = player.getUniqueId();
 	        	if (PlayerInfo.GetId(uuid) == -1) return true;
