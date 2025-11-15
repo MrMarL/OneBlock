@@ -1,6 +1,7 @@
 package Oneblock;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -50,9 +51,10 @@ public class PlayerInfo {
 		bar.setStyle(style);
 	}
 	
-	public void removeBar(Player p) {
+	public void removeBar(OfflinePlayer p) {
 		if (bar == null) return;
-		bar.removePlayer(p);
+		if (!(p instanceof Player)) return;
+		bar.removePlayer((Player)p);
 	}
 	
 	public void removeUUID(UUID deleted) {

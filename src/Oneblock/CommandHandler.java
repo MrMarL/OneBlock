@@ -26,7 +26,7 @@ import Oneblock.gui.GUI;
 
 public class CommandHandler implements CommandExecutor {
 	
-	public static boolean idresetCommand(Player pl) {
+	public static boolean idresetCommand(OfflinePlayer pl) {
 		if (pl == null) return false;
 		UUID uuid = pl.getUniqueId();
 		int PlId = PlayerInfo.GetId(uuid);
@@ -35,7 +35,7 @@ public class CommandHandler implements CommandExecutor {
 		plp.removeBar(pl);
 		plp.removeUUID(uuid);
 
-		if (!saveplayerinventory) pl.getInventory().clear();
+		if (!saveplayerinventory && pl instanceof Player) ((Player) pl).getInventory().clear();
 
 		if (OBWorldGuard.isEnabled())
 			plugin.OBWG.removeMember(uuid, PlId);
@@ -222,13 +222,6 @@ public class CommandHandler implements CommandExecutor {
 	       	 		sender.sendMessage(Messages.accept_none);
 	       		return true;
 	        }
-	        case ("idreset"):{
-	        	if (!requirePermission(sender, "Oneblock.idreset")) return true;
-	        	if (!idresetCommand(player)) return true;
-	        	sender.sendMessage(Messages.idreset);
-	        	player.performCommand("ob leave /n");
-	        	return true;
-	        }
 	        case ("top"):{
 	        	GUI.topGUI(player);
 	        	return true;
@@ -242,6 +235,15 @@ public class CommandHandler implements CommandExecutor {
 	        		GUI.openGUI(player);
 	        		return true;
 	        	}
+	        }
+	        case ("idreset"):{
+	        	if (args.length == 1) {
+		        	if (!requirePermission(sender, "Oneblock.idreset")) return true;
+		        	if (!idresetCommand(player)) return true;
+		        	sender.sendMessage(Messages.idreset);
+		        	player.performCommand("ob leave /n");
+		        	return true; 
+	        	} //else goto default for admin
 	        }
 	        default: {//admin commands
 	        	if (requirePermission(sender, "Oneblock.set")) 
@@ -385,6 +387,15 @@ public class CommandHandler implements CommandExecutor {
 			                }
 			                sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
 			                return true;
+			            }
+			            case ("idreset"):{
+			            	if (args.length <= 1) return true;
+			            	OfflinePlayer offpl = Bukkit.getOfflinePlayer(args[1]);
+			            	if (idresetCommand(offpl))
+		                    	sender.sendMessage(String.format("%splayer %s id is reseted! :D", ChatColor.GREEN, args[1]));
+		                    else
+		                    	sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
+		                    return true;
 			            }
 			            case ("clear"):{
 			                if (args.length <= 1) {

@@ -39,6 +39,7 @@ public class CommandTabCompleter implements TabCompleter {
         		case ("chest"):
         			commands.addAll(ChestItems.getChestNames());
                 case ("clear"):
+                case ("idreset"):
                 case ("setlevel"):{
                 	addOnlinePlayers(commands);
             		break;
