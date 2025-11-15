@@ -34,7 +34,7 @@ public class CommandTabCompleter implements TabCompleter {
         		addOnlinePlayers(commands);
         	}
         	else if (sender.hasPermission("Oneblock.set")) {
-        		switch (args[0])
+        		switch (args[0].toLowerCase())
                 {
         		case ("chest"):
         			commands.addAll(ChestItems.getChestNames());
