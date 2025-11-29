@@ -58,7 +58,7 @@ or simply **/ob**
 - **/ob islands set_my_by_def** - Set your island as default template
 - **/ob islands default** - Reset to default island
 - **/ob island_rebirth [true/false]** - Enable island rebirth
-- **/ob progress_bar color [COLOR]** - Set color
+- **/ob progress_bar color [color]** - Set color
 - **/ob progress_bar [true/false]** - Toggle progress bar
 - **/ob progress_bar level** - Progress_bar level mode
 - **/ob progress_bar settext <text>** - Progress_bar text change
