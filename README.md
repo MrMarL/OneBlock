@@ -19,8 +19,16 @@ Initialize the OneBlock area:
 ```
 /ob set
 ```
-- Default island spacing: **100 blocks**
-- Custom spacing example: **/ob set 300**
+```
+/ob set 500
+```
+- Sets the reference point using the current position of the player (admin) who used it, indicating a custom offset or with a default offset (100).
+
+```
+/ob set <offset> <x> <y> <z> [world]
+```
+- Alternative method. Sets the position and offset manually.
+
 ### 3. Join the Game
 Players can teleport to their island by entering:
 ```
@@ -33,7 +41,7 @@ or simply **/ob**
 - **/ob invite [player]** - Invite player to your island
 - **/ob kick [player]** - Remove player from your island
 - **/ob accept** - Accept island invitation
-- **/ob IDreset** - Reset your island and create new one
+- **/ob IDreset** - Resets your attachment to the island so that you can create a new island. (reset progress)
 
 ### Settings Commands:
 - **/ob set** - Set the first block (admin only)
@@ -50,6 +58,10 @@ or simply **/ob**
 - **/ob islands set_my_by_def** - Set your island as default template
 - **/ob islands default** - Reset to default island
 - **/ob island_rebirth [true/false]** - Enable island rebirth
+- **/ob progress_bar color [COLOR]** - Set color
+- **/ob progress_bar [true/false]** - Toggle progress bar
+- **/ob progress_bar level** - Progress_bar level mode
+- **/ob progress_bar settext <text>** - Progress_bar text change
 
 ### Config Commands:
 - **/ob reload** - Reload configuration files
@@ -57,15 +69,11 @@ or simply **/ob**
 - **/ob listlvl [level]** - Show blocks for specific level
 
 ### Other Commands:
-- /ob setleave
-- /ob leave
-- /ob Progress_bar color [COLOR] - Set color
-- /ob Progress_bar [true/false] - Toggle progress bar
-- /ob Progress_bar level - Progress_bar level mode
-- /ob Progress_bar settext <text> - Progress_bar text change
-- /ob setlevel "nick" 14 - Set ob level
-- /ob clear 'player' - Reset the player ob level and remove his island
-- /ob ver
+- **/ob idreset [player]** - Resets attachment to the island for the player.
+- **/ob setlevel [player] 14** - Set ob level
+- **/ob clear [player]** - Reset the player ob level and remove his island
+- **/ob setleave**
+- **/ob leave**
 
 # 🎨 Progress Bar Customization
 ### You can display the level in the progress bar:
@@ -78,6 +86,7 @@ or simply **/ob**
 You can specify the color of the progress bar for each level separately! In the blocks.yml file, the second line (after the line with the name of the level)
 
 # 📊 PlaceholderAPI Support
+- %OB_ver%
 - %OB_lvl% - The player's level number.
 - %OB_next_lvl% - The number of the next level.
 - %OB_break_on_this_lvl% - The number of broken blocks at this level.
@@ -101,7 +110,6 @@ You can specify the color of the progress bar for each level separately! In the 
 
 ### You can use placeholders in the progress bar text!
 /ob progress_bar settext %OB_lvl% lvl now. Need block to next lvl %OB_need_to_lvl_up%.
-
 ![You can use placeholders in the progress bar text](https://cdn.modrinth.com/data/cached_images/0f4203d44f3cd42c4b552fad3a2320640a2289c7.jpeg)
 
 # 🧱 Custom Blocks Support
@@ -125,11 +133,13 @@ for example:
 - '/setblock %d %d %d IC2:blockOreTin'
 - '/setblock %d %d %d IC2:blockOreUran'
 - '/setblock %d %d %d ic2:resource 4'
+  
 or
-- '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreCopper'
-- '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreTin'
-- '/execute in minecraft:oneblock run setblock ~ ~ ~ IC2:blockOreUran'
-- '/execute in minecraft:oneblock run setblock ~ ~ ~ ic2:resource 4'
+
+- '/execute in minecraft:oneblock run setblock %d %d %d IC2:blockOreCopper'
+- '/execute in minecraft:oneblock run setblock %d %d %d IC2:blockOreTin'
+- '/execute in minecraft:oneblock run setblock %d %d %d IC2:blockOreUran'
+- '/execute in minecraft:oneblock run setblock %d %d %d ic2:resource 4'
 
 ![Custom Blocks support](https://cdn.modrinth.com/data/cached_images/99fd24cc477a54d9490e64ae509de3583a22bc38.png)
 
@@ -143,4 +153,4 @@ Create custom default islands (7x12x7 area):
 ![Saves a copy of your island.](https://cdn.modrinth.com/data/cached_images/9130fc987296b722efa24636730613a9dee324ec.jpeg)
 
 # 📈 Stats
-[![](https://bstats.org/signatures/bukkit/Oneblock.svg)](bstats.org/plugin/bukkit/OneBlock/14477)
+![https://bstats.org/signatures/bukkit/Oneblock.svg](https://bstats.org/signatures/bukkit/Oneblock.svg)
