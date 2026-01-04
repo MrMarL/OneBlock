@@ -11,6 +11,7 @@
 ## 🌍 How to Start OneBlock?
 ### 1. Create the World
 Generate a dedicated OneBlock world:
+For example, using [Multiverse-Core](https://modrinth.com/plugin/multiverse-core):
 ```
 /mv create OneBlock normal -g Oneblock 
 ```
