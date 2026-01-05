@@ -22,42 +22,46 @@ public class DatabaseManager {
     public static boolean useSSL = false;
     public static boolean autoReconnect = true;
     
-    public static void initialize() {
-        HikariConfig config = new HikariConfig();
+    public static void initialize() { 
+    	try {HikariConfig config = new HikariConfig();
+	        
+	        if ("mysql".equalsIgnoreCase(dbType)) {
+	            config.setJdbcUrl(String.format(
+	                "jdbc:mysql://%s:%d/%s?useSSL=%s&autoReconnect=%s",
+	                host, port, database, useSSL, autoReconnect
+	            ));
+	            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+	        } else { // h2
+	            String h2Path = plugin.getDataFolder().getAbsolutePath() + "/PlData";
+	            config.setJdbcUrl("jdbc:h2:" + h2Path + ";MODE=MySQL");
+	            config.setDriverClassName("org.h2.Driver");
+	        }
+	        
+	        config.setUsername(username);
+	        config.setPassword(password);
+	        config.setMaximumPoolSize(10);
+	        config.setMinimumIdle(2);
+	        config.setConnectionTimeout(30000);
+	        config.setIdleTimeout(600000);
+	        config.setMaxLifetime(1800000);
+	        config.addDataSourceProperty("cachePrepStmts", "true");
+	        config.addDataSourceProperty("prepStmtCacheSize", "250");
+	        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         
-        if ("mysql".equalsIgnoreCase(dbType)) {
-            config.setJdbcUrl(String.format(
-                "jdbc:mysql://%s:%d/%s?useSSL=%s&autoReconnect=%s",
-                host, port, database, useSSL, autoReconnect
-            ));
-            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        } else { // h2
-            config.setJdbcUrl("jdbc:h2:./plugins/Oneblock/PlData;MODE=MySQL");
-            config.setDriverClassName("org.h2.Driver");
-        }
-        
-        config.setUsername(username);
-        config.setPassword(password);
-        config.setMaximumPoolSize(10);
-        config.setMinimumIdle(2);
-        config.setConnectionTimeout(30000);
-        config.setIdleTimeout(600000);
-        config.setMaxLifetime(1800000);
-        
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        
-        try {
         	dataSource = new HikariDataSource(config);
-        	createTable();
+        	
+        	plugin.getLogger().info("Database initialized successfully (" + dbType + ")");
         } catch (Exception e) {
         	plugin.getLogger().log(Level.SEVERE, "Failed to initialize Database", e);
         	dataSource = null;
         }
+    
+    	createTable();
     }
     
     private static void createTable() {
+        if (!isConnected()) return;
+        
         String sql = "CREATE TABLE IF NOT EXISTS player_data (" +
             "uuid VARCHAR(36) PRIMARY KEY, " +
             "level INT NOT NULL DEFAULT 1, " +
@@ -66,20 +70,19 @@ public class DatabaseManager {
             "invited_players TEXT" +
             ")";
         
-        if (dataSource != null)
-	        try (Connection conn = dataSource.getConnection();
-	             Statement stmt = conn.createStatement()) {
-	            stmt.execute(sql);
-	        } catch (SQLException e) {
-	            plugin.getLogger().log(Level.SEVERE, "Failed to create table", e);
-	        }
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to create table", e);
+        }
     }
     
     public static List<PlayerInfo> load() {
         List<PlayerInfo> players = new ArrayList<>();
         String sql = "SELECT uuid, level, breaks, allow_visit, invited_players FROM player_data";
         
-        if (dataSource != null)
+        if (isConnected())
 	        try (Connection conn = dataSource.getConnection();
 	             Statement stmt = conn.createStatement();
 	             ResultSet rs = stmt.executeQuery(sql)) {
@@ -100,16 +103,16 @@ public class DatabaseManager {
 	                players.add(player);
 	            }
 	        } catch (SQLException e) {
-	            plugin.getLogger().log(Level.SEVERE, "Failed to load player data", e);
+	            plugin.getLogger().log(Level.SEVERE, "Failed to load player data from Database", e);
 	        }
         
         return players;
     }
     
     public static boolean save(List<PlayerInfo> players) {
-    	if (dataSource == null) return false;
+    	if (!isConnected()) return false;
     	
-        // Универсальный запрос для H2 и MySQL
+        // H2 && MySQL
         String sql = "INSERT INTO player_data (uuid, level, breaks, allow_visit, invited_players) " +
                     "VALUES (?, ?, ?, ?, ?) " +
                     "ON DUPLICATE KEY UPDATE " +
@@ -144,12 +147,16 @@ public class DatabaseManager {
             return true;
             
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to save player data", e);
+            plugin.getLogger().log(Level.SEVERE, "Failed to save player data to Database", e);
             return false;
         }
     }
     
+    public static boolean isConnected() { 
+    	return dataSource == null ? false : !dataSource.isClosed(); 
+    }
+    
     public static void close() {
-        if (dataSource != null && !dataSource.isClosed()) dataSource.close();
+        if (isConnected()) dataSource.close();
     }
 }
