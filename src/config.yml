@@ -47,3 +47,14 @@ physics: false
 max_players_team: 0
 #Keep player inventory after id reset?
 saveplayerinventory: false
+#Available database types: json, h2, mysql.
+#Additional connection parameters are used only for mysql and are ignored in other cases.
+database:
+  type: json
+  host: localhost
+  port: 3306
+  name: oneblock
+  username: root
+  password: ''
+  useSSL: false
+  autoReconnect: true
