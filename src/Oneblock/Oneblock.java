@@ -261,7 +261,7 @@ public class Oneblock extends JavaPlugin {
         	if (Progress_bar) inf.createBar();
         	configManager.reward.executeRewards(ponl, inf.lvl, lvl_inf.name);
         }
-        if (Progress_bar && inf.bar != null) {
+        if (Progress_bar) {
             inf.bar.setTitle(getBarTitle(ponl, inf.lvl));
             inf.bar.setProgress(inf.getPercent());
             inf.bar.addPlayer(ponl);
