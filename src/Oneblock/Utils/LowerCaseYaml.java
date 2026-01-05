@@ -1,5 +1,5 @@
 // Copyright © 2025 MrMarL. The MIT License (MIT).
-package Oneblock.PlData;
+package Oneblock.Utils;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;

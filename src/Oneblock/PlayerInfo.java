@@ -11,11 +11,11 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class PlayerInfo {
-	public static ArrayList<PlayerInfo> list = new ArrayList<>();
+	public static List<PlayerInfo> list = new ArrayList<>();
 	public static final PlayerInfo not_found = new PlayerInfo(null);
 	
 	public UUID uuid;
-	public ArrayList<UUID> uuids = new ArrayList<UUID>();
+	public List<UUID> uuids = new ArrayList<UUID>();
 	public int lvl = 0;
 	public int breaks = 0;
 	public BossBar bar = null;

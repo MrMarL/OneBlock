@@ -1,5 +1,7 @@
 package Oneblock.PlData;
 
+import static Oneblock.Oneblock.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,11 +14,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import Oneblock.PlayerInfo;
 
 public class ReadOldData {
-	public static ArrayList<PlayerInfo> Read(final File f){
+	public static File f = new File(plugin.getDataFolder(), "PlData.yml");
+	
+	public static ArrayList<PlayerInfo> Read(){
 		ArrayList<PlayerInfo> infs = new ArrayList<PlayerInfo>();
 		ArrayList<String> nicks = new ArrayList<String>();
-		if (!f.exists())
-			return infs;
+		if (!f.exists()) return infs;
 		
 		try(FileReader fileReader = new FileReader(f)) {
 			@SuppressWarnings("resource")

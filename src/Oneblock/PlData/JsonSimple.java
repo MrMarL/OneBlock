@@ -1,9 +1,12 @@
 package Oneblock.PlData;
 
+import static Oneblock.Oneblock.*;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -17,9 +20,10 @@ import Oneblock.PlayerInfo;
 
 public class JsonSimple {
 	public static final Pattern p = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+	public static final File f = new File(plugin.getDataFolder(), "PlData.json");
 
 	@SuppressWarnings("unchecked")
-	public static void Write(ArrayList<PlayerInfo> pls, File f) {
+	public static void Write(List<PlayerInfo> pls) {
 		JSONObject main = new JSONObject();
 		
 		for (int i = 0;pls.size() > i;i++) {
@@ -52,7 +56,7 @@ public class JsonSimple {
 		} catch (Exception e) {}
 	}
 
-	public static ArrayList<PlayerInfo> Read(File f)  {
+	public static List<PlayerInfo> Read()  {
 		Server server = Bukkit.getServer();
 		JSONObject main = null;
 		JSONParser parser = new JSONParser();
@@ -60,7 +64,7 @@ public class JsonSimple {
 			main = (JSONObject) parser.parse(new FileReader(f));
 		} catch (Exception e) {}
 		
-		ArrayList <PlayerInfo> infs = new ArrayList <PlayerInfo>();
+		List <PlayerInfo> infs = new ArrayList <PlayerInfo>();
 		if (main == null)
 			return infs;
 		PlayerInfo nullable = new PlayerInfo(null);

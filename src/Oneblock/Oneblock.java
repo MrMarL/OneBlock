@@ -20,7 +20,6 @@ import Oneblock.gui.GUI;
 import Oneblock.gui.GUIListener;
 import me.clip.placeholderapi.PlaceholderAPI;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -312,19 +311,30 @@ public class Oneblock extends JavaPlugin {
         return Math.abs(deltaX) <= radius && Math.abs(deltaZ) <= radius;
     }
     
-    public void onDisable() { SaveData(); }
+    public void onDisable() { 
+    	DatabaseManager.save(PlayerInfo.list);
+    	DatabaseManager.close();
+    	JsonSimple.Write(PlayerInfo.list);
+    }
     
     public void SaveData() {
-    	File PlData = new File(getDataFolder(), "PlData.json");
-    	JsonSimple.Write(PlayerInfo.list, PlData);
+    	if (DatabaseManager.save(PlayerInfo.list)) return;
+    	JsonSimple.Write(PlayerInfo.list);
     }
 
     private void Datafile() {
-    	File PlData = new File(getDataFolder(), "PlData.json");
-		if (PlData.exists())
-			PlayerInfo.list = JsonSimple.Read(PlData);
-		else
-			PlayerInfo.list = ReadOldData.Read(new File(getDataFolder(), "PlData.yml"));
+        DatabaseManager.initialize();
+        PlayerInfo.list = DatabaseManager.load();
+    	
+    	if (PlayerInfo.list.size() > 0) {
+    		getLogger().info("Player data has been successfully obtained from the " + DatabaseManager.dbType + " database.");
+    		return;
+    	}
+    	
+		if (JsonSimple.f.exists())
+			PlayerInfo.list = JsonSimple.Read();
+		else 
+			PlayerInfo.list = ReadOldData.Read();
     }
     
     public void setPosition(Location loc) { setPosition(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()); }

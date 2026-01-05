@@ -17,7 +17,8 @@ import org.bukkit.entity.Player;
 import com.cryptomorin.xseries.XMaterial;
 import com.nexomc.nexo.api.NexoBlocks;
 
-import Oneblock.PlData.LowerCaseYaml;
+import Oneblock.PlData.DatabaseManager;
+import Oneblock.Utils.LowerCaseYaml;
 import Oneblock.Utils.Utils;
 import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
@@ -74,6 +75,9 @@ public class ConfigManager {
         offset = Check("set", 100);
         if (config.isSet("custom_island") && !legacy)
         	Island.read(config);
+        
+        DatabaseConfig();
+        
         LegacyConfigSaver.Save(config, con);
     }
 	 
@@ -90,6 +94,17 @@ public class ConfigManager {
         GUI.enabled = Check("gui", GUI.enabled);
         rebirth = Check("rebirth_on_the_island", rebirth);
         if (isBorderSupported) Border = Check("border", Border);
+    }
+    
+    private void DatabaseConfig() {
+        DatabaseManager.dbType = Check("database.type", "h2").toLowerCase();
+        DatabaseManager.host = Check("database.host", "localhost");
+        DatabaseManager.port = Check("database.port", 3306);
+        DatabaseManager.database = Check("database.name", "oneblock");
+        DatabaseManager.username = Check("database.username", "root");
+        DatabaseManager.password = Check("database.password", "");
+        DatabaseManager.useSSL = Check("database.useSSL", false);
+        DatabaseManager.autoReconnect = Check("database.autoReconnect", true);
     }
         
 	public void Blockfile() {
