@@ -48,8 +48,13 @@ public class DatabaseManager {
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         
-        dataSource = new HikariDataSource(config);
-        createTable();
+        try {
+        	dataSource = new HikariDataSource(config);
+        	createTable();
+        } catch (Exception e) {
+        	plugin.getLogger().log(Level.SEVERE, "Failed to initialize Database", e);
+        	dataSource = null;
+        }
     }
     
     private static void createTable() {
@@ -61,45 +66,49 @@ public class DatabaseManager {
             "invited_players TEXT" +
             ")";
         
-        try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to create table", e);
-        }
+        if (dataSource != null)
+	        try (Connection conn = dataSource.getConnection();
+	             Statement stmt = conn.createStatement()) {
+	            stmt.execute(sql);
+	        } catch (SQLException e) {
+	            plugin.getLogger().log(Level.SEVERE, "Failed to create table", e);
+	        }
     }
     
     public static List<PlayerInfo> load() {
         List<PlayerInfo> players = new ArrayList<>();
         String sql = "SELECT uuid, level, breaks, allow_visit, invited_players FROM player_data";
         
-        try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
-            while (rs.next()) {
-                PlayerInfo player = new PlayerInfo(UUID.fromString(rs.getString("uuid")));
-                player.lvl = rs.getInt("level");
-                player.breaks = rs.getInt("breaks");
-                player.allow_visit = rs.getBoolean("allow_visit");
-                
-                String invitedStr = rs.getString("invited_players");
-                if (invitedStr != null && !invitedStr.isEmpty()) {
-                    player.uuids.addAll(Arrays.stream(invitedStr.split(","))
-                        .map(UUID::fromString)
-                        .collect(Collectors.toList()));
-                }
-                
-                players.add(player);
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load player data", e);
-        }
+        if (dataSource != null)
+	        try (Connection conn = dataSource.getConnection();
+	             Statement stmt = conn.createStatement();
+	             ResultSet rs = stmt.executeQuery(sql)) {
+	            
+	            while (rs.next()) {
+	                PlayerInfo player = new PlayerInfo(UUID.fromString(rs.getString("uuid")));
+	                player.lvl = rs.getInt("level");
+	                player.breaks = rs.getInt("breaks");
+	                player.allow_visit = rs.getBoolean("allow_visit");
+	                
+	                String invitedStr = rs.getString("invited_players");
+	                if (invitedStr != null && !invitedStr.isEmpty()) {
+	                    player.uuids.addAll(Arrays.stream(invitedStr.split(","))
+	                        .map(UUID::fromString)
+	                        .collect(Collectors.toList()));
+	                }
+	                
+	                players.add(player);
+	            }
+	        } catch (SQLException e) {
+	            plugin.getLogger().log(Level.SEVERE, "Failed to load player data", e);
+	        }
         
         return players;
     }
     
     public static boolean save(List<PlayerInfo> players) {
+    	if (dataSource == null) return false;
+    	
         // Универсальный запрос для H2 и MySQL
         String sql = "INSERT INTO player_data (uuid, level, breaks, allow_visit, invited_players) " +
                     "VALUES (?, ?, ?, ?, ?) " +
