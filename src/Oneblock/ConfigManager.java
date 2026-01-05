@@ -33,14 +33,18 @@ public class ConfigManager {
 	
     public void loadConfigFiles() {
         Configfile();
-        Chestfile();
+        loadAdditionalConfigFiles();
+    }
+    
+    public void loadAdditionalConfigFiles() {
+    	Chestfile();
         Blockfile();
         Flowerfile();
         Messagefile();
         reward.loadRewards();
     }
 	
-	private void Configfile() {
+    public void Configfile() {
     	File con = new File(plugin.getDataFolder(), "config.yml");
         if (!con.exists())
         	plugin.saveResource("config.yml", false);

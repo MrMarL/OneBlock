@@ -300,8 +300,8 @@ public class CommandHandler implements CommandExecutor {
 			        	    LegacyConfigSaver.Save(config);
 			        	    
 			        	    sender.sendMessage(ChatColor.GREEN + "set OneBlock on: \n" +
-			        	                      ChatColor.WHITE + x + " " + y + " " + z + 
-			        	                      "\nin world " + getWorld().getName());
+			        	                      ChatColor.WHITE + x + ", " + y + ", " + z + 
+			        	                      ChatColor.GRAY + " in world " + ChatColor.WHITE + getWorld().getName());
 			        	    return true;
 			        	}
 			            case ("setleave"):{
