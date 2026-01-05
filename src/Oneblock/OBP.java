@@ -1,5 +1,7 @@
 package Oneblock;
 
+import static Oneblock.Oneblock.*;
+
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import java.util.TreeMap;
@@ -7,6 +9,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public class OBP extends PlaceholderExpansion {
 	
@@ -49,6 +52,14 @@ public class OBP extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer p, String identifier) {
     	if (p == null) return null;
+    	
+    	if (identifier.endsWith("_by_position")) {
+    		if (!(p instanceof Player)) return NONE_PLACEHOLDER;
+    		UUID ownerUUID = PlayerInfo.get(plugin.findNearestRegionId(p.getLocation())).uuid;
+	        if (ownerUUID == null) return NONE_PLACEHOLDER;
+
+    		return onRequest(Bukkit.getOfflinePlayer(ownerUUID), identifier.substring(0, identifier.length() - "_by_position".length()));
+    	}
     	
 		switch (identifier) {
 			case "lvl":
@@ -111,7 +122,7 @@ public class OBP extends PlaceholderExpansion {
         PlayerInfo playerInfo = PlayerInfo.get(playerUUID);
         UUID ownerUUID = playerInfo.uuid;
         
-        if (ownerUUID == null)  return NONE_PLACEHOLDER;
+        if (ownerUUID == null) return NONE_PLACEHOLDER;
         
         OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerUUID);
         return owner.getName() != null ? owner.getName() : NONE_PLACEHOLDER;

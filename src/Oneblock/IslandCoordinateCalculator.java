@@ -5,6 +5,7 @@ import org.bukkit.Location;
 public final class IslandCoordinateCalculator {
 	
 	public static int findNearestRegionId(Location loc) {
+	    if (loc == null) return 0;
 	    int nearestId = 0;
 	    int minDistSq = Integer.MAX_VALUE;
 	    int locX = loc.getBlockX();
