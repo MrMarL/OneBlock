@@ -118,10 +118,10 @@ public class Oneblock extends JavaPlugin {
         
         placetype = determinePlaceType(pluginManager);
         placer = Place.GetPlacerByType(placetype);
-        getLogger().info(placetype.name());
+        getLogger().info("Custom block support mode: " + placetype.name());
         
-        Datafile();
         configManager.loadConfigFiles();
+        Datafile();
         setupMetrics(metrics);
         
         pluginManager.registerEvents(new RespawnJoinEvent(), this);

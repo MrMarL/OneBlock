@@ -97,14 +97,14 @@ public class ConfigManager {
     }
     
     private void DatabaseConfig() {
-        DatabaseManager.dbType = Check("database.type", "h2").toLowerCase();
-        DatabaseManager.host = Check("database.host", "localhost");
-        DatabaseManager.port = Check("database.port", 3306);
-        DatabaseManager.database = Check("database.name", "oneblock");
-        DatabaseManager.username = Check("database.username", "root");
-        DatabaseManager.password = Check("database.password", "");
-        DatabaseManager.useSSL = Check("database.useSSL", false);
-        DatabaseManager.autoReconnect = Check("database.autoReconnect", true);
+        DatabaseManager.dbType = Check("database.type", DatabaseManager.dbType).toLowerCase();
+        DatabaseManager.host = Check("database.host", DatabaseManager.host);
+        DatabaseManager.port = Check("database.port", DatabaseManager.port);
+        DatabaseManager.database = Check("database.name", DatabaseManager.database);
+        DatabaseManager.username = Check("database.username",  DatabaseManager.username);
+        DatabaseManager.password = Check("database.password", DatabaseManager.password);
+        DatabaseManager.useSSL = Check("database.useSSL", DatabaseManager.useSSL);
+        DatabaseManager.autoReconnect = Check("database.autoReconnect", DatabaseManager.autoReconnect);
     }
         
 	public void Blockfile() {

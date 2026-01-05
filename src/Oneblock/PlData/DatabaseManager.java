@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class DatabaseManager {
     private static HikariDataSource dataSource;
     
-    public static String dbType = "h2"; // h2, mysql
+    public static String dbType = "json"; // json, h2, mysql
     public static String host = "localhost";
     public static int port = 3306;
     public static String database = "oneblock";
@@ -22,10 +22,16 @@ public class DatabaseManager {
     public static boolean useSSL = false;
     public static boolean autoReconnect = true;
     
-    public static void initialize() { 
+    public static void initialize() {
+    	if ("json".equals(dbType)) {
+    		plugin.getLogger().info("Database usage is turned off in the configuration");
+    		plugin.getLogger().info("Using JSON storage");
+    		return;
+    	}
+    	
     	try {HikariConfig config = new HikariConfig();
 	        
-	        if ("mysql".equalsIgnoreCase(dbType)) {
+	        if ("mysql".equals(dbType)) {
 	            config.setJdbcUrl(String.format(
 	                "jdbc:mysql://%s:%d/%s?useSSL=%s&autoReconnect=%s",
 	                host, port, database, useSSL, autoReconnect
@@ -53,6 +59,7 @@ public class DatabaseManager {
         	plugin.getLogger().info("Database initialized successfully (" + dbType + ")");
         } catch (Exception e) {
         	plugin.getLogger().log(Level.SEVERE, "Failed to initialize Database", e);
+        	plugin.getLogger().info("Using JSON storage");
         	dataSource = null;
         }
     
