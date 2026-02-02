@@ -10,18 +10,15 @@ public class PlaceCraftEngine extends Place{
 
 	@Override
 	public boolean setType(Block block, Object material_, boolean physics) {
-		Class<?> matClass = material_.getClass();
-    	
-		if (matClass == Material.class) 
+		if (material_ instanceof Material) 
 			block.setType((Material)material_, physics);
-		else if (matClass == Key.class) {
+		else if (material_ instanceof Key) {
 			Key key = (Key)material_;
 			return CraftEngineBlocks.place(block.getLocation(), key, false);
 		}
-		else if (matClass == String.class) {
+		else if (material_ instanceof String) 
 			return setCustomType(block, (String)material_);
-		}
-
+		
 		return false;
 	}
 }

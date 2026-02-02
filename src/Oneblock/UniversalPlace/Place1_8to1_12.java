@@ -10,13 +10,11 @@ public class Place1_8to1_12 extends Place{
 
 	@Override
 	public boolean setType(Block block, Object material_, boolean physics) {
-		Class<?> matClass = material_.getClass();
-    	
-		if (matClass == XMaterial.class)
+		if (material_ instanceof XMaterial)
 			XBlock.setType(block, (XMaterial)material_, physics);
-		else if (matClass == Material.class)
+		else if (material_ instanceof  Material)
 			block.setType((Material)material_, physics);
-		else if (matClass == String.class)
+		else if (material_ instanceof  String)
 			return setCustomType(block, (String)material_);
 
 		return false;

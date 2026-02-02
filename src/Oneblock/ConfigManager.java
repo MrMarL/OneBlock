@@ -138,41 +138,26 @@ public class ConfigManager {
         	while (q < bl_temp.size()) {
         		String text = bl_temp.get(q++);
         		//reading a custom block (command).
-        		if (text.charAt(0) == '/') {
-        			plugin.blocks.add(text);
+        		if (text.charAt(0) == '/' && plugin.blocks.add(text)) 
 	            	continue;
-        		}
         		//reading a custom chest.
-        		boolean check = false;
-        		for (String str : ChestItems.getChestNames())
-	        		if (text.equals(str)) {
-	        			check = plugin.blocks.add(str); break;
-	        		}
-        		if (check) continue;
+        		for (String str : ChestItems.getChestNames()) 
+        		    if (text.equals(str) && plugin.blocks.add(str)) 
+        		        continue;
         		//reading a mob.
         		try { plugin.mobs.add(EntityType.valueOf(text)); continue; }
         		catch (Exception e) {}
         		//read a material
-        		if (legacy){ //XMaterial lib
-        			Optional <XMaterial> a = XMaterial.matchXMaterial(text);
-	        		if (!a.isPresent()) {
-	        			plugin.blocks.add(null);
-	        			continue;
-	        		}
-	        		XMaterial xmt = a.get();
-	        		if (xmt == GRASS_BLOCK)
-	        			plugin.blocks.add(null);
-	        		else if (xmt == XMaterial.CHEST)
-	        			plugin.blocks.add(Material.CHEST);
-	        		else
-	        			plugin.blocks.add(xmt);
+        		Object mt = Material.matchMaterial(text);
+        		if (mt == null || mt == GRASS_BLOCK) 
+        			mt = getCustomBlock(text);
+        		//XMaterial lib
+        		if (legacy && mt == null) { 
+        			mt = XMaterial.matchXMaterial(text)
+        				    .map(xmt -> xmt == GRASS_BLOCK ? null : xmt)
+        				    .orElse(null);
         		}
-        		else {
-        			Object a = Material.matchMaterial(text);
-        			if (a == null || a == Material.GRASS_BLOCK)
-        				a = getCustomBlock(text);
-        			plugin.blocks.add(a);
-        		}
+        		plugin.blocks.add(mt);
         	}
         	level.blocks = plugin.blocks.size();
         	level.mobs = plugin.mobs.size();

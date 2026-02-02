@@ -9,15 +9,13 @@ public class PlaceItemsAdder extends Place{
 
 	@Override
 	public boolean setType(Block block, Object material_, boolean physics) {
-		Class<?> matClass = material_.getClass();
-    	
-		if (matClass == Material.class) 
+		if (material_ instanceof  Material) 
 			block.setType((Material)material_, physics);
-		else if (matClass == CustomBlock.class) {
+		else if (material_ instanceof CustomBlock) {
 			((CustomBlock)material_).place(block.getLocation());
 			return true;
 		}
-		else if (matClass == String.class) 
+		else if (material_ instanceof String) 
 			return setCustomType(block, (String)material_);
 
 		return false;
