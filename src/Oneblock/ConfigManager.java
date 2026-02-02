@@ -45,9 +45,7 @@ public class ConfigManager {
     }
 	
     public void Configfile() {
-    	File con = new File(plugin.getDataFolder(), "config.yml");
-        if (!con.exists())
-        	plugin.saveResource("config.yml", false);
+    	File con = getFile("config.yml");
         config = LowerCaseYaml.loadAndFixConfig(con);
         
         plugin.setPosition(
@@ -115,9 +113,7 @@ public class ConfigManager {
 		plugin.blocks.clear();
 		plugin.mobs.clear();
     	Level.levels.clear();
-        File block = new File(plugin.getDataFolder(), "blocks.yml");
-        if (!block.exists())
-        	plugin.saveResource("blocks.yml", false);
+        File block = getFile("blocks.yml");
         config_temp = YamlConfiguration.loadConfiguration(block);
         if (config_temp.isString("MaxLevel"))
         	Level.max.name = Utils.translateColorCodes(config_temp.getString("MaxLevel"));
@@ -234,9 +230,7 @@ public class ConfigManager {
 	}
 	
     private void Messagefile() {
-        File message = new File(plugin.getDataFolder(), "messages.yml");
-        if (!message.exists())
-        	plugin.saveResource("messages.yml", false);
+        File message = getFile("messages.yml");
         config_temp = YamlConfiguration.loadConfiguration(message);
         
         Messages.help = MessageCheck("help", Messages.help);
@@ -259,9 +253,7 @@ public class ConfigManager {
         Messages.allowed_visit = MessageCheck("allowed_visit", Messages.allowed_visit);
         Messages.forbidden_visit = MessageCheck("forbidden_visit", Messages.forbidden_visit);
         
-        File gui = new File(plugin.getDataFolder(), "gui.yml");
-        if (!gui.exists())
-        	plugin.saveResource("gui.yml", false);
+        File gui = getFile("gui.yml");
         config_temp = YamlConfiguration.loadConfiguration(gui);
         
         Messages.baseGUI = MessageCheck("baseGUI", Messages.baseGUI);
@@ -281,9 +273,7 @@ public class ConfigManager {
     
     private void Flowerfile() {
         plugin.flowers.clear();
-        File flower = new File(plugin.getDataFolder(), "flowers.yml");
-        if (!flower.exists())
-        	plugin.saveResource("flowers.yml", false);
+        File flower = getFile("flowers.yml");
         config_temp = YamlConfiguration.loadConfiguration(flower);
         plugin.flowers.add(GRASS);
         for(String list:config_temp.getStringList("flowers"))
@@ -294,11 +284,15 @@ public class ConfigManager {
     }
     
     private void Chestfile() {
-        File chest = new File(plugin.getDataFolder(), "chests.yml");
-        if (!chest.exists())
-        	plugin.saveResource("chests.yml", false);
-        ChestItems.chest = chest;
+        ChestItems.chest = getFile("chests.yml");
         ChestItems.load();
+    }
+    
+    File getFile(String name) {
+    	File file = new File(plugin.getDataFolder(), name);
+        if (!file.exists())
+        	plugin.saveResource(name, false);
+        return file;
     }
     
     String Check(String type, String data) {
