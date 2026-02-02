@@ -170,34 +170,8 @@ public class ConfigManager {
         		}
         		else {
         			Object a = Material.matchMaterial(text);
-        			if (a != null && a.equals(Material.GRASS_BLOCK))
-        				a = null;
-        			if (a == null) {
-        				switch (plugin.placetype) {
-						case ItemsAdder:
-							CustomBlock customBlock = CustomBlock.getInstance(text);
-	        				if(customBlock != null) 
-	        					a = customBlock;
-							break;
-						case Oraxen:
-							if (OraxenItems.exists(text))
-	        					a = text;
-							break;
-						case Nexo:
-							if (NexoBlocks.isCustomBlock(text))
-	        					a = text;
-							break;
-						case CraftEngine:
-							String[] pcid = text.split(":", 2);
-							if (pcid.length == 2) {
-								Key key = Key.of(pcid);
-								if (CraftEngineBlocks.byId(key) != null)
-									a = key;
-							}
-							break;
-						default: break;
-        				}
-        			}
+        			if (a == null || a == Material.GRASS_BLOCK)
+        				a = getCustomBlock(text);
         			plugin.blocks.add(a);
         		}
         	}
@@ -210,6 +184,19 @@ public class ConfigManager {
         
         SetupProgressBar();
     }
+	
+	private Object getCustomBlock(String text) {
+	    return switch (plugin.placetype) {
+	        case ItemsAdder -> CustomBlock.getInstance(text);
+	        case Oraxen -> OraxenItems.exists(text) ? text : null;
+	        case Nexo -> NexoBlocks.isCustomBlock(text) ? text : null;
+	        case CraftEngine -> {
+	            String[] pcid = text.split(":", 2);
+	            yield pcid.length == 2 ? Key.of(pcid) : null;
+	        }
+	        default -> null;
+	    };
+	}
 	
     public void SetupProgressBar() {
 		if (superlegacy) return;
