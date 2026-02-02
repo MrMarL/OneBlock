@@ -24,7 +24,6 @@ import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
 import dev.lone.itemsadder.api.CustomBlock;
 import io.th0rgal.oraxen.api.OraxenItems;
-import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
 import net.momirealms.craftengine.core.util.Key;
 
 public class ConfigManager {
@@ -186,16 +185,15 @@ public class ConfigManager {
     }
 	
 	private Object getCustomBlock(String text) {
-	    return switch (plugin.placetype) {
-	        case ItemsAdder -> CustomBlock.getInstance(text);
-	        case Oraxen -> OraxenItems.exists(text) ? text : null;
-	        case Nexo -> NexoBlocks.isCustomBlock(text) ? text : null;
-	        case CraftEngine -> {
+	    switch (plugin.placetype) {
+	        case ItemsAdder: return CustomBlock.getInstance(text);
+	        case Oraxen: return OraxenItems.exists(text) ? text : null;
+	        case Nexo: return NexoBlocks.isCustomBlock(text) ? text : null;
+	        case CraftEngine:
 	            String[] pcid = text.split(":", 2);
-	            yield pcid.length == 2 ? Key.of(pcid) : null;
-	        }
-	        default -> null;
-	    };
+	            return pcid.length == 2 ? Key.of(pcid) : null;
+	        default: return null;
+	    }
 	}
 	
     public void SetupProgressBar() {
