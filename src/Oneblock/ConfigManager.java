@@ -4,8 +4,6 @@ import static Oneblock.Oneblock.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;

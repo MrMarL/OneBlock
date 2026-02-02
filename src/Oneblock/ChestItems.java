@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,7 +17,7 @@ public class ChestItems {
 	private static Map<String, List<ItemStack>> chests = new HashMap<>();
 	
 	public static void save() {
-		YamlConfiguration config = YamlConfiguration.loadConfiguration(chest);
+		YamlConfiguration config = new YamlConfiguration();
 		
 		for (Map.Entry<String, List<ItemStack>> entry : chests.entrySet()) {
 			List<Object> simplifiedItems = new ArrayList<>();
@@ -49,28 +50,26 @@ public class ChestItems {
 	private static void loadItems(List<ItemStack> arr, List<?> data) {
 		if (data == null) return;
 		for (Object entry : data) {
-	        if (entry instanceof ItemStack) {
+	        if (entry instanceof ItemStack) 
 	        	arr.add((ItemStack) entry);
-	        } 
 	        else if (entry instanceof String) {
 	        	Material m = Material.getMaterial((String) entry);
-	    		if (m != null) {
+	    		if (m != null) 
 	    			arr.add(new ItemStack(m));
-	    		}
 	        }
 	    }
 	}
 	
-	public static ArrayList<String> getChestNames() {
-		return new ArrayList<>(chests.keySet());
+	public static Set<String> getChestNames() {
+		return chests.keySet();
 	}
 	
-	public static List <ItemStack> getChest(String chestType) {
+	public static List<ItemStack> getChest(String chestType) {
 		return chests.get(chestType);
 	}
 	
 	public static boolean fillChest(Inventory inv, String chestType) {
-		List <ItemStack> ch = getChest(chestType);
+		List<ItemStack> ch = getChest(chestType);
 		
 		final int max = Oneblock.rnd.nextInt(3) + 2;
         try { for (int i = 0; i < max; i++) {
