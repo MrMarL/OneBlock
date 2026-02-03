@@ -14,10 +14,24 @@ public final class IslandCoordinateCalculator {
 	    
 	    int halfStoSquared = (Oneblock.offset / 2) * (Oneblock.offset / 2);
 	    
+	    int X = 0, Z = 0;
+	    
 	    for (int i = 0; i < size; i++) {
-	        int[] coord = Oneblock.plugin.getIslandCoordinates(i);
-	        int dx = coord[0] - locX;
-	        int dz = coord[1] - locZ;
+	    	if (!Oneblock.CircleMode) {
+		    	if (X > Z)
+		    		if (X > -Z)
+		    			Z--;
+		    		else
+		    			X--;
+		    	else if (-X > Z || X == Z && Z < 0)
+		    		Z++;
+		    	else
+		    		X++;
+	    	} 
+	    	else X = i; 
+	    	
+	        int dx = (X * Oneblock.offset + Oneblock.x) - locX;
+	        int dz = (Z * Oneblock.offset + Oneblock.z) - locZ;
 	        int distSq = dx * dx + dz * dz;
 	        
 	        if (distSq < minDistSq) {
