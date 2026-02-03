@@ -17,7 +17,7 @@ public final class IslandCoordinateCalculator {
 	    int X = 0, Z = 0;
 	    
 	    for (int i = 0; i < size; i++) {
-	    	if (!Oneblock.CircleMode) {
+	    	if (Oneblock.CircleMode) {
 		    	if (X > Z)
 		    		if (X > -Z)
 		    			Z--;
