@@ -17,7 +17,18 @@ public final class IslandCoordinateCalculator {
 	    int X = 0, Z = 0;
 	    
 	    for (int i = 0; i < size; i++) {
-	    	if (Oneblock.CircleMode) {
+	        int dx = (X * Oneblock.offset + Oneblock.x) - locX;
+	        int dz = (Z * Oneblock.offset + Oneblock.z) - locZ;
+	        int distSq = dx * dx + dz * dz;
+	        
+	        if (distSq < minDistSq) {
+	            minDistSq = distSq;
+	            nearestId = i;
+	            
+	            if (minDistSq <= halfStoSquared) break;
+	        }
+	        
+	        if (Oneblock.CircleMode) {
 		    	if (X > Z)
 		    		if (X > -Z)
 		    			Z--;
@@ -28,20 +39,7 @@ public final class IslandCoordinateCalculator {
 		    	else
 		    		X++;
 	    	} 
-	    	else X = i; 
-	    	
-	        int dx = (X * Oneblock.offset + Oneblock.x) - locX;
-	        int dz = (Z * Oneblock.offset + Oneblock.z) - locZ;
-	        int distSq = dx * dx + dz * dz;
-	        
-	        if (distSq < minDistSq) {
-	            minDistSq = distSq;
-	            nearestId = i;
-	            
-	            if (minDistSq <= halfStoSquared) {
-	                break;
-	            }
-	        }
+	    	else X = i + 1; 
 	    }
 	    return nearestId;
 	}
