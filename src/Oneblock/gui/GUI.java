@@ -105,7 +105,7 @@ public class GUI {
 		if (p == null) return;
 		List<ItemStack> list = ChestItems.getChest(chestType);
 		
-		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(), 54, String.format("%sEdit: %s%s %s", ChatColor.BLACK, ChatColor.DARK_GRAY, chestType
+		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(chestType), 54, String.format("%sEdit: %s%s %s", ChatColor.BLACK, ChatColor.DARK_GRAY, chestType
 				, OBWorldGuard.canUse?"":"[Edit only in premium]"));
 		for(ItemStack itm : list)
 			if (itm != null)
