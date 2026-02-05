@@ -13,7 +13,7 @@ public final class IslandCoordinateCalculator {
 	    int size = PlayerInfo.size();
 	    
 	    int offset = Oneblock.offset;
-	    int halfRadiusSquared = (offset * offset) >> 2;
+	    int halfDiameterSquared = (offset * offset) >> 2;
 	    
 	    int x = Oneblock.x, z = Oneblock.z;
 	    int X = 0, Z = 0;
@@ -28,7 +28,7 @@ public final class IslandCoordinateCalculator {
 	            minDistSq = distSq;
 	            nearestId = i;
 	            
-	            if (minDistSq <= halfRadiusSquared) break;
+	            if (minDistSq <= halfDiameterSquared) break;
 	        }
 	        
 	        if (CircleMode) {
