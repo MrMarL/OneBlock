@@ -56,7 +56,7 @@ public class Oneblock extends JavaPlugin {
     
     public static ConfigManager configManager = new ConfigManager();
     
-    public static int x = 0, y = 0, z = 0, offset = 100, max_players_team = 0;
+    public static int x = 0, y = 0, z = 0, offset = 0, max_players_team = 0;
     public static boolean island_for_new_players = false, rebirth = false, autojoin = false;
     public static boolean droptossup = true, physics = false;
     public static boolean lvl_bar_mode = false, particle = true;
@@ -135,7 +135,7 @@ public class Oneblock extends JavaPlugin {
         getCommand("oneblock").setExecutor(new CommandHandler());
         getCommand("oneblock").setTabCompleter(new CommandTabCompleter());
         
-        if (config.getDouble("y") == 0) return;
+        if (offset == 0) return;
         
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Initialization(), 32, 80);
     }
@@ -179,7 +179,7 @@ public class Oneblock extends JavaPlugin {
     
     public void runMainTask() {
     	Bukkit.getScheduler().cancelTasks(this);
-		if (config.getDouble("y") == 0) return;
+		if (offset == 0) return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskUpdatePlayers(), 0, 120);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskSaveData(), 200, 6000);
 		if (!superlegacy) Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskParticle(), 40, 40);

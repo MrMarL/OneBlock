@@ -64,7 +64,7 @@ public class CommandHandler implements CommandExecutor {
         {
 	        case ("j"):
 	        case ("join"):{
-	            if (y == 0 || getWorld() == null) {
+	            if (offset == 0 || getWorld() == null) {
 	            	sender.sendMessage(ChatColor.YELLOW + "First you need to set the reference coordinates '/ob set'.");
 	            	return true;
 	            }
@@ -259,8 +259,9 @@ public class CommandHandler implements CommandExecutor {
 			        	    
 			        	    if (args.length >= 2) {
 			        	        try {
-			        	            offset = Integer.parseInt(args[1]);
-			        	            if (offset > 10000 || offset < -10000) throw new NumberFormatException();
+			        	            int off_set = Integer.parseInt(args[1]);
+			        	            if (off_set == 0 || off_set > 10000 || off_set < -10000) throw new NumberFormatException();
+			        	            offset = off_set;
 			        	        } catch (NumberFormatException nfe) {
 			        	            sender.sendMessage(Messages.invalid_value);
 			        	            return true;
