@@ -22,22 +22,26 @@ public class BlockEvent implements Listener {
 	private static final double DROP_TELEPORT_HEIGHT_OFFSET = 0.8;
 	private static final Vector UPWARD_VELOCITY = new Vector(0, .1, 0);
 	
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void ItemStackSpawn(final ItemSpawnEvent e) {
 		if (!droptossup) return;
-		
 		World world = getWorld();
 		if (world == null) return;
-            
-		Location loc = e.getLocation();
+        
+		Entity drop = e.getEntity();
+		Location loc = drop.getLocation();
+		
 		if (!world.equals(loc.getWorld())) return;
 		if (loc.getBlockY() != y) return;
 		if ((x - loc.getBlockX()) % offset != 0) return;
 		if ((z - loc.getBlockZ()) % offset != 0) return;
 		
-		Entity drop = e.getEntity();
-		drop.teleport(loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0));
-		drop.setVelocity(UPWARD_VELOCITY);
+		loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0);
+		
+		Bukkit.getScheduler().runTask(plugin, () -> { 
+			drop.teleport(loc);
+			drop.setVelocity(UPWARD_VELOCITY);
+		});
     }
 	
 	@EventHandler
