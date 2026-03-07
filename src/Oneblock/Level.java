@@ -32,11 +32,9 @@ public class Level {
     }
 	
 	public int getId() {
-		for (int i = 0; i < size(); i++) {
-			Level lvl = get(i);
-			if (lvl == this)
+		for (int i = 0; i < size(); i++) 
+			if (get(i) == this)
 				return i;
-		}
 		return 1;
 	}
 }
