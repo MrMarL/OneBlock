@@ -72,13 +72,13 @@ public class CommandTabCompleter implements TabCompleter {
 	                commands.add("false");
 	                break;
                 case ("listlvl"):
-	            	for(int i = 0;i<Level.size();)
-	            		commands.add(String.format("%d", i++));
+	            	for (int i = 0; i < Level.size(); i++)
+	            		commands.add(String.valueOf(i));
 	            	break;
                 case ("lvl_mult"):
                 case ("max_players_team"):
-                	for(int i = 0;i<4;)
-	            		commands.add(String.format("%d", i++));
+                	for (int i = 0; i < 4; i++)
+                		commands.add(String.valueOf(i));
                 case ("set"):
                 	commands.add("100");
                 	commands.add("500");
@@ -100,8 +100,8 @@ public class CommandTabCompleter implements TabCompleter {
         		}
         	}
         	else if (args[0].equals("setlevel"))
-            	for (int i = 0; i < Level.size();)
-            		commands.add(String.format("%d", i++));
+        		for (int i = 0; i < Level.size(); i++)
+        			commands.add(String.valueOf(i));
         Collections.sort(commands);
         return commands;
     }
