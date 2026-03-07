@@ -62,7 +62,7 @@ public class ConfigManager {
         	Progress_bar = Check("progress_bar", true);
         	Level.max.color = BarColor.valueOf(Check("progress_bar_color", "GREEN"));
         	Level.max.style = BarStyle.valueOf(Check("progress_bar_style", "SOLID"));
-	        TextP = Check("progress_bar_text", "level");
+	        TextP = Utils.translateColorCodes(Check("progress_bar_text", "level"));
 	        lvl_bar_mode = TextP.equals("level");
         }
         island_for_new_players = Check("island_for_new_players", true);

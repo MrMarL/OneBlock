@@ -19,8 +19,8 @@ import org.bukkit.util.Vector;
 import Oneblock.PlayerInfo;
 
 public class BlockEvent implements Listener {
-	private static final double DROP_TELEPORT_HEIGHT_OFFSET = 0.8;
-	private static final Vector UPWARD_VELOCITY = new Vector(0, .1, 0);
+	protected static final double DROP_TELEPORT_HEIGHT_OFFSET = 0.8;
+	protected static final Vector UPWARD_VELOCITY = new Vector(0, .1, 0);
 	
 	@EventHandler
 	public void ItemStackSpawn(final ItemSpawnEvent e) {
@@ -38,10 +38,8 @@ public class BlockEvent implements Listener {
 		
 		loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0);
 		
-		Bukkit.getScheduler().runTask(plugin, () -> { 
-			drop.teleport(loc);
-			drop.setVelocity(UPWARD_VELOCITY);
-		});
+		drop.teleport(loc);
+		drop.setVelocity(UPWARD_VELOCITY);
     }
 	
 	@EventHandler
@@ -58,7 +56,7 @@ public class BlockEvent implements Listener {
 		final int result[] = plugin.getIslandCoordinates(plID);
 		if (block.getX() != result[0]) return;
 		if (block.getZ() != result[1]) return;
-
-		Bukkit.getScheduler().runTaskLater(plugin, () -> { plugin.BlockGen(result[0], result[1], plID, ponl, block); }, 1L);
+		
+		Bukkit.getScheduler().runTaskLater(plugin, () -> {plugin.BlockGen(result[0], result[1], plID, ponl, block);}, 1L);
 	}
 }

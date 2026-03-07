@@ -1,11 +1,11 @@
 # Configuration of levels.
 # Blocks and mobs can be duplicated (Increases the chance of occurrence)
-# by MrMarL & Adarsh A
+# by MrMarL
 
 MaxLevel: 'Level: MAX'
 '0':
 ### Level name:
-- 'Level: 0 - Grass starter'
+- 'Level: 0 - &aGrass starter'
 ### [optional] Custom color of the progress bar:
 - GREEN
 ### [optional] Custom style of the progress bar:
@@ -17,14 +17,14 @@ MaxLevel: 'Level: MAX'
 ### List of mobs:
 - CREEPER
 '1':
-- 'Level: 1 - Podzol & melon'
+- 'Level: 1 - &2Podzol & melon'
 - PODZOL
 - GRASS_BLOCK
 - MELON_BLOCK
 - ZOMBIE
 - SPIDER
 '2':
-- 'Level: 2 - Forest'
+- 'Level: 2 - &2Forest'
 - BIRCH_LOG
 - OAK_LOG
 - OAK_LEAVES

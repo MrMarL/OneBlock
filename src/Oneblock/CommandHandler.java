@@ -21,6 +21,7 @@ import com.cryptomorin.xseries.XMaterial;
 
 import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
+import Oneblock.Utils.Utils;
 import Oneblock.WorldGuard.OBWorldGuard;
 import Oneblock.gui.GUI;
 
@@ -274,7 +275,6 @@ public class CommandHandler implements CommandExecutor {
 			        	            int x = Integer.parseInt(args[2]);
 			        	            int y = Integer.parseInt(args[3]);
 			        	            int z = Integer.parseInt(args[4]);
-			        	            if (y == 0) throw new NumberFormatException();
 			        	            
 			        	            World world = args.length >= 6 ? Bukkit.getWorld(args[5]) : 
 			        	                         (player != null ? player.getWorld() : null);
@@ -502,7 +502,7 @@ public class CommandHandler implements CommandExecutor {
 								for (int i = 2; i < args.length; i++)
 									txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
 			                    lvl_bar_mode = false;
-			                    config.set("progress_bar_text", TextP = txt_bar);
+			                    config.set("progress_bar_text", TextP = Utils.translateColorCodes(txt_bar));
 			                    configManager.SetupProgressBar();
 			                    return true;
 			                }
@@ -592,9 +592,8 @@ public class CommandHandler implements CommandExecutor {
 	        	
 	        	sender.sendMessage(
 	        		    ChatColor.values()[rnd.nextInt(ChatColor.values().length)] + 
-	        		    "\n▄▄▄ ▄▄ " +
-	        		    "\n█░█ █▄▀" +
-	        		    "\n█▄█ █▄▀ by MrMarL" +
+	        		    "\n▄▀▄ ██▄" +
+	        		    "\n▀▄▀ █▄█  by MrMarL" +
 	        		    "\nPlugin version: v" + plugin.version +
 	        		    "\nServer version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
     		     return true;

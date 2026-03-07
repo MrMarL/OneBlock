@@ -1,4 +1,4 @@
-// Copyright © 2025 MrMarL. The MIT License (MIT).
+// Copyright © 2026 MrMarL. The MIT License (MIT).
 package Oneblock;
 
 import org.bukkit.plugin.PluginManager;
@@ -11,6 +11,7 @@ import Oneblock.Events.ItemsAdderEvent;
 import Oneblock.Events.RespawnJoinEvent;
 import Oneblock.Events.TeleportEvent;
 import Oneblock.Events.TeleportNetherEvent;
+import Oneblock.Events.Extends.BlockEventFixed;
 import Oneblock.Invitation.Guest;
 import Oneblock.PlData.*;
 import Oneblock.UniversalPlace.*;
@@ -29,7 +30,6 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
@@ -47,12 +47,17 @@ public class Oneblock extends JavaPlugin {
     private static final int FLOWER_CHANCE = 3;
     private static final double[][] PARTICLE_OFFSETS = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     
+    private static final int BORDER_WARNING_DISTANCE = 2;
+    private static final double BORDER_DAMAGE_AMOUNT = .2;
+    private static final double BORDER_DAMAGE_BUFFER = 1;
+    
     public static final Random rnd = new Random(System.currentTimeMillis());
     public static final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
     public static final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     public static final boolean isBorderSupported = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?;
     public static final boolean legacy = !XMaterial.supports(13);// Is version 1.13 supported?
     public static final boolean superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
+    public static final boolean needfix = XMaterial.supports(21);
     
     public static ConfigManager configManager = new ConfigManager();
     
@@ -128,7 +133,8 @@ public class Oneblock extends JavaPlugin {
         
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
         if (!superlegacy) pluginManager.registerEvents(new TeleportEvent(), this);
-        pluginManager.registerEvents(new BlockEvent(), this);
+        BlockEvent blockEvent = needfix? new BlockEventFixed() : new BlockEvent();
+        pluginManager.registerEvents(blockEvent, this);
         pluginManager.registerEvents(new GUIListener(), this);
         pluginManager.registerEvents(new TeleportNetherEvent(), this);
         if (placetype == Place.Type.ItemsAdder) pluginManager.registerEvents(new ItemsAdderEvent(), this);
@@ -290,6 +296,9 @@ public class Oneblock extends JavaPlugin {
 		WorldBorder br = Bukkit.createWorldBorder();
     	br.setCenter(X_pl+.5, Z_pl+.5);
     	br.setSize(offset - 1 + (offset & 1));
+    	br.setWarningDistance(BORDER_WARNING_DISTANCE);
+    	br.setDamageAmount(BORDER_DAMAGE_AMOUNT);
+    	br.setDamageBuffer(BORDER_DAMAGE_BUFFER);
     	pl.setWorldBorder(br);
     }
     
@@ -383,14 +392,8 @@ public class Oneblock extends JavaPlugin {
     public static int getlenght(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).getNeed();
     }
-    public static boolean getvisitallowed(OfflinePlayer pl) {
-    	Location loc = pl.getLocation();
-    	if (loc == null) return false;
-    	if (loc.getWorld() != plugin.wor) return false;
-    	int id = plugin.findNearestRegionId(loc);
-    	if (id < 0 || id >= PlayerInfo.size()) return false;
-    	
-    	return PlayerInfo.get(id).allow_visit;
+    public static boolean getvisitallowed(UUID pl_uuid) {
+    	return PlayerInfo.get(pl_uuid).allow_visit;
     }
     public static int getvisits(UUID pl_uuid) {
     	int count = 0;

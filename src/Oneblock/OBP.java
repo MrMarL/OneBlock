@@ -55,7 +55,7 @@ public class OBP extends PlaceholderExpansion {
     	
     	if (identifier.endsWith("_by_position")) {
     		if (!(p instanceof Player)) return NONE_PLACEHOLDER;
-    		UUID ownerUUID = PlayerInfo.get(plugin.findNearestRegionId(p.getLocation())).uuid;
+    		UUID ownerUUID = PlayerInfo.get(plugin.findNearestRegionId(((Player)p).getLocation())).uuid;
 	        if (ownerUUID == null) return NONE_PLACEHOLDER;
 
     		return onRequest(Bukkit.getOfflinePlayer(ownerUUID), identifier.substring(0, identifier.length() - "_by_position".length()));
@@ -87,7 +87,7 @@ public class OBP extends PlaceholderExpansion {
 				return Integer.toString(Oneblock.plugin.cache.getPlayers().size());
 	
 			case "visit_allowed":
-				return Boolean.toString(Oneblock.getvisitallowed(p));
+				return Boolean.toString(Oneblock.getvisitallowed(p.getUniqueId()));
 	
 			case "visits":
 				return Integer.toString(Oneblock.getvisits(p.getUniqueId()));
