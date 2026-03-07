@@ -129,12 +129,12 @@ public class OBP extends PlaceholderExpansion {
     }
     
     private String getOwnerOnlineStatus(UUID playerUUID) {
-        PlayerInfo playerInfo = PlayerInfo.get(playerUUID);
-        UUID ownerUUID = playerInfo.uuid;
+        UUID ownerUUID = PlayerInfo.get(playerUUID).uuid;
         
-        if (ownerUUID == null) return "offline";
+        if (ownerUUID == null || Bukkit.getPlayer(ownerUUID) == null)
+        	return "offline";
         
-        return Bukkit.getPlayer(ownerUUID) != null ? "online" : "offline";
+        return "online";
     }
     
     private String handleTopPlaceholder(String identifier) {
