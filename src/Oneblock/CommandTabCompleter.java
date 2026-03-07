@@ -21,87 +21,93 @@ public class CommandTabCompleter implements TabCompleter {
 	@Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> commands = new ArrayList<>();
+        
+        boolean isAdmin = sender.hasPermission("Oneblock.set");
 
         if (args.length == 1) {
         	commands.addAll(BASE_COMMANDS);
         	if (sender.hasPermission("Oneblock.idreset")) commands.add("IDreset");
         	if (sender.hasPermission("Oneblock.visit")) commands.addAll(VISIT_COMMANDS);
         	if (sender.hasPermission("Oneblock.allow_visit")) commands.add("allow_visit");
-        	if (sender.hasPermission("Oneblock.set")) commands.addAll(ADMIN_COMMANDS);
+        	if (isAdmin) commands.addAll(ADMIN_COMMANDS);
         }
         else if (args.length == 2) {
-        	if (args[0].equals("invite") || args[0].equals("kick") || args[0].equals("visit") || args[0].equals("v")) {
+        	String arg = args[0].toLowerCase();
+        	
+        	if ("invite".equals(arg) || "kick".equals(arg) || "visit".equals(arg) || "v".equals(arg)) {
         		addOnlinePlayers(commands);
         	}
-        	else if (sender.hasPermission("Oneblock.set")) {
-        		switch (args[0].toLowerCase())
-                {
-        		case ("chest"):
-        			commands.addAll(ChestItems.getChestNames());
-                case ("clear"):
-                case ("idreset"):
-                case ("setlevel"):{
-                	addOnlinePlayers(commands);
-            		break;
-            	}
-                case ("progress_bar"):{
-	                commands.add("true");
-	                commands.add("false");
-	                commands.add("level");
-	                commands.add("settext");
-	                commands.add("color");
-	                commands.add("style");
-	                break;
-	            }
-                case ("islands"):
-	                commands.add("set_my_by_def");
-	                commands.add("default");
-                case ("UseEmptyIslands"):
-                case ("allow_nether"):
-                case ("rebirth_on_the_island"):
-                case ("saveplayerinventory"):
-                case ("protection"):
-                case ("circlemode"):
-                case ("worldguard"):
-                case ("border"):
-                case ("autoJoin"):
-                case ("droptossup"):
-                case ("physics"):
-                case ("gui"):
-	                commands.add("true");
-	                commands.add("false");
-	                break;
-                case ("listlvl"):
-	            	for (int i = 0; i < Level.size(); i++)
-	            		commands.add(String.valueOf(i));
-	            	break;
-                case ("lvl_mult"):
-                case ("max_players_team"):
-                	for (int i = 0; i < 4; i++)
-                		commands.add(String.valueOf(i));
-                case ("set"):
-                	commands.add("100");
-                	commands.add("500");
+        	else if (isAdmin) {
+        		switch (arg) {
+	        		case ("chest"):
+	        			commands.addAll(ChestItems.getChestNames());
+	        			break;
+	                case ("clear"):
+	                case ("idreset"):
+	                case ("setlevel"):
+	                	addOnlinePlayers(commands);
+	            		break;
+	                case ("progress_bar"):
+		                commands.add("true");
+		                commands.add("false");
+		                commands.add("level");
+		                commands.add("settext");
+		                commands.add("color");
+		                commands.add("style");
+		                break;
+	                case ("islands"):
+		                commands.add("set_my_by_def");
+		                commands.add("default");
+	                case ("useEmptyIslands"):
+	                case ("allow_nether"):
+	                case ("rebirth_on_the_island"):
+	                case ("saveplayerinventory"):
+	                case ("protection"):
+	                case ("circlemode"):
+	                case ("worldguard"):
+	                case ("border"):
+	                case ("autoJoin"):
+	                case ("droptossup"):
+	                case ("physics"):
+	                case ("gui"):
+		                commands.add("true");
+		                commands.add("false");
+		                break;
+	                case ("listlvl"):
+		            	for (int i = 0; i < Level.size(); i++)
+		            		commands.add(String.valueOf(i));
+		            	break;
+	                case ("lvl_mult"):
+	                case ("max_players_team"):
+	                	for (int i = 0; i < 4; i++)
+	                		commands.add(String.valueOf(i));
+	                case ("set"):
+	                	commands.add("100");
+	                	commands.add("500");
                 }
         	}
         }
-        else if (sender.hasPermission("Oneblock.set") && args.length == 3) 
-        	if (args[0].equals("progress_bar")) {
-        		if (args[1].equals("color"))
+        else if (isAdmin && args.length == 3) {
+        	String arg0 = args[0].toLowerCase();
+        	String arg1 = args[1].toLowerCase();
+        	
+        	if ("progress_bar".equals(arg0)) {
+        		if ("color".equals(arg1))
         			for (BarColor bc:BarColor.values())
         				commands.add(bc.name());
-        		if (args[1].equals("style"))
+        		if ("style".equals(arg1))
         			for (BarStyle bc:BarStyle.values())
         				commands.add(bc.name());
-        		if (args[1].equals("settext")) {
+        		if ("settext".equals(arg1)) {
         			commands.add("...");
         			if (Oneblock.plugin.isPAPIEnabled())
         				commands.add("%OB_lvl_name%. There are %OB_need_to_lvl_up% block(s) left.");
         		}
         	}
-        	else if (args[0].equals("setlevel"))
+        	else if ("setlevel".equals(arg0))
         		for (int i = 0; i < Level.size(); i++)
         			commands.add(String.valueOf(i));
+        }
         Collections.sort(commands);
         return commands;
     }
