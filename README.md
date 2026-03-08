@@ -97,6 +97,7 @@ You can specify the color of the progress bar for each level separately! In the 
 - %OB_lvl_lenght% - The length of the level.
 - %OB_next_lvl_name% - The name of the next level.​
 - %OB_owner_name% - The name of the owner of your island.
+- %OB_owner_online% - Returns "online" if the island owner is currently online, otherwise "offline".
 - %OB_percent% - Percentage of level completion.
 - %OB_scale% - Proportional scale of level completion.
 - %OB_top_1_name% - The name of the player with the highest island level.
@@ -109,7 +110,18 @@ You can specify the color of the progress bar for each level separately! In the 
 - %OB_top_10_lvl%
 - %OB_number_of_invited% - The number of people invited to your island.
 
-### You can use placeholders in the progress bar text!
+### 🎯 Special Placeholder Modifier: _by_position
+You can append _by_position to any placeholder to get information about the island at your current location instead of your own island.
+
+Examples:
+- %OB_lvl_by_position% - Shows the level of the island at your current location.
+- %OB_owner_name_by_position% - Shows the owner name of the island at your current location.
+- %OB_visits_by_position% - Shows the visit count of the island at your current location.
+- %OB_break_on_this_lvl_by_position% - Shows blocks broken on the island at your current location.
+
+This is especially useful when visiting other players' islands or when you want to display information about a specific island based on location rather than the player viewing the placeholder.
+
+### 🕬 You can use placeholders in the progress bar text!
 /ob progress_bar settext %OB_lvl% lvl now. Need block to next lvl %OB_need_to_lvl_up%.
 ![You can use placeholders in the progress bar text](https://cdn.modrinth.com/data/cached_images/0f4203d44f3cd42c4b552fad3a2320640a2289c7.jpeg)
 
