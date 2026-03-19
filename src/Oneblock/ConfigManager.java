@@ -147,7 +147,7 @@ public class ConfigManager {
         		catch (Exception e) {}
         		//read a material
         		Object mt = Material.matchMaterial(text);
-        		if (mt == null || mt == GRASS_BLOCK) 
+        		if (mt == null || mt == GRASS_BLOCK || !((Material)mt).isBlock()) 
         			mt = getCustomBlock(text);
         		//XMaterial lib
         		if (legacy && mt == null) { 
