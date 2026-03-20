@@ -43,7 +43,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class Oneblock extends JavaPlugin {
     public static Oneblock plugin;
     
-    private static final int MOB_SPAWN_CHANCE = 9;
     private static final int FLOWER_CHANCE = 3;
     private static final double[][] PARTICLE_OFFSETS = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     
@@ -61,7 +60,7 @@ public class Oneblock extends JavaPlugin {
     
     public static ConfigManager configManager = new ConfigManager();
     
-    public static int x = 0, y = 0, z = 0, offset = 0, max_players_team = 0;
+    public static int x = 0, y = 0, z = 0, offset = 0, max_players_team = 0, mob_spawn_chance = 9;
     public static boolean island_for_new_players = false, rebirth = false, autojoin = false;
     public static boolean droptossup = true, physics = false;
     public static boolean lvl_bar_mode = false, particle = true;
@@ -280,7 +279,7 @@ public class Oneblock extends JavaPlugin {
         }
         else placer.setType(block, newblocktype, physics);
 
-        if (rnd.nextInt(MOB_SPAWN_CHANCE) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
+        if (rnd.nextInt(mob_spawn_chance) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
 	}
     
 	public void spawnRandomMob(int pos_x, int pos_z, Level level) {

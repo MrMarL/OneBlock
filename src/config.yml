@@ -14,6 +14,8 @@ xleave: 0.0
 yleave: 0.0
 zleave: 0.0
 yawleave: 0.0
+#Mob spawn chance - lower values increase spawn frequency, higher values decrease it.
+mob_spawn_chance: 9
 #Should we enable the Progress Bar?
 progress_bar: true
 #What shoud progress bar show?

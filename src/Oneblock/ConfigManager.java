@@ -68,6 +68,8 @@ public class ConfigManager {
         island_for_new_players = Check("island_for_new_players", true);
         Level.multiplier = Check("level_multiplier", Level.multiplier);
         max_players_team = Check("max_players_team", max_players_team);
+        mob_spawn_chance = Check("mob_spawn_chance", mob_spawn_chance);
+        mob_spawn_chance = mob_spawn_chance < 2 ? 9 : mob_spawn_chance;
         UpdateBoolParametrs();
         OBWorldGuard.setEnabled(Check("worldguard", OBWorldGuard.canUse));
         OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
