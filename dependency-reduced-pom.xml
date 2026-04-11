@@ -60,6 +60,7 @@
                 <exclude>com/cryptomorin/xseries/XA*</exclude>
                 <exclude>com/cryptomorin/xseries/XS*</exclude>
                 <exclude>com/cryptomorin/xseries/XE*</exclude>
+                <exclude>com/cryptomorin/xseries/XG*</exclude>
                 <exclude>com/cryptomorin/xseries/XI*</exclude>
                 <exclude>com/cryptomorin/xseries/XP*</exclude>
                 <exclude>com/cryptomorin/xseries/XT*</exclude>
