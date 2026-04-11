@@ -19,11 +19,11 @@ import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
 
+import Oneblock.GUI.GUI;
 import Oneblock.Invitation.Guest;
 import Oneblock.Invitation.Invitation;
 import Oneblock.Utils.Utils;
 import Oneblock.WorldGuard.OBWorldGuard;
-import Oneblock.gui.GUI;
 
 public class CommandHandler implements CommandExecutor {
 	

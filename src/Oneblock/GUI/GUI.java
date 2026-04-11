@@ -1,4 +1,4 @@
-package Oneblock.gui;
+package Oneblock.GUI;
 
 import java.util.ArrayList;
 import java.util.Arrays;

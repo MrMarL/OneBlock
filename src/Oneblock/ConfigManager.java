@@ -15,11 +15,11 @@ import org.bukkit.entity.Player;
 import com.cryptomorin.xseries.XMaterial;
 import com.nexomc.nexo.api.NexoBlocks;
 
+import Oneblock.GUI.GUI;
 import Oneblock.PlData.DatabaseManager;
 import Oneblock.Utils.LowerCaseYaml;
 import Oneblock.Utils.Utils;
 import Oneblock.WorldGuard.OBWorldGuard;
-import Oneblock.gui.GUI;
 import dev.lone.itemsadder.api.CustomBlock;
 import io.th0rgal.oraxen.api.OraxenItems;
 import net.momirealms.craftengine.core.util.Key;

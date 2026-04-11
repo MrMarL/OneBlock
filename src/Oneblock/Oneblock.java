@@ -12,13 +12,13 @@ import Oneblock.Events.RespawnJoinEvent;
 import Oneblock.Events.TeleportEvent;
 import Oneblock.Events.TeleportNetherEvent;
 import Oneblock.Events.Extends.BlockEventFixed;
+import Oneblock.GUI.GUI;
+import Oneblock.GUI.GUIListener;
 import Oneblock.Invitation.Guest;
 import Oneblock.PlData.*;
 import Oneblock.UniversalPlace.*;
 import Oneblock.Utils.*;
 import Oneblock.WorldGuard.*;
-import Oneblock.gui.GUI;
-import Oneblock.gui.GUIListener;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.util.ArrayList;
