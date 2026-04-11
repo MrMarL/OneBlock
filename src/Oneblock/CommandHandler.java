@@ -595,7 +595,7 @@ public class CommandHandler implements CommandExecutor {
 	        		    "\n▄▀▄ ██▄" +
 	        		    "\n▀▄▀ █▄█  by MrMarL" +
 	        		    "\nPlugin version: v" + plugin.version +
-	        		    "\nServer version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + "1." + XMaterial.getVersion() + ".X");
+	        		    "\nServer version: " + (superlegacy ? "super legacy " : (legacy ? "legacy " : "")) + XMaterial.getVersionMajor() + "." + XMaterial.getVersionMinor());
     		     return true;
 		    }
 	    }
