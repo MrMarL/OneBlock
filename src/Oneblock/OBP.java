@@ -108,6 +108,11 @@ public class OBP extends PlaceholderExpansion {
 	
 			case "owner_online":
 				return getOwnerOnlineStatus(p.getUniqueId());
+				
+			case "top_position":
+	            PlayerInfo playerInfo = PlayerInfo.get(p.getUniqueId());
+	            int position = Oneblock.gettopposition(playerInfo);
+	            return position == -1 ? NONE_PLACEHOLDER : Integer.toString(position + 1);
 		}
     	
         // %OB_top_%d_...%

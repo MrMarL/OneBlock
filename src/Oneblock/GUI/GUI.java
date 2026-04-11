@@ -58,17 +58,20 @@ public class GUI {
 		if (p == null) return;
 		if (topGUI == null)
 			topGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.TOP), 27, Messages.topGUI);
-		PlayerInfo inf = Oneblock.Oneblock.gettop(0);
+		
+		List<PlayerInfo> toplist = Oneblock.Oneblock.gettoplist();
+		
+		PlayerInfo inf = Oneblock.Oneblock.gettop(0, toplist);
 		topGUI.setItem(4, setMeta(XMaterial.NETHERITE_BLOCK, ChatColor.GOLD + "1st - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
-		inf = Oneblock.Oneblock.gettop(1);
+		inf = Oneblock.Oneblock.gettop(1, toplist);
 		topGUI.setItem(12, setMeta(XMaterial.DIAMOND_BLOCK, ChatColor.GRAY + "2nd - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
-		inf = Oneblock.Oneblock.gettop(2);
+		inf = Oneblock.Oneblock.gettop(2, toplist);
 		topGUI.setItem(14, setMeta(XMaterial.IRON_BLOCK, ChatColor.GRAY + "3rd - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
-		inf = Oneblock.Oneblock.gettop(3);
+		inf = Oneblock.Oneblock.gettop(3, toplist);
 		topGUI.setItem(20, setMeta(XMaterial.GOLD_BLOCK, ChatColor.DARK_RED + "4th - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
-		inf = Oneblock.Oneblock.gettop(4);
+		inf = Oneblock.Oneblock.gettop(4, toplist);
 		topGUI.setItem(22, setMeta(XMaterial.COPPER_BLOCK, ChatColor.DARK_RED + "5th - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
-		inf = Oneblock.Oneblock.gettop(5);
+		inf = Oneblock.Oneblock.gettop(5, toplist);
 		topGUI.setItem(24, setMeta(XMaterial.COAL_BLOCK, ChatColor.DARK_RED + "6th - " + parseUUID(inf.uuid), inf.lvl, parseUUIDs(inf.uuids)));
         p.openInventory(topGUI);
 	}

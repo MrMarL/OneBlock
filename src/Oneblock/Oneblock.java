@@ -405,9 +405,25 @@ public class Oneblock extends JavaPlugin {
     }
     public static PlayerInfo gettop(int i) {
     	if (PlayerInfo.size() <= i) return PlayerInfo.not_found;
-    	
+    	return gettop(i,gettoplist());
+    }
+    public static PlayerInfo gettop(int i, List<PlayerInfo> sorted) {
+    	if (sorted.size() <= i) return PlayerInfo.not_found;
+    	return sorted.get(i).uuid == null ? PlayerInfo.not_found : sorted.get(i);
+    }
+    public static int gettopposition(PlayerInfo player) {
+        if (player == null || player.uuid == null) return -1;
+        
+        List<PlayerInfo> sorted = gettoplist();
+        for (int i = 0; i < sorted.size(); i++) 
+            if (sorted.get(i) == player)
+                return i;
+        
+        return -1;
+    }
+    public static List<PlayerInfo> gettoplist() {
     	List<PlayerInfo> sorted = new ArrayList<>(PlayerInfo.list);
     	sorted.sort(PlayerInfo.COMPARE_BY_LVL);
-    	return sorted.get(i).uuid == null ? PlayerInfo.not_found : sorted.get(i);
+    	return sorted;
     }
 }
