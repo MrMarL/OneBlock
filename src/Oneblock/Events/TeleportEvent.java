@@ -17,7 +17,7 @@ import Oneblock.PlayerInfo;
 public class TeleportEvent implements Listener {
     @EventHandler
     public void Teleport(final PlayerTeleportEvent e) {
-    	if (!Border) return;
+    	if (!border) return;
     	Location loc = e.getTo();
     	World to = loc.getWorld();
     	Player p = e.getPlayer();
@@ -32,7 +32,7 @@ public class TeleportEvent implements Listener {
     
     @EventHandler(priority = EventPriority.MONITOR)
     public void Respawn(final PlayerRespawnEvent e) {
-		if (!Border) return;
+		if (!border) return;
 		Location loc = e.getRespawnLocation();
 		Player p = e.getPlayer();
 		if (getWorld().equals(loc.getWorld())) {
@@ -45,7 +45,7 @@ public class TeleportEvent implements Listener {
 
     @EventHandler
     public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
-		if (!Border) return;
+		if (!progress_bar) return;
 		if (PlayerInfo.size() == 0) return;
     	if (e.getFrom().equals(getWorld()))
     		PlayerInfo.removeBarStatic(e.getPlayer());

@@ -91,7 +91,7 @@ public class CommandHandler implements CommandExecutor {
 	                X_pl = result[0]; Z_pl = result[1];
 	            }
 	            if (!plugin.enabled) plugin.runMainTask();
-	            if (Progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
+	            if (progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
 	            player.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
 	            if (OBWorldGuard.isEnabled()) plugin.OBWG.addMember(uuid, plID);
 	            return true;
@@ -379,7 +379,7 @@ public class CommandHandler implements CommandExecutor {
 			                    PlayerInfo inf = PlayerInfo.get(plID);
 		                        inf.breaks = 0;
 		                        inf.lvl = setlvl;
-		                        if (Progress_bar && offpl instanceof Player) {
+		                        if (progress_bar && offpl instanceof Player) {
 		                        	inf.createBar(getBarTitle((Player) offpl, inf.lvl));
 	                                inf.bar.setProgress(inf.getPercent());
 	                            }
@@ -412,7 +412,7 @@ public class CommandHandler implements CommandExecutor {
 			                PlayerInfo inf = PlayerInfo.get(id);
 		                    inf.breaks = 0;
 		                    inf.lvl = 0;
-		                    if (Progress_bar)
+		                    if (progress_bar)
 		                    	inf.bar.setVisible(false);
 		                    int result[] = plugin.getIslandCoordinates(id);
 		                    Island.clear(getWorld(), result[0], y, result[1], offset/4);
@@ -460,13 +460,13 @@ public class CommandHandler implements CommandExecutor {
 			                    return true;
 			                }
 			                if (args[1].equals("true") || args[1].equals("false")) {
-			                    Progress_bar = Boolean.valueOf(args[1]);
+			                    progress_bar = Boolean.valueOf(args[1]);
 			                    configManager.Blockfile();
-			                    config.set("progress_bar", Progress_bar);
+			                    config.set("progress_bar", progress_bar);
 			                    return true;
 			                }
 			                
-			                if (!Progress_bar) return true;
+			                if (!progress_bar) return true;
 			                
 			                boolean isColor = args[1].equalsIgnoreCase("color");
 			                if (isColor || args[1].equalsIgnoreCase("style")) {
@@ -502,7 +502,7 @@ public class CommandHandler implements CommandExecutor {
 								for (int i = 2; i < args.length; i++)
 									txt_bar = i == 2 ? args[i] : String.format("%s %s", txt_bar, args[i]);
 			                    lvl_bar_mode = false;
-			                    config.set("progress_bar_text", TextP = Utils.translateColorCodes(txt_bar));
+			                    config.set("progress_bar_text", phText = Utils.translateColorCodes(txt_bar));
 			                    configManager.SetupProgressBar();
 			                    return true;
 			                }

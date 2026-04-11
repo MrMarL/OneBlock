@@ -56,7 +56,7 @@ public class Oneblock extends JavaPlugin {
     public static final boolean isBorderSupported = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?;
     public static final boolean legacy = !XMaterial.supports(13);// Is version 1.13 supported?
     public static final boolean superlegacy = !XMaterial.supports(9);// Is version 1.9 supported?
-    public static final boolean needfix = XMaterial.supports(21);
+    public static final boolean needDropFix = XMaterial.supports(21);// Is version 1.9 supported?
     
     public static ConfigManager configManager = new ConfigManager();
     
@@ -66,11 +66,11 @@ public class Oneblock extends JavaPlugin {
     public static boolean lvl_bar_mode = false, particle = true;
     public static boolean allow_nether = true, protection = false;
     public static boolean saveplayerinventory = false;
-    public static boolean Border = false;
+    public static boolean border = false;
     public static boolean CircleMode = true;
     public static boolean UseEmptyIslands = true;
-    public static boolean Progress_bar = false;
-    public static String TextP = "";
+    public static boolean progress_bar = false;
+    public static String phText = "";
     
     public static YamlConfiguration config;
     
@@ -80,8 +80,8 @@ public class Oneblock extends JavaPlugin {
     private Place placer;
     
     World wor, leavewor;
-    boolean enabled = false;
     boolean PAPI = false;
+    boolean enabled = false;
     
     public ArrayList <Object> blocks = new ArrayList<>();
     public ArrayList <EntityType> mobs = new ArrayList<>();
@@ -98,9 +98,9 @@ public class Oneblock extends JavaPlugin {
     
     public static String getBarTitle(Player p, int lvl) {
 		if (lvl_bar_mode) return Level.get(lvl).name;
-		if (plugin.PAPI) return PlaceholderAPI.setPlaceholders(p, TextP);
+		if (plugin.PAPI) return PlaceholderAPI.setPlaceholders(p, phText);
         
-		return TextP;
+		return phText;
 	}
     
     @Override
@@ -132,7 +132,7 @@ public class Oneblock extends JavaPlugin {
         
         pluginManager.registerEvents(new RespawnJoinEvent(), this);
         if (!superlegacy) pluginManager.registerEvents(new TeleportEvent(), this);
-        BlockEvent blockEvent = needfix? new BlockEventFixed() : new BlockEvent();
+        BlockEvent blockEvent = needDropFix? new BlockEventFixed() : new BlockEvent();
         pluginManager.registerEvents(blockEvent, this);
         pluginManager.registerEvents(new GUIListener(), this);
         pluginManager.registerEvents(new TeleportNetherEvent(), this);
@@ -263,10 +263,10 @@ public class Oneblock extends JavaPlugin {
     	Level lvl_inf = Level.get(inf.lvl); 
         if (++inf.breaks >= inf.getNeed()) {
         	lvl_inf = inf.lvlup();
-        	if (Progress_bar) inf.createBar();
+        	if (progress_bar) inf.createBar();
         	configManager.reward.executeRewards(ponl, inf.lvl, lvl_inf.name);
         }
-        if (Progress_bar) {
+        if (progress_bar) {
             inf.bar.setTitle(getBarTitle(ponl, inf.lvl));
             inf.bar.setProgress(inf.getPercent());
             inf.bar.addPlayer(ponl);
@@ -309,7 +309,7 @@ public class Oneblock extends JavaPlugin {
     
     public void ReloadBorders() {
     	if (!isBorderSupported) return;
-    	if (Border) wor.getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
+    	if (border) wor.getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
     	else wor.getPlayers().forEach(pl -> pl.setWorldBorder(null));
     }
     

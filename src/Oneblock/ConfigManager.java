@@ -59,11 +59,11 @@ public class ConfigManager {
         		(float)Check("yawleave", .0));
         
         if (!superlegacy) {
-        	Progress_bar = Check("progress_bar", true);
+        	progress_bar = Check("progress_bar", true);
         	Level.max.color = BarColor.valueOf(Check("progress_bar_color", "GREEN"));
         	Level.max.style = BarStyle.valueOf(Check("progress_bar_style", "SOLID"));
-	        TextP = Utils.translateColorCodes(Check("progress_bar_text", "level"));
-	        lvl_bar_mode = TextP.equals("level");
+        	phText = Utils.translateColorCodes(Check("progress_bar_text", "level"));
+	        lvl_bar_mode = phText.equals("level");
         }
         island_for_new_players = Check("island_for_new_players", true);
         Level.multiplier = Check("level_multiplier", Level.multiplier);
@@ -94,7 +94,7 @@ public class ConfigManager {
         allow_nether = Check("allow_nether", allow_nether);
         GUI.enabled = Check("gui", GUI.enabled);
         rebirth = Check("rebirth_on_the_island", rebirth);
-        if (isBorderSupported) Border = Check("border", Border);
+        if (isBorderSupported) border = Check("border", border);
     }
     
     private void DatabaseConfig() {
@@ -195,7 +195,7 @@ public class ConfigManager {
 			else
 				inf.createBar(getBarTitle(p, inf.lvl));
         	        	
-			inf.bar.setVisible(Progress_bar);
+			inf.bar.setVisible(progress_bar);
         }});
 	}
 	

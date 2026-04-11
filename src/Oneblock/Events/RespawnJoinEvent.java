@@ -46,7 +46,7 @@ public class RespawnJoinEvent implements Listener {
 		Player pl = e.getPlayer();
 		if (pl.getWorld().equals(getWorld())) {
 			if (autojoin) pl.performCommand("ob j");
-			if (Border) {
+			if (border) {
 				plugin.UpdateBorderLocation(pl, pl.getLocation());
 				plugin.UpdateBorder(pl);
 			}
