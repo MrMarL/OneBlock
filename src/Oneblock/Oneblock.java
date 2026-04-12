@@ -54,9 +54,9 @@ public class Oneblock extends JavaPlugin {
     public static final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
     public static final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     public static final boolean isBorderSupported = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?;
-    public static final boolean legacy = !XMaterial.supports(13,0);// Is version 1.13 supported?
-    public static final boolean superlegacy = !XMaterial.supports(9,0);// Is version 1.9 supported?
-    public static final boolean needDropFix = XMaterial.supports(21,0);// Is version 1.9 supported?
+    public static final boolean legacy = !XMaterial.supports(1,13);// Is version 1.13 supported?
+    public static final boolean superlegacy = !XMaterial.supports(1,9);// Is version 1.9 supported?
+    public static final boolean needDropFix = XMaterial.supports(1,21);// Is version 1.21 supported?
     
     public static ConfigManager configManager = new ConfigManager();
     
