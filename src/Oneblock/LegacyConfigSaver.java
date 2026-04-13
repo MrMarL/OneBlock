@@ -18,7 +18,7 @@ public class LegacyConfigSaver {
 	public static void Save(final FileConfiguration fc, final File f) {
 		file = f;
 		// 1.8.x - 1.17.x
-		if (!XMaterial.supports(18,0)) try {
+		if (!XMaterial.supports(1,18)) try {
 	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
 	        StringBuffer inputBuffer = new StringBuffer();
 	        String line;
