@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.bukkit.World;
 
 public class Utils {
-    public static boolean isWorldMinHeightSupported = findMethod(World.class, "getMinHeight");
+    public static final boolean isWorldMinHeightSupported = findMethod(World.class, "getMinHeight");
 	
     public static boolean findMethod(final Class<?> cl, String name) {
         return Arrays.stream(cl.getMethods()).anyMatch(m -> m.getName().equals(name));
