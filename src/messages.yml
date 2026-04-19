@@ -33,7 +33,7 @@ invited: |
     &aYou were invited by player %s.
     &c/ob accept to accept).
 # %s - player name
-invited_succes: |
+invited_success: |
     &aSuccesfully invited %s.
 
 kicked: |
@@ -45,7 +45,7 @@ kick_usage: |
 kick_yourself: |
     &eYou can't kick yourself.
 
-accept_succes: |
+accept_success: |
     &aSuccesfully accepted the invitation.
 
 accept_none: |
