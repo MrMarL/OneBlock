@@ -13,8 +13,8 @@ public abstract class AbstractInvitation {
 	
 	@Override
     public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == getClass()) {
-        	Invitation inv = (Invitation)obj;
+        if (obj instanceof AbstractInvitation) {
+        	AbstractInvitation inv = (AbstractInvitation)obj;
         	return equals(inv.Inviting, inv.Invited);
         }
         return false;

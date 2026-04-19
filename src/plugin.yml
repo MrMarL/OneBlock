@@ -23,6 +23,9 @@ permissions:
     Oneblock.invite:
         description: Allows you to invite other players to your island to play together
         default: true
+    Oneblock.kick:
+        description: Allows the island owner to kick members and visitors from their island
+        default: true
     Oneblock.visit:
         description: Allows visiting other players islands
         default: false

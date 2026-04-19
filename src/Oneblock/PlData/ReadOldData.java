@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import Oneblock.PlayerInfo;
@@ -21,14 +20,14 @@ public class ReadOldData {
 		ArrayList<String> nicks = new ArrayList<String>();
 		if (!f.exists()) return infs;
 		
-		try(FileReader fileReader = new FileReader(f)) {
-			@SuppressWarnings("resource")
-			BufferedReader fileIn = new BufferedReader(new FileReader(f));
+		try (BufferedReader fileIn = new BufferedReader(new FileReader(f))) {
 	        String line;
 	        while ((line = fileIn.readLine()) != null)
 	        	if (line.startsWith("_"))
 	        		nicks.add(line.split(":")[0]);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			plugin.getLogger().warning("[Oneblock] Failed to parse legacy PlData.yml: " + e.getMessage());
+		}
 		
 		YamlConfiguration data = YamlConfiguration.loadConfiguration(f);
         if (!data.isInt("id"))
@@ -44,17 +43,15 @@ public class ReadOldData {
         	String lvl = String.format("Score_%d", i);
         	String breaks = String.format("ScSlom_%d", i);
         	
-        	Server server = Bukkit.getServer();
-        	
         	PlayerInfo newinf = null;
         	for(PlayerInfo inf:infs) 
-        		if (inf.uuid.equals(server.getOfflinePlayer(_nick).getUniqueId()))
+        		if (inf.uuid.equals(Bukkit.getOfflinePlayer(_nick).getUniqueId()))
         			newinf = inf;
 
         	if (newinf != null)
-        		newinf.uuids.add(server.getOfflinePlayer(_nick.substring(1)).getUniqueId());
+        		newinf.uuids.add(Bukkit.getOfflinePlayer(_nick.substring(1)).getUniqueId());
         	else{
-	        	newinf = new PlayerInfo(server.getOfflinePlayer(_nick.substring(1)).getUniqueId());
+	        	newinf = new PlayerInfo(Bukkit.getOfflinePlayer(_nick.substring(1)).getUniqueId());
 	            if (data.isInt(lvl))
 	            	newinf.lvl = data.getInt(lvl);
 	            if (data.isInt(breaks))

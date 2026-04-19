@@ -8,10 +8,15 @@ import Oneblock.PlayerInfo;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DatabaseManager {
     private static HikariDataSource dataSource;
+
+    // Allow-lists to prevent JDBC URL parameter injection via config values.
+    private static final Pattern HOST_PATTERN = Pattern.compile("^[A-Za-z0-9._\\-]{1,255}$");
+    private static final Pattern DB_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9_]{1,64}$");
     
     public static String dbType = "json"; // json, h2, mysql
     public static String host = "localhost";
@@ -32,15 +37,39 @@ public class DatabaseManager {
         try {HikariConfig config = new HikariConfig();
             
             if ("mysql".equals(dbType)) {
-                config.setJdbcUrl(String.format(
-                    "jdbc:mysql://%s:%d/%s?useSSL=%s&autoReconnect=%s",
-                    host, port, database, useSSL, autoReconnect
-                ));
+                if (!HOST_PATTERN.matcher(host).matches()) {
+                    throw new IllegalArgumentException("Invalid database.host value; expected hostname / IP matching " + HOST_PATTERN.pattern());
+                }
+                if (port <= 0 || port > 65535) {
+                    throw new IllegalArgumentException("Invalid database.port value: " + port);
+                }
+                if (!DB_NAME_PATTERN.matcher(database).matches()) {
+                    throw new IllegalArgumentException("Invalid database.name value; expected schema name matching " + DB_NAME_PATTERN.pattern());
+                }
+
+                // Build URL without user-controlled query params; pass options via DataSource properties below.
+                config.setJdbcUrl(String.format("jdbc:mysql://%s:%d/%s", host, port, database));
                 config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                // Harden the driver against known JDBC gadget vectors.
+                config.addDataSourceProperty("useSSL", String.valueOf(useSSL));
+                config.addDataSourceProperty("autoReconnect", String.valueOf(autoReconnect));
+                config.addDataSourceProperty("autoDeserialize", "false");
+                config.addDataSourceProperty("allowLoadLocalInfile", "false");
+                config.addDataSourceProperty("allowUrlInLocalInfile", "false");
+                config.addDataSourceProperty("allowLoadLocalInfileInPath", "");
+                config.addDataSourceProperty("allowPublicKeyRetrieval", "false");
+                if (!useSSL) {
+                    plugin.getLogger().warning("database.useSSL is false; MySQL credentials and data will traverse the network in plaintext.");
+                }
             } else { // h2
                 String h2Path = plugin.getDataFolder().getAbsolutePath() + "/PlData";
-                config.setJdbcUrl("jdbc:h2:" + h2Path + ";MODE=MySQL");
+                if (h2Path.indexOf(';') >= 0) {
+                    throw new IllegalArgumentException("Plugin data folder path contains ';' which is unsafe for the H2 JDBC URL: " + h2Path);
+                }
+                // Disable H2's ability to resolve aliases to arbitrary Java code and INIT scripts.
+                config.setJdbcUrl("jdbc:h2:" + h2Path + ";MODE=MySQL;ALLOW_LITERALS=ALL");
                 config.setDriverClassName("org.h2.Driver");
+                config.addDataSourceProperty("IFEXISTS", "FALSE");
             }
             
             config.setUsername(username);

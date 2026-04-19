@@ -180,10 +180,11 @@ public class CommandHandler implements CommandExecutor {
 	    		String name = player.getName();
 	    		GUI.acceptGUI(inv, name);
 	    		inv.sendMessage(String.format(Messages.invited, name));
-	    		sender.sendMessage(String.format(Messages.invited_succes, inv.getName()));
+	    		sender.sendMessage(String.format(Messages.invited_success, inv.getName()));
 	        	return true;
 	        }
 	        case ("kick"):{
+	        	if (!requirePermission(sender, "Oneblock.kick")) return true;
 	        	if (args.length < 2) {
 	        		sender.sendMessage(Messages.kick_usage);
 	        		return true;
@@ -196,7 +197,7 @@ public class CommandHandler implements CommandExecutor {
 	        		return true;
 	        	}
 	        	UUID owner_uuid = player.getUniqueId(), member_uuid = member.getUniqueId();
-	        	if (!PlayerInfo.ExistNoInvaitId(owner_uuid))
+	        	if (!PlayerInfo.existsAsOwner(owner_uuid))
 	        		return true;
 	        	int ownerID = PlayerInfo.GetId(owner_uuid);
 	        	PlayerInfo info = PlayerInfo.get(ownerID);
@@ -218,7 +219,7 @@ public class CommandHandler implements CommandExecutor {
 	        }
 	        case ("accept"):{
 	       	 	if (Invitation.check(player))
-	       	 		sender.sendMessage(Messages.accept_succes);
+	       	 		sender.sendMessage(Messages.accept_success);
 	       	 	else
 	       	 		sender.sendMessage(Messages.accept_none);
 	       		return true;
@@ -239,6 +240,7 @@ public class CommandHandler implements CommandExecutor {
 	        }
 	        case ("idreset"):{
 	        	if (args.length == 1) {
+	        		if (player == null) return false;
 		        	if (!requirePermission(sender, "Oneblock.idreset")) return true;
 		        	if (!idresetCommand(player)) return true;
 		        	sender.sendMessage(Messages.idreset);
@@ -352,7 +354,7 @@ public class CommandHandler implements CommandExecutor {
 			            	if (args.length > 1 &&
 			                    	(args[1].equals("true") || args[1].equals("false"))) {
 			                    	config.set(parametr, Boolean.valueOf(args[1]));
-			                    	configManager.UpdateBoolParametrs();
+			                    	configManager.updateBoolParameters();
 			                }
 			                else sender.sendMessage(Messages.bool_format);
 			                sender.sendMessage(String.format("%s%s is now %s", ChatColor.GREEN, parametr, (config.getBoolean(parametr)?"enabled.":"disabled.")));
@@ -555,6 +557,10 @@ public class CommandHandler implements CommandExecutor {
 			                		sender.sendMessage(ChatColor.RED + "Not supported in legacy versions!");
 			                		return true;
 			                	}
+			                	if (player == null) {
+			                		sender.sendMessage(ChatColor.RED + "This subcommand can only be used by a player.");
+			                		return true;
+			                	}
 			                	Player p = (Player) sender;
 			                	UUID uuid = p.getUniqueId();
 			                    if (PlayerInfo.GetId(uuid) != -1) {
@@ -583,8 +589,12 @@ public class CommandHandler implements CommandExecutor {
 			            		ChestItems.getChestNames().forEach(sender::sendMessage);
 			            		return true;
 			            	}
+			            	if (player == null) {
+			            		sender.sendMessage(ChatColor.RED + "This subcommand can only be used by a player.");
+			            		return true;
+			            	}
 			            	if (ChestItems.getChestNames().contains(args[1]))
-			            		GUI.chestGUI((Player) sender, args[1]);
+			            		GUI.chestGUI(player, args[1]);
 			            	return true;
 			            }
 			        }

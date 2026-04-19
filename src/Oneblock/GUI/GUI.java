@@ -80,18 +80,18 @@ public class GUI {
 		if (!enabled) return;
 		if (p == null) return;
 		Inventory visitGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.VISIT), 54, Messages.visitGUI);
-		ArrayList <PlayerInfo> list = new ArrayList<>();
-		int size = 0;
+		ArrayList<OfflinePlayer> matchedPlayers = new ArrayList<>();
 		for (OfflinePlayer pl: offlinePlayers) {
 			PlayerInfo inf = PlayerInfo.get(pl.getUniqueId());
 			if (inf == null) continue;
 			if (!inf.allow_visit) continue;
-			list.add(inf);
-			size++;
+			matchedPlayers.add(pl);
 		}
-		size = size > 54 ? 54 : size;
-		for (int i = 0; i < size; i++)
-			visitGUI.setItem(i, getPlayerHead(offlinePlayers[i], parseUUID(list.get(i).uuid)));
+		int size = Math.min(matchedPlayers.size(), 54);
+		for (int i = 0; i < size; i++) {
+			OfflinePlayer pl = matchedPlayers.get(i);
+			visitGUI.setItem(i, getPlayerHead(pl, pl.getName() != null ? pl.getName() : "Unknown"));
+		}
         p.openInventory(visitGUI);
 	}
 	

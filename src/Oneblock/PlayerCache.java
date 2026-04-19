@@ -7,17 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 
 public class PlayerCache {
-    private final ConcurrentHashMap<Player, int[]> players = new ConcurrentHashMap<>();
+    private volatile ConcurrentHashMap<Player, int[]> players = new ConcurrentHashMap<>();
 
     public void updateCache(Collection<? extends Player> onlinePlayers) {
-        players.clear();
+        ConcurrentHashMap<Player, int[]> newMap = new ConcurrentHashMap<>();
         onlinePlayers.forEach(player -> {
         	final UUID uuid = player.getUniqueId();
         	final int plID = PlayerInfo.GetId(uuid);
         	if (plID == -1)
         		return;
-        	players.put(player, Oneblock.plugin.getIslandCoordinates(plID));
+        	newMap.put(player, Oneblock.plugin.getIslandCoordinates(plID));
         });
+        players = newMap;
     }
     
     public Collection<Player> getPlayers() {

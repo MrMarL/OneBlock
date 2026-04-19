@@ -1,4 +1,4 @@
-// Copyright © 2026 MrMarL. The MIT License (MIT).
+// Copyright 2026 MrMarL. The MIT License (MIT).
 package Oneblock;
 
 import org.bukkit.plugin.PluginManager;
@@ -328,15 +328,16 @@ public class Oneblock extends JavaPlugin {
     }
     
     public void SaveData() {
-    	if (DatabaseManager.save(PlayerInfo.list)) return;
-    	JsonSimple.Write(PlayerInfo.list);
+    	ArrayList<PlayerInfo> clone = new ArrayList<>(PlayerInfo.list);
+    	if (DatabaseManager.save(clone)) return;
+    	JsonSimple.Write(clone);
     }
 
     private void Datafile() {
         DatabaseManager.initialize();
         PlayerInfo.list = DatabaseManager.load();
     	
-    	if (PlayerInfo.list.size() > 0) {
+    	if (!PlayerInfo.list.isEmpty()) {
     		getLogger().info("Player data has been successfully obtained from the " + DatabaseManager.dbType + " database.");
     		return;
     	}
@@ -388,7 +389,7 @@ public class Oneblock extends JavaPlugin {
     	PlayerInfo inf = PlayerInfo.get(pl_uuid);
     	return inf.getNeed() - inf.breaks;
     }
-    public static int getlenght(UUID pl_uuid) {
+    public static int getLength(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).getNeed();
     }
     public static boolean getvisitallowed(UUID pl_uuid) {

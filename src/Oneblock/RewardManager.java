@@ -13,8 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class RewardManager {
+    // Reject anything that is not a Mojang-legal player name; blocks command-injection
+    // attempts via offline-mode / proxy-forwarded nicknames being substituted into
+    // reward templates that are dispatched as console.
+    private static final Pattern SAFE_PLAYER_NAME = Pattern.compile("^[A-Za-z0-9_]{1,16}$");
+
     private List<String> allRewards = new ArrayList<>();
     private Map<Integer, List<String>> levelRewards = new HashMap<>();
     
@@ -61,6 +67,10 @@ public class RewardManager {
     
     public void executeRewards(Player player, int level, String levelName) {
         String playerName = player.getName();
+        if (playerName == null || !SAFE_PLAYER_NAME.matcher(playerName).matches()) {
+            plugin.getLogger().warning("Skipping reward dispatch for player with unsafe name: '" + playerName + "'. Expected " + SAFE_PLAYER_NAME.pattern() + ".");
+            return;
+        }
         
         // Replace placeholders
         Map<String, String> placeholders = new HashMap<>();

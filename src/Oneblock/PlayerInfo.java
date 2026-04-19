@@ -76,7 +76,7 @@ public class PlayerInfo {
 	}
 	
 	public static void removeBarStatic(Player p) {
-		if (list.size() == 0) return;
+		if (list.isEmpty()) return;
 		get(p.getUniqueId()).removeBar(p);
 	}
 	
@@ -93,7 +93,7 @@ public class PlayerInfo {
     	return -1;
     }
 	
-	public static boolean ExistNoInvaitId(UUID name) {
+	public static boolean existsAsOwner(UUID name) {
     	for(PlayerInfo pl:PlayerInfo.list) {
     		if (pl.uuid == null)
     			continue;

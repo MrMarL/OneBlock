@@ -29,7 +29,7 @@ public class Guest extends AbstractInvitation {
 	public static boolean remove(UUID uuid) {
 		Guest r = null;
 		for (Guest g : list)
-			if (g.Invited == uuid) { r = g; break; }
+			if (g.Invited.equals(uuid)) { r = g; break; }
 		return list.remove(r);
 	}
 }

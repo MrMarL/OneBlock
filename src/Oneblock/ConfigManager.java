@@ -70,7 +70,7 @@ public class ConfigManager {
         max_players_team = Check("max_players_team", max_players_team);
         mob_spawn_chance = Check("mob_spawn_chance", mob_spawn_chance);
         mob_spawn_chance = mob_spawn_chance < 2 ? 9 : mob_spawn_chance;
-        UpdateBoolParametrs();
+        updateBoolParameters();
         OBWorldGuard.setEnabled(Check("worldguard", OBWorldGuard.canUse));
         OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
         offset = Check("set", 100);
@@ -82,7 +82,7 @@ public class ConfigManager {
         LegacyConfigSaver.Save(config, con);
     }
 	 
-    public void UpdateBoolParametrs() {
+    public void updateBoolParameters() {
     	CircleMode = Check("circlemode", CircleMode);
     	UseEmptyIslands = Check("useemptyislands", UseEmptyIslands);
     	saveplayerinventory = Check("saveplayerinventory", saveplayerinventory);
@@ -138,8 +138,9 @@ public class ConfigManager {
         	while (q < bl_temp.size()) {
         		String text = bl_temp.get(q++);
         		//reading a custom block (command).
-        		if (text.charAt(0) == '/' && plugin.blocks.add(text)) 
-	            	continue;
+        		if (text.charAt(0) == '/') try { String.format(text.replaceFirst("/", ""), 99, 64, 99);
+    				if (plugin.blocks.add(text)) continue;
+    				} catch (Exception e) {}
         		//reading a custom chest.
         		for (String str : ChestItems.getChestNames()) 
         		    if (text.equals(str) && plugin.blocks.add(str)) 
@@ -210,11 +211,11 @@ public class ConfigManager {
         Messages.invite_no_island = MessageCheck("invite_no_island", Messages.invite_no_island);
         Messages.invite_team = MessageCheck("invite_team", Messages.invite_team);
         Messages.invited = MessageCheck("invited", Messages.invited);
-        Messages.invited_succes = MessageCheck("invited_succes", Messages.invited_succes);
+        Messages.invited_success = MessageCheck("invited_success", Messages.invited_success);
         Messages.kicked = MessageCheck("kicked", Messages.kicked);
         Messages.kick_usage = MessageCheck("kick_usage", Messages.kick_usage);
         Messages.kick_yourself = MessageCheck("kick_yourself", Messages.kick_yourself);
-        Messages.accept_succes = MessageCheck("accept_succes", Messages.accept_succes);
+        Messages.accept_success = MessageCheck("accept_success", Messages.accept_success);
         Messages.accept_none = MessageCheck("accept_none", Messages.accept_none);
         Messages.idreset = MessageCheck("idreset", Messages.idreset);
         Messages.protection = MessageCheck("protection", Messages.protection);
@@ -247,10 +248,7 @@ public class ConfigManager {
         config_temp = YamlConfiguration.loadConfiguration(flower);
         plugin.flowers.add(GRASS);
         for(String list:config_temp.getStringList("flowers"))
-        	if (!XMaterial.matchXMaterial(list).isPresent())
-        		plugin.flowers.add(GRASS);
-        	else
-        		plugin.flowers.add(XMaterial.matchXMaterial(list).get());
+        	plugin.flowers.add(XMaterial.matchXMaterial(list).orElse(GRASS));
     }
     
     private void Chestfile() {

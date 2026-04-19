@@ -78,7 +78,7 @@ public class OBP extends PlaceholderExpansion {
 				return Integer.toString(Oneblock.getblocks(p.getUniqueId()));
 	
 			case "lvl_lenght":
-				return Integer.toString(Oneblock.getlenght(p.getUniqueId()));
+				return Integer.toString(Oneblock.getLength(p.getUniqueId()));
 	
 			case "need_to_lvl_up":
 				return Integer.toString(Oneblock.getneed(p.getUniqueId()));

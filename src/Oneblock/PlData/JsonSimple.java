@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -48,21 +47,22 @@ public class JsonSimple {
 
 		main.put("id", pls.size());
 		
-		try {
-			FileWriter file = new FileWriter(f);
+		try (FileWriter file = new FileWriter(f)) {
 			file.write(main.toJSONString());
 			file.flush();
-			file.close();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			plugin.getLogger().warning("Failed to write player data to JSON: " + e.getMessage());
+		}
 	}
 
 	public static List<PlayerInfo> Read()  {
-		Server server = Bukkit.getServer();
 		JSONObject main = null;
 		JSONParser parser = new JSONParser();
-		try {
-			main = (JSONObject) parser.parse(new FileReader(f));
-		} catch (Exception e) {}
+		try (FileReader reader = new FileReader(f)) {
+			main = (JSONObject) parser.parse(reader);
+		} catch (Exception e) {
+			plugin.getLogger().warning("Failed to read player data from JSON: " + e.getMessage());
+		}
 		
 		List <PlayerInfo> infs = new ArrayList <PlayerInfo>();
 		if (main == null)
@@ -79,7 +79,7 @@ public class JsonSimple {
 			if (user.containsKey("uuid"))
 				pl = new PlayerInfo(UUID.fromString((String)user.get("uuid")));
 			else
-				pl = new PlayerInfo(server.getOfflinePlayer((String) user.get("nick")).getUniqueId());
+				pl = new PlayerInfo(Bukkit.getOfflinePlayer((String) user.get("nick")).getUniqueId());
 			pl.lvl = ((Number) user.get("lvl")).intValue();
 			pl.breaks = ((Number) user.get("breaks")).intValue();
 			pl.allow_visit = user.containsKey("visit");
@@ -89,7 +89,7 @@ public class JsonSimple {
 				if (p.matcher(us).matches())
 					pl.uuids.add(UUID.fromString(us));
 				else
-					pl.uuids.add(server.getOfflinePlayer(us).getUniqueId());
+					pl.uuids.add(Bukkit.getOfflinePlayer(us).getUniqueId());
 			}
 			infs.add(pl); 
 		}

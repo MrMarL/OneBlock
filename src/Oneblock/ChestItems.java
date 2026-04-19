@@ -33,7 +33,9 @@ public class ChestItems {
 			config.set(entry.getKey(), simplifiedItems);
 		}
 		
-		try { config.save(chest); } catch (Exception e) { }
+		try { config.save(chest); } catch (Exception e) {
+			org.bukkit.Bukkit.getLogger().warning("[Oneblock] Failed to save chests.yml: " + e.getMessage());
+		}
 	}
     
 	public static void load() {
@@ -73,7 +75,7 @@ public class ChestItems {
 		
 		final int max = Oneblock.rnd.nextInt(3) + 2;
         try { for (int i = 0; i < max; i++) {
-        	ItemStack m = ch.get(Oneblock.rnd.nextInt(ch.size()));
+        	ItemStack m = ch.get(Oneblock.rnd.nextInt(ch.size())).clone();
             if (m.getMaxStackSize() == 1)
             	m.setAmount(1);
             else
