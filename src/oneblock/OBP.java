@@ -1,0 +1,169 @@
+package oneblock;
+
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+
+import static oneblock.Oneblock.*;
+
+import java.util.TreeMap;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+public class OBP extends PlaceholderExpansion {
+	
+	private static final TreeMap<Double, String> SCALE;
+	private static final String SCALE_CHAR = "█";
+	private static final String NONE_PLACEHOLDER = "[None]";
+    static {
+        SCALE = new TreeMap<>();
+        SCALE.put(.0,	"&c╍╍╍╍╍╍╍╍");
+        SCALE.put(.125,	"&a╍&c╍╍╍╍╍╍╍");
+        SCALE.put(.25,	"&a╍╍&c╍╍╍╍╍╍");
+        SCALE.put(.375,	"&a╍╍╍&c╍╍╍╍╍");
+        SCALE.put(.5,	"&a╍╍╍╍&c╍╍╍╍");
+        SCALE.put(.625,	"&a╍╍╍╍╍&c╍╍╍");
+        SCALE.put(.75,	"&a╍╍╍╍╍╍&c╍╍");
+        SCALE.put(.875,	"&a╍╍╍╍╍╍╍&c╍");
+        SCALE.put(1.,	"&a╍╍╍╍╍╍╍╍");
+    }
+
+    @Override
+    public boolean canRegister() {
+        return true;
+    }
+    @Override
+    public String getAuthor() {
+        return "MrMarL";
+    }
+    @Override
+    public String getIdentifier() {
+        return "OB";
+    }
+    @Override
+    public String getPlugin() {
+        return null;
+    }
+    @Override
+    public String getVersion() {
+        return Oneblock.plugin.version;
+    }
+    @Override
+    public String onRequest(OfflinePlayer p, String identifier) {
+    	if (p == null) return null;
+    	
+    	if (identifier.endsWith("_by_position")) {
+    		if (!(p instanceof Player)) return NONE_PLACEHOLDER;
+    		UUID ownerUUID = PlayerInfo.get(plugin.findNearestRegionId(((Player)p).getLocation())).uuid;
+	        if (ownerUUID == null) return NONE_PLACEHOLDER;
+
+    		return onRequest(Bukkit.getOfflinePlayer(ownerUUID), identifier.substring(0, identifier.length() - "_by_position".length()));
+    	}
+    	
+		switch (identifier) {
+			case "lvl":
+				return Integer.toString(Oneblock.getlvl(p.getUniqueId()));
+	
+			case "lvl_name":
+				return Oneblock.getlvlname(p.getUniqueId());
+	
+			case "next_lvl":
+				return Integer.toString(Oneblock.getnextlvl(p.getUniqueId()));
+	
+			case "next_lvl_name":
+				return Oneblock.getnextlvlname(p.getUniqueId());
+	
+			case "break_on_this_lvl":
+				return Integer.toString(Oneblock.getblocks(p.getUniqueId()));
+	
+			case "lvl_lenght":
+				return Integer.toString(Oneblock.getLength(p.getUniqueId()));
+	
+			case "need_to_lvl_up":
+				return Integer.toString(Oneblock.getneed(p.getUniqueId()));
+	
+			case "player_count":
+				return Integer.toString(Oneblock.plugin.cache.getPlayers().size());
+	
+			case "visit_allowed":
+				return Boolean.toString(Oneblock.getvisitallowed(p.getUniqueId()));
+	
+			case "visits":
+				return Integer.toString(Oneblock.getvisits(p.getUniqueId()));
+	
+			case "percent":
+				PlayerInfo inf0 = PlayerInfo.get(p.getUniqueId());
+				return Integer.toString((int) (inf0.getPercent() * 100)) + "%";
+	
+			case "scale":
+				PlayerInfo inf1 = PlayerInfo.get(p.getUniqueId());
+				return SCALE.floorEntry(inf1.getPercent()).getValue().replace("╍", SCALE_CHAR);
+	
+			case "number_of_invited":
+				return Integer.toString(PlayerInfo.get(p.getUniqueId()).uuids.size());
+	
+			case "owner_name":
+				return getOwnerName(p.getUniqueId());
+	
+			case "owner_online":
+				return getOwnerOnlineStatus(p.getUniqueId());
+				
+			case "top_position":
+	            PlayerInfo playerInfo = PlayerInfo.get(p.getUniqueId());
+	            int position = Oneblock.gettopposition(playerInfo);
+	            return position == -1 ? NONE_PLACEHOLDER : Integer.toString(position + 1);
+		}
+    	
+        // %OB_top_%d_...%
+        if (identifier.startsWith("top_")) {
+            return handleTopPlaceholder(identifier);
+        }
+
+        return null; 
+    }
+    
+    private String getOwnerName(UUID playerUUID) {
+        PlayerInfo playerInfo = PlayerInfo.get(playerUUID);
+        UUID ownerUUID = playerInfo.uuid;
+        
+        if (ownerUUID == null) return NONE_PLACEHOLDER;
+        
+        OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerUUID);
+        return owner.getName() != null ? owner.getName() : NONE_PLACEHOLDER;
+    }
+    
+    private String getOwnerOnlineStatus(UUID playerUUID) {
+        UUID ownerUUID = PlayerInfo.get(playerUUID).uuid;
+        
+        if (ownerUUID == null || Bukkit.getPlayer(ownerUUID) == null)
+        	return "offline";
+        
+        return "online";
+    }
+    
+    private String handleTopPlaceholder(String identifier) {
+    	String[] parts = identifier.split("_", 3);
+        if (parts.length != 3) return null;
+        
+        try {
+            int position = Integer.parseInt(parts[1]) - 1;
+            if (position < 0 || position >= 10) return null;
+            
+            PlayerInfo topPlayer = Oneblock.gettop(position);
+            
+            if (topPlayer.uuid == null) return NONE_PLACEHOLDER;
+            
+            switch (parts[2]) {
+	            case "name":
+	                OfflinePlayer player = Bukkit.getOfflinePlayer(topPlayer.uuid);
+	                return player.getName() != null ? player.getName() : NONE_PLACEHOLDER;
+	                
+	            case "lvl":
+	                return Integer.toString(topPlayer.lvl);
+            }
+        } catch (NumberFormatException e) { return null; }
+
+        return null;
+    }
+}

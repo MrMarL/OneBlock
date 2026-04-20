@@ -263,12 +263,12 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats</pattern>
-							<shadedPattern>Oneblock.Utils.stats</shadedPattern>
+							<shadedPattern>oneblock.utils.stats</shadedPattern>
 						</relocation>
 						
 						<relocation>
 			                <pattern>com.cryptomorin.xseries</pattern>
-			                <shadedPattern>Oneblock.Utils.lib</shadedPattern>
+			                <shadedPattern>oneblock.utils.lib</shadedPattern>
 			            </relocation>
 					</relocations>
 					

@@ -1,0 +1,22 @@
+package oneblock.universalplace;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+
+import com.cryptomorin.xseries.XBlock;
+import com.cryptomorin.xseries.XMaterial;
+
+public class Place1_8to1_12 extends Place{
+
+	@Override
+	public boolean setType(Block block, Object material_, boolean physics) {
+		if (material_ instanceof XMaterial)
+			XBlock.setType(block, (XMaterial)material_, physics);
+		else if (material_ instanceof  Material)
+			block.setType((Material)material_, physics);
+		else if (material_ instanceof  String)
+			return setCustomType(block, (String)material_);
+
+		return false;
+	}
+}
