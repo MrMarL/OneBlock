@@ -21,13 +21,16 @@ public class BlockEventFixed extends BlockEvent {
 		Location loc = drop.getLocation();
 		
 		if (!world.equals(loc.getWorld())) return;
-		if (loc.getBlockY() != y) return;
-		if ((x - loc.getBlockX()) % offset != 0) return;
-		if ((z - loc.getBlockZ()) % offset != 0) return;
-		
-		e.setCancelled(true);
+		if (loc.getBlockY() != getY()) return;
+		if ((getX() - loc.getBlockX()) % getOffset() != 0) return;
+		if ((getZ() - loc.getBlockZ()) % getOffset() != 0) return;
 		
 		loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0);
+
+		// 1.21+ reworked item spawning so the old `teleport` path drops silently
+		// lose their Z-axis velocity. Use the new copy() + setVelocity() API
+		// on modern servers.
+		e.setCancelled(true);
 		drop.copy(loc).setVelocity(UPWARD_VELOCITY);
     }
 }

@@ -19,18 +19,16 @@ public class LegacyConfigSaver {
 		file = f;
 		// 1.8.x - 1.17.x
 		if (!XMaterial.supports(1,18)) try {
-	        BufferedReader fileIn = new BufferedReader(new FileReader(f));
-	        StringBuffer inputBuffer = new StringBuffer();
-	        String line;
-
 	        ArrayList<String> inputStr1 = new ArrayList<String>();
+	        try (BufferedReader fileIn = new BufferedReader(new FileReader(f))) {
+	            String line;
+	            while ((line = fileIn.readLine()) != null)
+	                inputStr1.add(line);
+	        }
 	        ArrayList<String> inputStr2 = new ArrayList<String>();
-	        while ((line = fileIn.readLine()) != null)
-	        	inputStr1.add(line);
-	        fileIn.close();
 	        inputStr2.addAll(Arrays.asList(fc.saveToString().split("\n")));
-	        inputBuffer = new StringBuffer();
-	        
+	        StringBuffer inputBuffer = new StringBuffer();
+
 	        int i = 0;
 	        for (String a:inputStr1) {
 	        	if (i >= inputStr2.size())
@@ -41,22 +39,26 @@ public class LegacyConfigSaver {
 	        		inputBuffer.append(inputStr2.get(i++));
     			inputBuffer.append('\n');
 	        }
-	        
+
 	        while (i < inputStr2.size()) {
 	        	inputBuffer.append(inputStr2.get(i++));
 	        	inputBuffer.append('\n');
 	        }
-	        
-	        FileOutputStream fileOut = new FileOutputStream(f);
-	        fileOut.write(inputBuffer.toString().getBytes());
-	        fileOut.close();
+
+	        try (FileOutputStream fileOut = new FileOutputStream(f)) {
+	            fileOut.write(inputBuffer.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+	        }
 	        return;
 		} 
-		catch (Exception e) {}
+		catch (Exception e) {
+			org.bukkit.Bukkit.getLogger().warning("[Oneblock] Legacy config save failed for " + f + ": " + e.getMessage());
+		}
 		
 		// 1.18+
 		try { fc.save(f); } 
-		catch (Exception e) {}
+		catch (Exception e) {
+			org.bukkit.Bukkit.getLogger().warning("[Oneblock] Config save failed for " + f + ": " + e.getMessage());
+		}
 	}
 	
 	public static void Save (final FileConfiguration fc) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.entity.EntityType;
 
 public class Level {
 	public static Level max = new Level("Level: MAX");
@@ -21,8 +22,8 @@ public class Level {
 	}
 	
 	public String name;
-	public int blocks = 0;
-	public int mobs = 0;
+	public WeightedPool<PoolEntry> blockPool = new WeightedPool<>();
+	public WeightedPool<EntityType> mobPool = new WeightedPool<>();
 	public BarColor color;
 	public BarStyle style;
 	public int length = 100;
@@ -36,5 +37,13 @@ public class Level {
 			if (get(i) == this)
 				return i;
 		return 1;
+	}
+	
+	public int blockPoolSize() { return blockPool.size(); }
+	public int mobPoolSize()   { return mobPool.size(); }
+	
+	public void resetPools() {
+		blockPool = new WeightedPool<>();
+		mobPool = new WeightedPool<>();
 	}
 }

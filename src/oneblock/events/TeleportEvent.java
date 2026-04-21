@@ -10,10 +10,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import oneblock.PlayerInfo;
-
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 public class TeleportEvent implements Listener {
     @EventHandler

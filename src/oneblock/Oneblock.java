@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import oneblock.events.BlockEvent;
 import oneblock.events.ItemsAdderEvent;
 import oneblock.events.RespawnJoinEvent;
@@ -16,20 +15,24 @@ import oneblock.events.extended.BlockEventFixed;
 import oneblock.gui.GUI;
 import oneblock.gui.GUIListener;
 import oneblock.invitation.Guest;
+import oneblock.loot.LootTableDispatcher;
 import oneblock.pldata.*;
 import oneblock.universalplace.*;
 import oneblock.utils.*;
 import oneblock.worldguard.*;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
@@ -50,7 +53,7 @@ public class Oneblock extends JavaPlugin {
     private static final double BORDER_DAMAGE_AMOUNT = .2;
     private static final double BORDER_DAMAGE_BUFFER = 1;
     
-    public static final Random rnd = new Random(System.currentTimeMillis());
+    public static final Random rnd = new Random();
     public static final XMaterial GRASS_BLOCK = XMaterial.GRASS_BLOCK, GRASS = XMaterial.SHORT_GRASS;
     public static final VoidChunkGenerator GenVoid = new VoidChunkGenerator();
     public static final boolean isBorderSupported = Utils.findMethod(Bukkit.class, "createWorldBorder");// Is virtual border supported?;
@@ -60,37 +63,73 @@ public class Oneblock extends JavaPlugin {
     
     public static ConfigManager configManager = new ConfigManager();
     
-    public static int x = 0, y = 0, z = 0, offset = 0, max_players_team = 0, mob_spawn_chance = 9;
-    public static boolean island_for_new_players = false, rebirth = false, autojoin = false;
-    public static boolean droptossup = true, physics = false;
-    public static boolean lvl_bar_mode = false, particle = true;
-    public static boolean allow_nether = true, protection = false;
-    public static boolean saveplayerinventory = false;
-    public static boolean border = false;
-    public static boolean CircleMode = true;
-    public static boolean UseEmptyIslands = true;
-    public static boolean progress_bar = false;
-    public static String phText = "";
+    /**
+     * Island layout origin: {@code (world, x, y, z, offset)} treated as a single
+     * atomically-replaceable unit. Writers mutate the origin via
+     * {@link #setPosition} / {@link #setOffset} which perform one atomic swap
+     * each; readers call {@link #origin()} once and use the captured snapshot
+     * so that a concurrent {@code /ob set} cannot produce a mixed (torn) view
+     * (e.g. new {@code x} with old {@code offset}).
+     *
+     * <p>Package-private so test code can reflect it; callers outside the
+     * package use the getter helpers ({@link #getX()}, {@link #getOffset()},
+     * ...) or {@link #origin()}.
+     */
+    static final AtomicReference<IslandOrigin> ORIGIN =
+            new AtomicReference<>(IslandOrigin.EMPTY);
+
+    public static volatile int max_players_team = 0, mob_spawn_chance = 9;
+    public static volatile boolean island_for_new_players = false, rebirth = false, autojoin = false;
+    public static volatile boolean droptossup = true, physics = false;
+    public static volatile boolean lvl_bar_mode = false, particle = true;
+    public static volatile boolean allow_nether = true, protection = false;
+    public static volatile boolean saveplayerinventory = false;
+    public static volatile boolean border = false;
+    public static volatile boolean CircleMode = true;
+    public static volatile boolean UseEmptyIslands = true;
+    public static volatile boolean progress_bar = false;
+    public static volatile String phText = "";
     
-    public static YamlConfiguration config;
+    public static volatile YamlConfiguration config;
     
     public final String version = getDescription().getVersion();
     public OBWorldGuard OBWG = new OBWorldGuard();
     public Place.Type placetype = Place.Type.basic;
     private Place placer;
     
-    World wor, leavewor;
+    /**
+     * Leave-world reference. Written only by the main thread (
+     * {@link #setLeave} + admin commands); {@code volatile} so the async
+     * {@link Initialization} task's first read picks up a freshly-assigned
+     * value. Separate from {@link #ORIGIN} because it belongs to a different
+     * workflow (player teleport destination) and is updated independently.
+     */
+    public static volatile World leavewor;
     boolean PAPI = false;
     boolean enabled = false;
     
-    public ArrayList <Object> blocks = new ArrayList<>();
-    public ArrayList <EntityType> mobs = new ArrayList<>();
     public ArrayList <XMaterial> flowers = new ArrayList<>();
     public PlayerCache cache = new PlayerCache();
     
-    public final static World getWorld() { return plugin.wor; }
+    /** Shorthand for {@code origin().world()}. Pre-config returns {@code null}. */
+    public final static World getWorld() { return ORIGIN.get().world(); }
+    /** Snapshot of the current island origin. Always non-null. */
+    public static IslandOrigin origin()  { return ORIGIN.get(); }
+    /** Shorthand for {@code origin().world()}. */
+    public static World getWor()  { return ORIGIN.get().world(); }
+    /** Shorthand for {@code origin().x()}. */
+    public static int getX()      { return ORIGIN.get().x(); }
+    /** Shorthand for {@code origin().y()}. */
+    public static int getY()      { return ORIGIN.get().y(); }
+    /** Shorthand for {@code origin().z()}. */
+    public static int getZ()      { return ORIGIN.get().z(); }
+    /** Shorthand for {@code origin().offset()}; {@code 0} means "not configured". */
+    public static int getOffset() { return ORIGIN.get().offset(); }
     public boolean isPAPIEnabled() { return PAPI; }
-    public int[] getIslandCoordinates(final int id) { return IslandCoordinateCalculator.getById(id, x, z, offset, CircleMode); }
+    public int[] getIslandCoordinates(final int id) {
+    	IslandOrigin o = ORIGIN.get();
+    	return IslandCoordinateCalculator.getById(id, o.x(), o.z(), o.offset(), CircleMode);
+    }
     public int findNearestRegionId(final Location loc) { return IslandCoordinateCalculator.findNearestRegionId(loc); }
     
     @Override
@@ -140,7 +179,7 @@ public class Oneblock extends JavaPlugin {
         getCommand("oneblock").setExecutor(new CommandHandler());
         getCommand("oneblock").setTabCompleter(new CommandTabCompleter());
         
-        if (offset == 0) return;
+        if (getOffset() == 0) return;
         
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Initialization(), 32, 80);
     }
@@ -169,22 +208,26 @@ public class Oneblock extends JavaPlugin {
     
     public class Initialization implements Runnable {
         public void run() {
-            if (wor == null) {
-            	getLogger().info("Waiting for the initialization of the world");
-            	getLogger().info("Trying to initialize the world again...");
-                wor = Bukkit.getWorld(config.getString("world"));
-                leavewor = Bukkit.getWorld(config.getString("leaveworld"));
+            if (getWor() != null) return;
+            final World w = Bukkit.getWorld(config.getString("world"));
+            leavewor = Bukkit.getWorld(config.getString("leaveworld"));
+            if (w != null) {
+                // Atomic swap: fold the freshly-resolved world into ORIGIN while
+                // preserving the existing x/y/z/offset loaded earlier by
+                // ConfigManager.Configfile(). Runs on the async scheduler thread.
+                ORIGIN.updateAndGet(prev -> new IslandOrigin(w, prev.x(), prev.y(), prev.z(), prev.offset()));
+                getLogger().info("The initialization of the world was successful!");
+                runMainTask();
+                reload();
             } else {
-            	getLogger().info("The initialization of the world was successful!");
-            	runMainTask();
-            	reload();
+                getLogger().info("Waiting for initialization of world '" + config.getString("world") + "'...");
             }
         }
     }
     
     public void runMainTask() {
     	Bukkit.getScheduler().cancelTasks(this);
-		if (offset == 0) return;
+		if (getOffset() == 0) return;
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskUpdatePlayers(), 0, 120);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskSaveData(), 200, 6000);
 		if (!superlegacy) Bukkit.getScheduler().runTaskTimerAsynchronously(this, new TaskParticle(), 40, 40);
@@ -193,14 +236,16 @@ public class Oneblock extends JavaPlugin {
 		
     	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
         	getLogger().info("WorldGuard has been found!");
-        	OBWG = legacy ? new OBWorldGuard6() : new OBWorldGuard7();
         	OBWG.ReCreateRegions();
         }
         else OBWorldGuard.setEnabled(false);
     }
 
 	public class TaskUpdatePlayers implements Runnable {
-		public void run() { cache.updateCache(wor.getPlayers()); }
+		public void run() {
+			World w = getWor();
+			if (w != null) cache.updateCache(w.getPlayers());
+		}
 	}
 	
 	public class TaskSaveData implements Runnable {
@@ -215,11 +260,11 @@ public class Oneblock extends JavaPlugin {
 	            int[] result = cache.getIslandCoordinates(ponl);
 	            if (result == null) continue;
 	            int X_pl = result[0], Z_pl = result[1];
-	            double baseY = y + 0.5;
+	            double baseY = getY() + 0.5;
 
 	            for (double[] offset : PARTICLE_OFFSETS) {
-	                Location loc = new Location(wor, X_pl + offset[0], baseY, Z_pl + offset[1]);
-	                wor.spawnParticle(Particle.PORTAL, loc, 5, 0, 0, 0, 0);
+	                Location loc = new Location(getWor(), X_pl + offset[0], baseY, Z_pl + offset[1]);
+	                getWor().spawnParticle(Particle.PORTAL, loc, 5, 0, 0, 0, 0);
 	            }
 	        }
 	    }
@@ -228,7 +273,7 @@ public class Oneblock extends JavaPlugin {
     public class Task implements Runnable {
         public void run() { // SubBlockGen
             for (Player player : cache.getPlayers()) {
-            	if (player.getWorld() != wor) continue;
+            	if (player.getWorld() != getWor()) continue;
             	final UUID uuid = player.getUniqueId();
             	final int result[] = cache.getIslandCoordinates(player);
                 final int X_pl = result[0], Z_pl = result[1], plID = result[2];
@@ -249,7 +294,7 @@ public class Oneblock extends JavaPlugin {
                     }
                 }
                 
-                final Block block = wor.getBlockAt(X_pl, y, Z_pl);
+                final Block block = getWor().getBlockAt(X_pl, getY(), Z_pl);
                 if (block.getType() != Material.AIR) continue;
                 if (PlayerInfo.GetId(uuid) == -1) continue;
                 
@@ -272,19 +317,33 @@ public class Oneblock extends JavaPlugin {
             inf.bar.addPlayer(ponl);
         }
         
-        Object newblocktype = blocks.get(lvl_inf.blocks == 0 ? 0 : rnd.nextInt(lvl_inf.blocks));
-        if (newblocktype == null) {
+        PoolEntry entry = lvl_inf.blockPool.pick(rnd);
+        if (entry == null || entry.kind == PoolEntry.Kind.DEFAULT_GRASS) {
             XBlock.setType(block, GRASS_BLOCK);
-            if (rnd.nextInt(FLOWER_CHANCE) == 1) XBlock.setType(wor.getBlockAt(X_pl, y + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
+            if (rnd.nextInt(FLOWER_CHANCE) == 1)
+                XBlock.setType(getWor().getBlockAt(X_pl, getY() + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
         }
-        else placer.setType(block, newblocktype, physics);
+        else switch (entry.kind) {
+            case BLOCK:
+                placer.setType(block, entry.value, physics);
+                break;
+            case LOOT_TABLE:
+                LootTableDispatcher.populate(block, (NamespacedKey) entry.value, rnd);
+                break;
+            case COMMAND:
+                Place.executeCommand(block, (String) entry.value);
+                break;
+            default:
+                break;
+        }
 
         if (rnd.nextInt(mob_spawn_chance) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);
 	}
     
 	public void spawnRandomMob(int pos_x, int pos_z, Level level) {
-		if (level.mobs == 0) return;
-		wor.spawnEntity(new Location(wor, pos_x + .5, y + 1, pos_z + .5), mobs.get(rnd.nextInt(level.mobs)));
+		EntityType type = level.mobPool.pick(rnd);
+		if (type == null) return;
+		getWor().spawnEntity(new Location(getWor(), pos_x + .5, getY() + 1, pos_z + .5), type);
 	}
     
     public void UpdateBorderLocation(Player pl, Location loc) {
@@ -294,7 +353,8 @@ public class Oneblock extends JavaPlugin {
 		
 		WorldBorder br = Bukkit.createWorldBorder();
     	br.setCenter(X_pl+.5, Z_pl+.5);
-    	br.setSize(offset - 1 + (offset & 1));
+    	int _off = getOffset();
+    	br.setSize(_off - 1 + (_off & 1));
     	br.setWarningDistance(BORDER_WARNING_DISTANCE);
     	br.setDamageAmount(BORDER_DAMAGE_AMOUNT);
     	br.setDamageBuffer(BORDER_DAMAGE_BUFFER);
@@ -309,51 +369,67 @@ public class Oneblock extends JavaPlugin {
     
     public void ReloadBorders() {
     	if (!isBorderSupported) return;
-    	if (border) wor.getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
-    	else wor.getPlayers().forEach(pl -> pl.setWorldBorder(null));
+    	World w = getWor();
+    	if (w == null) return;
+    	if (border) w.getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
+    	else w.getPlayers().forEach(pl -> pl.setWorldBorder(null));
     }
     
     public boolean isWithinIslandBounds(Location loc, int centerX, int centerZ) {
         int deltaX = loc.getBlockX() - centerX;
-        int deltaZ = CircleMode ? loc.getBlockZ() - centerZ : 0;
-        int radius = Math.abs(offset >> 1) + 1;
+        int deltaZ = loc.getBlockZ() - centerZ;
+        int radius = Math.abs(getOffset() >> 1) + 1;
         
         return Math.abs(deltaX) <= radius && Math.abs(deltaZ) <= radius;
     }
     
-    public void onDisable() { 
-    	DatabaseManager.save(PlayerInfo.list);
+    @Override
+    public void onDisable() {
+    	SaveData();
     	DatabaseManager.close();
-    	JsonSimple.Write(PlayerInfo.list);
     }
     
     public void SaveData() {
-    	ArrayList<PlayerInfo> clone = new ArrayList<>(PlayerInfo.list);
-    	if (DatabaseManager.save(clone)) return;
-    	JsonSimple.Write(clone);
+    	if (DatabaseManager.save(PlayerInfo.list)) return;
+    	JsonSimple.Write(PlayerInfo.list);
     }
 
     private void Datafile() {
         DatabaseManager.initialize();
-        PlayerInfo.list = DatabaseManager.load();
-    	
+        PlayerInfo.replaceAll(DatabaseManager.load());
+
     	if (!PlayerInfo.list.isEmpty()) {
     		getLogger().info("Player data has been successfully obtained from the " + DatabaseManager.dbType + " database.");
     		return;
     	}
-    	
+
 		if (JsonSimple.f.exists())
-			PlayerInfo.list = JsonSimple.Read();
-		else 
-			PlayerInfo.list = ReadOldData.Read();
+			PlayerInfo.replaceAll(JsonSimple.Read());
+		else
+			PlayerInfo.replaceAll(ReadOldData.Read());
     }
     
     public void setPosition(Location loc) { setPosition(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()); }
-    public void setPosition(World world, int x_, int y_, int z_) { 
-    	if (world != null) config.set("world", (wor = world).getName());
-        config.set("x", (double) (x = x_));
-        config.set("y", (double) (y = y_));
-        config.set("z", (double) (z = z_));
+    public void setPosition(World world, int x_, int y_, int z_) {
+    	// Single atomic swap: readers on async threads either see the pre-call
+    	// origin in full, or the post-call origin in full — never a mix.
+    	IslandOrigin next = ORIGIN.updateAndGet(prev -> new IslandOrigin(
+    			world != null ? world : prev.world(), x_, y_, z_, prev.offset()));
+    	if (next.world() != null) config.set("world", next.world().getName());
+        config.set("x", (double) x_);
+        config.set("y", (double) y_);
+        config.set("z", (double) z_);
+    }
+
+    /**
+     * Atomically set the cell-edge length ({@code offset}) that drives the
+     * island grid. Also persists the new value to {@code config.yml} under
+     * the key {@code set}. Safe to call only from the main thread (admin
+     * {@code /ob set}) — config writes assume main-thread ownership.
+     */
+    public void setOffset(int off) {
+    	ORIGIN.updateAndGet(prev -> prev.withOffset(off));
+    	if (config != null) config.set("set", off);
     }
     
     public Location getLeave() { return new Location(leavewor, config.getDouble("xleave"), config.getDouble("yleave"), config.getDouble("zleave"), (float)config.getDouble("yawleave"), 0f); }
@@ -414,17 +490,31 @@ public class Oneblock extends JavaPlugin {
     }
     public static int gettopposition(PlayerInfo player) {
         if (player == null || player.uuid == null) return -1;
-        
+
         List<PlayerInfo> sorted = gettoplist();
-        for (int i = 0; i < sorted.size(); i++) 
-            if (sorted.get(i) == player)
+        for (int i = 0; i < sorted.size(); i++) {
+            PlayerInfo entry = sorted.get(i);
+            if (entry != null && player.uuid.equals(entry.uuid))
                 return i;
-        
+        }
+
         return -1;
     }
+    // Sorted top-list cache. Invalidated via PlayerInfo.topVersion() which bumps
+    // on level-up, slot assignment, and bulk reload. Under light contention we
+    // may re-sort twice from two threads simultaneously; that's benign duplicate
+    // work and cheaper than a global lock in the hot placeholder path.
+    private static volatile long topCacheVersion = -1;
+    private static volatile List<PlayerInfo> topCache = java.util.Collections.emptyList();
+
     public static List<PlayerInfo> gettoplist() {
-    	List<PlayerInfo> sorted = new ArrayList<>(PlayerInfo.list);
-    	sorted.sort(PlayerInfo.COMPARE_BY_LVL);
-    	return sorted;
+    	long v = PlayerInfo.topVersion();
+    	if (v != topCacheVersion) {
+    		List<PlayerInfo> sorted = new ArrayList<>(PlayerInfo.list);
+    		sorted.sort(PlayerInfo.COMPARE_BY_LVL);
+    		topCache = java.util.Collections.unmodifiableList(sorted);
+    		topCacheVersion = v;
+    	}
+    	return topCache;
     }
 }

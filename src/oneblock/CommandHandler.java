@@ -19,6 +19,9 @@ import org.bukkit.entity.Player;
 
 import com.cryptomorin.xseries.XMaterial;
 
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.EntityType;
+
 import oneblock.gui.GUI;
 import oneblock.invitation.Guest;
 import oneblock.invitation.Invitation;
@@ -65,7 +68,7 @@ public class CommandHandler implements CommandExecutor {
         {
 	        case ("j"):
 	        case ("join"):{
-	            if (offset == 0 || getWorld() == null) {
+	            if (getOffset() == 0 || getWorld() == null) {
 	            	sender.sendMessage(ChatColor.YELLOW + "First you need to set the reference coordinates '/ob set'.");
 	            	return true;
 	            }
@@ -79,9 +82,9 @@ public class CommandHandler implements CommandExecutor {
 	            	int result[] = plugin.getIslandCoordinates(plID);
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
-	            		Island.clear(getWorld(), X_pl, y, Z_pl, offset/4);
-	                Island.place(getWorld(), X_pl, y, Z_pl);
-	                plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, offset, plID);
+	            		Island.clear(getWorld(), X_pl, getY(), Z_pl, getOffset()/4);
+	                Island.place(getWorld(), X_pl, getY(), Z_pl);
+	                plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, getOffset(), plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
 						inf.createBar(getBarTitle(player, 0));
@@ -92,14 +95,14 @@ public class CommandHandler implements CommandExecutor {
 	            }
 	            if (!plugin.enabled) plugin.runMainTask();
 	            if (progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
-	            player.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
+	            player.teleport(new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
 	            if (OBWorldGuard.isEnabled()) plugin.OBWG.addMember(uuid, plID);
 	            return true;
 	        }
 	        case ("leave"):{
 	        	if (player == null) return false;
 	            PlayerInfo.removeBarStatic(player);
-	            if (plugin.leavewor == null || config.getDouble("yleave") == 0) {
+	            if (leavewor == null || config.getDouble("yleave") == 0) {
 	            	if (!args[args.length-1].equals("/n"))
 	            		sender.sendMessage(Messages.leave_not_set);
 	            	return true;
@@ -137,7 +140,7 @@ public class CommandHandler implements CommandExecutor {
 	            final int X_pl = result[0], Z_pl = result[1];
 	    		
 	            if (protection) Guest.list.add(new Guest(uuid, player.getUniqueId()));
-	            player.teleport(new Location(getWorld(), X_pl + 0.5, y + 1.2013, Z_pl + 0.5));
+	            player.teleport(new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
 	    		PlayerInfo.removeBarStatic(player);
 	            return true;
 	        }
@@ -202,7 +205,7 @@ public class CommandHandler implements CommandExecutor {
 	        	int ownerID = PlayerInfo.GetId(owner_uuid);
 	        	PlayerInfo info = PlayerInfo.get(ownerID);
 	        	if (info.uuids.contains(member_uuid)) {
-	        		info.uuids.remove(member_uuid);
+	        		info.removeInvite(member_uuid);
 	        		if (OBWorldGuard.isEnabled())
 	        			plugin.OBWG.removeMember(member_uuid, ownerID);
 	        	}
@@ -237,6 +240,15 @@ public class CommandHandler implements CommandExecutor {
 	        		GUI.openGUI(player);
 	        		return true;
 	        	}
+	        	// Fall-through contract for the next three cases ("gui", "idreset", default):
+	        	//   single-arg -> user-facing behaviour (open GUI / self-idreset), returns.
+	        	//   multi-arg  -> intentional fall-through to the admin `default` block,
+	        	//                 which performs the Oneblock.set permission check and
+	        	//                 re-dispatches to the admin switch's matching case.
+	        	// DO NOT insert new cases in between without preserving the chain, or
+	        	// `/ob gui true|false` and `/ob idreset <name>` will silently stop
+	        	// reaching the admin handler.
+	        	// fall through: `/ob gui true|false` reaches the admin bool-toggle via default.
 	        }
 	        case ("idreset"):{
 	        	if (args.length == 1) {
@@ -246,7 +258,8 @@ public class CommandHandler implements CommandExecutor {
 		        	sender.sendMessage(Messages.idreset);
 		        	player.performCommand("ob leave /n");
 		        	return true; 
-	        	} //else goto default for admin
+	        	}
+	        	// fall through: `/ob idreset <name>` reaches the admin idreset via default.
 	        }
 	        default: {//admin commands
 	        	if (requirePermission(sender, "Oneblock.set")) 
@@ -264,7 +277,7 @@ public class CommandHandler implements CommandExecutor {
 			        	        try {
 			        	            int off_set = Integer.parseInt(args[1]);
 			        	            if (off_set == 0 || off_set > 10000 || off_set < -10000) throw new NumberFormatException();
-			        	            offset = off_set;
+			        	            plugin.setOffset(off_set);
 			        	        } catch (NumberFormatException nfe) {
 			        	            sender.sendMessage(Messages.invalid_value);
 			        	            return true;
@@ -293,17 +306,17 @@ public class CommandHandler implements CommandExecutor {
 			        	        }
 			        	    } else location = player.getLocation();
 			        	    
-			        	    config.set("set", offset);
+			        	    // plugin.setOffset above already persisted `set` to config; no explicit set needed here.
 			        	    plugin.setPosition(location);
 			        	    
 			        	    if (!plugin.enabled) plugin.runMainTask();
 			        	    
-			        	    getWorld().getBlockAt(x, y, z).setType(GRASS_BLOCK.get());
+			        	    getWorld().getBlockAt(getX(), getY(), getZ()).setType(GRASS_BLOCK.get());
 			        	    plugin.OBWG.ReCreateRegions();
 			        	    LegacyConfigSaver.Save(config);
 			        	    
 			        	    sender.sendMessage(ChatColor.GREEN + "set OneBlock on: \n" +
-			        	                      ChatColor.WHITE + x + ", " + y + ", " + z + 
+			        	                      ChatColor.WHITE + getX() + ", " + getY() + ", " + getZ() +
 			        	                      ChatColor.GRAY + " in world " + ChatColor.WHITE + getWorld().getName());
 			        	    return true;
 			        	}
@@ -339,7 +352,11 @@ public class CommandHandler implements CommandExecutor {
 			                    sender.sendMessage(String.format("%sThe border can only be used on version 1.18.2 and above!", ChatColor.YELLOW));
 			                    return true;
 			                }
+			            	// ReloadBorders is scheduled 2 ticks later so the fall-through
+			            	// below can first persist `border=true/false` via the shared
+			            	// bool-toggle body; the ordering is load-bearing.
 			            	Bukkit.getScheduler().runTaskLater(plugin, () -> { plugin.ReloadBorders(); }, 2L);
+			            	// fall through to shared bool-toggle body:
 			            case ("circlemode"):
 			            case ("useemptyislands"):
 			            case ("protection"):
@@ -417,7 +434,7 @@ public class CommandHandler implements CommandExecutor {
 		                    if (progress_bar)
 		                    	inf.bar.setVisible(false);
 		                    int result[] = plugin.getIslandCoordinates(id);
-		                    Island.clear(getWorld(), result[0], y, result[1], offset/4);
+		                    Island.clear(getWorld(), result[0], getY(), result[1], getOffset()/4);
 		                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
 		                    return true;
 			            }
@@ -522,13 +539,12 @@ public class CommandHandler implements CommandExecutor {
 			                    	sender.sendMessage(String.format("%sundefined lvl", ChatColor.RED));
 			                    	return true;
 			                    }
-			                    sender.sendMessage(String.format("%s%s",ChatColor.GREEN, Level.get(temp).name));
-			                    int i = (temp == 0) ? 0 : Level.get(temp-1).blocks;
-			                    for(;i<Level.get(temp).blocks;i++)
-			                    	if (plugin.blocks.get(i) == null)
-			                    		sender.sendMessage("Grass (undefined)");
-			                    	else
-			                    		sender.sendMessage(plugin.blocks.get(i).toString());
+			                    Level lvl = Level.get(temp);
+			                    sender.sendMessage(String.format("%s%s %s(weight total: %d)", ChatColor.GREEN, lvl.name, ChatColor.GRAY, lvl.blockPool.totalWeight() + lvl.mobPool.totalWeight()));
+			                    for (WeightedPool.Entry<PoolEntry> e : lvl.blockPool.entries())
+			                    	sender.sendMessage("  " + e.value + " (weight " + e.weight + ")");
+			                    for (WeightedPool.Entry<EntityType> e : lvl.mobPool.entries())
+			                    	sender.sendMessage("  mob: " + e.value + " (weight " + e.weight + ")");
 			                    return true;
 			                }
 			                for(int i = 0;i<Level.size();i++)
@@ -565,7 +581,7 @@ public class CommandHandler implements CommandExecutor {
 			                	UUID uuid = p.getUniqueId();
 			                    if (PlayerInfo.GetId(uuid) != -1) {
 			                        int result[] = plugin.getIslandCoordinates(PlayerInfo.GetId(uuid));
-			                        Island.scan(getWorld(), result[0], y, result[1]);
+			                        Island.scan(getWorld(), result[0], getY(), result[1]);
 			                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
 			                        config.set("custom_island", Island.map());
 			                    } else
@@ -586,15 +602,39 @@ public class CommandHandler implements CommandExecutor {
 			            }
 			            case ("chest"):{
 			            	if (args.length < 2) {
-			            		ChestItems.getChestNames().forEach(sender::sendMessage);
+			            		if (ChestItems.getChestNames().isEmpty()) {
+			            			sender.sendMessage(ChatColor.YELLOW + "No chest aliases configured. Define them in chests.yml as 'name: minecraft:chests/<loot_table>'.");
+			            			return true;
+			            		}
+			            		for (String name : ChestItems.getChestNames()) {
+			            			NamespacedKey k = ChestItems.resolve(name);
+			            			sender.sendMessage(ChatColor.GREEN + name + ChatColor.GRAY + " -> " + ChatColor.WHITE + (k == null ? "<unset>" : k));
+			            		}
 			            		return true;
 			            	}
-			            	if (player == null) {
-			            		sender.sendMessage(ChatColor.RED + "This subcommand can only be used by a player.");
+			            	String chestName = args[1];
+			            	if (args.length < 3) {
+			            		NamespacedKey current = ChestItems.resolve(chestName);
+			            		if (current == null)
+			            			sender.sendMessage(ChatColor.YELLOW + "No loot-table mapping for '" + chestName + "'. Usage: /ob chest " + chestName + " set <namespaced_key>");
+			            		else {
+			            			sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + ChatColor.WHITE + current);
+			            			sender.sendMessage(ChatColor.GRAY + "Usage: /ob chest " + chestName + " set <namespaced_key>");
+			            		}
 			            		return true;
 			            	}
-			            	if (ChestItems.getChestNames().contains(args[1]))
-			            		GUI.chestGUI(player, args[1]);
+			            	if (!args[2].equalsIgnoreCase("set") || args.length < 4) {
+			            		sender.sendMessage(ChatColor.RED + "Usage: /ob chest <name> [set <namespaced_key>]");
+			            		return true;
+			            	}
+			            	NamespacedKey newKey = ChestItems.parseKey(args[3]);
+			            	if (newKey == null) {
+			            		sender.sendMessage(ChatColor.RED + "Invalid namespaced key '" + args[3] + "'.");
+			            		return true;
+			            	}
+			            	ChestItems.setAlias(chestName, newKey);
+			            	ChestItems.save();
+			            	sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + ChatColor.WHITE + newKey);
 			            	return true;
 			            }
 			        }

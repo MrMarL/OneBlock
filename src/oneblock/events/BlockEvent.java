@@ -32,12 +32,11 @@ public class BlockEvent implements Listener {
 		Location loc = drop.getLocation();
 		
 		if (!world.equals(loc.getWorld())) return;
-		if (loc.getBlockY() != y) return;
-		if ((x - loc.getBlockX()) % offset != 0) return;
-		if ((z - loc.getBlockZ()) % offset != 0) return;
+		if (loc.getBlockY() != getY()) return;
+		if ((getX() - loc.getBlockX()) % getOffset() != 0) return;
+		if ((getZ() - loc.getBlockZ()) % getOffset() != 0) return;
 		
 		loc.add(0, DROP_TELEPORT_HEIGHT_OFFSET, 0);
-		
 		drop.teleport(loc);
 		drop.setVelocity(UPWARD_VELOCITY);
     }
@@ -48,7 +47,7 @@ public class BlockEvent implements Listener {
 		if (world == null) return;
 		final Block block = e.getBlock();
 		if (block.getWorld() != world) return;
-		if (block.getY() != y) return;
+		if (block.getY() != getY()) return;
 		final Player ponl = e.getPlayer();
 		final UUID uuid = ponl.getUniqueId();
 		final int plID = PlayerInfo.GetId(uuid);

@@ -68,31 +68,69 @@ public class JsonSimple {
 		if (main == null)
 			return infs;
 		PlayerInfo nullable = new PlayerInfo(null);
-		int id = ((Number) main.get("id")).intValue();
+		Object idObj = main.get("id");
+		if (!(idObj instanceof Number)) { plugin.getLogger().warning("[Oneblock] PlData.json missing or non-numeric 'id' header; treating as empty."); return infs; }
+		int id = ((Number) idObj).intValue();
 		for(int i = 0; i<id ;i++) {
 			JSONObject user = (JSONObject) main.get(""+i);
 			if (user == null) {
 				infs.add(nullable);
 				continue;
 			}
-			PlayerInfo pl;
-			if (user.containsKey("uuid"))
-				pl = new PlayerInfo(UUID.fromString((String)user.get("uuid")));
-			else
-				pl = new PlayerInfo(Bukkit.getOfflinePlayer((String) user.get("nick")).getUniqueId());
-			pl.lvl = ((Number) user.get("lvl")).intValue();
-			pl.breaks = ((Number) user.get("breaks")).intValue();
-			pl.allow_visit = user.containsKey("visit");
-			JSONArray arr = (JSONArray) (user.containsKey("invated")? user.get("invated"): user.get("invited"));
-			for(int q = 0;q<arr.size();q++) {
-				String us = (String) arr.get(q);
-				if (p.matcher(us).matches())
-					pl.uuids.add(UUID.fromString(us));
-				else
-					pl.uuids.add(Bukkit.getOfflinePlayer(us).getUniqueId());
-			}
-			infs.add(pl); 
+			PlayerInfo pl = readPlayerInfo(user, i);
+			if (pl == null) { infs.add(nullable); continue; }
+			infs.add(pl);
 		}
 		return infs;
+	}
+
+	private static PlayerInfo readPlayerInfo(JSONObject user, int row) {
+		UUID owner = resolveOwner(user, row);
+		if (owner == null) return null;
+		PlayerInfo pl = new PlayerInfo(owner);
+		Object lvlObj = user.get("lvl");
+		Object brkObj = user.get("breaks");
+		pl.lvl    = (lvlObj instanceof Number) ? ((Number) lvlObj).intValue() : 0;
+		pl.breaks = (brkObj instanceof Number) ? ((Number) brkObj).intValue() : 0;
+		pl.allow_visit = user.containsKey("visit");
+		Object arrObj = user.containsKey("invated") ? user.get("invated") : user.get("invited");
+		if (arrObj instanceof JSONArray) {
+			JSONArray arr = (JSONArray) arrObj;
+			for (int q = 0; q < arr.size(); q++) {
+				Object raw = arr.get(q);
+				if (!(raw instanceof String)) continue;
+				UUID invited = resolveUuid((String) raw, row, "invited");
+				if (invited != null) pl.uuids.add(invited);
+			}
+		}
+		return pl;
+	}
+
+	private static UUID resolveOwner(JSONObject user, int row) {
+		if (user.containsKey("uuid")) {
+			Object raw = user.get("uuid");
+			if (raw instanceof String) return resolveUuid((String) raw, row, "owner");
+		}
+		Object nickRaw = user.get("nick");
+		if (nickRaw instanceof String) return resolveUuid((String) nickRaw, row, "owner");
+		plugin.getLogger().warning("[Oneblock] PlData.json row " + row + " has neither 'uuid' nor 'nick'; skipping");
+		return null;
+	}
+
+	private static UUID resolveUuid(String token, int row, String field) {
+		if (token == null || token.isEmpty()) return null;
+		if (p.matcher(token).matches()) {
+			try { return UUID.fromString(token); }
+			catch (IllegalArgumentException ex) {
+				plugin.getLogger().warning("[Oneblock] PlData.json row " + row + " " + field + " invalid UUID '" + token + "'");
+				return null;
+			}
+		}
+		org.bukkit.OfflinePlayer off = Bukkit.getOfflinePlayer(token);
+		if (off == null || off.getUniqueId() == null) {
+			plugin.getLogger().warning("[Oneblock] PlData.json row " + row + " unresolved " + field + " nick '" + token + "'");
+			return null;
+		}
+		return off.getUniqueId();
 	}
 }

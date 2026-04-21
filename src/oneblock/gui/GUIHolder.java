@@ -8,7 +8,6 @@ public class GUIHolder implements InventoryHolder {
     public enum GUIType {
         MAIN_MENU,
         TOP,
-        PLAYER_STATS,
         INVITE,
         VISIT
     }

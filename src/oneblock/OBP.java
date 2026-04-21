@@ -1,8 +1,8 @@
 package oneblock;
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-
 import static oneblock.Oneblock.*;
+
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import java.util.TreeMap;
 import java.util.UUID;

@@ -23,7 +23,7 @@ public class Invitation extends AbstractInvitation {
 				return;
     	Invitation inv_ = new Invitation(name, to);
     	Invitation.list.add(inv_);
-    	Bukkit.getScheduler().runTaskLaterAsynchronously(Oneblock.plugin, 
+    	Bukkit.getScheduler().runTaskLater(Oneblock.plugin, 
     			() -> { Invitation.list.remove(inv_); }, 300L);
     }
 	
@@ -43,7 +43,7 @@ public class Invitation extends AbstractInvitation {
 		
 		CommandHandler.idresetCommand(pl);
 		
-		PlayerInfo.get(inv_.Inviting).uuids.add(uuid);
+		PlayerInfo.get(inv_.Inviting).addInvite(uuid);
 		pl.performCommand("ob j");
 		list.remove(inv_);
 		return true; 

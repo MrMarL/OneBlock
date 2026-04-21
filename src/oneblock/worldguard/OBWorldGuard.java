@@ -37,7 +37,7 @@ public class OBWorldGuard {
 			if (owner.uuid == null) continue;
 			
 			int pos[] = Oneblock.plugin.getIslandCoordinates(i);
-			CreateRegion_(owner.uuid, pos[0], pos[1], Oneblock.offset, i);
+			CreateRegion_(owner.uuid, pos[0], pos[1], Oneblock.getOffset(), i);
 			for (UUID member: owner.uuids) 
 				addMember(member, i);
 		}

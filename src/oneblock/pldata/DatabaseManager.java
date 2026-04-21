@@ -1,12 +1,10 @@
 package oneblock.pldata;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import oneblock.PlayerInfo;
-
 import static oneblock.Oneblock.*;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import oneblock.PlayerInfo;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;

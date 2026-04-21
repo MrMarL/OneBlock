@@ -81,11 +81,13 @@ public class CommandTabCompleter implements TabCompleter {
 	                case ("max_players_team"):
 	                	for (int i = 0; i < 4; i++)
 	                		commands.add(String.valueOf(i));
+	                	break;
 	                case ("set"):
 	                	commands.add("100");
 	                	commands.add("500");
 	                	commands.add("100 0 64 0");
 	                	commands.add("500 0 64 0");
+	                	break;
                 }
         	}
         }
@@ -109,6 +111,15 @@ public class CommandTabCompleter implements TabCompleter {
         	else if ("setlevel".equals(arg0))
         		for (int i = 0; i < Level.size(); i++)
         			commands.add(String.valueOf(i));
+        	else if ("chest".equals(arg0))
+        		commands.add("set");
+        }
+        else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2])) {
+        	commands.add("minecraft:chests/simple_dungeon");
+        	commands.add("minecraft:chests/abandoned_mineshaft");
+        	commands.add("minecraft:chests/end_city_treasure");
+        	commands.add("minecraft:chests/buried_treasure");
+        	commands.add("minecraft:chests/nether_bridge");
         }
         Collections.sort(commands);
         return commands;

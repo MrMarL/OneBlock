@@ -40,18 +40,25 @@ public class ReadOldData {
         			_nick = nick;
         	if (_nick.equals(""))
         		continue;
+        	String playerName = _nick.substring(1);
+        	org.bukkit.OfflinePlayer off = Bukkit.getOfflinePlayer(playerName);
+        	if (off == null || off.getUniqueId() == null) {
+        		plugin.getLogger().warning("[Oneblock] Legacy PlData.yml: unresolved nick '" + playerName + "' for island " + i + "; skipping row");
+        		continue;
+        	}
+        	java.util.UUID uuid = off.getUniqueId();
         	String lvl = String.format("Score_%d", i);
         	String breaks = String.format("ScSlom_%d", i);
-        	
+
         	PlayerInfo newinf = null;
-        	for(PlayerInfo inf:infs) 
-        		if (inf.uuid.equals(Bukkit.getOfflinePlayer(_nick).getUniqueId()))
+        	for(PlayerInfo inf:infs)
+        		if (uuid.equals(inf.uuid))
         			newinf = inf;
 
         	if (newinf != null)
-        		newinf.uuids.add(Bukkit.getOfflinePlayer(_nick.substring(1)).getUniqueId());
+        		newinf.uuids.add(uuid);
         	else{
-	        	newinf = new PlayerInfo(Bukkit.getOfflinePlayer(_nick.substring(1)).getUniqueId());
+	        	newinf = new PlayerInfo(uuid);
 	            if (data.isInt(lvl))
 	            	newinf.lvl = data.getInt(lvl);
 	            if (data.isInt(breaks))

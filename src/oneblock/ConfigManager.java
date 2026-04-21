@@ -4,8 +4,10 @@ import static oneblock.Oneblock.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,14 +17,15 @@ import org.bukkit.entity.Player;
 import com.cryptomorin.xseries.XMaterial;
 import com.nexomc.nexo.api.NexoBlocks;
 
-import dev.lone.itemsadder.api.CustomBlock;
-import io.th0rgal.oraxen.api.OraxenItems;
-import net.momirealms.craftengine.core.util.Key;
 import oneblock.gui.GUI;
+import oneblock.migration.LegacyBlocksMigrator;
 import oneblock.pldata.DatabaseManager;
 import oneblock.utils.LowerCaseYaml;
 import oneblock.utils.Utils;
 import oneblock.worldguard.OBWorldGuard;
+import dev.lone.itemsadder.api.CustomBlock;
+import io.th0rgal.oraxen.api.OraxenItems;
+import net.momirealms.craftengine.core.util.Key;
 
 public class ConfigManager {
 	public YamlConfiguration config_temp;
@@ -47,9 +50,9 @@ public class ConfigManager {
         
         plugin.setPosition(
         		Bukkit.getWorld(Check("world", "world")),
-        		(int)Check("x", (double) x), 
-        		(int)Check("y", (double) y), 
-        		(int)Check("z", (double) z));
+        		(int)Check("x", (double) getX()), 
+        		(int)Check("y", (double) getY()), 
+        		(int)Check("z", (double) getZ()));
         
         plugin.setLeave(
         		Bukkit.getWorld(Check("leaveworld", "world")), 
@@ -73,7 +76,7 @@ public class ConfigManager {
         updateBoolParameters();
         OBWorldGuard.setEnabled(Check("worldguard", OBWorldGuard.canUse));
         OBWorldGuard.flags = Check("wgflags", OBWorldGuard.flags);
-        offset = Check("set", 100);
+        plugin.setOffset(Check("set", 100));
         if (config.isSet("custom_island") && !legacy)
         	Island.read(config);
         
@@ -109,65 +112,189 @@ public class ConfigManager {
     }
         
 	public void Blockfile() {
-		plugin.blocks.clear();
-		plugin.mobs.clear();
     	Level.levels.clear();
+    	Level.max.resetPools();
         File block = getFile("blocks.yml");
+        
+        // Migrate legacy (cumulative-list) blocks.yml in-place before parsing.
+        // Uses ChestItems.chest (already-loaded or legacy) to map old chest-alias
+        // tokens to vanilla loot-table keys during flattening.
+        LegacyBlocksMigrator.migrateBlocks(block, ChestItems.chest);
+        
         config_temp = YamlConfiguration.loadConfiguration(block);
+        
+        // MaxLevel: may be scalar (name-only, legacy passthrough) or a full list entry.
         if (config_temp.isString("MaxLevel"))
         	Level.max.name = Utils.translateColorCodes(config_temp.getString("MaxLevel"));
+        else if (config_temp.isList("MaxLevel"))
+        	parseLevelFromList(config_temp.getList("MaxLevel"), Level.max);
+        
         for (int i = 0; config_temp.isList(String.format("%d", i)); i++) {
-        	List <String> bl_temp = config_temp.getStringList(String.format("%d", i));
-        	Level level = new Level(Utils.translateColorCodes(bl_temp.get(0)));
+        	List<?> bl_temp = config_temp.getList(String.format("%d", i));
+        	if (bl_temp == null || bl_temp.isEmpty()) continue;
+        	Object first = bl_temp.get(0);
+        	Level level = new Level(first instanceof String
+        			? Utils.translateColorCodes((String) first)
+        			: "Level " + i);
         	Level.levels.add(level);
-        	int q = 1;
-        	if (!superlegacy && q < bl_temp.size()) {
-        		try {//reading a custom color for the level.
-        			level.color = BarColor.valueOf(bl_temp.get(q).toUpperCase());
-        			q++;
-        		} catch(Exception e) {level.color = Level.max.color;}
-	        	try {//reading a custom style for the level.
-	    			level.style = BarStyle.valueOf(bl_temp.get(q).toUpperCase());
-	    			q++;
-	    		} catch(Exception e) {level.style = Level.max.style;}
-	        } try {//reading a custom size for the level.
-	        	int value = Integer.parseInt(bl_temp.get(q));
-	    		level.length = value > 0 ? value : 1;
-	    		q++;
-	    	} catch(Exception e) {level.length = 16 + level.getId() * Level.multiplier;}
-        	while (q < bl_temp.size()) {
-        		String text = bl_temp.get(q++);
-        		//reading a custom block (command).
-        		if (text.charAt(0) == '/') try { String.format(text.replaceFirst("/", ""), 99, 64, 99);
-    				if (plugin.blocks.add(text)) continue;
-    				} catch (Exception e) {}
-        		//reading a custom chest.
-        		for (String str : ChestItems.getChestNames()) 
-        		    if (text.equals(str) && plugin.blocks.add(str)) 
-        		        continue;
-        		//reading a mob.
-        		try { plugin.mobs.add(EntityType.valueOf(text)); continue; }
-        		catch (Exception e) {}
-        		//read a material
-        		Object mt = Material.matchMaterial(text);
-        		if (mt == null || mt == GRASS_BLOCK || !((Material)mt).isBlock()) 
-        			mt = getCustomBlock(text);
-        		//XMaterial lib
-        		if (legacy && mt == null) { 
-        			mt = XMaterial.matchXMaterial(text)
-        				    .map(xmt -> xmt == GRASS_BLOCK ? null : xmt)
-        				    .orElse(null);
-        		}
-        		plugin.blocks.add(mt);
-        	}
-        	level.blocks = plugin.blocks.size();
-        	level.mobs = plugin.mobs.size();
+        	parseLevelFromList(bl_temp, level);
         }
-        Level.max.blocks = plugin.blocks.size();
-        if ((Level.max.mobs = plugin.mobs.size()) == 0) 
-        	plugin.getLogger().warning("Mobs are not set in the blocks.yml");
+        
+        if (Level.max.mobPoolSize() == 0) {
+        	int totalMobs = 0;
+        	for (Level lvl : Level.levels) totalMobs += lvl.mobPoolSize();
+        	if (totalMobs == 0)
+        		plugin.getLogger().warning("Mobs are not set in the blocks.yml");
+        }
         
         SetupProgressBar();
+    }
+    
+    /**
+     * Parse a level list (header + pool entries) into the given {@link Level}.
+     * Header positions 0..3 are name/color/style/length (best-effort, same semantics
+     * as the legacy parser). Pool entries beyond the header may be plain strings
+     * (legacy, weight=1) or maps with {@code block|mob|loot_table|command} + optional
+     * {@code weight}. Unresolved / malformed entries are skipped with a warning.
+     */
+    private void parseLevelFromList(List<?> bl_temp, Level level) {
+    	if (bl_temp == null || bl_temp.isEmpty()) return;
+    	int q = 0;
+    	if (q < bl_temp.size() && bl_temp.get(q) instanceof String) {
+    		level.name = Utils.translateColorCodes((String) bl_temp.get(q));
+    		q++;
+    	}
+    	// Duck-type probe: the string at position q may be a BarColor, a BarStyle
+    	// OR the next header field (length) OR the first pool entry. We attempt
+    	// each shape in turn; on failure we DO NOT advance q, leaving the string
+    	// for the next parser. This is legacy config compatibility, not a bug.
+    	if (!superlegacy) {
+    		level.color = Level.max.color;
+    		if (q < bl_temp.size() && bl_temp.get(q) instanceof String) try {
+    			level.color = BarColor.valueOf(((String) bl_temp.get(q)).toUpperCase());
+    			q++;
+    		} catch (Exception e) {}
+    		level.style = Level.max.style;
+    		if (q < bl_temp.size() && bl_temp.get(q) instanceof String)  try {
+    			level.style = BarStyle.valueOf(((String) bl_temp.get(q)).toUpperCase());
+    			q++;
+    		} catch (Exception e) {}
+    	}
+    	if (q < bl_temp.size()) {
+    		Object lenItem = bl_temp.get(q);
+    		if (lenItem instanceof Number) {
+    			level.length = Math.max(1, ((Number) lenItem).intValue());
+    			q++;
+    		} else if (lenItem instanceof String) {
+    			// Duck-type probe (see above): if the string can't be parsed as an
+    			// int, it's the first pool-entry token; leave q unchanged so the
+    			// pool-entry loop below picks it up.
+    			try {
+    				level.length = Math.max(1, Integer.parseInt((String) lenItem));
+    				q++;
+    			} catch (Exception e) { level.length = 16 + level.getId() * Level.multiplier; }
+    		} else {
+    			level.length = 16 + level.getId() * Level.multiplier;
+    		}
+    	}
+    	while (q < bl_temp.size()) {
+    		Object raw = bl_temp.get(q++);
+    		parsePoolEntry(raw, level);
+    	}
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void parsePoolEntry(Object raw, Level level) {
+    	if (raw == null) return;
+    	int weight = 1;
+    	String kind;
+    	Object payload;
+    	
+    	if (raw instanceof Map) {
+    		Map<String, Object> m = (Map<String, Object>) raw;
+    		if (m.containsKey("weight")) {
+    			Object w = m.get("weight");
+    			if (w instanceof Number) weight = Math.max(1, ((Number) w).intValue());
+    			else if (w != null) {
+    				try { weight = Math.max(1, Integer.parseInt(w.toString())); }
+    				catch (NumberFormatException nfe) {
+    					plugin.getLogger().warning("[Oneblock] blocks.yml: non-numeric weight '" + w + "' in entry " + m + "; defaulting to 1.");
+    				}
+    			}
+    		}
+    		if      (m.containsKey("block"))      { kind = "block";      payload = m.get("block"); }
+    		else if (m.containsKey("mob"))        { kind = "mob";        payload = m.get("mob"); }
+    		else if (m.containsKey("loot_table")) { kind = "loot_table"; payload = m.get("loot_table"); }
+    		else if (m.containsKey("command"))    { kind = "command";    payload = m.get("command"); }
+    		else {
+    			plugin.getLogger().warning("[Oneblock] blocks.yml: entry has no recognized kind (expected one of block/mob/loot_table/command): " + m);
+    			return;
+    		}
+    	} else if (raw instanceof String) {
+    		String text = (String) raw;
+    		if (text.isEmpty()) return;
+    		if (text.charAt(0) == '/') { kind = "command"; payload = text; }
+    		else {
+    			try { EntityType.valueOf(text.toUpperCase()); kind = "mob"; payload = text.toUpperCase(); }
+    			catch (Exception ignore) { kind = "block"; payload = text; }
+    		}
+    	} else {
+    		return;
+    	}
+    	
+    	if (payload == null) return;
+    	switch (kind) {
+    		case "block":
+    			level.blockPool.add(resolveBlock(payload.toString()), weight);
+    			break;
+    		case "mob":
+    			EntityType et;
+    			try { et = EntityType.valueOf(payload.toString().toUpperCase()); }
+    			catch (Exception e) {
+    				plugin.getLogger().warning("[Oneblock] blocks.yml: unknown mob '" + payload + "'");
+    				return;
+    			}
+    			level.mobPool.add(et, weight);
+    			break;
+    		case "loot_table":
+    			NamespacedKey key = ChestItems.parseKey(payload.toString());
+    			if (key == null) {
+    				plugin.getLogger().warning("[Oneblock] blocks.yml: invalid loot table key '" + payload + "'");
+    				return;
+    			}
+    			level.blockPool.add(PoolEntry.lootTable(key), weight);
+    			break;
+    		case "command":
+    			String str = payload.toString();
+    			try { String.format(str.substring(1), 99, 64, 99); } 
+    			catch (Exception e) 
+    			{
+    				plugin.getLogger().warning("[Oneblock] blocks.yml: invalid command '" + payload + "'"); 				
+    				return;
+    			}
+    			level.blockPool.add(PoolEntry.command(str), weight);
+    			break;
+    	}
+    }
+    
+    /**
+     * Resolve a block-name string to a {@link PoolEntry}. Mirrors the legacy resolver
+     * chain: Material → custom block (ItemsAdder / Oraxen / Nexo / CraftEngine) →
+     * XMaterial (legacy servers). Unresolved names fall back to {@link PoolEntry#GRASS}
+     * which renders as grass + chance of flower at runtime.
+     */
+    private PoolEntry resolveBlock(String text) {
+    	if (text == null || text.isEmpty()) return PoolEntry.GRASS;
+    	Object mt = Material.matchMaterial(text);
+    	if (mt == null || mt == GRASS_BLOCK || !((Material) mt).isBlock())
+    		mt = getCustomBlock(text);
+    	if (legacy && mt == null) {
+    		mt = XMaterial.matchXMaterial(text)
+    				.map(xmt -> xmt == GRASS_BLOCK ? null : xmt)
+    				.orElse(null);
+    	}
+    	if (mt == null) return PoolEntry.GRASS;
+    	return PoolEntry.block(mt);
     }
 	
 	private Object getCustomBlock(String text) {
@@ -253,6 +380,7 @@ public class ConfigManager {
     
     private void Chestfile() {
         ChestItems.chest = getFile("chests.yml");
+        LegacyBlocksMigrator.migrateChests(ChestItems.chest);
         ChestItems.load();
     }
     

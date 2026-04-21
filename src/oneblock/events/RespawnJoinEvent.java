@@ -25,7 +25,7 @@ public class RespawnJoinEvent implements Listener {
 		if (plID == -1) return;
 		
 		int result[] = plugin.getIslandCoordinates(plID);
-		Location loc = new Location(world, result[0] + .5, y + 1.75, result[1] + .5);
+		Location loc = new Location(world, result[0] + .5, getY() + 1.75, result[1] + .5);
 		e.setRespawnLocation(loc);
     }
     @EventHandler
@@ -36,7 +36,7 @@ public class RespawnJoinEvent implements Listener {
 		World from = e.getFrom().getWorld();
 		World to = loc.getWorld();
 		World ob = getWorld();
-		if (!from.equals(ob) && to.equals(ob) && loc.getY() != y + 1.2013) {
+		if (!from.equals(ob) && to.equals(ob) && loc.getY() != getY() + 1.2013) {
 			e.setCancelled(true);
 			e.getPlayer().performCommand("ob j");
 		}
