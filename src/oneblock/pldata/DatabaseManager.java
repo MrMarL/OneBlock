@@ -86,7 +86,7 @@ public class DatabaseManager {
             dataSource = new HikariDataSource(config);
             
             plugin.getLogger().info("Database initialized successfully (" + dbType + ")");
-        } catch (Exception e) {
+        } catch (Exception | UnsupportedClassVersionError  e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to initialize Database", e);
             plugin.getLogger().info("Using JSON storage");
             dataSource = null;
