@@ -18,15 +18,14 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.15.0</version>
         <configuration>
           <source>${java.version}</source>
-          <target>${java.version}</target>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.6.2</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -50,6 +49,8 @@
             <filter>
               <artifact>*:*</artifact>
               <excludes>
+                <exclude>module-info.class</exclude>
+                <exclude>META-INF/**</exclude>
                 <exclude>com/cryptomorin/xseries/*/*/*/**</exclude>
                 <exclude>com/cryptomorin/xseries/base/XM*</exclude>
                 <exclude>com/cryptomorin/xseries/base/*y*</exclude>
@@ -73,7 +74,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -238,13 +239,13 @@
     <dependency>
       <groupId>net.momirealms</groupId>
       <artifactId>craft-engine-bukkit</artifactId>
-      <version>0.0.62</version>
+      <version>0.0.67</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>net.momirealms</groupId>
       <artifactId>craft-engine-core</artifactId>
-      <version>0.0.62</version>
+      <version>0.0.67</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -256,7 +257,7 @@
   </dependencies>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
+    <java.version>8</java.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <src.dir>src</src.dir>
   </properties>
