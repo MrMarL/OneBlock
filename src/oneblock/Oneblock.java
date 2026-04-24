@@ -317,7 +317,8 @@ public class Oneblock extends JavaPlugin {
             inf.bar.addPlayer(ponl);
         }
         
-        PoolEntry entry = lvl_inf.blockPool.pick(rnd);
+        PoolEntry entry = PoolRegistry.pickBlock(lvl_inf.blocks, rnd);
+        
         if (entry == null || entry.kind == PoolEntry.Kind.DEFAULT_GRASS) {
             XBlock.setType(block, GRASS_BLOCK);
             if (rnd.nextInt(FLOWER_CHANCE) == 1)
@@ -330,9 +331,6 @@ public class Oneblock extends JavaPlugin {
             case LOOT_TABLE:
                 LootTableDispatcher.populate(block, (NamespacedKey) entry.value, rnd);
                 break;
-            case COMMAND:
-                Place.executeCommand(block, (String) entry.value);
-                break;
             default:
                 break;
         }
@@ -341,7 +339,7 @@ public class Oneblock extends JavaPlugin {
 	}
     
 	public void spawnRandomMob(int pos_x, int pos_z, Level level) {
-		EntityType type = level.mobPool.pick(rnd);
+		EntityType type = PoolRegistry.pickMob(level.mobs, rnd);
 		if (type == null) return;
 		getWor().spawnEntity(new Location(getWor(), pos_x + .5, getY() + 1, pos_z + .5), type);
 	}

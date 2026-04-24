@@ -2,6 +2,7 @@ package oneblock;
 
 import static oneblock.Oneblock.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -540,11 +541,19 @@ public class CommandHandler implements CommandExecutor {
 			                    	return true;
 			                    }
 			                    Level lvl = Level.get(temp);
-			                    sender.sendMessage(String.format("%s%s %s(weight total: %d)", ChatColor.GREEN, lvl.name, ChatColor.GRAY, lvl.blockPool.totalWeight() + lvl.mobPool.totalWeight()));
-			                    for (WeightedPool.Entry<PoolEntry> e : lvl.blockPool.entries())
-			                    	sender.sendMessage("  " + e.value + " (weight " + e.weight + ")");
-			                    for (WeightedPool.Entry<EntityType> e : lvl.mobPool.entries())
-			                    	sender.sendMessage("  mob: " + e.value + " (weight " + e.weight + ")");
+			                    Map<PoolEntry, Integer> blocks = PoolRegistry.getBlocks(lvl);
+			                    Map<EntityType, Integer> mobs = PoolRegistry.getMobs(lvl);
+			                    
+			                    sender.sendMessage(String.format("%s%s %s(blocks: %d, mobs: %d)", 
+			                        ChatColor.GREEN, lvl.name, ChatColor.GRAY,
+			                        blocks.values().stream().mapToInt(Integer::intValue).sum(),
+			                        mobs.values().stream().mapToInt(Integer::intValue).sum()));
+			                    
+			                    blocks.forEach((entry, weight) -> 
+			                        sender.sendMessage("  " + entry + " (weight " + weight + ")"));
+			                    mobs.forEach((mob, weight) -> 
+			                        sender.sendMessage("  mob: " + mob + " (weight " + weight + ")"));
+			                    
 			                    return true;
 			                }
 			                for(int i = 0;i<Level.size();i++)

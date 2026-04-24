@@ -52,8 +52,8 @@ public abstract class Place {
 	 * reaches this method; any {@code String.format} validation is performed during
 	 * configuration parsing, so this method assumes a well-formed command template.
 	 */
-	public static boolean executeCommand(Block block, String command) {
-		if (command == null || command.isEmpty() || command.charAt(0) != '/') return false;
+	public boolean executeCommand(Block block, String command) {
+		if (command.isEmpty() || command.charAt(0) != '/') return false;
 		String template = command.substring(1);
 		String dispatched = String.format(template, block.getX(), block.getY(), block.getZ());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), dispatched);

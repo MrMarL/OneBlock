@@ -113,7 +113,7 @@ public class ConfigManager {
         
 	public void Blockfile() {
     	Level.levels.clear();
-    	Level.max.resetPools();
+    	PoolRegistry.clear();
         File block = getFile("blocks.yml");
         
         // Migrate legacy (cumulative-list) blocks.yml in-place before parsing.
@@ -140,12 +140,11 @@ public class ConfigManager {
         	parseLevelFromList(bl_temp, level);
         }
         
-        if (Level.max.mobPoolSize() == 0) {
-        	int totalMobs = 0;
-        	for (Level lvl : Level.levels) totalMobs += lvl.mobPoolSize();
-        	if (totalMobs == 0)
-        		plugin.getLogger().warning("Mobs are not set in the blocks.yml");
-        }
+        if (PoolRegistry.totalMobs() == 0) 
+        	plugin.getLogger().warning("Mobs are not set in the blocks.yml");
+        
+        Level.max.blocks = PoolRegistry.totalBlocks();
+        Level.max.mobs = PoolRegistry.totalMobs();
         
         SetupProgressBar();
     }
@@ -201,6 +200,8 @@ public class ConfigManager {
     		Object raw = bl_temp.get(q++);
     		parsePoolEntry(raw, level);
     	}
+    	level.blocks = PoolRegistry.totalBlocks();
+    	level.mobs = PoolRegistry.totalMobs();
     }
     
     @SuppressWarnings("unchecked")
@@ -218,7 +219,7 @@ public class ConfigManager {
     			else if (w != null) {
     				try { weight = Math.max(1, Integer.parseInt(w.toString())); }
     				catch (NumberFormatException nfe) {
-    					plugin.getLogger().warning("[Oneblock] blocks.yml: non-numeric weight '" + w + "' in entry " + m + "; defaulting to 1.");
+    					plugin.getLogger().warning("blocks.yml: non-numeric weight '" + w + "' in entry " + m + "; defaulting to 1.");
     				}
     			}
     		}
@@ -227,7 +228,7 @@ public class ConfigManager {
     		else if (m.containsKey("loot_table")) { kind = "loot_table"; payload = m.get("loot_table"); }
     		else if (m.containsKey("command"))    { kind = "command";    payload = m.get("command"); }
     		else {
-    			plugin.getLogger().warning("[Oneblock] blocks.yml: entry has no recognized kind (expected one of block/mob/loot_table/command): " + m);
+    			plugin.getLogger().warning("blocks.yml: entry has no recognized kind (expected one of block/mob/loot_table/command): " + m);
     			return;
     		}
     	} else if (raw instanceof String) {
@@ -245,24 +246,24 @@ public class ConfigManager {
     	if (payload == null) return;
     	switch (kind) {
     		case "block":
-    			level.blockPool.add(resolveBlock(payload.toString()), weight);
+    			PoolRegistry.addBlock(resolveBlock(payload.toString()), weight);
     			break;
     		case "mob":
     			EntityType et;
     			try { et = EntityType.valueOf(payload.toString().toUpperCase()); }
     			catch (Exception e) {
-    				plugin.getLogger().warning("[Oneblock] blocks.yml: unknown mob '" + payload + "'");
+    				plugin.getLogger().warning("blocks.yml: unknown mob '" + payload + "'");
     				return;
     			}
-    			level.mobPool.add(et, weight);
+    			PoolRegistry.addMob(et, weight);
     			break;
     		case "loot_table":
     			NamespacedKey key = ChestItems.parseKey(payload.toString());
     			if (key == null) {
-    				plugin.getLogger().warning("[Oneblock] blocks.yml: invalid loot table key '" + payload + "'");
+    				plugin.getLogger().warning("blocks.yml: invalid loot table key '" + payload + "'");
     				return;
     			}
-    			level.blockPool.add(PoolEntry.lootTable(key), weight);
+    			PoolRegistry.addBlock(PoolEntry.lootTable(key), weight);
     			break;
     		case "command":
     			String str = payload.toString();
@@ -272,7 +273,7 @@ public class ConfigManager {
     				plugin.getLogger().warning("[Oneblock] blocks.yml: invalid command '" + payload + "'"); 				
     				return;
     			}
-    			level.blockPool.add(PoolEntry.command(str), weight);
+    			PoolRegistry.addBlock(PoolEntry.command(str), weight);
     			break;
     	}
     }
