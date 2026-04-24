@@ -76,7 +76,7 @@ public class LegacyBlocksMigrator {
 		YamlConfiguration legacy = YamlConfiguration.loadConfiguration(blocksFile);
 		if (!isLegacyBlocks(legacy)) return;
 		
-		Bukkit.getLogger().info("[Oneblock] Legacy blocks.yml detected. Migrating to weighted schema (original backed up to " + blocksFile.getName() + ".bak).");
+		Oneblock.plugin.getLogger().info("Legacy blocks.yml detected. Migrating to weighted schema (original backed up to " + blocksFile.getName() + ".bak).");
 		
 		if (!backup(blocksFile)) return;
 		
@@ -119,7 +119,7 @@ public class LegacyBlocksMigrator {
 			}
 			
 			out.set(strKey, newList);
-			Bukkit.getLogger().info(String.format("[Oneblock] Migrated level %d: %d entries, total weight %d", id, levelEntries, levelWeight));
+			Oneblock.plugin.getLogger().info(String.format("Migrated level %d: %d entries, total weight %d", id, levelEntries, levelWeight));
 		}
 		
 		// MaxLevel: preserve its name (or scalar) and attach the full flattened pool.
@@ -141,7 +141,7 @@ public class LegacyBlocksMigrator {
 		
 		try { out.save(blocksFile); }
 		catch (Exception e) {
-			Bukkit.getLogger().warning("[Oneblock] Failed to write migrated blocks.yml: " + e.getMessage());
+			Oneblock.plugin.getLogger().warning("Failed to write migrated blocks.yml: " + e.getMessage());
 		}
 	}
 	
@@ -158,12 +158,12 @@ public class LegacyBlocksMigrator {
 			String key = DEFAULT_CHEST_LOOT_TABLES.getOrDefault(name.toLowerCase(), FALLBACK_LOOT);
 			out.set(name, key);
 			if (!DEFAULT_CHEST_LOOT_TABLES.containsKey(name.toLowerCase())) {
-				Bukkit.getLogger().warning("[Oneblock] Unknown legacy chest '" + name + "'; mapped to " + FALLBACK_LOOT + " — customize in chests.yml if desired.");
+				Oneblock.plugin.getLogger().warning("Unknown legacy chest '" + name + "'; mapped to " + FALLBACK_LOOT + " — customize in chests.yml if desired.");
 			}
 		}
 		try { out.save(chestsFile); }
 		catch (Exception e) {
-			Bukkit.getLogger().warning("[Oneblock] Failed to write migrated chests.yml: " + e.getMessage());
+			Oneblock.plugin.getLogger().warning("Failed to write migrated chests.yml: " + e.getMessage());
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class LegacyBlocksMigrator {
 			Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
 			return true;
 		} catch (Exception e) {
-			Bukkit.getLogger().warning("[Oneblock] Failed to back up " + f + ": " + e.getMessage());
+			Oneblock.plugin.getLogger().warning("Failed to back up " + f + ": " + e.getMessage());
 			return false;
 		}
 	}
