@@ -89,10 +89,10 @@ public class LegacyBlocksMigrator {
 		}
 		Collections.sort(levelIds);
 		
-		LinkedHashMap<String, Integer> acc = new LinkedHashMap<>();
 		YamlConfiguration out = new YamlConfiguration();
 		
 		for (int id : levelIds) {
+			LinkedHashMap<String, Integer> acc = new LinkedHashMap<>();
 			String strKey = String.valueOf(id);
 			List<?> raw = legacy.getList(strKey);
 			if (raw == null || raw.isEmpty()) continue;
@@ -122,21 +122,13 @@ public class LegacyBlocksMigrator {
 			Oneblock.plugin.getLogger().info(String.format("Migrated level %d: %d entries, total weight %d", id, levelEntries, levelWeight));
 		}
 		
-		// MaxLevel: preserve its name (or scalar) and attach the full flattened pool.
-		String maxName;
 		Object legacyMax = legacy.get("MaxLevel");
-		if (legacyMax instanceof String) {
-			maxName = (String) legacyMax;
-		//} else if (legacyMax instanceof List && !((List<?>) legacyMax).isEmpty()
-		//		&& ((List<?>) legacyMax).get(0) instanceof String) {
-		//	maxName = (String) ((List<?>) legacyMax).get(0);
-		} else {
-			maxName = "Level: MAX";
-		}
+		String maxName = legacyMax instanceof String ? (String) legacyMax : "Level: MAX";
+		
 		List<Object> maxList = new ArrayList<>();
 		maxList.add(maxName);
-		for (Map.Entry<String, Integer> e : acc.entrySet())
-			maxList.add(buildEntryMap(e.getKey(), e.getValue()));
+		//for (Map.Entry<String, Integer> e : acc.entrySet())
+		//	maxList.add(buildEntryMap(e.getKey(), e.getValue()));
 		out.set("MaxLevel", maxList);
 		
 		try { out.save(blocksFile); }

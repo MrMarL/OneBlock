@@ -20,8 +20,8 @@ public class Level {
     }
     
     public String name;
-    public int blocks = 0;  // Граница в общем списке блоков
-    public int mobs = 0;    // Граница в общем списке мобов
+    public int blocks = 0;  // PoolRegistry blocks bound
+    public int mobs = 0;    // PoolRegistry mobs bound
     public BarColor color;
     public BarStyle style;
     public int length = 100;
