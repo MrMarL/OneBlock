@@ -50,6 +50,7 @@ public class LootTableDispatcher {
 	
 	/**
 	 * I don't know how to get LootTable in 1.8 - 1.12...
+	 * Bukkit.getLootTable(key) for 1.13+
 	 */
 	public static LootTable getLootTable(NamespacedKey key) {
 		if (key == null) return null;
