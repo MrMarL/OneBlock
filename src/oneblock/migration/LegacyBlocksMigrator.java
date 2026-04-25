@@ -229,7 +229,7 @@ public class LegacyBlocksMigrator {
 		
 		String lt = chestMap.get(text);
 		if (lt == null) lt = chestMap.get(text.toLowerCase());
-		if (lt != null) return "loot_table|" + lt;
+		if (lt != null) return "chest|" + text;
 		
 		try { EntityType.valueOf(text.toUpperCase()); return "mob|" + text.toUpperCase(); }
 		catch (Exception ignore) {}

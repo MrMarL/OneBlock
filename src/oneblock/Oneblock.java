@@ -32,7 +32,6 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
@@ -328,8 +327,11 @@ public class Oneblock extends JavaPlugin {
             case BLOCK:
                 placer.setType(block, entry.value, physics);
                 break;
-            case LOOT_TABLE:
-                LootTableDispatcher.populate(block, (NamespacedKey) entry.value, rnd);
+            case CHEST:
+                LootTableDispatcher.populate(block, ChestItems.resolve((String) entry.value), rnd);
+                break;
+            case COMMAND:
+            	placer.executeCommand(block, (String)entry.value);
                 break;
             default:
                 break;

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -225,7 +224,7 @@ public class ConfigManager {
     		}
     		if      (m.containsKey("block"))      { kind = "block";      payload = m.get("block"); }
     		else if (m.containsKey("mob"))        { kind = "mob";        payload = m.get("mob"); }
-    		else if (m.containsKey("loot_table")) { kind = "loot_table"; payload = m.get("loot_table"); }
+    		else if (m.containsKey("chest"))      { kind = "chest";      payload = m.get("chest"); }
     		else if (m.containsKey("command"))    { kind = "command";    payload = m.get("command"); }
     		else {
     			plugin.getLogger().warning("blocks.yml: entry has no recognized kind (expected one of block/mob/loot_table/command): " + m);
@@ -257,20 +256,20 @@ public class ConfigManager {
     			}
     			PoolRegistry.addMob(et, weight);
     			break;
-    		case "loot_table":
-    			NamespacedKey key = ChestItems.parseKey(payload.toString());
-    			if (key == null) {
-    				plugin.getLogger().warning("blocks.yml: invalid loot table key '" + payload + "'");
+    		case "chest":
+    			String chest_name = payload.toString();
+    			if (ChestItems.resolve(chest_name) == null) {
+    				plugin.getLogger().warning("blocks.yml: chest name '" + payload + "' not found in chests.yml");
     				return;
     			}
-    			PoolRegistry.addBlock(PoolEntry.lootTable(key), weight);
+    			PoolRegistry.addBlock(PoolEntry.chest(chest_name), weight);
     			break;
     		case "command":
     			String str = payload.toString();
     			try { String.format(str.substring(1), 99, 64, 99); } 
     			catch (Exception e) 
     			{
-    				plugin.getLogger().warning("[Oneblock] blocks.yml: invalid command '" + payload + "'"); 				
+    				plugin.getLogger().warning("blocks.yml: invalid command '" + payload + "'"); 				
     				return;
     			}
     			PoolRegistry.addBlock(PoolEntry.command(str), weight);

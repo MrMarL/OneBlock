@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -28,7 +27,7 @@ public class ChestItems {
 		for (Map.Entry<String, NamespacedKey> e : aliases.entrySet())
 			config.set(e.getKey(), e.getValue().toString());
 		try { config.save(chest); } catch (Exception e) {
-			Bukkit.getLogger().warning("[Oneblock] Failed to save chests.yml: " + e.getMessage());
+			Oneblock.plugin.getLogger().warning("Failed to save chests.yml: " + e.getMessage());
 		}
 	}
 	
@@ -43,7 +42,7 @@ public class ChestItems {
 			if (key != null)
 				aliases.put(name, key);
 			else
-				Bukkit.getLogger().warning("[Oneblock] Unknown loot-table key '" + keyString + "' for chest alias '" + name + "'");
+				Oneblock.plugin.getLogger().warning("Unknown loot-table key '" + keyString + "' for chest alias '" + name + "'");
 		}
 	}
 	

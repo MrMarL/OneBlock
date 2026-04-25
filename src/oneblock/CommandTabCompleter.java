@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.loot.LootTables;
 
 public class CommandTabCompleter implements TabCompleter {
 	private final List<String> BASE_COMMANDS = Arrays.asList("j","join","leave","invite","accept","kick","help","gui","top");
@@ -115,11 +116,8 @@ public class CommandTabCompleter implements TabCompleter {
         		commands.add("set");
         }
         else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2])) {
-        	commands.add("minecraft:chests/simple_dungeon");
-        	commands.add("minecraft:chests/abandoned_mineshaft");
-        	commands.add("minecraft:chests/end_city_treasure");
-        	commands.add("minecraft:chests/buried_treasure");
-        	commands.add("minecraft:chests/nether_bridge");
+        	for (LootTables lt:LootTables.values())
+        		commands.add(lt.getKey().toString());
         }
         Collections.sort(commands);
         return commands;
