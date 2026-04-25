@@ -25,8 +25,8 @@ public class PoolEntry {
 	@Override
 	public String toString() {
 		switch (kind) {
-			case DEFAULT_GRASS: return "Grass (default)";
-			case BLOCK:         return value == null ? "Grass (undefined)" : value.toString();
+			case DEFAULT_GRASS: return "GRASS (undefined)";
+			case BLOCK:         return value == null ? "null" : value.toString();
 			case CHEST:    		return "chest: " + value;
 			case COMMAND:       return "command: " + value;
 			default:            return "?";
