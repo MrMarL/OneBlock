@@ -36,10 +36,13 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class Oneblock extends JavaPlugin {
@@ -328,7 +331,12 @@ public class Oneblock extends JavaPlugin {
                 placer.setType(block, entry.value, physics);
                 break;
             case CHEST:
-                LootTableDispatcher.populate(block, ChestItems.resolve((String) entry.value), rnd);
+            	String chest_name = (String)entry.value;
+                if (LootTableDispatcher.populate(block, ChestItems.getNamespacedKey(chest_name), rnd)) {
+                	BlockState bs = block.getState();
+            		if (!(bs instanceof Chest)) break;
+                	ChestItems.fillLegacyChest(((Chest)bs).getInventory(), chest_name, rnd);
+                }
                 break;
             case COMMAND:
             	placer.executeCommand(block, (String)entry.value);

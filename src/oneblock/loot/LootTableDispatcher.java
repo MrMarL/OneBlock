@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootContext;
@@ -26,10 +27,10 @@ public class LootTableDispatcher {
 	public static boolean populate(Block block, NamespacedKey key, Random rnd) {
 		if (block == null) return false;
 		block.setType(Material.CHEST);
+		BlockState bs = block.getState();
 
-		if (!(block.getState() instanceof Chest)) return false;
-		Chest chest = (Chest) block.getState();
-		Inventory inv = chest.getInventory();
+		if (!(bs instanceof Chest)) return false;
+		Inventory inv = ((Chest) bs).getInventory();
 		
 		LootTable table = getLootTable(key);
 		if (table == null) {

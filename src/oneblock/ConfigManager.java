@@ -258,7 +258,7 @@ public class ConfigManager {
     			break;
     		case "chest":
     			String chest_name = payload.toString();
-    			if (ChestItems.resolve(chest_name) == null) {
+    			if (!ChestItems.hasChest(chest_name)) {
     				plugin.getLogger().warning("blocks.yml: chest name '" + payload + "' not found in chests.yml");
     				return;
     			}
@@ -380,7 +380,6 @@ public class ConfigManager {
     
     private void Chestfile() {
         ChestItems.chest = getFile("chests.yml");
-        LegacyBlocksMigrator.migrateChests(ChestItems.chest);
         ChestItems.load();
     }
     

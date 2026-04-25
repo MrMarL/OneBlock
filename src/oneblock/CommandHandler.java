@@ -616,14 +616,14 @@ public class CommandHandler implements CommandExecutor {
 			            			return true;
 			            		}
 			            		for (String name : ChestItems.getChestNames()) {
-			            			NamespacedKey k = ChestItems.resolve(name);
+			            			NamespacedKey k = ChestItems.getNamespacedKey(name);
 			            			sender.sendMessage(ChatColor.GREEN + name + ChatColor.GRAY + " -> " + ChatColor.WHITE + (k == null ? "<unset>" : k));
 			            		}
 			            		return true;
 			            	}
 			            	String chestName = args[1];
 			            	if (args.length < 3) {
-			            		NamespacedKey current = ChestItems.resolve(chestName);
+			            		NamespacedKey current = ChestItems.getNamespacedKey(chestName);
 			            		if (current == null)
 			            			sender.sendMessage(ChatColor.YELLOW + "No loot-table mapping for '" + chestName + "'. Usage: /ob chest " + chestName + " set <namespaced_key>");
 			            		else {
@@ -641,7 +641,7 @@ public class CommandHandler implements CommandExecutor {
 			            		sender.sendMessage(ChatColor.RED + "Invalid namespaced key '" + args[3] + "'.");
 			            		return true;
 			            	}
-			            	ChestItems.setAlias(chestName, newKey);
+			            	ChestItems.setLootTable(chestName, newKey);
 			            	ChestItems.save();
 			            	sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + ChatColor.WHITE + newKey);
 			            	return true;

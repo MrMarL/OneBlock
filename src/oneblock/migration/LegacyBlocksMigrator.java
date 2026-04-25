@@ -11,18 +11,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
+import oneblock.ChestItems;
 import oneblock.Oneblock;
 
 /**
  * One-shot migrator that rewrites the legacy cumulative-pool {@code blocks.yml}
- * and the legacy {@code ItemStack}-list {@code chests.yml} into the new
- * strict-discrete, weighted-map schema.
+ * into the new strict-discrete, weighted-map schema.
  *
  * <p>The blocks migrator FLATTENS the cumulative pool: level N's new pool is
  * an explicit, self-contained entry list that represents the union of levels
@@ -31,14 +30,6 @@ import oneblock.Oneblock;
  * while producing a strict-discrete runtime-friendly config.
  */
 public class LegacyBlocksMigrator {
-	private static final Map<String, String> DEFAULT_CHEST_LOOT_TABLES = new LinkedHashMap<>();
-	static {
-		DEFAULT_CHEST_LOOT_TABLES.put("small_chest",  "minecraft:chests/simple_dungeon");
-		DEFAULT_CHEST_LOOT_TABLES.put("medium_chest", "minecraft:chests/abandoned_mineshaft");
-		DEFAULT_CHEST_LOOT_TABLES.put("high_chest",   "minecraft:chests/end_city_treasure");
-	}
-	private static final String FALLBACK_LOOT = "minecraft:chests/simple_dungeon";
-	
 	// ---------- Detection ----------
 	
 	/** blocks.yml is legacy iff {@code MaxLevel} is a scalar, or any pool entry (idx >= header) is a raw String. */
@@ -59,16 +50,6 @@ public class LegacyBlocksMigrator {
 		return false;
 	}
 	
-	/** chests.yml is legacy iff any top-level value is a list (of ItemStacks / material names). */
-	public static boolean isLegacyChests(YamlConfiguration config) {
-		for (String key : config.getKeys(false)) {
-			Object v = config.get(key);
-			if (v instanceof List) return true;
-			if (v instanceof String) return false;
-		}
-		return false;
-	}
-	
 	// ---------- Public entry points ----------
 	
 	public static void migrateBlocks(File blocksFile, File chestsFile) {
@@ -80,7 +61,7 @@ public class LegacyBlocksMigrator {
 		
 		if (!backup(blocksFile)) return;
 		
-		Map<String, String> chestAliases = buildChestAliasMap(chestsFile);
+
 		
 		List<Integer> levelIds = new ArrayList<>();
 		for (String key : legacy.getKeys(false)) {
@@ -106,7 +87,7 @@ public class LegacyBlocksMigrator {
 			for (int i = headerEnd; i < raw.size(); i++) {
 				Object o = raw.get(i);
 				if (!(o instanceof String)) continue;
-				String key = classify((String) o, chestAliases);
+				String key = classify((String) o);
 				if (key != null) acc.compute(key, (k, v) -> v == null ? 1 : v + 1);
 			}
 			
@@ -127,35 +108,11 @@ public class LegacyBlocksMigrator {
 		
 		List<Object> maxList = new ArrayList<>();
 		maxList.add(maxName);
-		//for (Map.Entry<String, Integer> e : acc.entrySet())
-		//	maxList.add(buildEntryMap(e.getKey(), e.getValue()));
 		out.set("MaxLevel", maxList);
 		
 		try { out.save(blocksFile); }
 		catch (Exception e) {
 			Oneblock.plugin.getLogger().warning("Failed to write migrated blocks.yml: " + e.getMessage());
-		}
-	}
-	
-	public static void migrateChests(File chestsFile) {
-		if (chestsFile == null || !chestsFile.exists()) return;
-		YamlConfiguration legacy = YamlConfiguration.loadConfiguration(chestsFile);
-		if (!isLegacyChests(legacy)) return;
-		
-		Bukkit.getLogger().info("[Oneblock] Legacy chests.yml detected. Migrating to LootTable alias map (original backed up to " + chestsFile.getName() + ".bak).");
-		if (!backup(chestsFile)) return;
-		
-		YamlConfiguration out = new YamlConfiguration();
-		for (String name : legacy.getKeys(false)) {
-			String key = DEFAULT_CHEST_LOOT_TABLES.getOrDefault(name.toLowerCase(), FALLBACK_LOOT);
-			out.set(name, key);
-			if (!DEFAULT_CHEST_LOOT_TABLES.containsKey(name.toLowerCase())) {
-				Oneblock.plugin.getLogger().warning("Unknown legacy chest '" + name + "'; mapped to " + FALLBACK_LOOT + " — customize in chests.yml if desired.");
-			}
-		}
-		try { out.save(chestsFile); }
-		catch (Exception e) {
-			Oneblock.plugin.getLogger().warning("Failed to write migrated chests.yml: " + e.getMessage());
 		}
 	}
 	
@@ -196,40 +153,13 @@ public class LegacyBlocksMigrator {
 		}
 		return q;
 	}
-	
-	/** Build a chest-alias → loot-table-string lookup from the legacy chests.yml keys. */
-	private static Map<String, String> buildChestAliasMap(File chestsFile) {
-		Map<String, String> map = new LinkedHashMap<>();
-		if (chestsFile == null || !chestsFile.exists()) return map;
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(chestsFile);
-		for (String name : cfg.getKeys(false)) {
-			// Prefer the already-migrated value if the user ran chests.yml migration first.
-			Object v = cfg.get(name);
-			String lt;
-			if (v instanceof String) {
-				lt = (String) v;
-			} else {
-				lt = DEFAULT_CHEST_LOOT_TABLES.getOrDefault(name.toLowerCase(), FALLBACK_LOOT);
-			}
-			// Both case forms needed because `classify()` tries a case-sensitive
-			// lookup first then falls back to lowercase. Skip the second put if
-			// the user's key is already lowercase (else we'd overwrite with the
-			// same value).
-			map.put(name, lt);
-			String lower = name.toLowerCase();
-			if (!lower.equals(name)) map.put(lower, lt);
-		}
-		return map;
-	}
+
 	
 	/** Classify a legacy pool string into a kind|value accumulator key. */
-	private static String classify(String text, Map<String, String> chestMap) {
+	private static String classify(String text) {
 		if (text == null || text.isEmpty()) return null;
 		if (text.charAt(0) == '/') return "command|" + text;
-		
-		String lt = chestMap.get(text);
-		if (lt == null) lt = chestMap.get(text.toLowerCase());
-		if (lt != null) return "chest|" + text;
+		if (ChestItems.hasChest(text)) return "chest|" + text;
 		
 		try { EntityType.valueOf(text.toUpperCase()); return "mob|" + text.toUpperCase(); }
 		catch (Exception ignore) {}
