@@ -15,8 +15,6 @@ public class PlaceItemsAdder extends Place{
 			((CustomBlock)material_).place(block.getLocation());
 			return true;
 		}
-		else if (material_ instanceof String) 
-			return setCustomType(block, (String)material_);
 
 		return false;
 	}

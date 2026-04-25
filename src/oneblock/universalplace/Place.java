@@ -35,16 +35,6 @@ public abstract class Place {
 	public abstract boolean setType(Block block, Object material_, boolean physics);
 	
 	/**
-	 * Defensive legacy fallback path for placer subclasses that still receive raw
-	 * {@code String} payloads (e.g. unresolved Oraxen / Nexo custom-block ids).
-	 * Only runs the {@code /command} branch since chest-name tokens are handled
-	 * upstream as {@code LOOT_TABLE} pool entries.
-	 */
-	public boolean setCustomType(Block block, String command) {
-		return executeCommand(block, command);
-	}
-	
-	/**
 	 * Execute a {@code /command} entry. The command string is the body after the
 	 * leading slash and is formatted with the block's {@code (x, y, z)} coordinates.
 	 *

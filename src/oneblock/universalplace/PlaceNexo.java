@@ -17,7 +17,6 @@ public class PlaceNexo extends Place{
 				NexoBlocks.place(material, block.getLocation());
 				return true;
 			}
-			return setCustomType(block, (String)material_);
 		}
 
 		return false;

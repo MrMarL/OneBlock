@@ -16,8 +16,6 @@ public class PlaceCraftEngine extends Place{
 			Key key = (Key)material_;
 			return CraftEngineBlocks.place(block.getLocation(), key, false);
 		}
-		else if (material_ instanceof String) 
-			return setCustomType(block, (String)material_);
 		
 		return false;
 	}

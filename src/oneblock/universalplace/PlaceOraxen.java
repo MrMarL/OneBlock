@@ -18,7 +18,6 @@ public class PlaceOraxen extends Place{
 				OraxenBlocks.place(material, block.getLocation());
 				return true;
 			}
-			return setCustomType(block, (String)material_);
 		}
 
 		return false;

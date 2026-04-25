@@ -14,8 +14,6 @@ public class Place1_8to1_12 extends Place{
 			XBlock.setType(block, (XMaterial)material_, physics);
 		else if (material_ instanceof  Material)
 			block.setType((Material)material_, physics);
-		else if (material_ instanceof  String)
-			return setCustomType(block, (String)material_);
 
 		return false;
 	}
