@@ -104,6 +104,13 @@ public class GUI {
         return skull;
     }
 	
+	/**
+	 * Opens a GUI displaying the contents of a legacy chest.
+	 * Only works with legacy item-list chests ({@link ChestItems#aliaseslegacy}), not loot tables.
+	 *
+	 * @param p         the player opening the GUI
+	 * @param chestType the chest alias name (must exist in legacy storage)
+	 */
 	public static void chestGUI(Player p, String chestType) {
 		if (p == null) return;
 		List<ItemStack> list = ChestItems.getItems(chestType);

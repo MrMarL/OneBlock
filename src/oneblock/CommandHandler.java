@@ -637,8 +637,8 @@ public class CommandHandler implements CommandExecutor {
 			                		sender.sendMessage(ChatColor.RED + "This subcommand can only be used by a player.");
 			                		return true;
 			                	}
-			                    if (!ChestItems.hasChest(chestName)) {
-			                        sender.sendMessage(ChatColor.RED + "Chest alias '" + chestName + "' not found.");
+			                    if (ChestItems.getItems(chestName) == null) {
+			                        sender.sendMessage(ChatColor.RED + "Legacy chest alias '" + chestName + "' not found.");
 			                        return true;
 			                    }
 			                    GUI.chestGUI(player, chestName);
