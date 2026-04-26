@@ -112,8 +112,10 @@ public class CommandTabCompleter implements TabCompleter {
         	else if ("setlevel".equals(arg0))
         		for (int i = 0; i < Level.size(); i++)
         			commands.add(String.valueOf(i));
-        	else if ("chest".equals(arg0))
+        	else if ("chest".equals(arg0)) {
         		commands.add("set");
+        		commands.add("edit");
+        	}
         }
         else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2])) {
         	for (LootTables lt:LootTables.values())

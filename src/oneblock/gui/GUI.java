@@ -17,8 +17,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.cryptomorin.xseries.XMaterial;
 
+import oneblock.ChestItems;
 import oneblock.Messages;
 import oneblock.PlayerInfo;
+import oneblock.worldguard.OBWorldGuard;
 
 public class GUI {
 	public static boolean enabled = true;
@@ -101,6 +103,19 @@ public class GUI {
         skull.setItemMeta(skullMeta);
         return skull;
     }
+	
+	public static void chestGUI(Player p, String chestType) {
+		if (p == null) return;
+		List<ItemStack> list = ChestItems.getItems(chestType);
+		if (list == null) return;
+		
+		Inventory chestGUI = Bukkit.createInventory(new ChestHolder(chestType), 54, String.format("%sEdit: %s%s %s", ChatColor.BLACK, ChatColor.DARK_GRAY, chestType
+				, OBWorldGuard.canUse?"":"[Edit only in premium]"));
+		for(ItemStack itm : list)
+			if (itm != null)
+				chestGUI.addItem(itm);
+		p.openInventory(chestGUI);
+	}
 
 	/**
 	 * Render a UUID as a display name for GUI lore. Intentionally swallows any

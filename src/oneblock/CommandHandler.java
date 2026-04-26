@@ -632,6 +632,18 @@ public class CommandHandler implements CommandExecutor {
 			            		}
 			            		return true;
 			            	}
+			                if (args[2].equalsIgnoreCase("edit")) {
+			                	if (player == null) {
+			                		sender.sendMessage(ChatColor.RED + "This subcommand can only be used by a player.");
+			                		return true;
+			                	}
+			                    if (!ChestItems.hasChest(chestName)) {
+			                        sender.sendMessage(ChatColor.RED + "Chest alias '" + chestName + "' not found.");
+			                        return true;
+			                    }
+			                    GUI.chestGUI(player, chestName);
+			                    return true;
+			                }
 			            	if (!args[2].equalsIgnoreCase("set") || args.length < 4) {
 			            		sender.sendMessage(ChatColor.RED + "Usage: /ob chest <name> [set <namespaced_key>]");
 			            		return true;
