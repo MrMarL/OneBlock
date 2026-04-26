@@ -5,6 +5,7 @@
   <h3>Works on java 8 and bukkit/</h3>
 
   [![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)
+  [![Java CI](https://github.com/MrMarL/OneBlock/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/MrMarL/OneBlock/actions/workflows/maven-publish.yml)
 </div>
 
 # OneBlock minigame plugin.
@@ -167,3 +168,21 @@ Create custom default islands (7x12x7 area):
 
 # 📈 Stats
 ![https://bstats.org/signatures/bukkit/Oneblock.svg](https://bstats.org/signatures/bukkit/Oneblock.svg)
+
+# 🛠️ Building from source
+
+### **Requirements:** 
+- JDK 21 (Temurin recommended)
+- Bundled Apache Maven 3.9.15 (included under `resources/apache-maven-3.9.15/`)
+
+### **Build:** 
+**Windows (PowerShell)**
+```
+.\resources\apache-maven-3.9.15\bin\mvn.cmd
+```
+**Linux / macOS**
+```
+./resources/apache-maven-3.9.15/bin/mvn
+```
+
+The shaded plugin jar will be produced in `target/Oneblock-*.jar`.
