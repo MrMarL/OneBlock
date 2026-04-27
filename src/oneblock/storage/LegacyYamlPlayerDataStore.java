@@ -12,6 +12,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import oneblock.PlayerInfo;
 
+/**
+ * Legacy YAML-backed player data store used only as a one-time migration
+ * source on first load when no {@code PlData.json} exists yet. Reads the
+ * old {@code PlData.yml} format (pre-1.x Oneblock, where nicknames were
+ * the primary key) and returns the data shaped as modern
+ * {@link PlayerInfo} objects keyed by {@link java.util.UUID}.
+ */
 public class LegacyYamlPlayerDataStore {
 	public static File f = new File(plugin.getDataFolder(), "PlData.yml");
 	
@@ -26,7 +33,7 @@ public class LegacyYamlPlayerDataStore {
 	        	if (line.startsWith("_"))
 	        		nicks.add(line.split(":")[0]);
 		} catch (Exception e) {
-			plugin.getLogger().warning("[Oneblock] Failed to parse legacy PlData.yml: " + e.getMessage());
+			plugin.getLogger().warning("Failed to parse legacy PlData.yml: " + e.getMessage());
 		}
 		
 		YamlConfiguration data = YamlConfiguration.loadConfiguration(f);
@@ -43,7 +50,7 @@ public class LegacyYamlPlayerDataStore {
         	String playerName = _nick.substring(1);
         	org.bukkit.OfflinePlayer off = Bukkit.getOfflinePlayer(playerName);
         	if (off == null || off.getUniqueId() == null) {
-        		plugin.getLogger().warning("[Oneblock] Legacy PlData.yml: unresolved nick '" + playerName + "' for island " + i + "; skipping row");
+        		plugin.getLogger().warning("Legacy PlData.yml: unresolved nick '" + playerName + "' for island " + i + "; skipping row");
         		continue;
         	}
         	java.util.UUID uuid = off.getUniqueId();

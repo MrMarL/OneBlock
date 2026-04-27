@@ -17,6 +17,11 @@ import org.json.simple.parser.JSONParser;
 
 import oneblock.PlayerInfo;
 
+/**
+ * JSON-backed player data store. Writes / reads the {@code PlData.json}
+ * file in the plugin data folder. Used as the primary persistence layer
+ * when no database is configured (or the database save returned false).
+ */
 public class JsonPlayerDataStore {
 	public static final Pattern p = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
 	public static final File f = new File(plugin.getDataFolder(), "PlData.json");
