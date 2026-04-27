@@ -17,7 +17,7 @@ import org.json.simple.parser.JSONParser;
 
 import oneblock.PlayerInfo;
 
-public class JsonSimple {
+public class JsonPlayerDataStore {
 	public static final Pattern p = Pattern.compile("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
 	public static final File f = new File(plugin.getDataFolder(), "PlData.json");
 

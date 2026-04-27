@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import oneblock.PlayerInfo;
 
-public class ReadOldData {
+public class LegacyYamlPlayerDataStore {
 	public static File f = new File(plugin.getDataFolder(), "PlData.yml");
 	
 	public static ArrayList<PlayerInfo> Read(){
