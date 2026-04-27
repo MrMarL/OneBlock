@@ -39,7 +39,7 @@ public class Invitation extends AbstractInvitation {
 		UUID uuid = pl.getUniqueId();
 		Invitation inv_ = check(uuid);
 		if (inv_ == null) return false; 
-		if (PlayerInfo.GetId(inv_.Inviting) == -1) return false;
+		if (PlayerInfo.getId(inv_.Inviting) == -1) return false;
 		
 		CommandHandler.idresetCommand(pl);
 		

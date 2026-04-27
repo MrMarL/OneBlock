@@ -34,7 +34,7 @@ public class CommandHandler implements CommandExecutor {
 	public static boolean idresetCommand(OfflinePlayer pl) {
 		if (pl == null) return false;
 		UUID uuid = pl.getUniqueId();
-		int PlId = PlayerInfo.GetId(uuid);
+		int PlId = PlayerInfo.getId(uuid);
 		if (PlId == -1) return false;
 		PlayerInfo plp = PlayerInfo.get(PlId);
 		plp.removeBar(pl);
@@ -76,7 +76,7 @@ public class CommandHandler implements CommandExecutor {
 	            if (player == null) return false;
 	            UUID uuid = player.getUniqueId();
 	            int X_pl = 0, Z_pl = 0;
-	            int plID = PlayerInfo.GetId(uuid);
+	            int plID = PlayerInfo.getId(uuid);
 	            if (plID == -1) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
 	            	plID = PlayerInfo.getFreeId(UseEmptyIslands);
@@ -102,7 +102,7 @@ public class CommandHandler implements CommandExecutor {
 	        }
 	        case ("leave"):{
 	        	if (player == null) return false;
-	            PlayerInfo.removeBarStatic(player);
+	            PlayerInfo.removeBarFor(player);
 	            if (leavewor == null || config.getDouble("yleave") == 0) {
 	            	if (!args[args.length-1].equals("/n"))
 	            		sender.sendMessage(Messages.leave_not_set);
@@ -126,7 +126,7 @@ public class CommandHandler implements CommandExecutor {
 	    			return true;
 	    		}
 	    		UUID uuid = inv.getUniqueId();
-	    		final int plID = PlayerInfo.GetId(uuid);
+	    		final int plID = PlayerInfo.getId(uuid);
 	    		if (plID == -1) {
 	    			sender.sendMessage(Messages.invite_no_island);
 	    			return true;
@@ -142,14 +142,14 @@ public class CommandHandler implements CommandExecutor {
 	    		
 	            if (protection) Guest.list.add(new Guest(uuid, player.getUniqueId()));
 	            player.teleport(new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
-	    		PlayerInfo.removeBarStatic(player);
+	    		PlayerInfo.removeBarFor(player);
 	            return true;
 	        }
 	        case ("allow_visit"):{
 	        	if (!requirePermission(sender, "Oneblock.allow_visit")) return true;
 	        	if (player == null) return false;
 	        	UUID uuid = player.getUniqueId();
-	        	if (PlayerInfo.GetId(uuid) == -1) return true;
+	        	if (PlayerInfo.getId(uuid) == -1) return true;
 	        	PlayerInfo inf = PlayerInfo.get(uuid);
 	        	inf.allow_visit = !inf.allow_visit;
 	        	player.sendMessage(inf.allow_visit ? Messages.allowed_visit : Messages.forbidden_visit);
@@ -169,7 +169,7 @@ public class CommandHandler implements CommandExecutor {
 	    			return true;
 	    		}
 	    		UUID uuid = player.getUniqueId();
-	    		if (PlayerInfo.GetId(uuid) == -1) {
+	    		if (PlayerInfo.getId(uuid) == -1) {
 	    			sender.sendMessage(Messages.invite_no_island);
 	    			return true;
 	    		}
@@ -203,7 +203,7 @@ public class CommandHandler implements CommandExecutor {
 	        	UUID owner_uuid = player.getUniqueId(), member_uuid = member.getUniqueId();
 	        	if (!PlayerInfo.existsAsOwner(owner_uuid))
 	        		return true;
-	        	int ownerID = PlayerInfo.GetId(owner_uuid);
+	        	int ownerID = PlayerInfo.getId(owner_uuid);
 	        	PlayerInfo info = PlayerInfo.get(ownerID);
 	        	if (info.uuids.contains(member_uuid)) {
 	        		info.removeInvite(member_uuid);
@@ -385,7 +385,7 @@ public class CommandHandler implements CommandExecutor {
 			                }
 			                OfflinePlayer offpl = Bukkit.getOfflinePlayer(args[1]);
 			                UUID uuid = offpl.getUniqueId();
-			                int plID = PlayerInfo.GetId(uuid);
+			                int plID = PlayerInfo.getId(uuid);
 			                if (plID != -1) {
 			                    int setlvl = 0;
 			                    try {
@@ -424,7 +424,7 @@ public class CommandHandler implements CommandExecutor {
 			                    return true;
 			                }
 			                UUID uuid = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-			                int id = PlayerInfo.GetId(uuid);
+			                int id = PlayerInfo.getId(uuid);
 			                if (id == -1) {
 			                	sender.sendMessage(String.format("%sa player named %s was not found.", ChatColor.RED, args[1]));
 				                return true;
@@ -588,8 +588,8 @@ public class CommandHandler implements CommandExecutor {
 			                	}
 			                	Player p = (Player) sender;
 			                	UUID uuid = p.getUniqueId();
-			                    if (PlayerInfo.GetId(uuid) != -1) {
-			                        int result[] = plugin.getIslandCoordinates(PlayerInfo.GetId(uuid));
+			                    if (PlayerInfo.getId(uuid) != -1) {
+			                        int result[] = plugin.getIslandCoordinates(PlayerInfo.getId(uuid));
 			                        Island.scan(getWorld(), result[0], getY(), result[1]);
 			                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
 			                        config.set("custom_island", Island.map());

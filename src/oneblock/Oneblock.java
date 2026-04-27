@@ -285,7 +285,7 @@ public class Oneblock extends JavaPlugin {
                 	Location loc = player.getLocation();
             		PlayerInfo inf = Guest.getPlayerInfo(uuid);
             		if (inf != null) {
-                    	int crd[] = getIslandCoordinates(PlayerInfo.GetId(inf.uuid));
+                    	int crd[] = getIslandCoordinates(PlayerInfo.getId(inf.uuid));
                         CheckGuest = isWithinIslandBounds(loc, crd[0], crd[1]);
                         if (!CheckGuest) Guest.remove(uuid);
             		}
@@ -298,7 +298,7 @@ public class Oneblock extends JavaPlugin {
                 
                 final Block block = getWor().getBlockAt(X_pl, getY(), Z_pl);
                 if (block.getType() != Material.AIR) continue;
-                if (PlayerInfo.GetId(uuid) == -1) continue;
+                if (PlayerInfo.getId(uuid) == -1) continue;
                 
                 BlockGen(X_pl, Z_pl, plID, player, block);
             }
@@ -481,7 +481,7 @@ public class Oneblock extends JavaPlugin {
     }
     public static int getvisits(UUID pl_uuid) {
     	int count = 0;
-    	int reg_id = PlayerInfo.GetId(pl_uuid);
+    	int reg_id = PlayerInfo.getId(pl_uuid);
     	if (reg_id != -1)
 	    	for (Player ponl: plugin.cache.getPlayers())
 	    		if (plugin.findNearestRegionId(ponl.getLocation()) == reg_id)

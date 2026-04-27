@@ -50,7 +50,7 @@ public class BlockEvent implements Listener {
 		if (block.getY() != getY()) return;
 		final Player ponl = e.getPlayer();
 		final UUID uuid = ponl.getUniqueId();
-		final int plID = PlayerInfo.GetId(uuid);
+		final int plID = PlayerInfo.getId(uuid);
 		if (plID == -1) return;
 		final int result[] = plugin.getIslandCoordinates(plID);
 		if (block.getX() != result[0]) return;

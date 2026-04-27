@@ -48,6 +48,6 @@ public class TeleportEvent implements Listener {
 		if (!progress_bar) return;
 		if (PlayerInfo.list.isEmpty()) return;
     	if (e.getFrom().equals(getWorld()))
-    		PlayerInfo.removeBarStatic(e.getPlayer());
+    		PlayerInfo.removeBarFor(e.getPlayer());
     }
 }
