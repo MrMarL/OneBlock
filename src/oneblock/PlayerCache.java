@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
-public class PlayerCache {
+public final class PlayerCache {
     private volatile ConcurrentHashMap<Player, int[]> players = new ConcurrentHashMap<>();
 
     public void updateCache(Collection<? extends Player> onlinePlayers) {

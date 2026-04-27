@@ -1,12 +1,23 @@
 package oneblock.invitation;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import oneblock.PlayerInfo;
 
 public class Guest extends AbstractInvitation {
-	public static ArrayList <Guest> list = new ArrayList<>();
+	/**
+	 * Active guest visits. Phase 4.2 swapped the previous {@code ArrayList}
+	 * for a {@link CopyOnWriteArrayList} so that the {@code IslandBlockGenTask}
+	 * iteration ({@link #check(UUID)} via {@link #getPlayerInfo(UUID)}) and a
+	 * concurrent {@code Guest.list.add} from a future off-thread caller (or
+	 * the in-loop {@link #remove(UUID)} call) cannot trigger a
+	 * {@link java.util.ConcurrentModificationException}. All current writers
+	 * remain on the main thread; this is a forward-looking guard documented
+	 * by {@code CONTRIBUTING.md} as a tracked race before Phase 4.
+	 */
+	public static final List<Guest> list = new CopyOnWriteArrayList<>();
 	
 	public Guest(UUID inviting, UUID invited) {
 		super(inviting, invited);
