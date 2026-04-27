@@ -371,7 +371,7 @@ public class Oneblock extends JavaPlugin {
     
     public void UpdateBorder(final Player pl) {
     	WorldBorder border = pl.getWorldBorder();
-    	Bukkit.getScheduler().runTaskLaterAsynchronously(this, 
+    	Bukkit.getScheduler().runTaskLater(this, 
     		() -> { pl.setWorldBorder(border); }, 10L);
     }
     
