@@ -617,19 +617,27 @@ public class CommandHandler implements CommandExecutor {
 			            		}
 			            		for (String name : ChestItems.getChestNames()) {
 			            			NamespacedKey k = ChestItems.getNamespacedKey(name);
-			            			sender.sendMessage(ChatColor.GREEN + name + ChatColor.GRAY + " -> " + ChatColor.WHITE + (k == null ? "<unset>" : k));
+			            			
+			            			String type = ChestItems.getItems(name) != null ?
+			            					"[legacy]": k == null ? "<unset>" : k.toString();
+			            			
+			            			sender.sendMessage(ChatColor.GREEN + name + ChatColor.GRAY + " -> " + ChatColor.WHITE + type);
 			            		}
 			            		return true;
 			            	}
 			            	String chestName = args[1];
+			            	boolean isLegacyChest = ChestItems.getItems(chestName) != null;
+			            	
 			            	if (args.length < 3) {
 			            		NamespacedKey current = ChestItems.getNamespacedKey(chestName);
-			            		if (current == null)
-			            			sender.sendMessage(ChatColor.YELLOW + "No loot-table mapping for '" + chestName + "'. Usage: /ob chest " + chestName + " set <namespaced_key>");
-			            		else {
+			            		if (current != null)
+			            			sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + "[legacy]");
+			            		else if (isLegacyChest)
 			            			sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + ChatColor.WHITE + current);
-			            			sender.sendMessage(ChatColor.GRAY + "Usage: /ob chest " + chestName + " set <namespaced_key>");
-			            		}
+			            		else
+			            			sender.sendMessage(ChatColor.YELLOW + "No loot-table mapping for '" + chestName);
+			            			
+			            		sender.sendMessage(ChatColor.GRAY + "Usage: /ob chest " + chestName + (isLegacyChest ? " edit" : " set <namespaced_key>"));
 			            		return true;
 			            	}
 			                if (args[2].equalsIgnoreCase("edit")) {
@@ -637,7 +645,7 @@ public class CommandHandler implements CommandExecutor {
 			                		sender.sendMessage(ChatColor.RED + "This subcommand can only be used by a player.");
 			                		return true;
 			                	}
-			                    if (ChestItems.getItems(chestName) == null) {
+			                    if (!isLegacyChest) {
 			                        sender.sendMessage(ChatColor.RED + "Legacy chest alias '" + chestName + "' not found.");
 			                        return true;
 			                    }
