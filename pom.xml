@@ -277,6 +277,11 @@
 			                <excludes>
 			                	<exclude>module-info.class</exclude>
 					            <exclude>META-INF/**</exclude>
+			                	<exclude>LICENSE**</exclude>
+			                	<exclude>README**</exclude>
+			                	<exclude>INFO_**</exclude>
+			                	<exclude>*.txt</exclude>
+			                	<exclude>*.md</exclude>
 			                	<exclude>com/cryptomorin/xseries/*/*/*/**</exclude>
 			                	<exclude>com/cryptomorin/xseries/base/XM*</exclude>
 			                	<exclude>com/cryptomorin/xseries/base/*y*</exclude>
