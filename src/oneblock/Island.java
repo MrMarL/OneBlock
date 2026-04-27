@@ -16,7 +16,7 @@ import com.cryptomorin.xseries.XMaterial;
 
 import oneblock.utils.Utils;
 
-public class Island {
+public final class Island {
     public static BlockData[][][] custom = null;
     private static final int SIZE = 7;
     private static final int HEIGHT = 12;

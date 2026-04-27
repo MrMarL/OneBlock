@@ -2,7 +2,7 @@ package oneblock;
 
 import org.bukkit.ChatColor;
 
-public class Messages {
+public final class Messages {
 	public static final String bool_format = String.format("%sEnter a valid value true or false", ChatColor.YELLOW);
 	public static final String invalid_value = String.format("%sinvalid value", ChatColor.RED);
 	

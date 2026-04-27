@@ -13,7 +13,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTables;
 
-public class CommandTabCompleter implements TabCompleter {
+public final class CommandTabCompleter implements TabCompleter {
 	private final List<String> BASE_COMMANDS = Arrays.asList("j","join","leave","invite","accept","kick","help","gui","top");
 	private final List<String> VISIT_COMMANDS = Arrays.asList("v","visit");
 	private final List<String> ADMIN_COMMANDS = Arrays.asList("set","setleave","progress_bar","setlevel","clear","circlemode","lvl_mult","max_players_team", "chest", "saveplayerinventory",
