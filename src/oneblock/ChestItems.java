@@ -24,14 +24,14 @@ import org.bukkit.inventory.ItemStack;
  * contains a colon, it's treated as a loot-table key; otherwise it's parsed as
  * a list of items.
  */
-public class ChestItems {
+public final class ChestItems {
     public static File chest;
 
     private static final Map<String, NamespacedKey> aliases = new LinkedHashMap<>();
-    private static final Map<String, List<ItemStack>> aliaseslegacy = new LinkedHashMap<>();
+    private static final Map<String, List<ItemStack>> aliasesLegacy = new LinkedHashMap<>();
 
     public static void load() {
-        aliaseslegacy.clear();
+        aliasesLegacy.clear();
         aliases.clear();
 
         if (chest == null || !chest.exists()) return;
@@ -58,7 +58,7 @@ public class ChestItems {
                 List<ItemStack> items = new ArrayList<>();
                 Material m = Material.getMaterial(str);
                 if (m != null) items.add(new ItemStack(m));
-                aliaseslegacy.put(name, items);
+                aliasesLegacy.put(name, items);
                 continue;
             }
 
@@ -66,7 +66,7 @@ public class ChestItems {
             if (value instanceof List) {
                 List<ItemStack> items = new ArrayList<>();
                 loadItems(items, (List<?>) value);
-                aliaseslegacy.put(name, items);
+                aliasesLegacy.put(name, items);
             }
         }
     }
@@ -75,7 +75,7 @@ public class ChestItems {
         YamlConfiguration config = new YamlConfiguration();
 
         // Save legacy item chests
-        for (Map.Entry<String, List<ItemStack>> entry : aliaseslegacy.entrySet()) {
+        for (Map.Entry<String, List<ItemStack>> entry : aliasesLegacy.entrySet()) {
             List<Object> simplified = new ArrayList<>();
             for (ItemStack item : entry.getValue()) {
                 if (item == null || item.getType() == Material.AIR) continue;
@@ -113,14 +113,14 @@ public class ChestItems {
     /** Returns all chest alias names (both legacy and loot-table). */
     public static Set<String> getChestNames() {
         Set<String> names = new java.util.LinkedHashSet<>();
-        names.addAll(aliaseslegacy.keySet());
+        names.addAll(aliasesLegacy.keySet());
         names.addAll(aliases.keySet());
         return Collections.unmodifiableSet(names);
     }
 
     /** Returns the legacy item list for the given alias, or null if it's a loot-table chest. */
     public static List<ItemStack> getItems(String chestType) {
-        return aliaseslegacy.get(chestType);
+        return aliasesLegacy.get(chestType);
     }
 
     /** Returns the loot-table key for the given alias, or null if it's a legacy chest. */
@@ -133,24 +133,24 @@ public class ChestItems {
      * @return true if the chest is registered, false otherwise
      */
     public static boolean hasChest(String chestType) {
-        return aliases.containsKey(chestType) || aliaseslegacy.containsKey(chestType);
+        return aliases.containsKey(chestType) || aliasesLegacy.containsKey(chestType);
     }
 
     /** Add or update a legacy item chest. */
     public static void setItems(String name, List<ItemStack> items) {
         aliases.remove(name);
-        aliaseslegacy.put(name, new ArrayList<>(items));
+        aliasesLegacy.put(name, new ArrayList<>(items));
     }
 
     /** Add or update a loot-table chest. */
     public static void setLootTable(String name, NamespacedKey key) {
-        aliaseslegacy.remove(name);
+        aliasesLegacy.remove(name);
         aliases.put(name, key);
     }
 
     /** Remove a chest alias entirely. */
     public static boolean remove(String name) {
-        boolean removed = aliaseslegacy.remove(name) != null;
+        boolean removed = aliasesLegacy.remove(name) != null;
         removed |= aliases.remove(name) != null;
         return removed;
     }
@@ -160,7 +160,7 @@ public class ChestItems {
      * @return true if the chest exists (legacy) and at least one item was added, false otherwise
      */
     public static boolean fillLegacyChest(Inventory inv, String chestType,  Random rnd) {
-        List<ItemStack> items = aliaseslegacy.get(chestType);
+        List<ItemStack> items = aliasesLegacy.get(chestType);
         if (items == null || items.isEmpty()) return false;
         return fillLegacyChest(inv, items, rnd);
     }
