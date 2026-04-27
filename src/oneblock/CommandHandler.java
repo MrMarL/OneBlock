@@ -132,8 +132,8 @@ public class CommandHandler implements CommandExecutor {
 	    			return true;
 	    		}
 	    		PlayerInfo pinf = PlayerInfo.get(uuid);
-	    		if (!pinf.allow_visit || (inv instanceof Player && !((Player) inv).hasPermission("Oneblock.allow_visit"))) {
-	    			pinf.allow_visit = false;
+	    		if (!pinf.allowVisit || (inv instanceof Player && !((Player) inv).hasPermission("Oneblock.allow_visit"))) {
+	    			pinf.allowVisit = false;
 	    			sender.sendMessage(Messages.not_allow_visit);
 	    			return true;
 	    		}
@@ -151,8 +151,8 @@ public class CommandHandler implements CommandExecutor {
 	        	UUID uuid = player.getUniqueId();
 	        	if (PlayerInfo.getId(uuid) == -1) return true;
 	        	PlayerInfo inf = PlayerInfo.get(uuid);
-	        	inf.allow_visit = !inf.allow_visit;
-	        	player.sendMessage(inf.allow_visit ? Messages.allowed_visit : Messages.forbidden_visit);
+	        	inf.allowVisit = !inf.allowVisit;
+	        	player.sendMessage(inf.allowVisit ? Messages.allowed_visit : Messages.forbidden_visit);
 	        	return true;
 	        }
 	        case ("invite"):{

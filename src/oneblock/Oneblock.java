@@ -307,7 +307,7 @@ public class Oneblock extends JavaPlugin {
     public void BlockGen(final int X_pl, final int Z_pl, final int plID, final Player ponl, final Block block) {
     	final PlayerInfo inf = PlayerInfo.get(plID);
     	Level lvl_inf = Level.get(inf.lvl); 
-        if (++inf.breaks >= inf.getNeed()) {
+        if (++inf.breaks >= inf.getRequiredBreaks()) {
         	lvl_inf = inf.lvlup();
         	if (progress_bar) inf.createBar();
         	configManager.reward.executeRewards(ponl, inf.lvl, lvl_inf.name);
@@ -470,13 +470,13 @@ public class Oneblock extends JavaPlugin {
     }
     public static int getRemaining(UUID pl_uuid) {
     	PlayerInfo inf = PlayerInfo.get(pl_uuid);
-    	return inf.getNeed() - inf.breaks;
+    	return inf.getRequiredBreaks() - inf.breaks;
     }
     public static int getLevelLength(UUID pl_uuid) {
-    	return PlayerInfo.get(pl_uuid).getNeed();
+    	return PlayerInfo.get(pl_uuid).getRequiredBreaks();
     }
     public static boolean isVisitAllowed(UUID pl_uuid) {
-    	return PlayerInfo.get(pl_uuid).allow_visit;
+    	return PlayerInfo.get(pl_uuid).allowVisit;
     }
     public static int countVisitors(UUID pl_uuid) {
     	int count = 0;

@@ -40,7 +40,7 @@ public class JsonPlayerDataStore {
 			user.put("uuid", pl.uuid.toString());
 			user.put("lvl", pl.lvl);
 			user.put("breaks", pl.breaks);
-			if (pl.allow_visit) user.put("visit", pl.allow_visit);
+			if (pl.allowVisit) user.put("visit", pl.allowVisit);
 			
 			JSONArray arr = new JSONArray();
 			
@@ -97,7 +97,7 @@ public class JsonPlayerDataStore {
 		Object brkObj = user.get("breaks");
 		pl.lvl    = (lvlObj instanceof Number) ? ((Number) lvlObj).intValue() : 0;
 		pl.breaks = (brkObj instanceof Number) ? ((Number) brkObj).intValue() : 0;
-		pl.allow_visit = user.containsKey("visit");
+		pl.allowVisit = user.containsKey("visit");
 		Object arrObj = user.containsKey("invated") ? user.get("invated") : user.get("invited");
 		if (arrObj instanceof JSONArray) {
 			JSONArray arr = (JSONArray) arrObj;

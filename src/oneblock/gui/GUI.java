@@ -84,7 +84,7 @@ public class GUI {
 		for (OfflinePlayer pl: offlinePlayers) {
 			PlayerInfo inf = PlayerInfo.get(pl.getUniqueId());
 			if (inf == null) continue;
-			if (!inf.allow_visit) continue;
+			if (!inf.allowVisit) continue;
 			matchedPlayers.add(pl);
 		}
 		int size = Math.min(matchedPlayers.size(), 54);

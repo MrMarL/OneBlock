@@ -134,7 +134,7 @@ public class DatabaseManager {
                 if (uuid != null) {
 	                player.lvl = rs.getInt("level");
 	                player.breaks = rs.getInt("breaks");
-	                player.allow_visit = rs.getBoolean("allow_visit");
+	                player.allowVisit = rs.getBoolean("allow_visit");
 	                
 	                String invitedStr = rs.getString("invited_players");
 	                if (invitedStr != null && !invitedStr.trim().isEmpty()) {
@@ -188,7 +188,7 @@ public class DatabaseManager {
                 
                 pstmt.setInt(3, player.lvl);
                 pstmt.setInt(4, player.breaks);
-                pstmt.setBoolean(5, player.allow_visit);
+                pstmt.setBoolean(5, player.allowVisit);
                 
                 String invitedStr = player.uuids.stream()
                     .map(UUID::toString)
