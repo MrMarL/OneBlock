@@ -1,4 +1,4 @@
-package oneblock.universalplace;
+package oneblock.placement;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
