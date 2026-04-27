@@ -18,7 +18,7 @@ import com.nexomc.nexo.api.NexoBlocks;
 
 import oneblock.gui.GUI;
 import oneblock.migration.LegacyBlocksMigrator;
-import oneblock.pldata.DatabaseManager;
+import oneblock.storage.DatabaseManager;
 import oneblock.utils.LowerCaseYaml;
 import oneblock.utils.Utils;
 import oneblock.worldguard.OBWorldGuard;
