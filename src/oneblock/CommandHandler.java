@@ -619,7 +619,7 @@ public class CommandHandler implements CommandExecutor {
 			            			NamespacedKey k = ChestItems.getNamespacedKey(name);
 			            			
 			            			String type = ChestItems.getItems(name) != null ?
-			            					"[legacy]": k == null ? "<unset>" : k.toString();
+			            					"<legacy>": k == null ? "<unset>" : k.toString();
 			            			
 			            			sender.sendMessage(ChatColor.GREEN + name + ChatColor.GRAY + " -> " + ChatColor.WHITE + type);
 			            		}
@@ -630,9 +630,9 @@ public class CommandHandler implements CommandExecutor {
 			            	
 			            	if (args.length < 3) {
 			            		NamespacedKey current = ChestItems.getNamespacedKey(chestName);
-			            		if (current != null)
-			            			sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + "[legacy]");
-			            		else if (isLegacyChest)
+			            		if (isLegacyChest)
+			            			sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + "<legacy>");
+			            		else if (current != null)
 			            			sender.sendMessage(ChatColor.GREEN + chestName + ChatColor.GRAY + " -> " + ChatColor.WHITE + current);
 			            		else
 			            			sender.sendMessage(ChatColor.YELLOW + "No loot-table mapping for '" + chestName);
