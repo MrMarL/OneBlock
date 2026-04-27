@@ -63,34 +63,34 @@ public class OBP extends PlaceholderExpansion {
     	
 		switch (identifier) {
 			case "lvl":
-				return Integer.toString(Oneblock.getlvl(p.getUniqueId()));
+				return Integer.toString(Oneblock.getLevel(p.getUniqueId()));
 	
 			case "lvl_name":
-				return Oneblock.getlvlname(p.getUniqueId());
+				return Oneblock.getLevelName(p.getUniqueId());
 	
 			case "next_lvl":
-				return Integer.toString(Oneblock.getnextlvl(p.getUniqueId()));
+				return Integer.toString(Oneblock.getNextLevel(p.getUniqueId()));
 	
 			case "next_lvl_name":
-				return Oneblock.getnextlvlname(p.getUniqueId());
+				return Oneblock.getNextLevelName(p.getUniqueId());
 	
 			case "break_on_this_lvl":
-				return Integer.toString(Oneblock.getblocks(p.getUniqueId()));
+				return Integer.toString(Oneblock.getBroken(p.getUniqueId()));
 	
 			case "lvl_lenght":
-				return Integer.toString(Oneblock.getLength(p.getUniqueId()));
+				return Integer.toString(Oneblock.getLevelLength(p.getUniqueId()));
 	
 			case "need_to_lvl_up":
-				return Integer.toString(Oneblock.getneed(p.getUniqueId()));
+				return Integer.toString(Oneblock.getRemaining(p.getUniqueId()));
 	
 			case "player_count":
 				return Integer.toString(Oneblock.plugin.cache.getPlayers().size());
 	
 			case "visit_allowed":
-				return Boolean.toString(Oneblock.getvisitallowed(p.getUniqueId()));
+				return Boolean.toString(Oneblock.isVisitAllowed(p.getUniqueId()));
 	
 			case "visits":
-				return Integer.toString(Oneblock.getvisits(p.getUniqueId()));
+				return Integer.toString(Oneblock.countVisitors(p.getUniqueId()));
 	
 			case "percent":
 				PlayerInfo inf0 = PlayerInfo.get(p.getUniqueId());
@@ -111,7 +111,7 @@ public class OBP extends PlaceholderExpansion {
 				
 			case "top_position":
 	            PlayerInfo playerInfo = PlayerInfo.get(p.getUniqueId());
-	            int position = Oneblock.gettopposition(playerInfo);
+	            int position = Oneblock.getTopPosition(playerInfo);
 	            return position == -1 ? NONE_PLACEHOLDER : Integer.toString(position + 1);
 		}
     	
@@ -150,7 +150,7 @@ public class OBP extends PlaceholderExpansion {
             int position = Integer.parseInt(parts[1]) - 1;
             if (position < 0 || position >= 10) return null;
             
-            PlayerInfo topPlayer = Oneblock.gettop(position);
+            PlayerInfo topPlayer = Oneblock.getTop(position);
             
             if (topPlayer.uuid == null) return NONE_PLACEHOLDER;
             

@@ -42,7 +42,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class Oneblock extends JavaPlugin {
@@ -452,34 +451,34 @@ public class Oneblock extends JavaPlugin {
         config.set("yawleave", yaw);
     }
     
-    public static int getlvl(UUID pl_uuid) {
+    public static int getLevel(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).lvl;
     }
-    public static int getnextlvl(UUID pl_uuid) {
-    	return getlvl(pl_uuid) + 1;
+    public static int getNextLevel(UUID pl_uuid) {
+    	return getLevel(pl_uuid) + 1;
     }
-    public static String getlvlname(UUID pl_uuid) {
-    	int lvl = getlvl(pl_uuid);
+    public static String getLevelName(UUID pl_uuid) {
+    	int lvl = getLevel(pl_uuid);
     	return Level.get(lvl).name;
     }
-    public static String getnextlvlname(UUID pl_uuid) {
-    	int lvl = getnextlvl(pl_uuid);
+    public static String getNextLevelName(UUID pl_uuid) {
+    	int lvl = getNextLevel(pl_uuid);
     	return Level.get(lvl).name;
     }
-    public static int getblocks(UUID pl_uuid) {
+    public static int getBroken(UUID pl_uuid) {
         return PlayerInfo.get(pl_uuid).breaks;
     }
-    public static int getneed(UUID pl_uuid) {
+    public static int getRemaining(UUID pl_uuid) {
     	PlayerInfo inf = PlayerInfo.get(pl_uuid);
     	return inf.getNeed() - inf.breaks;
     }
-    public static int getLength(UUID pl_uuid) {
+    public static int getLevelLength(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).getNeed();
     }
-    public static boolean getvisitallowed(UUID pl_uuid) {
+    public static boolean isVisitAllowed(UUID pl_uuid) {
     	return PlayerInfo.get(pl_uuid).allow_visit;
     }
-    public static int getvisits(UUID pl_uuid) {
+    public static int countVisitors(UUID pl_uuid) {
     	int count = 0;
     	int reg_id = PlayerInfo.getId(pl_uuid);
     	if (reg_id != -1)
@@ -488,18 +487,18 @@ public class Oneblock extends JavaPlugin {
 	    			count++;
     	return count;
     }
-    public static PlayerInfo gettop(int i) {
+    public static PlayerInfo getTop(int i) {
     	if (PlayerInfo.size() <= i) return PlayerInfo.not_found;
-    	return gettop(i,gettoplist());
+    	return getTop(i,getTopList());
     }
-    public static PlayerInfo gettop(int i, List<PlayerInfo> sorted) {
+    public static PlayerInfo getTop(int i, List<PlayerInfo> sorted) {
     	if (sorted.size() <= i) return PlayerInfo.not_found;
     	return sorted.get(i).uuid == null ? PlayerInfo.not_found : sorted.get(i);
     }
-    public static int gettopposition(PlayerInfo player) {
+    public static int getTopPosition(PlayerInfo player) {
         if (player == null || player.uuid == null) return -1;
 
-        List<PlayerInfo> sorted = gettoplist();
+        List<PlayerInfo> sorted = getTopList();
         for (int i = 0; i < sorted.size(); i++) {
             PlayerInfo entry = sorted.get(i);
             if (entry != null && player.uuid.equals(entry.uuid))
@@ -515,7 +514,7 @@ public class Oneblock extends JavaPlugin {
     private static volatile long topCacheVersion = -1;
     private static volatile List<PlayerInfo> topCache = java.util.Collections.emptyList();
 
-    public static List<PlayerInfo> gettoplist() {
+    public static List<PlayerInfo> getTopList() {
     	long v = PlayerInfo.topVersion();
     	if (v != topCacheVersion) {
     		List<PlayerInfo> sorted = new ArrayList<>(PlayerInfo.list);
