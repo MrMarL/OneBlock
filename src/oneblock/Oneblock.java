@@ -331,7 +331,7 @@ public class Oneblock extends JavaPlugin {
                 break;
             case CHEST:
             	String chest_name = (String)entry.value;
-                if (LootTableDispatcher.populate(block, ChestItems.getNamespacedKey(chest_name), rnd)) {
+                if (!LootTableDispatcher.populate(block, ChestItems.getNamespacedKey(chest_name), rnd)) {
                 	BlockState bs = block.getState();
             		if (!(bs instanceof Chest)) break;
                 	ChestItems.fillLegacyChest(((Chest)bs).getInventory(), chest_name, rnd);
