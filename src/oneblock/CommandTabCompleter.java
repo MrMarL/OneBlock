@@ -105,8 +105,8 @@ public final class CommandTabCompleter implements TabCompleter {
         				commands.add(bc.name());
         		if ("settext".equals(arg1)) {
         			commands.add("...");
-        			commands.add("%OB_lvl% &8- %OB_lvl_name% &8| &fProgress: &e%OB_break_on_this_lvl%/%OB_lvl_lenght%");
-        			commands.add("%OB_lvl_name% &8| &fProgress: &e%OB_break_on_this_lvl%/%OB_lvl_lenght% &8(&b%OB_need_to_lvl_up% left&8)");
+        			commands.add("%OB_lvl% &8- %OB_lvl_name% &8| &fProgress: &e%OB_break_on_this_lvl%/%OB_lvl_length%");
+        			commands.add("%OB_lvl_name% &8| &fProgress: &e%OB_break_on_this_lvl%/%OB_lvl_length% &8(&b%OB_need_to_lvl_up% left&8)");
         		}
         	}
         	else if ("setlevel".equals(arg0))
