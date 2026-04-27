@@ -1,21 +1,30 @@
 package oneblock;
 
-import static oneblock.Oneblock.*;
-
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-public class OBP extends PlaceholderExpansion {
+public final class OBP extends PlaceholderExpansion {
 	
 	private static final TreeMap<Double, String> SCALE;
 	private static final String SCALE_CHAR = "█";
 	private static final String NONE_PLACEHOLDER = "[None]";
+	/**
+	 * Set of legacy / typo'd placeholder names that have already been
+	 * deprecation-warned this session, so each name is logged at most
+	 * once per JVM. PAPI dispatches from any thread, so the set is a
+	 * concurrent-safe key set. Test code may clear it via reflection
+	 * to verify the once-per-session contract.
+	 */
+	private static final Set<String> WARNED_DEPRECATED_PLACEHOLDERS =
+			ConcurrentHashMap.newKeySet();
     static {
         SCALE = new TreeMap<>();
         SCALE.put(.0,	"&c╍╍╍╍╍╍╍╍");
@@ -55,7 +64,7 @@ public class OBP extends PlaceholderExpansion {
     	
     	if (identifier.endsWith("_by_position")) {
     		if (!(p instanceof Player)) return NONE_PLACEHOLDER;
-    		UUID ownerUUID = PlayerInfo.get(plugin.findNearestRegionId(((Player)p).getLocation())).uuid;
+    		UUID ownerUUID = PlayerInfo.get(Oneblock.plugin.findNearestRegionId(((Player)p).getLocation())).uuid;
 	        if (ownerUUID == null) return NONE_PLACEHOLDER;
 
     		return onRequest(Bukkit.getOfflinePlayer(ownerUUID), identifier.substring(0, identifier.length() - "_by_position".length()));
@@ -78,6 +87,13 @@ public class OBP extends PlaceholderExpansion {
 				return Integer.toString(Oneblock.getBroken(p.getUniqueId()));
 	
 			case "lvl_lenght":
+				// `lvl_lenght` was the original (typo'd) placeholder name shipped
+				// in pre-Phase-6 releases; existing servers' scoreboards still
+				// reference it, so we keep it as a backward-compat alias and
+				// emit a once-per-session deprecation warning. New servers
+				// should use `lvl_length`.
+				warnDeprecatedPlaceholderOnce("lvl_lenght", "lvl_length");
+			case "lvl_length":
 				return Integer.toString(Oneblock.getLevelLength(p.getUniqueId()));
 	
 			case "need_to_lvl_up":
@@ -142,6 +158,22 @@ public class OBP extends PlaceholderExpansion {
         return "online";
     }
     
+    /**
+     * Log a deprecation warning for {@code legacy} the first time the
+     * legacy spelling is dispatched in this JVM. Subsequent dispatches
+     * for the same legacy name are silent so the warning never floods
+     * the console under steady-state placeholder traffic. Set membership
+     * is the once-flag; insertion races (PAPI dispatches from any thread)
+     * are resolved by the underlying {@link ConcurrentHashMap#newKeySet()}
+     * so at most one warning is logged.
+     */
+    private static void warnDeprecatedPlaceholderOnce(String legacy, String canonical) {
+        if (!WARNED_DEPRECATED_PLACEHOLDERS.add(legacy)) return;
+        Oneblock.plugin.getLogger().warning(
+                "Placeholder %OB_" + legacy + "% is deprecated; please use %OB_" + canonical + "% instead. " +
+                "The legacy spelling will be removed in a future release.");
+    }
+
     private String handleTopPlaceholder(String identifier) {
     	String[] parts = identifier.split("_", 3);
         if (parts.length != 3) return null;

@@ -43,7 +43,7 @@ public class CommandHandler implements CommandExecutor {
 		if (!saveplayerinventory && pl instanceof Player) ((Player) pl).getInventory().clear();
 
 		if (OBWorldGuard.isEnabled())
-			plugin.OBWG.removeMember(uuid, PlId);
+			plugin.worldGuard.removeMember(uuid, PlId);
 
 		return true;
 	}
@@ -85,7 +85,7 @@ public class CommandHandler implements CommandExecutor {
 	            	if (plID != PlayerInfo.size())
 	            		Island.clear(getWorld(), X_pl, getY(), Z_pl, getOffset()/4);
 	                Island.place(getWorld(), X_pl, getY(), Z_pl);
-	                plugin.OBWG.CreateRegion(uuid, X_pl, Z_pl, getOffset(), plID);
+	                plugin.worldGuard.createRegion(uuid, X_pl, Z_pl, getOffset(), plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
 						inf.createBar(getBarTitle(player, 0));
@@ -97,7 +97,7 @@ public class CommandHandler implements CommandExecutor {
 	            if (!plugin.enabled) plugin.runMainTask();
 	            if (progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
 	            player.teleport(new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
-	            if (OBWorldGuard.isEnabled()) plugin.OBWG.addMember(uuid, plID);
+	            if (OBWorldGuard.isEnabled()) plugin.worldGuard.addMember(uuid, plID);
 	            return true;
 	        }
 	        case ("leave"):{
@@ -208,7 +208,7 @@ public class CommandHandler implements CommandExecutor {
 	        	if (info.uuids.contains(member_uuid)) {
 	        		info.removeInvite(member_uuid);
 	        		if (OBWorldGuard.isEnabled())
-	        			plugin.OBWG.removeMember(member_uuid, ownerID);
+	        			plugin.worldGuard.removeMember(member_uuid, ownerID);
 	        	}
 	        	if (!(member instanceof Player)) return true;
 	        	Player member_ex = (Player) member;
@@ -313,7 +313,7 @@ public class CommandHandler implements CommandExecutor {
 			        	    if (!plugin.enabled) plugin.runMainTask();
 			        	    
 			        	    getWorld().getBlockAt(getX(), getY(), getZ()).setType(GRASS_BLOCK.get());
-			        	    plugin.OBWG.ReCreateRegions();
+			        	    plugin.worldGuard.recreateRegions();
 			        	    LegacyConfigSaver.Save(config);
 			        	    
 			        	    sender.sendMessage(ChatColor.GREEN + "set OneBlock on: \n" +
@@ -340,9 +340,9 @@ public class CommandHandler implements CommandExecutor {
 			            			OBWorldGuard.setEnabled(Boolean.valueOf(args[1]));
 			                    	config.set("WorldGuard", OBWorldGuard.isEnabled());
 			                    	if (OBWorldGuard.isEnabled())
-			                    		plugin.OBWG.ReCreateRegions();
+			                    		plugin.worldGuard.recreateRegions();
 			                    	else
-			                    		plugin.OBWG.RemoveRegions(PlayerInfo.size());
+			                    		plugin.worldGuard.removeRegions(PlayerInfo.size());
 			                }
 			                else sender.sendMessage(Messages.bool_format);
 			            	sender.sendMessage(String.format("%sthe OBWorldGuard is now %s", ChatColor.GREEN, (OBWorldGuard.isEnabled()?"enabled.":"disabled.")));

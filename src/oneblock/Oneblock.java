@@ -94,7 +94,7 @@ public class Oneblock extends JavaPlugin {
     public static volatile YamlConfiguration config;
     
     public final String version = getDescription().getVersion();
-    public OBWorldGuard OBWG = new OBWorldGuard();
+    public OBWorldGuard worldGuard = new OBWorldGuard();
     public Place.Type placetype = Place.Type.basic;
     private Place placer;
     
@@ -195,7 +195,7 @@ public class Oneblock extends JavaPlugin {
     
     public void reload() {
     	configManager.loadConfigFiles();
-    	OBWG.ReCreateRegions();
+    	worldGuard.recreateRegions();
     	ReloadBorders();
     }
     
@@ -237,7 +237,7 @@ public class Oneblock extends JavaPlugin {
 		
     	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
         	getLogger().info("WorldGuard has been found!");
-        	OBWG.ReCreateRegions();
+        	worldGuard.recreateRegions();
         }
         else OBWorldGuard.setEnabled(false);
     }
