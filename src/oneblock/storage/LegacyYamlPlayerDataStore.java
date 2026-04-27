@@ -22,7 +22,7 @@ import oneblock.PlayerInfo;
 public class LegacyYamlPlayerDataStore {
 	public static File f = new File(plugin.getDataFolder(), "PlData.yml");
 	
-	public static ArrayList<PlayerInfo> Read(){
+	public static ArrayList<PlayerInfo> read(){
 		ArrayList<PlayerInfo> infs = new ArrayList<PlayerInfo>();
 		ArrayList<String> nicks = new ArrayList<String>();
 		if (!f.exists()) return infs;

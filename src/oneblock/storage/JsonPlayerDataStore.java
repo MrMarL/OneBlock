@@ -27,7 +27,7 @@ public class JsonPlayerDataStore {
 	public static final File f = new File(plugin.getDataFolder(), "PlData.json");
 
 	@SuppressWarnings("unchecked")
-	public static void Write(List<PlayerInfo> pls) {
+	public static void write(List<PlayerInfo> pls) {
 		JSONObject main = new JSONObject();
 		
 		for (int i = 0;pls.size() > i;i++) {
@@ -60,7 +60,7 @@ public class JsonPlayerDataStore {
 		}
 	}
 
-	public static List<PlayerInfo> Read()  {
+	public static List<PlayerInfo> read()  {
 		JSONObject main = null;
 		JSONParser parser = new JSONParser();
 		try (FileReader reader = new FileReader(f)) {

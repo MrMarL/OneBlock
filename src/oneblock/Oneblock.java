@@ -398,7 +398,7 @@ public class Oneblock extends JavaPlugin {
     
     public void SaveData() {
     	if (DatabaseManager.save(PlayerInfo.list)) return;
-    	JsonPlayerDataStore.Write(PlayerInfo.list);
+    	JsonPlayerDataStore.write(PlayerInfo.list);
     }
 
     private void Datafile() {
@@ -411,9 +411,9 @@ public class Oneblock extends JavaPlugin {
     	}
 
 		if (JsonPlayerDataStore.f.exists())
-			PlayerInfo.replaceAll(JsonPlayerDataStore.Read());
+			PlayerInfo.replaceAll(JsonPlayerDataStore.read());
 		else
-			PlayerInfo.replaceAll(LegacyYamlPlayerDataStore.Read());
+			PlayerInfo.replaceAll(LegacyYamlPlayerDataStore.read());
     }
     
     public void setPosition(Location loc) { setPosition(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()); }
