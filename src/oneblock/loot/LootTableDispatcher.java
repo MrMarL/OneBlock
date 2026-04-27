@@ -4,7 +4,6 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -25,8 +24,7 @@ public class LootTableDispatcher {
 	private static final NamespacedKey FALLBACK_KEY = LootTables.SIMPLE_DUNGEON.getKey();
 	
 	public static boolean populate(Block block, NamespacedKey key, Random rnd) {
-		if (block == null) return false;
-		block.setType(Material.CHEST);
+		if (key == null) return false;
 		BlockState bs = block.getState();
 
 		if (!(bs instanceof Chest)) return false;
