@@ -117,7 +117,7 @@ public final class CommandTabCompleter implements TabCompleter {
         		commands.add("edit");
         	}
         }
-        else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2])) {
+        else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2]) && !Oneblock.legacy) {
         	for (LootTables lt:LootTables.values())
         		commands.add(lt.getKey().toString());
         }

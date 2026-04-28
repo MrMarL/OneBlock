@@ -11,8 +11,6 @@ import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootContext;
 import org.bukkit.loot.LootTable;
-import org.bukkit.loot.LootTables;
-
 import oneblock.Oneblock;
 
 /**
@@ -21,7 +19,7 @@ import oneblock.Oneblock;
  */
 public class LootTableDispatcher {
 	private static final Logger LOG = Oneblock.plugin.getLogger();
-	private static final NamespacedKey FALLBACK_KEY = LootTables.SIMPLE_DUNGEON.getKey();
+	private static final String FALLBACK_KEY = "chests/simple_dungeon";
 	
 	public static boolean populate(Block block, NamespacedKey key, Random rnd) {
 		if (key == null) return false;
@@ -31,11 +29,7 @@ public class LootTableDispatcher {
 		Inventory inv = ((Chest) bs).getInventory();
 		
 		LootTable table = getLootTable(key);
-		if (table == null) {
-			LOG.warning("Loot table '" + key + "' not found; using vanilla fallback '" + FALLBACK_KEY + "'.");
-			table = getLootTable(FALLBACK_KEY);
-			if (table == null) return false;
-		}
+		if (table == null) return false;
 		
 		try {
 			LootContext ctx = new LootContext.Builder(block.getLocation()).build();
@@ -53,9 +47,13 @@ public class LootTableDispatcher {
 	 */
 	public static LootTable getLootTable(NamespacedKey key) {
 		if (key == null) return null;
-	    if (!Oneblock.legacy) 
-	        return Bukkit.getLootTable(key); // 1.13+
+	    if (Oneblock.legacy) return null;
 	    
-	    return null;
+	    LootTable table = Bukkit.getLootTable(key);
+	    if (table == null) {
+	    	LOG.warning("Loot table '" + key + "' not found; using vanilla fallback '" + FALLBACK_KEY + "'.");
+	    	table = Bukkit.getLootTable(NamespacedKey.minecraft(FALLBACK_KEY));
+	    }
+	    return table;  // 1.13+
 	}
 }
