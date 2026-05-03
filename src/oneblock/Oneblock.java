@@ -80,17 +80,17 @@ public class Oneblock extends JavaPlugin {
     public static final AtomicReference<IslandOrigin> ORIGIN =
             new AtomicReference<>(IslandOrigin.EMPTY);
 
-    public static volatile int max_players_team = 0, mob_spawn_chance = 9;
-    public static volatile boolean island_for_new_players = false, rebirth = false, autojoin = false;
-    public static volatile boolean droptossup = true, physics = false;
-    public static volatile boolean lvl_bar_mode = false, particle = true;
-    public static volatile boolean allow_nether = true, protection = false;
-    public static volatile boolean saveplayerinventory = false;
-    public static volatile boolean border = false;
-    public static volatile boolean CircleMode = true;
-    public static volatile boolean UseEmptyIslands = true;
-    public static volatile boolean progress_bar = false;
-    public static volatile String phText = "";
+    public static int max_players_team = 0, mob_spawn_chance = 9;
+    public static boolean island_for_new_players = false, rebirth = false, autojoin = false;
+    public static boolean droptossup = true, physics = false;
+    public static boolean lvl_bar_mode = false, particle = true;
+    public static boolean allow_nether = true, protection = false;
+    public static boolean saveplayerinventory = false;
+    public static boolean border = false;
+    public static boolean CircleMode = true;
+    public static boolean UseEmptyIslands = true;
+    public static boolean progress_bar = false;
+    public static String phText = "";
     
     public static volatile YamlConfiguration config;
     
