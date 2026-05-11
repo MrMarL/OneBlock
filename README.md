@@ -143,17 +143,17 @@ This is especially useful when visiting other players' islands or when you want 
 In addition, you can spawn custom blocks (from mods or plugins) using the commands specified in blocks.yml
 
 for example:
-- '/setblock %d %d %d IC2:blockOreCopper'
-- '/setblock %d %d %d IC2:blockOreTin'
-- '/setblock %d %d %d IC2:blockOreUran'
-- '/setblock %d %d %d ic2:resource 4'
+- command: /execute in minecraft:overworld run setblock %d %d %d IC2:blockOreCopper
+- command: /execute in minecraft:overworld run setblock %d %d %d IC2:blockOreTin
+- command: /execute in minecraft:overworld run setblock %d %d %d IC2:blockOreUran
+- command: /execute in minecraft:overworld run setblock %d %d %d ic2:resource 4
   
 or
 
-- '/execute in minecraft:oneblock run setblock %d %d %d IC2:blockOreCopper'
-- '/execute in minecraft:oneblock run setblock %d %d %d IC2:blockOreTin'
-- '/execute in minecraft:oneblock run setblock %d %d %d IC2:blockOreUran'
-- '/execute in minecraft:oneblock run setblock %d %d %d ic2:resource 4'
+- command: execute in {world} run setblock %d %d %d IC2:blockOreCopper
+- command: execute in {world} run setblock %d %d %d IC2:blockOreTin
+- command: execute in {world} run setblock %d %d %d IC2:blockOreUran
+- command: execute in {world} run setblock %d %d %d ic2:resource 4
 
 ![Custom Blocks support](https://cdn.modrinth.com/data/cached_images/99fd24cc477a54d9490e64ae509de3583a22bc38.png)
 
