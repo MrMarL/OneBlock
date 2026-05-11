@@ -45,6 +45,7 @@ public abstract class Place {
 	 */
 	public boolean executeCommand(Block block, String command, String playerName) {
 	    String dispatched = String.format(command, block.getX(), block.getY(), block.getZ());
+	    dispatched = dispatched.replace("{world}", block.getWorld().getName());
 	    if (!playerName.isEmpty()) //if (playerName != null) 
 	    	dispatched = dispatched.replace("{player}", playerName);
 	    
