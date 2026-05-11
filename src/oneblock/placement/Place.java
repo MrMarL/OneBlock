@@ -45,8 +45,8 @@ public abstract class Place {
 	 */
 	public boolean executeCommand(Block block, String command, String playerName) {
 	    String dispatched = String.format(command, block.getX(), block.getY(), block.getZ());
-	    //if (playerName != null) 
-	    dispatched = dispatched.replace("{player}", playerName);
+	    if (!playerName.isEmpty()) //if (playerName != null) 
+	    	dispatched = dispatched.replace("{player}", playerName);
 	    
 	    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), dispatched);
 	    return true;
