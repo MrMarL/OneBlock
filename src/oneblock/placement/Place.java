@@ -34,6 +34,7 @@ public abstract class Place {
 	
 	public abstract boolean setType(Block block, Object material_, boolean physics);
 	
+	
 	/**
 	 * Execute a {@code /command} entry. The command string is the body after the
 	 * leading slash and is formatted with the block's {@code (x, y, z)} coordinates.
@@ -42,11 +43,12 @@ public abstract class Place {
 	 * reaches this method; any {@code String.format} validation is performed during
 	 * configuration parsing, so this method assumes a well-formed command template.
 	 */
-	public boolean executeCommand(Block block, String command) {
-		if (command.isEmpty() || command.charAt(0) != '/') return false;
-		String template = command.substring(1);
-		String dispatched = String.format(template, block.getX(), block.getY(), block.getZ());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), dispatched);
-		return true;
+	public boolean executeCommand(Block block, String command, String playerName) {
+	    String dispatched = String.format(command, block.getX(), block.getY(), block.getZ());
+	    //if (playerName != null) 
+	    dispatched = dispatched.replace("{player}", playerName);
+	    
+	    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), dispatched);
+	    return true;
 	}
 }

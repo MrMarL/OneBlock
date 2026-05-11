@@ -259,7 +259,7 @@ public class Oneblock extends JavaPlugin {
                 getLogger().warning("Misconfigured chest '" + chest_name + "' in chests.yml — no loot table or item list found.");	
                 break;
             case COMMAND:
-            	placer.executeCommand(block, (String)entry.value);
+            	placer.executeCommand(block, (String)entry.value, ponl.getName());
                 break;
             default:
                 break;

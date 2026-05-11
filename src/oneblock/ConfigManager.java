@@ -266,7 +266,7 @@ public class ConfigManager {
     			break;
     		case "command":
     			String str = payload.toString();
-    			try { String.format(str.substring(1), 99, 64, 99); } 
+    			try { String.format(str = str.substring(1), 99, 64, 99); } 
     			catch (Exception e) 
     			{
     				plugin.getLogger().warning("blocks.yml: invalid command '" + payload + "'"); 				
