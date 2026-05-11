@@ -268,8 +268,11 @@ public class ConfigManager {
     			String str = payload.toString();
     			if (str.startsWith("/"))str = str.substring(1);
     			
-    			try { String.format(str, 99, 64, 99); }  catch (Exception e) 
-    			{
+    			try {
+    				if (str.isEmpty()) throw new Exception();
+    				String.format(str, 99, 64, 99); 
+    			}
+    			catch (Exception e) {
     				plugin.getLogger().warning("blocks.yml: invalid command '" + payload + "'"); 				
     				return;
     			}
