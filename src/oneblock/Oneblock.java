@@ -260,7 +260,7 @@ public class Oneblock extends JavaPlugin {
             default:
             	XBlock.setType(block, GRASS_BLOCK);
         		if (rnd.nextInt(FLOWER_CHANCE) == 1)
-        			XBlock.setType(getWor().getBlockAt(X_pl, getY() + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
+        			XBlock.setType(block.getRelative(0, 1, 0), flowers.get(rnd.nextInt(flowers.size())));
         		break;
         }
 
