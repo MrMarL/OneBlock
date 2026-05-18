@@ -301,7 +301,7 @@ public class ConfigManager {
     private PoolEntry resolveBlock(String text) {
     	if (text == null || text.isEmpty()) return PoolEntry.GRASS;
     	Object mt = Material.matchMaterial(text);
-    	if (mt == null || mt == GRASS_BLOCK || !((Material) mt).isBlock())
+    	if (mt == null || mt == GRASS_BLOCK.get() || !((Material) mt).isBlock())
     		mt = getCustomBlock(text);
     	if (legacy && mt == null) {
     		mt = XMaterial.matchXMaterial(text)
