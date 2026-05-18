@@ -3,7 +3,6 @@ package oneblock;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
 import oneblock.events.BlockEvent;
@@ -110,7 +109,6 @@ public class Oneblock extends JavaPlugin {
     boolean PAPI = false;
     boolean enabled = false;
     
-    public ArrayList <XMaterial> flowers = new ArrayList<>();
     public PlayerCache cache = new PlayerCache();
     
     /** Shorthand for {@code origin().world()}. Pre-config returns {@code null}. */
@@ -259,10 +257,12 @@ public class Oneblock extends JavaPlugin {
             	placer.executeCommand(block, (String)entry.value, ponl.getName());
                 break;
             default:
-            	XBlock.setType(block, GRASS_BLOCK);
-        		if (rnd.nextInt(FLOWER_CHANCE) == 1)
-        			XBlock.setType(block.getRelative(0, 1, 0), flowers.get(rnd.nextInt(flowers.size())));
-        		break;
+            	block.setType(GRASS_BLOCK.get());
+                if (rnd.nextInt(FLOWER_CHANCE) == 1) {
+                    PoolEntry flower = PoolRegistry.pickFlower(rnd);
+                    placer.setType(block.getRelative(0, 1, 0), flower.value, physics);
+                }
+                break;
         }
 
         if (rnd.nextInt(mob_spawn_chance) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);

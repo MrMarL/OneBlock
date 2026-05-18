@@ -197,15 +197,25 @@ public class ConfigManager {
     	}
     	while (q < bl_temp.size()) {
     		Object raw = bl_temp.get(q++);
-    		parsePoolEntry(raw, level);
+    		Object[] payload = parsePoolEntry(raw);
+    		if (payload.length > 0) {
+    			if (payload[0] instanceof PoolEntry) 
+    				PoolRegistry.addBlock((PoolEntry)payload[0], payload.length);
+    			else if (payload[0] instanceof EntityType) 
+    				PoolRegistry.addMob((EntityType)payload[0], payload.length);
+    		}
     	}
     	level.blocks = PoolRegistry.totalBlocks();
     	level.mobs = PoolRegistry.totalMobs();
     }
     
+    /**
+     * Returns an array where [0] = payload, length = weight.
+     * Empty array if invalid/unrecognized.
+     */
     @SuppressWarnings("unchecked")
-    private void parsePoolEntry(Object raw, Level level) {
-    	if (raw == null) return;
+    private Object[] parsePoolEntry(Object raw) {
+    	if (raw == null) return new Object[0];
     	int weight = 1;
     	String kind;
     	Object payload;
@@ -228,41 +238,38 @@ public class ConfigManager {
     		else if (m.containsKey("command"))    { kind = "command";    payload = m.get("command"); }
     		else {
     			plugin.getLogger().warning("blocks.yml: entry has no recognized kind (expected one of block/mob/loot_table/command): " + m);
-    			return;
+    			return new Object[0];
     		}
     	} else if (raw instanceof String) {
     		String text = (String) raw;
-    		if (text.isEmpty()) return;
+    		if (text.isEmpty()) return new Object[0];
     		if (text.charAt(0) == '/') { kind = "command"; payload = text; }
     		else {
     			try { EntityType.valueOf(text.toUpperCase()); kind = "mob"; payload = text.toUpperCase(); }
     			catch (Exception ignore) { kind = "block"; payload = text; }
     		}
-    	} else {
-    		return;
-    	}
+    	} 
+    	else return new Object[0];
     	
-    	if (payload == null) return;
+    	if (payload == null) return new Object[0];
     	switch (kind) {
     		case "block":
-    			PoolRegistry.addBlock(resolveBlock(payload.toString()), weight);
+    			payload = resolveBlock(payload.toString());
     			break;
     		case "mob":
-    			EntityType et;
-    			try { et = EntityType.valueOf(payload.toString().toUpperCase()); }
+    			try { payload = EntityType.valueOf(payload.toString().toUpperCase()); }
     			catch (Exception e) {
     				plugin.getLogger().warning("blocks.yml: unknown mob '" + payload + "'");
-    				return;
+    				return new Object[0];
     			}
-    			PoolRegistry.addMob(et, weight);
     			break;
     		case "chest":
     			String chest_name = payload.toString();
     			if (!ChestItems.hasChest(chest_name)) {
     				plugin.getLogger().warning("blocks.yml: chest name '" + payload + "' not found in chests.yml");
-    				return;
+    				return new Object[0];
     			}
-    			PoolRegistry.addBlock(PoolEntry.chest(chest_name), weight);
+    			payload = PoolEntry.chest(chest_name);
     			break;
     		case "command":
     			String str = payload.toString();
@@ -274,11 +281,15 @@ public class ConfigManager {
     			}
     			catch (Exception e) {
     				plugin.getLogger().warning("blocks.yml: invalid command '" + payload + "'"); 				
-    				return;
+    				return new Object[0];
     			}
-    			PoolRegistry.addBlock(PoolEntry.command(str), weight);
+    			payload = PoolEntry.command(str);
     			break;
     	}
+    	
+    	Object[] result = new Object[weight];
+        result[0] = payload;
+        return result;
     }
     
     /**
@@ -374,12 +385,19 @@ public class ConfigManager {
     }
     
     private void Flowerfile() {
-        plugin.flowers.clear();
         File flower = getFile("flowers.yml");
         config_temp = YamlConfiguration.loadConfiguration(flower);
-        plugin.flowers.add(GRASS);
-        for(String list:config_temp.getStringList("flowers"))
-        	plugin.flowers.add(XMaterial.matchXMaterial(list).orElse(GRASS));
+        
+        List<?> rawList = config_temp.getList("flowers");
+        if (rawList == null) return;
+        
+        for (Object raw : rawList) {
+            Object[] arr = parsePoolEntry(raw);
+            if (arr.length == 0) continue;
+            if (!(arr[0] instanceof PoolEntry)) continue;
+            
+            PoolRegistry.addFlower((PoolEntry) arr[0], arr.length);
+        }
     }
     
     private void Chestfile() {
