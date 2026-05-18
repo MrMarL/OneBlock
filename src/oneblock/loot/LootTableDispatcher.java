@@ -21,10 +21,10 @@ public class LootTableDispatcher {
 	
 	public static boolean populate(Chest chest, NamespacedKey key, Random rnd) {
 		if (key == null) return false;
-		Inventory inv = chest.getInventory();
-		
 		LootTable table = getLootTable(key);
 		if (table == null) return false;
+		
+		Inventory inv = chest.getInventory();
 		
 		try {
 			LootContext ctx = new LootContext.Builder(chest.getLocation()).build();
