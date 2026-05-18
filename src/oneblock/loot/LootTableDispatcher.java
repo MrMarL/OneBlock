@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootContext;
 import org.bukkit.loot.LootTable;
 import oneblock.Oneblock;
@@ -25,9 +26,16 @@ public class LootTableDispatcher {
 		LootTable table = getLootTable(key);
 		if (table == null) return false;
 		
-		LootContext ctx = new LootContext.Builder(chest.getLocation()).build();
-		table.fillInventory(chest.getInventory(), rnd, ctx);
-		return true;
+		Inventory inv = chest.getInventory();
+		
+		try {
+			LootContext ctx = new LootContext.Builder(chest.getLocation()).build();
+			table.fillInventory(inv, rnd, ctx);
+			return true;
+		} catch (Throwable t) {
+			LOG.warning("Loot table '" + key + "' failed to populate: " + t.getMessage());
+			return false;
+		}
 	}
 	
 	/**
