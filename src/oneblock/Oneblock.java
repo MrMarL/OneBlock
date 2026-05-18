@@ -239,13 +239,9 @@ public class Oneblock extends JavaPlugin {
         }
         
         PoolEntry entry = PoolRegistry.pickBlock(lvl_inf.blocks, rnd);
+        if (entry == null) return;
         
-        if (entry == null || entry.kind == PoolEntry.Kind.DEFAULT_GRASS) {
-            XBlock.setType(block, GRASS_BLOCK);
-            if (rnd.nextInt(FLOWER_CHANCE) == 1)
-                XBlock.setType(getWor().getBlockAt(X_pl, getY() + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
-        }
-        else switch (entry.kind) {
+        switch (entry.kind) {
             case BLOCK:
                 placer.setType(block, entry.value, physics);
                 break;
@@ -262,7 +258,10 @@ public class Oneblock extends JavaPlugin {
             	placer.executeCommand(block, (String)entry.value, ponl.getName());
                 break;
             default:
-                break;
+            	XBlock.setType(block, GRASS_BLOCK);
+        		if (rnd.nextInt(FLOWER_CHANCE) == 1)
+        			XBlock.setType(getWor().getBlockAt(X_pl, getY() + 1, Z_pl), flowers.get(rnd.nextInt(flowers.size())));
+        		break;
         }
 
         if (rnd.nextInt(mob_spawn_chance) == 0) spawnRandomMob(X_pl, Z_pl, lvl_inf);

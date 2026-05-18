@@ -32,7 +32,7 @@ public class PoolRegistry {
     }
     
     public static PoolEntry pickBlock(int bound, Random rnd) {
-        if (bound <= 0) return null;
+        if (bound <= 0) return PoolEntry.GRASS;
         return BLOCKS.get(rnd.nextInt(bound));
     }
     
