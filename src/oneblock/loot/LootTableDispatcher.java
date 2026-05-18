@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootContext;
@@ -21,18 +19,15 @@ public class LootTableDispatcher {
 	private static final Logger LOG = Oneblock.plugin.getLogger();
 	private static final String FALLBACK_KEY = "chests/simple_dungeon";
 	
-	public static boolean populate(Block block, NamespacedKey key, Random rnd) {
+	public static boolean populate(Chest chest, NamespacedKey key, Random rnd) {
 		if (key == null) return false;
-		BlockState bs = block.getState();
-
-		if (!(bs instanceof Chest)) return false;
-		Inventory inv = ((Chest) bs).getInventory();
+		Inventory inv = chest.getInventory();
 		
 		LootTable table = getLootTable(key);
 		if (table == null) return false;
 		
 		try {
-			LootContext ctx = new LootContext.Builder(block.getLocation()).build();
+			LootContext ctx = new LootContext.Builder(chest.getLocation()).build();
 			table.fillInventory(inv, rnd, ctx);
 			return true;
 		} catch (Throwable t) {
