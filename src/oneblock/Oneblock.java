@@ -244,7 +244,7 @@ public class Oneblock extends JavaPlugin {
                 placer.setType(block, entry.value, physics);
                 break;
             case CHEST:
-            	block.setType(Material.CHEST, physics);
+            	block.setType(Material.CHEST);
                 BlockState bs = block.getState();
             	if (!(bs instanceof Chest)) break;
             	Chest chest = (Chest) bs;
@@ -260,6 +260,7 @@ public class Oneblock extends JavaPlugin {
             	block.setType(GRASS_BLOCK.get());
                 if (rnd.nextInt(FLOWER_CHANCE) == 1) {
                     PoolEntry flower = PoolRegistry.pickFlower(rnd);
+                    if (flower == null) break;
                     placer.setType(block.getRelative(0, 1, 0), flower.value, physics);
                 }
                 break;

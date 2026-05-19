@@ -43,6 +43,7 @@ public class PoolRegistry {
     }
     
     public static PoolEntry pickFlower(Random rnd) {
+    	if (FLOWERS.isEmpty()) return null;
         return FLOWERS.get(rnd.nextInt(FLOWERS.size()));
     }
     
@@ -68,6 +69,5 @@ public class PoolRegistry {
         BLOCKS.clear();
         MOBS.clear();
         FLOWERS.clear();
-        FLOWERS.add(PoolEntry.block(GRASS.get()));
     }
 }
