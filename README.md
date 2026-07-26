@@ -1,15 +1,23 @@
-<a href="https://www.spigotmc.org/resources/oneblock.83215/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="spigot page" align="right"></a>
-<div align="center">
-  <h1>OneBlock</h1>
-  <h3>Support 1.8.X - 26.1.X and higher...</h3>
-  <h3>Works on java 8 and bukkit/</h3>
+<a href="https://modrinth.com/plugin/oneblock_bukkit/"><img src="https://i.ibb.co/xCRdNdM/ob.png" width="200" alt="Spigot Page" align="right"></a>
 
-  [![Discord Shield](https://discordapp.com/api/guilds/797551904250920980/widget.png?style=shield)](https://discord.gg/zUKrmp3P9y)
+<div align="center">
+  <h1>OneBlock Bukkit Plugin</h1>
+
+  [![Java Version](https://img.shields.io/badge/Java-8-red.svg)](https://openjdk.org/projects/jdk/8/)
+  [![Spigot API](https://img.shields.io/badge/Spigot_API-1.20.6-blue.svg)](https://hub.spigotmc.org/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
   [![Java CI](https://github.com/MrMarL/OneBlock/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/MrMarL/OneBlock/actions/workflows/maven-publish.yml)
+  [![Discord](https://img.shields.io/discord/797551904250920980?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/zUKrmp3P9y)
+
+  [![Supported](https://img.shields.io/badge/Bukkit/Spigot/Paper:-black.svg?style=for-the-badge)](https://hub.spigotmc.org/)
+  ![Min ver](https://img.shields.io/badge/1.8.X-red.svg?style=for-the-badge)
+  ![-](https://img.shields.io/badge/>>-gray.svg?style=for-the-badge)
+  ![Max ver](https://img.shields.io/badge/26.2+-green.svg?style=for-the-badge)
 </div>
 
-# OneBlock minigame plugin.
-## 🌍 How to Start OneBlock?
+<br>
+
+# 🌍 How to Start OneBlock?
 ### 1. Create the World
 Generate a dedicated OneBlock world:
 For example, using [Multiverse-Core](https://modrinth.com/plugin/multiverse-core):
