@@ -51,13 +51,13 @@ public class LegacyConfigSaver {
 	        return;
 		} 
 		catch (Exception e) {
-			Oneblock.plugin.getLogger().warning("Legacy config save failed for " + f + ": " + e.getMessage());
+			OneBlock.plugin.getLogger().warning("Legacy config save failed for " + f + ": " + e.getMessage());
 		}
 		
 		// 1.18+
 		try { fc.save(f); } 
 		catch (Exception e) {
-			Oneblock.plugin.getLogger().warning("Config save failed for " + f + ": " + e.getMessage());
+			OneBlock.plugin.getLogger().warning("Config save failed for " + f + ": " + e.getMessage());
 		}
 	}
 	

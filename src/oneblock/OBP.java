@@ -56,7 +56,7 @@ public final class OBP extends PlaceholderExpansion {
     }
     @Override
     public String getVersion() {
-        return Oneblock.plugin.version;
+        return OneBlock.plugin.version;
     }
     @Override
     public String onRequest(OfflinePlayer p, String identifier) {
@@ -64,7 +64,7 @@ public final class OBP extends PlaceholderExpansion {
     	
     	if (identifier.endsWith("_by_position")) {
     		if (!(p instanceof Player)) return NONE_PLACEHOLDER;
-    		UUID ownerUUID = PlayerInfo.get(Oneblock.plugin.findNearestRegionId(((Player)p).getLocation())).uuid;
+    		UUID ownerUUID = PlayerInfo.get(OneBlock.plugin.findNearestRegionId(((Player)p).getLocation())).uuid;
 	        if (ownerUUID == null) return NONE_PLACEHOLDER;
 
     		return onRequest(Bukkit.getOfflinePlayer(ownerUUID), identifier.substring(0, identifier.length() - "_by_position".length()));
@@ -72,19 +72,19 @@ public final class OBP extends PlaceholderExpansion {
     	
 		switch (identifier) {
 			case "lvl":
-				return Integer.toString(Oneblock.getLevel(p.getUniqueId()));
+				return Integer.toString(OneBlock.getLevel(p.getUniqueId()));
 	
 			case "lvl_name":
-				return Oneblock.getLevelName(p.getUniqueId());
+				return OneBlock.getLevelName(p.getUniqueId());
 	
 			case "next_lvl":
-				return Integer.toString(Oneblock.getNextLevel(p.getUniqueId()));
+				return Integer.toString(OneBlock.getNextLevel(p.getUniqueId()));
 	
 			case "next_lvl_name":
-				return Oneblock.getNextLevelName(p.getUniqueId());
+				return OneBlock.getNextLevelName(p.getUniqueId());
 	
 			case "break_on_this_lvl":
-				return Integer.toString(Oneblock.getBroken(p.getUniqueId()));
+				return Integer.toString(OneBlock.getBroken(p.getUniqueId()));
 	
 			case "lvl_lenght":
 				// `lvl_lenght` was the original (typo'd) placeholder name shipped
@@ -94,19 +94,19 @@ public final class OBP extends PlaceholderExpansion {
 				// should use `lvl_length`.
 				warnDeprecatedPlaceholderOnce("lvl_lenght", "lvl_length");
 			case "lvl_length":
-				return Integer.toString(Oneblock.getLevelLength(p.getUniqueId()));
+				return Integer.toString(OneBlock.getLevelLength(p.getUniqueId()));
 	
 			case "need_to_lvl_up":
-				return Integer.toString(Oneblock.getRemaining(p.getUniqueId()));
+				return Integer.toString(OneBlock.getRemaining(p.getUniqueId()));
 	
 			case "player_count":
-				return Integer.toString(Oneblock.plugin.cache.getPlayers().size());
+				return Integer.toString(OneBlock.plugin.cache.getPlayers().size());
 	
 			case "visit_allowed":
-				return Boolean.toString(Oneblock.isVisitAllowed(p.getUniqueId()));
+				return Boolean.toString(OneBlock.isVisitAllowed(p.getUniqueId()));
 	
 			case "visits":
-				return Integer.toString(Oneblock.countVisitors(p.getUniqueId()));
+				return Integer.toString(OneBlock.countVisitors(p.getUniqueId()));
 	
 			case "percent":
 				PlayerInfo inf0 = PlayerInfo.get(p.getUniqueId());
@@ -127,7 +127,7 @@ public final class OBP extends PlaceholderExpansion {
 				
 			case "top_position":
 	            PlayerInfo playerInfo = PlayerInfo.get(p.getUniqueId());
-	            int position = Oneblock.getTopPosition(playerInfo);
+	            int position = OneBlock.getTopPosition(playerInfo);
 	            return position == -1 ? NONE_PLACEHOLDER : Integer.toString(position + 1);
 		}
     	
@@ -169,7 +169,7 @@ public final class OBP extends PlaceholderExpansion {
      */
     private static void warnDeprecatedPlaceholderOnce(String legacy, String canonical) {
         if (!WARNED_DEPRECATED_PLACEHOLDERS.add(legacy)) return;
-        Oneblock.plugin.getLogger().warning(
+        OneBlock.plugin.getLogger().warning(
                 "Placeholder %OB_" + legacy + "% is deprecated; please use %OB_" + canonical + "% instead. " +
                 "The legacy spelling will be removed in a future release.");
     }
@@ -182,7 +182,7 @@ public final class OBP extends PlaceholderExpansion {
             int position = Integer.parseInt(parts[1]) - 1;
             if (position < 0 || position >= 10) return null;
             
-            PlayerInfo topPlayer = Oneblock.getTop(position);
+            PlayerInfo topPlayer = OneBlock.getTop(position);
             
             if (topPlayer.uuid == null) return NONE_PLACEHOLDER;
             

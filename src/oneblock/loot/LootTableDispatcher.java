@@ -9,10 +9,10 @@ import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootContext;
 import org.bukkit.loot.LootTable;
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 
 public class LootTableDispatcher {
-	private static final Logger LOG = Oneblock.plugin.getLogger();
+	private static final Logger LOG = OneBlock.plugin.getLogger();
 	private static final String FALLBACK_KEY = "chests/simple_dungeon";
 	
 	/**
@@ -44,7 +44,7 @@ public class LootTableDispatcher {
 	 */
 	public static LootTable getLootTable(NamespacedKey key) {
 		if (key == null) return null;
-	    if (Oneblock.legacy) return null;
+	    if (OneBlock.legacy) return null;
 	    
 	    LootTable table = Bukkit.getLootTable(key);
 	    if (table == null) {

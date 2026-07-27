@@ -1,6 +1,6 @@
 package oneblock;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import java.io.File;
 import java.util.List;
@@ -85,8 +85,8 @@ public class ConfigManager {
     }
 	 
     public void updateBoolParameters() {
-    	CircleMode = Check("circlemode", CircleMode);
-    	UseEmptyIslands = Check("useemptyislands", UseEmptyIslands);
+    	circlemode = Check("circlemode", circlemode);
+    	useEmptyIslands = Check("useemptyislands", useEmptyIslands);
     	saveplayerinventory = Check("saveplayerinventory", saveplayerinventory);
         protection = Check("protection", protection);
         autojoin = Check("autojoin", autojoin);

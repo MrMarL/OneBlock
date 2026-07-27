@@ -97,7 +97,7 @@ public final class Island {
     public static void place(World world, int x, int y, int z) {
     	XBlock.setType(world.getBlockAt(x, y, z), XMaterial.GRASS_BLOCK);
     	
-    	if (!Oneblock.island_for_new_players) return;
+    	if (!OneBlock.island_for_new_players) return;
         if (custom == null) {
             createDefaultIsland(world, x, y, z);
             return;

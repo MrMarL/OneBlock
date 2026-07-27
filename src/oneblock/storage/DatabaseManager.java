@@ -1,6 +1,6 @@
 package oneblock.storage;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

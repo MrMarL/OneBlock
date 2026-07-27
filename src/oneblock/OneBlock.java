@@ -46,8 +46,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class Oneblock extends JavaPlugin {
-    public static Oneblock plugin;
+public class OneBlock extends JavaPlugin {
+    public static OneBlock plugin;
     
     private static final int FLOWER_CHANCE = 3;
     private static final int BORDER_WARNING_DISTANCE = 2;
@@ -86,8 +86,8 @@ public class Oneblock extends JavaPlugin {
     public static boolean allow_nether = true, protection = false;
     public static boolean saveplayerinventory = false;
     public static boolean border = false;
-    public static boolean CircleMode = true;
-    public static boolean UseEmptyIslands = true;
+    public static boolean circlemode = true;
+    public static boolean useEmptyIslands = true;
     public static boolean progress_bar = false;
     public static String phText = "";
     
@@ -128,7 +128,7 @@ public class Oneblock extends JavaPlugin {
     public boolean isPAPIEnabled() { return PAPI; }
     public int[] getIslandCoordinates(final int id) {
     	IslandOrigin o = ORIGIN.get();
-    	return IslandCoordinateCalculator.getById(id, o.x(), o.z(), o.offset(), CircleMode);
+    	return IslandCoordinateCalculator.getById(id, o.x(), o.z(), o.offset(), circlemode);
     }
     public int findNearestRegionId(final Location loc) { return IslandCoordinateCalculator.findNearestRegionId(loc); }
     
@@ -200,8 +200,8 @@ public class Oneblock extends JavaPlugin {
     
     private void setupMetrics(Metrics metrics) {
         metrics.addCustomChart(new SimplePie("premium", () -> String.valueOf(OBWorldGuard.canUse)));
-        metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(CircleMode)));
-        metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(UseEmptyIslands)));
+        metrics.addCustomChart(new SimplePie("circle_mode", () -> String.valueOf(circlemode)));
+        metrics.addCustomChart(new SimplePie("use_empty_islands", () -> String.valueOf(useEmptyIslands)));
         metrics.addCustomChart(new SimplePie("gui", () -> String.valueOf(GUI.enabled)));
         metrics.addCustomChart(new SimplePie("place_type", () -> String.valueOf(placetype)));
     }

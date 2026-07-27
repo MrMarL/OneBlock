@@ -1,6 +1,6 @@
 package oneblock;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -59,7 +59,7 @@ public class CommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	if (!cmd.getName().equalsIgnoreCase("oneblock")) return false;
-        if (!requirePermission(sender, "Oneblock.join")) return true;
+        if (!requirePermission(sender, "oneblock.join")) return true;
         if (args.length == 0) args = new String[] {"j"};
         
         Player player = sender instanceof Player ? (Player) sender : null;
@@ -79,7 +79,7 @@ public class CommandHandler implements CommandExecutor {
 	            int plID = PlayerInfo.getId(uuid);
 	            if (plID == -1) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
-	            	plID = PlayerInfo.getFreeId(UseEmptyIslands);
+	            	plID = PlayerInfo.getFreeId(useEmptyIslands);
 	            	int result[] = plugin.getIslandCoordinates(plID);
 	            	X_pl = result[0]; Z_pl = result[1];
 	            	if (plID != PlayerInfo.size())
@@ -113,7 +113,7 @@ public class CommandHandler implements CommandExecutor {
 	        }
 	        case ("v"):
 	        case ("visit"):{
-	        	if (!requirePermission(sender, "Oneblock.visit")) return true;
+	        	if (!requirePermission(sender, "oneblock.visit")) return true;
 	        	if (player == null) return false;
 	            if (args.length < 2) {
 	        		GUI.visitGUI(player, Bukkit.getOfflinePlayers());
@@ -132,7 +132,7 @@ public class CommandHandler implements CommandExecutor {
 	    			return true;
 	    		}
 	    		PlayerInfo pinf = PlayerInfo.get(uuid);
-	    		if (!pinf.allowVisit || (inv instanceof Player && !((Player) inv).hasPermission("Oneblock.allow_visit"))) {
+	    		if (!pinf.allowVisit || (inv instanceof Player && !((Player) inv).hasPermission("oneblock.allow_visit"))) {
 	    			pinf.allowVisit = false;
 	    			sender.sendMessage(Messages.not_allow_visit);
 	    			return true;
@@ -146,7 +146,7 @@ public class CommandHandler implements CommandExecutor {
 	            return true;
 	        }
 	        case ("allow_visit"):{
-	        	if (!requirePermission(sender, "Oneblock.allow_visit")) return true;
+	        	if (!requirePermission(sender, "oneblock.allow_visit")) return true;
 	        	if (player == null) return false;
 	        	UUID uuid = player.getUniqueId();
 	        	if (PlayerInfo.getId(uuid) == -1) return true;
@@ -188,7 +188,7 @@ public class CommandHandler implements CommandExecutor {
 	        	return true;
 	        }
 	        case ("kick"):{
-	        	if (!requirePermission(sender, "Oneblock.kick")) return true;
+	        	if (!requirePermission(sender, "oneblock.kick")) return true;
 	        	if (args.length < 2) {
 	        		sender.sendMessage(Messages.kick_usage);
 	        		return true;
@@ -214,7 +214,7 @@ public class CommandHandler implements CommandExecutor {
 	        	Player member_ex = (Player) member;
 	        	int memberID = plugin.findNearestRegionId(member_ex.getLocation());
 	        	if (memberID == ownerID) {
-	        		if (!member_ex.hasPermission("Oneblock.set"))
+	        		if (!member_ex.hasPermission("oneblock.set"))
 	        			member_ex.performCommand("ob j");
 	        		info.removeBar(member_ex);
 	        		sender.sendMessage(member.getName() + Messages.kicked);
@@ -233,7 +233,7 @@ public class CommandHandler implements CommandExecutor {
 	        	return true;
 	        }
 	        case ("help"):{
-	        	sender.sendMessage(sender.hasPermission("Oneblock.set") ? Messages.help_adm:Messages.help);
+	        	sender.sendMessage(sender.hasPermission("oneblock.set") ? Messages.help_adm:Messages.help);
 	        	return true;
 	        }
 	        case ("gui"):{
@@ -244,7 +244,7 @@ public class CommandHandler implements CommandExecutor {
 	        	// Fall-through contract for the next three cases ("gui", "idreset", default):
 	        	//   single-arg -> user-facing behaviour (open GUI / self-idreset), returns.
 	        	//   multi-arg  -> intentional fall-through to the admin `default` block,
-	        	//                 which performs the Oneblock.set permission check and
+	        	//                 which performs the oneblock.set permission check and
 	        	//                 re-dispatches to the admin switch's matching case.
 	        	// DO NOT insert new cases in between without preserving the chain, or
 	        	// `/ob gui true|false` and `/ob idreset <name>` will silently stop
@@ -254,7 +254,7 @@ public class CommandHandler implements CommandExecutor {
 	        case ("idreset"):{
 	        	if (args.length == 1) {
 	        		if (player == null) return false;
-		        	if (!requirePermission(sender, "Oneblock.idreset")) return true;
+		        	if (!requirePermission(sender, "oneblock.idreset")) return true;
 		        	if (!idresetCommand(player)) return true;
 		        	sender.sendMessage(Messages.idreset);
 		        	player.performCommand("ob leave /n");
@@ -263,7 +263,7 @@ public class CommandHandler implements CommandExecutor {
 	        	// fall through: `/ob idreset <name>` reaches the admin idreset via default.
 	        }
 	        default: {//admin commands
-	        	if (requirePermission(sender, "Oneblock.set")) 
+	        	if (requirePermission(sender, "oneblock.set")) 
 		        {
 	        		config = YamlConfiguration.loadConfiguration(LegacyConfigSaver.file); // Loading the config.yml file before making changes.
 	        		Bukkit.getScheduler().runTaskLater(plugin, () -> { LegacyConfigSaver.Save(config); }, 2L); // Saving the config.yml file after making changes.

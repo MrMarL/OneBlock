@@ -10,7 +10,7 @@ import java.util.Objects;
  * The snapshot {@code (world, x, y, z, offset)} is treated as a single atomically-replaceable unit.
  * Writers mutate the origin via
  * {@link java.util.concurrent.atomic.AtomicReference#updateAndGet} on {@code Oneblock.ORIGIN};
- * readers call {@link Oneblock#origin()} once and use the captured snapshot so that a concurrent
+ * readers call {@link OneBlock#origin()} once and use the captured snapshot so that a concurrent
  * {@code /ob set} cannot produce a mixed (torn) view where, say, {@code x} is new but {@code offset} is old.
  * <p>
  * The zero/null sentinel {@link #EMPTY} is used both as the initial ORIGIN state (before config.yml load)

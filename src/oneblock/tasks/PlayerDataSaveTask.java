@@ -1,6 +1,6 @@
 package oneblock.tasks;
 
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 
 /**
  * Async-scheduled persistence pulse: every five minutes (6000 ticks) it
@@ -9,9 +9,9 @@ import oneblock.Oneblock;
  * fallback {@link oneblock.storage.JsonPlayerDataStore}.
  */
 public final class PlayerDataSaveTask implements Runnable {
-    private final Oneblock plugin;
+    private final OneBlock plugin;
 
-    public PlayerDataSaveTask(Oneblock plugin) { this.plugin = plugin; }
+    public PlayerDataSaveTask(OneBlock plugin) { this.plugin = plugin; }
 
     @Override
     public void run() { plugin.saveData(); }

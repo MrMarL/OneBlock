@@ -1,37 +1,37 @@
 package oneblock.tasks;
 
 import oneblock.IslandOrigin;
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 /**
  * Async-scheduled poll that resolves the configured island {@code world} once Bukkit has finished
- * loading worlds. On success it folds the resolved {@link World} into {@link Oneblock#origin()}
+ * loading worlds. On success it folds the resolved {@link World} into {@link OneBlock#origin()}
  * (preserving the already-loaded {@code x/y/z/offset}), kicks off the four steady-state runners via
- * {@link Oneblock#runMainTask()} and triggers a {@link Oneblock#reload()} so all dependent caches
+ * {@link OneBlock#runMainTask()} and triggers a {@link OneBlock#reload()} so all dependent caches
  * see the new world.
  */
 public final class WorldInitTask implements Runnable {
-  private final Oneblock plugin;
+  private final OneBlock plugin;
 
-  public WorldInitTask(Oneblock plugin) {
+  public WorldInitTask(OneBlock plugin) {
     this.plugin = plugin;
   }
 
   @Override
   public void run() {
-      if (Oneblock.getWor() != null) return;
-      final World w = Bukkit.getWorld(Oneblock.config.getString("world"));
+      if (OneBlock.getWor() != null) return;
+      final World w = Bukkit.getWorld(OneBlock.config.getString("world"));
       
       if (w != null) {
-    	  Oneblock.ORIGIN.updateAndGet(prev -> new IslandOrigin(w, prev.x(), prev.y(), prev.z(), prev.offset()));
-    	  Oneblock.leavewor = Bukkit.getWorld(Oneblock.config.getString("leaveworld"));
+    	  OneBlock.ORIGIN.updateAndGet(prev -> new IslandOrigin(w, prev.x(), prev.y(), prev.z(), prev.offset()));
+    	  OneBlock.leavewor = Bukkit.getWorld(OneBlock.config.getString("leaveworld"));
     	  plugin.getLogger().info("The initialization of the world was successful!");
     	  plugin.runMainTask();
     	  plugin.reload();
       } else {
-    	  plugin.getLogger().info("Waiting for initialization of world '" + Oneblock.config.getString("world") + "'...");
+    	  plugin.getLogger().info("Waiting for initialization of world '" + OneBlock.config.getString("world") + "'...");
       }
   }
 }

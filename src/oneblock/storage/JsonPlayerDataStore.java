@@ -1,6 +1,6 @@
 package oneblock.storage;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import java.io.File;
 import java.io.FileReader;

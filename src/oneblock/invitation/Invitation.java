@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import oneblock.CommandHandler;
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 import oneblock.PlayerInfo;
 
 public class Invitation extends AbstractInvitation {
@@ -35,7 +35,7 @@ public class Invitation extends AbstractInvitation {
 				return;
     	Invitation inv_ = new Invitation(name, to);
     	Invitation.list.add(inv_);
-    	Bukkit.getScheduler().runTaskLater(Oneblock.plugin, 
+    	Bukkit.getScheduler().runTaskLater(OneBlock.plugin, 
     			() -> { Invitation.list.remove(inv_); }, 300L);
     }
 	

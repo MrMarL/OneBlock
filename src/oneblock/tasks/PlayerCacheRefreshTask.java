@@ -2,7 +2,7 @@ package oneblock.tasks;
 
 import org.bukkit.World;
 
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 
 /**
  * Async-scheduled refresh of {@link oneblock.PlayerCache} contents from
@@ -11,13 +11,13 @@ import oneblock.Oneblock;
  * runners can iterate the cache instead of re-querying Bukkit each time.
  */
 public final class PlayerCacheRefreshTask implements Runnable {
-    private final Oneblock plugin;
+    private final OneBlock plugin;
 
-    public PlayerCacheRefreshTask(Oneblock plugin) { this.plugin = plugin; }
+    public PlayerCacheRefreshTask(OneBlock plugin) { this.plugin = plugin; }
 
     @Override
     public void run() {
-        World w = Oneblock.getWorld();
+        World w = OneBlock.getWorld();
         if (w != null) plugin.cache.updateCache(w.getPlayers());
     }
 }

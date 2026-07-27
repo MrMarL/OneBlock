@@ -1,6 +1,6 @@
 package oneblock.events;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import java.util.UUID;
 

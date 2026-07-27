@@ -49,7 +49,7 @@ public final class ChestItems {
                     if (key != null) {
                         aliases.put(name, key);
                     } else {
-                        Oneblock.plugin.getLogger().warning(
+                        OneBlock.plugin.getLogger().warning(
                             "Unknown loot-table key '" + str + "' for chest alias '" + name + "'");
                     }
                     continue;
@@ -93,7 +93,7 @@ public final class ChestItems {
 			config.set(e.getKey(), e.getValue().toString());
 
         try { config.save(chest); } catch (Exception e) {
-            Oneblock.plugin.getLogger().warning("Failed to save chests.yml: " + e.getMessage());
+            OneBlock.plugin.getLogger().warning("Failed to save chests.yml: " + e.getMessage());
         }
     }
 

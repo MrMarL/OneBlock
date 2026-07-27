@@ -17,7 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
 import oneblock.ChestItems;
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 
 /**
  * One-shot migrator that rewrites the legacy cumulative-pool {@code blocks.yml}
@@ -57,7 +57,7 @@ public class LegacyBlocksMigrator {
 		YamlConfiguration legacy = YamlConfiguration.loadConfiguration(blocksFile);
 		if (!isLegacyBlocks(legacy)) return;
 		
-		Oneblock.plugin.getLogger().info("Legacy blocks.yml detected. Migrating to weighted schema (original backed up to " + blocksFile.getName() + ".bak).");
+		OneBlock.plugin.getLogger().info("Legacy blocks.yml detected. Migrating to weighted schema (original backed up to " + blocksFile.getName() + ".bak).");
 		
 		if (!backup(blocksFile)) return;
 		
@@ -100,7 +100,7 @@ public class LegacyBlocksMigrator {
 			}
 			
 			out.set(strKey, newList);
-			Oneblock.plugin.getLogger().info(String.format("Migrated level %d: %d entries, total weight %d", id, levelEntries, levelWeight));
+			OneBlock.plugin.getLogger().info(String.format("Migrated level %d: %d entries, total weight %d", id, levelEntries, levelWeight));
 		}
 		
 		Object legacyMax = legacy.get("MaxLevel");
@@ -112,7 +112,7 @@ public class LegacyBlocksMigrator {
 		
 		try { out.save(blocksFile); }
 		catch (Exception e) {
-			Oneblock.plugin.getLogger().warning("Failed to write migrated blocks.yml: " + e.getMessage());
+			OneBlock.plugin.getLogger().warning("Failed to write migrated blocks.yml: " + e.getMessage());
 		}
 	}
 	
@@ -125,7 +125,7 @@ public class LegacyBlocksMigrator {
 			Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
 			return true;
 		} catch (Exception e) {
-			Oneblock.plugin.getLogger().warning("Failed to back up " + f + ": " + e.getMessage());
+			OneBlock.plugin.getLogger().warning("Failed to back up " + f + ": " + e.getMessage());
 			return false;
 		}
 	}
@@ -134,7 +134,7 @@ public class LegacyBlocksMigrator {
 	private static int detectHeaderEnd(List<?> raw) {
 		int q = 0;
 		if (q < raw.size() && raw.get(q) instanceof String) q++; // name
-		if (!Oneblock.superlegacy) {
+		if (!OneBlock.superlegacy) {
 			if (q < raw.size() && raw.get(q) instanceof String) {
 				String s = (String) raw.get(q);
 				try { BarColor.valueOf(s.toUpperCase()); q++; } catch (Exception ignore) {}

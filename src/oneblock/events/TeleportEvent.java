@@ -1,6 +1,6 @@
 package oneblock.events;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import org.bukkit.Location;
 import org.bukkit.World;

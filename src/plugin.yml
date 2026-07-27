@@ -1,5 +1,5 @@
 name:  Oneblock
-main:  oneblock.Oneblock
+main:  oneblock.OneBlock
 version:  1.6.2
 api-version: 1.13
 author:  MrMarL
@@ -8,33 +8,33 @@ softdepend: ['PlaceholderAPI', 'WorldGuard', 'ItemsAdder', 'Oraxen', 'Nexo', 'Cr
 
 commands:
   oneblock:
-    description: Oneblock main command.
+    description: OneBlock main command.
     aliases: ob
     usage: Are you using the command incorrectly?
   ob j:
 
 permissions:
-    Oneblock.set:
+    oneblock.set:
         description: Access to admin commands and settings
         default: op
-    Oneblock.join:
+    oneblock.join:
         description: Main permission
         default: true
-    Oneblock.invite:
+    oneblock.invite:
         description: Allows you to invite other players to your island to play together
         default: true
-    Oneblock.kick:
+    oneblock.kick:
         description: Allows the island owner to kick members and visitors from their island
         default: true
-    Oneblock.visit:
+    oneblock.visit:
         description: Allows visiting other players islands
         default: false
-    Oneblock.ignoreBarrier:
+    oneblock.ignoreBarrier:
         description: Allows bypassing island barriers and restrictions
         default: op
-    Oneblock.idreset:
+    oneblock.idreset:
         description: Allows resetting your island ID
         default: true
-    Oneblock.allow_visit:
+    oneblock.allow_visit:
         description: Allow players to open their island for visitors
         default: op

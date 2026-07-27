@@ -23,13 +23,13 @@ public final class CommandTabCompleter implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> commands = new ArrayList<>();
         
-        boolean isAdmin = sender.hasPermission("Oneblock.set");
+        boolean isAdmin = sender.hasPermission("oneblock.set");
 
         if (args.length == 1) {
         	commands.addAll(BASE_COMMANDS);
-        	if (sender.hasPermission("Oneblock.idreset")) commands.add("IDreset");
-        	if (sender.hasPermission("Oneblock.visit")) commands.addAll(VISIT_COMMANDS);
-        	if (sender.hasPermission("Oneblock.allow_visit")) commands.add("allow_visit");
+        	if (sender.hasPermission("oneblock.idreset")) commands.add("IDreset");
+        	if (sender.hasPermission("oneblock.visit")) commands.addAll(VISIT_COMMANDS);
+        	if (sender.hasPermission("oneblock.allow_visit")) commands.add("allow_visit");
         	if (isAdmin) commands.addAll(ADMIN_COMMANDS);
         }
         else if (args.length == 2) {
@@ -117,7 +117,7 @@ public final class CommandTabCompleter implements TabCompleter {
         		commands.add("edit");
         	}
         }
-        else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2]) && !Oneblock.legacy) {
+        else if (isAdmin && args.length == 4 && "chest".equalsIgnoreCase(args[0]) && "set".equalsIgnoreCase(args[2]) && !OneBlock.legacy) {
         	for (LootTables lt:LootTables.values())
         		commands.add(lt.getKey().toString());
         }
@@ -127,7 +127,7 @@ public final class CommandTabCompleter implements TabCompleter {
 	
 	// Auxiliary methods
     private void addOnlinePlayers(List<String> completions) {
-    	for (Player ponl: Oneblock.plugin.cache.getPlayers())
+    	for (Player ponl: OneBlock.plugin.cache.getPlayers())
     		completions.add(ponl.getName());
     }
 }

@@ -16,7 +16,7 @@ public final class PlayerCache {
         	final int plID = PlayerInfo.getId(uuid);
         	if (plID == -1)
         		return;
-        	newMap.put(player, Oneblock.plugin.getIslandCoordinates(plID));
+        	newMap.put(player, OneBlock.plugin.getIslandCoordinates(plID));
         });
         players = newMap;
     }

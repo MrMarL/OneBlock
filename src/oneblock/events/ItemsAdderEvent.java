@@ -1,6 +1,6 @@
 package oneblock.events;
 
-import static oneblock.Oneblock.*;
+import static oneblock.OneBlock.*;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

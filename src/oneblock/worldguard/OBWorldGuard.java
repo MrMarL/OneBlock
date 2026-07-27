@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.util.Vector;
 
-import oneblock.Oneblock;
+import oneblock.OneBlock;
 import oneblock.PlayerInfo;
 
 public class OBWorldGuard {
@@ -36,8 +36,8 @@ public class OBWorldGuard {
 			PlayerInfo owner = PlayerInfo.get(i);
 			if (owner.uuid == null) continue;
 			
-			int pos[] = Oneblock.plugin.getIslandCoordinates(i);
-			createRegionInternal(owner.uuid, pos[0], pos[1], Oneblock.getOffset(), i);
+			int pos[] = OneBlock.plugin.getIslandCoordinates(i);
+			createRegionInternal(owner.uuid, pos[0], pos[1], OneBlock.getOffset(), i);
 			for (UUID member: owner.uuids) 
 				addMember(member, i);
 		}

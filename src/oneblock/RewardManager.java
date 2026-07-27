@@ -20,9 +20,9 @@ public final class RewardManager {
         allRewards.clear();
         levelRewards.clear();
         
-        File rewardsFile = new File(Oneblock.plugin.getDataFolder(), "rewards.yml");
+        File rewardsFile = new File(OneBlock.plugin.getDataFolder(), "rewards.yml");
         if (!rewardsFile.exists()) {
-            Oneblock.plugin.saveResource("rewards.yml", false);
+            OneBlock.plugin.saveResource("rewards.yml", false);
         }
         
         YamlConfiguration config = YamlConfiguration.loadConfiguration(rewardsFile);
@@ -48,12 +48,12 @@ public final class RewardManager {
                     
                     levelRewards.put(level, processedRewards);
                 } catch (NumberFormatException e) {
-                    Oneblock.plugin.getLogger().warning("Invalid level number in rewards.yml: " + levelStr);
+                    OneBlock.plugin.getLogger().warning("Invalid level number in rewards.yml: " + levelStr);
                 }
             }
         }
         
-        Oneblock.plugin.getLogger().info("Loaded " + allRewards.size() + " general rewards and " + 
+        OneBlock.plugin.getLogger().info("Loaded " + allRewards.size() + " general rewards and " + 
                 levelRewards.size() + " level-specific reward sets");
     }
     
