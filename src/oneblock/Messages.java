@@ -33,4 +33,18 @@ public final class Messages {
 	public static String topGUI = "";
 	public static String visitGUI = "";
 	public static String idresetGUI = "";
+
+	// GUI text
+	public static String island_profile = "";
+	public static String teleport_island = "";
+	public static String leave_island = "";
+	public static String visit_islands = "";
+	public static String toggle_visits = "";
+	public static String view_leaderboard = "";
+	public static String click_to_open = "";
+	public static String view_commands = "";
+	public static String reset_island = "";
+	public static String close = "";
+	public static String close_menu = "";
+	public static String return_to_menu = "";
 }

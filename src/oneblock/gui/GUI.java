@@ -35,7 +35,7 @@ public class GUI {
         fillBorder(inv);
 
         ItemStack profile = getPlayerHead(Bukkit.getOfflinePlayer(p.getUniqueId()),
-                ChatColor.GREEN + "Island Profile");
+                ChatColor.GREEN + Messages.island_profile);
         ItemMeta profileMeta = profile.getItemMeta();
         if (profileMeta != null) {
             profileMeta.setLore(Arrays.asList(
@@ -47,35 +47,35 @@ public class GUI {
 
         inv.setItem(20, item(XMaterial.GRASS_BLOCK,
                 ChatColor.GREEN + "/ob join",
-                ChatColor.GRAY + "Teleport to your OneBlock island."));
+                ChatColor.GRAY + Messages.teleport_island));
         inv.setItem(21, item(XMaterial.PODZOL,
                 ChatColor.GREEN + "/ob leave",
-                ChatColor.GRAY + "Leave your OneBlock island."));
+                ChatColor.GRAY + Messages.leave_island));
         if (p.hasPermission("Oneblock.visit"))
             inv.setItem(22, item(XMaterial.MELON,
                 ChatColor.GREEN + "/ob visit",
-                ChatColor.GRAY + "Visit other players' islands."));
+                ChatColor.GRAY + Messages.visit_islands));
         if (p.hasPermission("Oneblock.allow_visit"))
             inv.setItem(23, item(XMaterial.EMERALD_BLOCK,
                 ChatColor.GREEN + "/ob allow_visit",
-                ChatColor.GRAY + "Toggle island visiting."));
+                ChatColor.GRAY + Messages.toggle_visits));
         inv.setItem(24, item(XMaterial.NETHER_STAR,
                 ChatColor.GREEN + "/ob top",
-                ChatColor.GRAY + "View the island leaderboard.",
+                ChatColor.GRAY + Messages.view_leaderboard,
                 "",
-                ChatColor.YELLOW + "Click to open"));
+                ChatColor.YELLOW + Messages.click_to_open));
         inv.setItem(30, item(XMaterial.PAPER,
                 ChatColor.GREEN + "/ob help",
-                ChatColor.GRAY + "View all OneBlock commands."));
+                ChatColor.GRAY + Messages.view_commands));
 
         if (p.hasPermission("Oneblock.idreset")) {
             inv.setItem(32, item(XMaterial.BARRIER,
                     ChatColor.RED + "/ob idreset",
-                    ChatColor.GRAY + "Reset your island ID.",
+                    ChatColor.GRAY + Messages.reset_island,
                     Messages.idresetGUI));
         }
 
-        inv.setItem(49, item(XMaterial.BARRIER, ChatColor.RED + "Close", ChatColor.GRAY + "Close this menu."));
+        inv.setItem(49, item(XMaterial.BARRIER, ChatColor.RED + Messages.close, ChatColor.GRAY + Messages.close_menu));
         p.openInventory(inv);
     }
 
@@ -92,8 +92,8 @@ public class GUI {
         if (topGUI == null) {
             topGUI = Bukkit.createInventory(new GUIHolder(GUIHolder.GUIType.TOP), 27, Messages.topGUI);
             fillBorder(topGUI);
-            topGUI.setItem(18, item(XMaterial.ARROW, ChatColor.YELLOW + "/ob gui", ChatColor.GRAY + "Return to the island menu."));
-            topGUI.setItem(26, item(XMaterial.BARRIER, ChatColor.RED + "Close", ChatColor.GRAY + "Close this menu."));
+            topGUI.setItem(18, item(XMaterial.ARROW, ChatColor.YELLOW + "/ob gui", ChatColor.GRAY + Messages.return_to_menu));
+            topGUI.setItem(26, item(XMaterial.BARRIER, ChatColor.RED + Messages.close, ChatColor.GRAY + Messages.close_menu));
         }
         
         List<PlayerInfo> toplist = oneblock.OneBlock.getTopList();

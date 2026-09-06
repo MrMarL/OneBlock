@@ -11,3 +11,42 @@ topGUI: "&f[OneBlock GUI] &f- &lTop"
 visitGUI: "&f[OneBlock GUI] &f- &lVisit"
     
 idresetGUI: "&4[your island's data will be lost]"
+
+island_profile: "&aIsland Profile"
+
+# GUI text
+teleport_island: |
+    &7Teleport to your OneBlock island.
+    &8Use /ob join
+
+leave_island: |
+    &7Leave your OneBlock island.
+    &8Use /ob leave
+
+visit_islands: |
+    &7Visit other players' islands.
+    &8Use /ob visit
+
+toggle_visits: |
+    &7Toggle island visiting.
+    &8Use /ob allow_visit
+
+view_leaderboard: |
+    &7View the island leaderboard.
+    &8Click to open
+
+click_to_open: "&eClick to open"
+
+view_commands: |
+    &7View all OneBlock commands.
+    &8Use /ob help
+
+reset_island: |
+    &7Reset your island ID.
+    &8Use /ob idreset
+
+close: "&cClose"
+
+close_menu: "&7Close this menu."
+
+return_to_menu: "&7Return to the island menu."

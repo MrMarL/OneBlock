@@ -3,6 +3,8 @@ package oneblock;
 import static oneblock.OneBlock.*;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
@@ -344,39 +346,28 @@ public class ConfigManager {
 	
     private void Messagefile() {
         File message = getFile("messages.yml");
-        config_temp = YamlConfiguration.loadConfiguration(message);
-        
-        Messages.help = MessageCheck("help", Messages.help);
-        Messages.help_adm = MessageCheck("help_adm", Messages.help_adm);
-        Messages.invite_usage = MessageCheck("invite_usage", Messages.invite_usage);
-        Messages.invite_yourself = MessageCheck("invite_yourself", Messages.invite_yourself);
-        Messages.invite_no_island = MessageCheck("invite_no_island", Messages.invite_no_island);
-        Messages.invite_team = MessageCheck("invite_team", Messages.invite_team);
-        Messages.invited = MessageCheck("invited", Messages.invited);
-        Messages.invited_success = MessageCheck("invited_success", Messages.invited_success);
-        Messages.kicked = MessageCheck("kicked", Messages.kicked);
-        Messages.kick_usage = MessageCheck("kick_usage", Messages.kick_usage);
-        Messages.kick_yourself = MessageCheck("kick_yourself", Messages.kick_yourself);
-        Messages.accept_success = MessageCheck("accept_success", Messages.accept_success);
-        Messages.accept_none = MessageCheck("accept_none", Messages.accept_none);
-        Messages.idreset = MessageCheck("idreset", Messages.idreset);
-        Messages.protection = MessageCheck("protection", Messages.protection);
-        Messages.leave_not_set = MessageCheck("leave_not_set", Messages.leave_not_set);
-        Messages.not_allow_visit = MessageCheck("not_allow_visit", Messages.not_allow_visit);
-        Messages.allowed_visit = MessageCheck("allowed_visit", Messages.allowed_visit);
-        Messages.forbidden_visit = MessageCheck("forbidden_visit", Messages.forbidden_visit);
-        
-        File gui = getFile("gui.yml");
-        config_temp = YamlConfiguration.loadConfiguration(gui);
-        
-        Messages.baseGUI = MessageCheck("baseGUI", Messages.baseGUI);
-        Messages.acceptGUI = MessageCheck("acceptGUI", Messages.acceptGUI);
-        Messages.acceptGUIignore = MessageCheck("acceptGUIignore", Messages.acceptGUIignore);
-        Messages.acceptGUIjoin = MessageCheck("acceptGUIjoin", Messages.acceptGUIjoin);
-        Messages.topGUI = MessageCheck("topGUI", Messages.topGUI);
-        Messages.visitGUI = MessageCheck("visitGUI", Messages.visitGUI);
-        Messages.idresetGUI = MessageCheck("idresetGUI", Messages.idresetGUI);
+		config_temp = YamlConfiguration.loadConfiguration(message);
+		loadMessages(Messages.class);
+		
+		File gui = getFile("gui.yml");
+		config_temp = YamlConfiguration.loadConfiguration(gui);
+		loadMessages(Messages.class);
     }
+
+	private void loadMessages(Class<?> clazz) {
+		for (Field field : clazz.getDeclaredFields()) {
+			if (!field.getType().equals(String.class)) continue;
+			if (!Modifier.isStatic(field.getModifiers())) continue;
+			if (Modifier.isFinal(field.getModifiers())) continue;
+			
+			try {
+				String name = field.getName();
+				String defValue = (String) field.get(null);
+				String newValue = MessageCheck(name, defValue);
+				field.set(null, newValue);
+			} catch (IllegalAccessException e) {}
+		}
+	}
     
     private String MessageCheck(String name, String def_message) {
     	if (config_temp.isString(name))
