@@ -1,6 +1,6 @@
 name:  Oneblock
 main:  oneblock.OneBlock
-version:  1.6.2
+version:  1.6.3
 api-version: 1.13
 author:  MrMarL
 loadbefore: ['Multiverse-Core']

@@ -199,7 +199,7 @@ public class GUI {
         int size = inv.getSize();
         int row = size / 9;
 
-        ItemStack pane = item(XMaterial.GRAY_STAINED_GLASS_PANE, "");
+        ItemStack pane = item(XMaterial.GRAY_STAINED_GLASS_PANE, " ");
 
         for (int i = 0; i < 9; i++) {
             inv.setItem(i, pane);

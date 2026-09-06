@@ -217,6 +217,7 @@ public class OneBlock extends JavaPlugin {
 		
     	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
         	getLogger().info("WorldGuard has been found!");
+            worldGuard = legacy ? new OBWorldGuard6() : new OBWorldGuard7();
         	worldGuard.recreateRegions();
         }
         else OBWorldGuard.setEnabled(false);
