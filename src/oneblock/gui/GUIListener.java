@@ -32,6 +32,7 @@ public class GUIListener implements Listener {
 	    Player pl = (Player) he;
 		
 		switch (holder.getGuiType()) {
+			case TOP:
 		    case MAIN_MENU:
 		        if (e.getClickedInventory() != inv) return;
 		        ItemStack item = e.getCurrentItem();
