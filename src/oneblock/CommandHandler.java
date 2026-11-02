@@ -283,7 +283,7 @@ public class CommandHandler implements CommandExecutor {
 			        	            sender.sendMessage(Messages.invalid_value);
 			        	            return true;
 			        	        }
-			        	    }
+			        	    } else plugin.setOffset(100);
 			        	    
 			        	    Location location;
 			        	    if (args.length >= 5) {
