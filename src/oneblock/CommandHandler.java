@@ -318,7 +318,8 @@ public class CommandHandler implements CommandExecutor {
 			        	    
 			        	    sender.sendMessage(ChatColor.GREEN + "set OneBlock on: \n" +
 			        	                      ChatColor.WHITE + getX() + ", " + getY() + ", " + getZ() +
-			        	                      ChatColor.GRAY + " in world " + ChatColor.WHITE + getWorld().getName());
+			        	                      ChatColor.GRAY + " in world " + ChatColor.WHITE + getWorld().getName() +
+											  ChatColor.GRAY + "\nisland diameter: " + ChatColor.WHITE + plugin.getOffset());
 			        	    return true;
 			        	}
 			            case ("setleave"):{
