@@ -12,6 +12,7 @@ import oneblock.Messages;
 import oneblock.OneBlock;
 import oneblock.PlayerInfo;
 import oneblock.invitation.Guest;
+import oneblock.utils.Scheduler;
 
 /**
  * Main-thread block-generation pulse: every four seconds (80 ticks) it
@@ -28,34 +29,40 @@ public final class IslandBlockGenTask implements Runnable {
 
     @Override
     public void run() { // SubBlockGen
-        for (Player player : plugin.cache.getPlayers()) {
-        	final World wor = OneBlock.getWor();
-        	if (player.getWorld() != wor) continue;
-        	final UUID uuid = player.getUniqueId();
-        	final int result[] = plugin.cache.getIslandCoordinates(player);
-            final int X_pl = result[0], Z_pl = result[1], plID = result[2];
-        	
-            if (OneBlock.protection && !player.hasPermission("Oneblock.ignoreBarrier")) {
-            	boolean CheckGuest = false;
-            	Location loc = player.getLocation();
-        		PlayerInfo inf = Guest.getPlayerInfo(uuid);
-        		if (inf != null) {
-                	int crd[] = plugin.getIslandCoordinates(PlayerInfo.getId(inf.uuid));
-                    CheckGuest = plugin.isWithinIslandBounds(loc, crd[0], crd[1]);
-                    if (!CheckGuest) Guest.remove(uuid);
-        		}
-        		if (!plugin.isWithinIslandBounds(loc, X_pl, Z_pl) && !CheckGuest) {
-        			player.performCommand("ob j");
-        			player.sendMessage(Messages.protection);
-                	continue;
-                }
+        for (Player player : plugin.cache.getPlayers())
+        	Scheduler.runFor(player, () -> pulse(player));
+    }
+
+    private void pulse(Player player) {
+    	final World wor = OneBlock.getWor();
+    	if (player.getWorld() != wor) return;
+    	final UUID uuid = player.getUniqueId();
+    	final int result[] = plugin.cache.getIslandCoordinates(player);
+        final int X_pl = result[0], Z_pl = result[1], plID = result[2];
+
+        if (OneBlock.protection && !player.hasPermission("Oneblock.ignoreBarrier")) {
+        	boolean CheckGuest = false;
+        	Location loc = player.getLocation();
+    		PlayerInfo inf = Guest.getPlayerInfo(uuid);
+    		if (inf != null) {
+            	int crd[] = plugin.getIslandCoordinates(PlayerInfo.getId(inf.uuid));
+                CheckGuest = plugin.isWithinIslandBounds(loc, crd[0], crd[1]);
+                if (!CheckGuest) Guest.remove(uuid);
+    		}
+    		if (!plugin.isWithinIslandBounds(loc, X_pl, Z_pl) && !CheckGuest) {
+    			player.performCommand("ob j");
+    			player.sendMessage(Messages.protection);
+            	return;
             }
-            
-            final Block block = wor.getBlockAt(X_pl, OneBlock.getY(), Z_pl);
-            if (block.getType() != Material.AIR) continue;
-            if (PlayerInfo.getId(uuid) == -1) continue;
-            
-            plugin.BlockGen(X_pl, Z_pl, plID, player, block);
         }
+
+        // On Folia the island block may belong to another region than the player.
+        Scheduler.runAt(new Location(wor, X_pl, OneBlock.getY(), Z_pl), () -> {
+	        final Block block = wor.getBlockAt(X_pl, OneBlock.getY(), Z_pl);
+	        if (block.getType() != Material.AIR) return;
+	        if (PlayerInfo.getId(uuid) == -1) return;
+
+	        plugin.BlockGen(X_pl, Z_pl, plID, player, block);
+        });
     }
 }

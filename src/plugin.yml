@@ -1,7 +1,8 @@
 name:  Oneblock
 main:  oneblock.OneBlock
-version:  1.6.3
+version:  1.6.4
 api-version: 1.13
+folia-supported: true
 author:  MrMarL
 loadbefore: ['Multiverse-Core']
 softdepend: ['PlaceholderAPI', 'WorldGuard', 'ItemsAdder', 'Oraxen', 'Nexo', 'CraftEngine']

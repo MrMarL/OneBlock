@@ -145,6 +145,7 @@ public class OneBlock extends JavaPlugin {
     @Override
     public void onEnable() {
     	plugin = this;
+    	Scheduler.init(this);
         GUI.legacy = !Utils.findMethod(SkullMeta.class, "setOwningPlayer");
         final Metrics metrics = new Metrics(this, 14477);
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -181,7 +182,7 @@ public class OneBlock extends JavaPlugin {
         
         if (getOffset() == 0) return;
         
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new WorldInitTask(this), 32, 80);
+        Scheduler.runTimerAsync(new WorldInitTask(this), 32, 80);
     }
     
     private Place.Type determinePlaceType(PluginManager pluginManager) {
@@ -207,12 +208,12 @@ public class OneBlock extends JavaPlugin {
     }
     
     public void runMainTask() {
-    	Bukkit.getScheduler().cancelTasks(this);
+    	Scheduler.cancelTasks();
 		if (getOffset() == 0) return;
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayerCacheRefreshTask(this), 0, 120);
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayerDataSaveTask(this), 200, 6000);
-		if (!superlegacy) Bukkit.getScheduler().runTaskTimerAsynchronously(this, new IslandParticleTask(this), 40, 40);
-		Bukkit.getScheduler().runTaskTimer(this, new IslandBlockGenTask(this), 40, 80);
+		Scheduler.runTimerAsync(new PlayerCacheRefreshTask(this), 0, 120);
+		Scheduler.runTimerAsync(new PlayerDataSaveTask(this), 200, 6000);
+		if (!superlegacy) Scheduler.runTimerAsync(new IslandParticleTask(this), 40, 40);
+		Scheduler.runTimer(new IslandBlockGenTask(this), 40, 80);
 		enabled = true;
 		
     	if (OBWorldGuard.canUse && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
@@ -293,7 +294,7 @@ public class OneBlock extends JavaPlugin {
     
     public void UpdateBorder(final Player pl) {
     	WorldBorder border = pl.getWorldBorder();
-    	Bukkit.getScheduler().runTaskLater(this, 
+    	Scheduler.runForLater(pl,
     		() -> { pl.setWorldBorder(border); }, 10L);
     }
     
@@ -301,8 +302,8 @@ public class OneBlock extends JavaPlugin {
     	if (!isBorderSupported) return;
     	World w = getWor();
     	if (w == null) return;
-    	if (border) w.getPlayers().forEach(pl -> plugin.UpdateBorderLocation(pl, pl.getLocation()));
-    	else w.getPlayers().forEach(pl -> pl.setWorldBorder(null));
+    	if (border) Scheduler.playersIn(w).forEach(pl -> Scheduler.runFor(pl, () -> plugin.UpdateBorderLocation(pl, pl.getLocation())));
+    	else Scheduler.playersIn(w).forEach(pl -> Scheduler.runFor(pl, () -> pl.setWorldBorder(null)));
     }
     
     public boolean isWithinIslandBounds(Location loc, int centerX, int centerZ) {

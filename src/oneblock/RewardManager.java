@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import oneblock.utils.Scheduler;
 import oneblock.utils.Utils;
 
 import java.io.File;
@@ -83,8 +84,9 @@ public final class RewardManager {
                 finalCommand = finalCommand.replace(entry.getKey(), entry.getValue());
             }
             
-            // Execute command as console
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
+            // Execute command as console (Folia: on the global region thread)
+            final String dispatched = finalCommand;
+            Scheduler.run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), dispatched));
         }
     }
     

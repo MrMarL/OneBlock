@@ -26,9 +26,11 @@ import org.bukkit.entity.EntityType;
 import oneblock.gui.GUI;
 import oneblock.invitation.Guest;
 import oneblock.invitation.Invitation;
+import oneblock.utils.Scheduler;
 import oneblock.utils.Utils;
 import oneblock.worldguard.OBWorldGuard;
 
+@SuppressWarnings("deprecation")
 public class CommandHandler implements CommandExecutor {
 	
 	public static boolean idresetCommand(OfflinePlayer pl) {
@@ -76,15 +78,19 @@ public class CommandHandler implements CommandExecutor {
 	            if (player == null) return false;
 	            UUID uuid = player.getUniqueId();
 	            int X_pl = 0, Z_pl = 0;
+	            Runnable newIsland = null;
 	            int plID = PlayerInfo.getId(uuid);
 	            if (plID == -1) {
 	            	PlayerInfo inf = new PlayerInfo(uuid);
 	            	plID = PlayerInfo.getFreeId(useEmptyIslands);
 	            	int result[] = plugin.getIslandCoordinates(plID);
 	            	X_pl = result[0]; Z_pl = result[1];
-	            	if (plID != PlayerInfo.size())
-	            		Island.clear(getWorld(), X_pl, getY(), Z_pl, getOffset()/4);
-	                Island.place(getWorld(), X_pl, getY(), Z_pl);
+	            	final boolean reused = plID != PlayerInfo.size();
+	            	final int X_isl = X_pl, Z_isl = Z_pl;
+	            	newIsland = () -> {
+	            		if (reused) Island.clear(getWorld(), X_isl, getY(), Z_isl, getOffset()/4);
+	            		Island.place(getWorld(), X_isl, getY(), Z_isl);
+	            	};
 	                plugin.worldGuard.createRegion(uuid, X_pl, Z_pl, getOffset(), plID);
 					PlayerInfo.set(plID, inf);
 					if (!superlegacy)
@@ -96,7 +102,13 @@ public class CommandHandler implements CommandExecutor {
 	            }
 	            if (!plugin.enabled) plugin.runMainTask();
 	            if (progress_bar) PlayerInfo.get(plID).bar.setVisible(true);
-	            player.teleport(new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
+	            final Location spawn = new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5);
+	            if (newIsland == null) Scheduler.teleport(player, spawn);
+	            else {
+	            	// Build the island on its own region thread (Folia), then bring the player over.
+	            	final Runnable build = newIsland;
+	            	Scheduler.runAt(spawn, () -> { build.run(); Scheduler.teleport(player, spawn); });
+	            }
 	            if (OBWorldGuard.isEnabled()) plugin.worldGuard.addMember(uuid, plID);
 	            return true;
 	        }
@@ -108,7 +120,7 @@ public class CommandHandler implements CommandExecutor {
 	            		sender.sendMessage(Messages.leave_not_set);
 	            	return true;
 	            }
-	            player.teleport(plugin.getLeave());
+	            Scheduler.teleport(player, plugin.getLeave());
 	            return true;
 	        }
 	        case ("v"):
@@ -141,7 +153,7 @@ public class CommandHandler implements CommandExecutor {
 	            final int X_pl = result[0], Z_pl = result[1];
 	    		
 	            if (protection) Guest.list.add(new Guest(uuid, player.getUniqueId()));
-	            player.teleport(new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
+	            Scheduler.teleport(player, new Location(getWorld(), X_pl + 0.5, getY() + 1.2013, Z_pl + 0.5));
 	    		PlayerInfo.removeBarFor(player);
 	            return true;
 	        }
@@ -212,13 +224,15 @@ public class CommandHandler implements CommandExecutor {
 	        	}
 	        	if (!(member instanceof Player)) return true;
 	        	Player member_ex = (Player) member;
-	        	int memberID = plugin.findNearestRegionId(member_ex.getLocation());
-	        	if (memberID == ownerID) {
-	        		if (!member_ex.hasPermission("oneblock.set"))
-	        			member_ex.performCommand("ob j");
-	        		info.removeBar(member_ex);
-	        		sender.sendMessage(member.getName() + Messages.kicked);
-	        	}
+	        	Scheduler.runFor(member_ex, () -> {
+		        	int memberID = plugin.findNearestRegionId(member_ex.getLocation());
+		        	if (memberID == ownerID) {
+		        		if (!member_ex.hasPermission("oneblock.set"))
+		        			member_ex.performCommand("ob j");
+		        		info.removeBar(member_ex);
+		        		sender.sendMessage(member_ex.getName() + Messages.kicked);
+		        	}
+	        	});
 	        	return true;
 	        }
 	        case ("accept"):{
@@ -266,7 +280,7 @@ public class CommandHandler implements CommandExecutor {
 	        	if (requirePermission(sender, "oneblock.set")) 
 		        {
 	        		config = YamlConfiguration.loadConfiguration(LegacyConfigSaver.file); // Loading the config.yml file before making changes.
-	        		Bukkit.getScheduler().runTaskLater(plugin, () -> { LegacyConfigSaver.Save(config); }, 2L); // Saving the config.yml file after making changes.
+	        		Scheduler.runLater(() -> { LegacyConfigSaver.Save(config); }, 2L); // Saving the config.yml file after making changes.
 		        	switch (parametr) {
 			        	case ("set"): {
 			        		if (player == null && args.length < 6) {
@@ -312,7 +326,8 @@ public class CommandHandler implements CommandExecutor {
 			        	    
 			        	    if (!plugin.enabled) plugin.runMainTask();
 			        	    
-			        	    getWorld().getBlockAt(getX(), getY(), getZ()).setType(GRASS_BLOCK.get());
+			        	    Scheduler.runAt(new Location(getWorld(), getX(), getY(), getZ()),
+			        	    		() -> getWorld().getBlockAt(getX(), getY(), getZ()).setType(GRASS_BLOCK.get()));
 			        	    plugin.worldGuard.recreateRegions();
 			        	    LegacyConfigSaver.Save(config);
 			        	    
@@ -357,7 +372,7 @@ public class CommandHandler implements CommandExecutor {
 			            	// ReloadBorders is scheduled 2 ticks later so the fall-through
 			            	// below can first persist `border=true/false` via the shared
 			            	// bool-toggle body; the ordering is load-bearing.
-			            	Bukkit.getScheduler().runTaskLater(plugin, () -> { plugin.ReloadBorders(); }, 2L);
+			            	Scheduler.runLater(() -> { plugin.ReloadBorders(); }, 2L);
 			            	// fall through to shared bool-toggle body:
 			            case ("circlemode"):
 			            case ("useemptyislands"):
@@ -436,7 +451,8 @@ public class CommandHandler implements CommandExecutor {
 		                    if (progress_bar)
 		                    	inf.bar.setVisible(false);
 		                    int result[] = plugin.getIslandCoordinates(id);
-		                    Island.clear(getWorld(), result[0], getY(), result[1], getOffset()/4);
+		                    Scheduler.runAt(new Location(getWorld(), result[0], getY(), result[1]),
+		                    		() -> Island.clear(getWorld(), result[0], getY(), result[1], getOffset()/4));
 		                    sender.sendMessage(String.format("%splayer %s island is destroyed! :D", ChatColor.GREEN, args[1]));
 		                    return true;
 			            }
@@ -591,9 +607,11 @@ public class CommandHandler implements CommandExecutor {
 			                	UUID uuid = p.getUniqueId();
 			                    if (PlayerInfo.getId(uuid) != -1) {
 			                        int result[] = plugin.getIslandCoordinates(PlayerInfo.getId(uuid));
-			                        Island.scan(getWorld(), result[0], getY(), result[1]);
-			                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
-			                        config.set("custom_island", Island.map());
+			                        Scheduler.runAt(new Location(getWorld(), result[0], getY(), result[1]), () -> {
+				                        Island.scan(getWorld(), result[0], getY(), result[1]);
+				                        sender.sendMessage(ChatColor.GREEN + "A copy of your island has been successfully saved!");
+				                        config.set("custom_island", Island.map());
+			                        });
 			                    } else
 			                        sender.sendMessage(ChatColor.RED + "You don't have an island!");
 			                    return true;
