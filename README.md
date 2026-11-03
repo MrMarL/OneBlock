@@ -4,12 +4,12 @@
   <h1>OneBlock Bukkit Plugin</h1>
 
   [![Java Version](https://img.shields.io/badge/Java-8-red.svg)](https://openjdk.org/projects/jdk/8/)
-  [![Spigot API](https://img.shields.io/badge/Spigot_API-1.20.6-blue.svg)](https://hub.spigotmc.org/)
+  [![Paper API](https://img.shields.io/badge/Paper_API-1.20.6-blue.svg)](https://jd.papermc.io/paper/1.20.6/)
   [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
   [![Java CI](https://github.com/MrMarL/OneBlock/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/MrMarL/OneBlock/actions/workflows/maven-publish.yml)
   [![Discord](https://img.shields.io/discord/797551904250920980?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/zUKrmp3P9y)
 
-  [![Supported](https://img.shields.io/badge/Bukkit/Spigot/Paper:-black.svg?style=for-the-badge)](https://hub.spigotmc.org/)
+  [![Supported](https://img.shields.io/badge/Bukkit/Spigot/Paper/Folia:-black.svg?style=for-the-badge)](https://hub.spigotmc.org/)
   ![Min ver](https://img.shields.io/badge/1.8.X-red.svg?style=for-the-badge)
   ![-](https://img.shields.io/badge/>>-gray.svg?style=for-the-badge)
   ![Max ver](https://img.shields.io/badge/26.3+-green.svg?style=for-the-badge)
